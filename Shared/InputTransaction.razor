@@ -1,0 +1,463 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+<style>
+    .food {
+        background-color: deeppink;
+    }
+
+    .gas {
+        background-color: coral;
+    }
+
+    .fun {
+        background-color: green;
+    }
+
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+    input{
+        color: black;
+    }
+</style>
+@if (Mobile)
+{
+    @if (Constants.Presets != null && Constants.Presets.Count > 0)
+    {
+        <div style="border: 2px solid green; width:90vw;height:50vh;right:1vw;top:15vh;">
+            <h1 style="text-align:center">Presets:</h1>
+            <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                    @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Food"))
+                    {
+                        <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                    }
+                </div>
+                <br />
+                <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                    @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Debt"))
+                    {
+                        <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                    }
+                </div>
+                <br />
+                <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                    @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Gas"))
+                    {
+                        <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                    }
+                </div>
+                <br />
+                <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                    @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Static Cost"))
+                    {
+                        <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                    }
+                </div>
+                <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                    @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType != "Food" && p.ExpenseType != "Debt" && p.ExpenseType != "Gas" && p.ExpenseType != "Static Cost"))
+                    {
+                        <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    <br />
+    <br />
+    <div style="position:relative;">
+        <div>
+            <label>Transaction:</label>
+            <br />
+            <input type="text" placeholder="Name of Transaction" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
+        </div>
+        <br />
+        <div>
+            <label>Expense Type:</label>
+            <br />
+            <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="ExpenseType" title="Pick an Expense Type ">
+                <option value="@string.Empty" selected disabled="disabled">Expense</option>
+                <option value="Static Cost">Static Cost</option>
+                <option value="Income">Income</option>
+                <option value="Debt">Paying Off Debt</option>
+                <option value="Food">Food</option>
+                <option value="Fun">Fun</option>
+                <option value="Gas">Gas</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        @if (ExpenseType == "Debt")
+        {
+            <br />
+            <div>
+                <label>@($"What's {Constants.Person1} paying off:")</label>
+                <br />
+                <select class="custom-select" @bind="PaidOffPerson1" title="Paid Off is required ">
+                    <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
+                    @if (Balances != null)
+                    {
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 && b.BalanceType.Contains("Loan")))
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <br />
+            <div>
+                <label><strong>@($"What's {Constants.Person2} paying off:")</strong></label>
+                <br />
+                <select class="custom-select" @bind="PaidOffPerson2" title="Paid Off is required ">
+                    <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
+                    @if (Balances != null)
+                    {
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 && b.BalanceType.Contains("Loan")))
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        }
+        <br style="clear:both;" />
+        <br />
+        <div>
+            <label>@($"{Constants.Person1} Paid With:")</label>
+            <br />
+            <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
+                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Paid)")</option>
+                @if (Balances != null)
+                {
+                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1))
+                    {
+                        <option value="@pay.Id">@pay.Name</option>
+                    }
+                }
+                <option value="NONE">Did not pay</option>
+            </select>
+        </div>
+        <br />
+        <div>
+            <label>@($"{Constants.Person2} Paid With:")</label>
+            <br />
+            <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
+                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Paid)")</option>
+                @if (Balances != null)
+                {
+                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2))
+                    {
+                        <option value="@pay.Id">@pay.Name</option>
+                    }
+                }
+                <option value="NONE">Did not pay</option>
+            </select>
+        </div>
+        <br style="clear:both;" />
+        <br />
+        <div>
+            <label>@($"{Constants.Person1} Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+        </div>
+        <br />
+        <div>
+            <label>@($"{Constants.Person2} Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+        </div>
+
+        <br style="clear:both" />
+        <div style="margin-bottom:2vh;">
+            <button class="btn btn-secondary" style="float:left" @onclick="Submit">Submit</button>
+        </div>
+        <br />
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p style="color:@ErrorColor">@ErrorMsg</p>
+        }
+    </div>
+}
+else
+{
+    <div class="tabcontent">
+        <div style="float:left; margin-right:10vw;">
+            <label>Transaction:</label>
+            <br />
+            <input type="text" placeholder="Name of Transaction" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
+        </div>
+        <div style="float:left; margin-right:12vw;">
+            <label>Expense Type:</label>
+            <br />
+            <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="ExpenseType" title="Pick an Expense Type ">
+                <option value="@string.Empty" selected disabled="disabled">Expense</option>
+                <option value="Static Cost">Static Cost</option>
+                <option value="Income">Income</option>
+                <option value="Debt">Paying Off Debt</option>
+                <option value="Food">Food</option>
+                <option value="Fun">Fun</option>
+                <option value="Gas">Gas</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        @if (ExpenseType == "Debt")
+        {
+            <div style="float:left; margin-left:1.4vw;">
+                <label><strong>@($"{Constants.Person1} Paid With:")</strong></label>
+                <br />
+                <select class="custom-select" @bind="PaidOffPerson1" title="Paid Off is required ">
+                    <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
+                    @if (Balances != null)
+                    {
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 && b.BalanceType.Contains("Loan")))
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        }
+        <br style="clear:both;" />
+        <br />
+        <div style="float:left; margin-right:9.1vw;">
+            <label><strong>@($"{Constants.Person1} Paid With:")</strong></label>
+            <br />
+            <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
+                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Paid)")</option>
+                @if (Balances != null)
+                {
+                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1))
+                    {
+                        <option value="@pay.Id">@pay.Name</option>
+                    }
+                }
+                <option value="NONE">Did not pay</option>
+            </select>
+        </div>
+        <div style="float:left; margin-right:5.6vw;">
+            <label>@($"{Constants.Person2} Paid With:")</label>
+            <br />
+            <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
+                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Paid)")</option>
+                @if (Balances != null)
+                {
+                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2))
+                    {
+                        <option value="@pay.Id">@pay.Name</option>
+                    }
+                }
+                <option value="NONE">Did not pay</option>
+            </select>
+        </div>
+        @if (ExpenseType == "Debt")
+        {
+            <div style="float:left; margin-left:1.4vw;">
+                <strong>@($"What's {Constants.Person2} paying off:")</strong>
+                <br />
+                <select class="custom-select" @bind="PaidOffPerson2" title="Paid Off is required ">
+                    <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
+                    @if (Balances != null)
+                    {
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 && b.BalanceType.Contains("Loan")))
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        }
+        <br style="clear:both;" />
+        <br />
+        <div style="float:left;margin-right:10vw;">
+            <label>@($"{Constants.Person1} Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+        </div>
+        <div>
+            <label>@($"{Constants.Person2} Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+        </div>
+        <br style="clear:both;" />
+
+        @if (Constants.Presets != null && Constants.Presets.Count > 0)
+        {
+            <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
+                <h1 style="text-align:center">Presets:</h1>
+                <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                    <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Food"))
+                        {
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                        }
+                    </div>
+                    <br />
+                    <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Debt"))
+                        {
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                        }
+                    </div>
+                    <br />
+                    <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Gas"))
+                        {
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                        }
+                    </div>
+                    <br />
+                    <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Static Cost"))
+                        {
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                        }
+                    </div>
+                    <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType != "Food" && p.ExpenseType != "Debt" && p.ExpenseType != "Gas" && p.ExpenseType != "Static Cost"))
+                        {
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        <br style="clear:both" />
+        @if (!string.IsNullOrEmpty(TransactionName))
+        {
+            <div style="float:right; margin-right:1vw;display:inline-block;">
+                <div style="display:flex;justify-content:end">
+                    <label style="float:left;margin-right:1vw">Text Color:</label>
+                    <input @bind="TextColor" type="color" />
+                </div>
+                <br />
+                <div style="display:flex;justify-content:end">
+                    <label style="float:left;margin-right:1vw">Color:</label>
+                    <input @bind=Hex type="color" />
+                </div>
+            </div>
+        }
+        <br style="clear:both" />
+        <br style="clear:both" />
+        <div style="margin-bottom:2vh;">
+            <button class="btn btn-secondary" style="float:left;" @onclick="Submit">Submit</button>
+            @if (!string.IsNullOrEmpty(TransactionName))
+            {
+                <button class="btn btn-primary" style="float:right;background-color:@Hex;color:@TextColor;" @onclick="AddPreset">
+                    <span>Add Preset For:</span>
+                    <br />
+                    <span>@TransactionName</span>
+                </button>
+            }
+        </div>
+        <br />
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p style="color:@ErrorColor">@ErrorMsg</p>
+        }
+    </div>
+}
+<br />
+<br />
+
+@code {
+    [Parameter]
+    public string TransactionName { get; set; }
+    [Parameter]
+    public string ExpenseType { get; set; }
+    [Parameter]
+    public string PaidOffPerson1 { get; set; }
+    [Parameter]
+    public string PaidOffPerson2 { get; set; }
+    [Parameter]
+    public string PaidWithPerson1 { get; set; }
+    [Parameter]
+    public string PaidWithPerson2 { get; set; }
+    [Parameter]
+    public string Person1Amount { get; set; }
+    [Parameter]
+    public string Person2Amount { get; set; }
+    [Parameter]
+    public bool Mobile { get; set; }
+    [Parameter]
+    public Action<string> Preset { get; set; }
+
+    private string Hex { get; set; } = "#28A745";
+    private string TextColor { get; set; } = "#FFFFFF";
+
+    private List<Balance> Balances => BalanceRepo.GetBalances();
+
+    private string ErrorMsg { get; set; } = string.Empty;
+    private string ErrorColor { get; set; } = "red";
+
+    public async void Submit()
+    {
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+        bool tpNAmount = double.TryParse(Person1Amount, out double nam);
+        bool tpLAmount = double.TryParse(Person2Amount, out double lam);
+
+        ErrorMsg += string.IsNullOrEmpty(TransactionName) ? "Transaction Name must be set. " : "";
+        ErrorMsg += string.IsNullOrEmpty(ExpenseType) ? "Please select an expense type. " : "";
+        ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tpNAmount ? $"{Constants.Person1} Amount must be a number. " : "";
+        ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tpLAmount ? $"{Constants.Person2} Amount must be a number. " : "";
+        //ErrorMsg += !string.IsNullOrEmpty(ExpenseType) && ExpenseType == "Debt" ? "APR must be a number. " : "";
+        //ErrorMsg += string.IsNullOrEmpty(Color) ? "Color must be set." : "";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            BalanceRepoCaller brc = new BalanceRepoCaller();
+            await TransactionRepo.AddOrUpdateAsync(new Transaction(TransactionName, ExpenseType, nam, lam, brc.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2)));
+
+            ErrorColor = "green";
+            ErrorMsg = TransactionName + " transaction was added!";
+
+            TransactionName = string.Empty;
+            Person1Amount = string.Empty;
+            Person2Amount = string.Empty;
+            ExpenseType = string.Empty;
+            PaidOffPerson2 = string.Empty;
+            PaidOffPerson1 = string.Empty;
+            PaidWithPerson2 = string.Empty;
+            PaidWithPerson1 = string.Empty;
+
+            await Constants.Init();
+            StateHasChanged();
+        }
+    }
+    public async void AddPreset()
+    {
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+        bool tpNAmount = double.TryParse(Person1Amount, out double nam);
+        bool tpLAmount = double.TryParse(Person2Amount, out double lam);
+
+        ErrorMsg += string.IsNullOrEmpty(TransactionName) ? "Transaction Name must be set. " : "";
+        ErrorMsg += string.IsNullOrEmpty(ExpenseType) ? "Please select an expense type. " : "";
+        ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tpNAmount ? $"{Constants.Person1} Amount must be a number. " : "";
+        ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tpLAmount ? $"{Constants.Person2} Amount must be a number. " : "";
+        //ErrorMsg += !string.IsNullOrEmpty(ExpenseType) && ExpenseType == "Debt" ? "APR must be a number. " : "";
+        //ErrorMsg += string.IsNullOrEmpty(Color) ? "Color must be set." : "";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2), Hex, TextColor));
+
+            ErrorColor = "green";
+            ErrorMsg = TransactionName + " preset was added!";
+
+            TransactionName = string.Empty;
+            Person1Amount = string.Empty;
+            Person2Amount = string.Empty;
+            ExpenseType = string.Empty;
+            PaidOffPerson2 = string.Empty;
+            PaidOffPerson1 = string.Empty;
+            PaidWithPerson2 = string.Empty;
+            PaidWithPerson1 = string.Empty;
+
+            StateHasChanged();
+        }
+    }
+}

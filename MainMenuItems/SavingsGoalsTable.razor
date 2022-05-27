@@ -1,0 +1,53 @@
+﻿@if (Mobile)
+{
+    <div style="width:100%; margin-right:2vw;">
+        <table>
+            <tr>
+                <th colspan="2" style="font-size:3vw;background-color:dodgerblue;color:white"><i>Savings Goals</i></th>
+            </tr>
+            @foreach (var sg in Constants.SavingsGoals)
+            {
+                <tr>
+                    <td style="font-size:3vw;padding:.5vw 0;">@sg.Person</td>
+                    <td style="font-size:3vw;">@Constants.Pretty(sg.Goal)</td>
+                </tr>
+            }
+            <tr>
+                <td style="font-size:3vw;" colspan="2">=</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;"><strong>Total</strong></td>
+                <td style="font-size:3vw;">@Constants.Pretty(Constants.SavingsGoals.Sum(s => s.Goal))</td>
+            </tr>
+        </table>
+    </div>
+}
+else
+{
+    <div style="width:100%; margin-right:2vw; margin-top:2vh;">
+        <table>
+            <tr>
+                <th colspan="2" style="background-color:dodgerblue;color:white"><i>Savings Goals</i></th>
+            </tr>
+            @foreach (var sg in Constants.SavingsGoals)
+            {
+                <tr>
+                    <td style="padding:.5vw 0;">@sg.Person</td>
+                    <td>@Constants.Pretty(sg.Goal)</td>
+                </tr>
+            }
+            <tr>
+                <td colspan="2">=</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td>@Constants.Pretty(Constants.SavingsGoals.Sum(s => s.Goal))</td>
+            </tr>
+        </table>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool Mobile { get; set; }
+}

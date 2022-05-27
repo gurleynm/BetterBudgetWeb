@@ -1,0 +1,101 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+
+<div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="width:fit-content;margin:25vh 0 0 0;background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+            <div class="modal-header">
+                <h5 class="modal-title" style="font-size:large;font-family:Papyrus">
+                    <strong>Editting Transaction</strong>
+                </h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                </button>
+            </div>
+            <div class="modal-body" style="width:fit-content">
+                <table>
+                    <tr>
+                        <th colspan="6" style="background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
+                    </tr>
+                    <tr>
+                        <th style="">Expense</th>
+                        <th style="">Name</th>
+                        <th style="">@Constants.Person1</th>
+                        <th style="">@Constants.Person2</th>
+                        <th style="">Total</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="Transact.ExpenseType" title="Pick an Expense Type ">
+                                <option value="@string.Empty" selected disabled="disabled">Expense</option>
+                                <option value="Static Cost">Static Cost</option>
+                                <option value="Income">Income</option>
+                                <option value="Food">Food</option>
+                                <option value="Fun">Fun</option>
+                                <option value="Gas">Gas</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </td>
+                        <td><input type="text" style="min-width:8vw; width:fit-content;margin:.5vw;" @bind="Transact.Name" /></td>
+                        <td>
+                            <input type="number" style="width:5vw;margin:.5vw" @bind="Transact.Person1Amount" />
+                            <select class="custom-select" style="width:8vw;margin:1vh;" @bind="Transact.PaidWithPerson1" title="Pick a payment type ">
+                                <option value="@string.Empty" selected disabled="disabled">Payment</option>
+                                @foreach (var pay in BalanceRepo.GetBalances().Where(b => b.Person == Constants.Person1))
+                                {
+                                    <option value="@pay.Name">@pay.Name</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" style="width:5vw;margin:.5vw" @bind="Transact.Person2Amount" />
+                            <select class="custom-select" style="width:8vw;margin:1vh;" @bind="Transact.PaidWithPerson2" title="Pick a payment type ">
+                                <option value="@string.Empty" selected disabled="disabled">Payment</option>
+                                @foreach (var pay in BalanceRepo.GetBalances().Where(b => b.Person == Constants.Person2))
+                                {
+                                    <option value="@pay.Name">@pay.Name</option>
+                                }
+                            </select>
+                        </td>
+                        <td style="background-color:white;padding:5px;">@Constants.Pretty(Transact.TotalAmount)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="@ModalDecline">Decline</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Accept</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public Transaction Transact { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalDecline()
+    {
+        await OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalAccept()
+    {
+        Constants.Transactions = await TransactionRepo.AddOrUpdateAsync(Transact);
+        await OnClose.InvokeAsync(true);
+    }
+}

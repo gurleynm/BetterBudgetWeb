@@ -1,0 +1,362 @@
+﻿@page "/projections"
+@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Projections</PageTitle>
+
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+    input{
+        color: black;
+    }
+    button{
+        color:black;
+    }
+</style>
+
+@if (!mobile)
+{
+    <h1>Savings Projections</h1>
+}
+else
+{
+    <h1 style="text-align:center">Savings Projections</h1>
+}
+
+@if (!mobile)
+{
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>
+                    <strong>Home Price</strong>
+                </td>
+                @foreach (double need in NeedForHome)
+                {
+                    <td style="background-color:darkorange;color:black">
+                        <strong>
+                            @Pretty(need)
+                        </strong>
+                    </td>
+                }
+            </tr>
+            <tr>
+                <td>
+                    <strong>Down Payment</strong>
+                </td>
+                @foreach (double need in NeedForHome)
+                {
+                    <td style="background-color:darkorange;color:black">
+                        <strong>
+                            @Pretty(need*.2)
+                        </strong>
+                    </td>
+                }
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    <br />
+    @if (Goals == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Year</th>
+                    <th>@(Constants.Person1 + " (Projected)")</th>
+                    <th>@(Constants.Person2 + " (Projected)")</th>
+                    <th>Total</th>
+                    <th>@(Constants.Person1 + " (Actual)")</th>
+                    <th>@(Constants.Person2 + " (Actual)")</th>
+                    <th>Total (Actual)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="MonthYear" title="Pick a Month Year ">
+                            <option value="@string.Empty" selected disabled="disabled">(Choose Month Year)</option>
+                            @foreach (var my in Goals)
+                            {
+                                @if (my.TotalActual < 0)
+                                {
+                                    <option value="@my.MonthYear()">@my.MonthYear()</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td><input type="number" @bind=NewPerson1 /></td>
+                    <td><input type="number" @bind=NewPerson2 /></td>
+                    <td>@(Pretty(NewTotal))</td>
+                    <td><button class="btn btn-primary" @onclick=Submit>Submit</button></td>
+                </tr>
+                @foreach (var goal in Goals)
+                {
+                    <tr>
+                        <td>@goal.Month</td>
+                        <td>@goal.Year</td>
+                        <td>@Pretty(goal.Person1Projected)</td>
+                        <td>@Pretty(goal.Person2Projected)</td>
+                        <td>@Pretty(goal.TotalProjected)</td>
+                        @if (goal.TotalActual > 0)
+                        {
+                            <td>@Pretty(goal.Person1Actual)</td>
+                            <td>@Pretty(goal.Person2Actual)</td>
+                            <td>@Pretty(goal.TotalActual)</td>
+                        }
+                        else
+                        {
+                            <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");">
+                                @Pretty(-1 * goal.Person1Actual)
+                            </td>
+                            <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");;">
+                                @Pretty(-1 * goal.Person2Actual)
+                            </td>
+                            <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");">@Pretty(-1 * goal.TotalActual)</td>
+                        }
+                        <td></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <br />
+    }
+}
+else
+{
+    <table class="table">
+        <tbody>
+            <tr>
+                <td style="font-size:3vw;text-align:center;border: 1px solid black;">
+                    <strong>Home Price</strong>
+                </td>
+                <td style="font-size:3vw;text-align:center;border: 1px solid black;">
+                    <strong>Down Payment</strong>
+                </td>
+            </tr>
+            @foreach (double need in NeedForHome)
+            {
+                <tr>
+                    <td style="font-size:3vw;background-color:darkorange;text-align:center;color:black;">
+                        <strong>
+                            @Pretty(need)
+                        </strong>
+                    </td>
+                    <td style="font-size:3vw;background-color:darkorange;text-align:center;border-left: 1px solid black;color:black;">
+                        <strong>
+                            @Pretty(need*.2)
+                        </strong>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <br />
+    @if (Goals == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="font-size:3vw;">Month Year</th>
+                    <th style="font-size:3vw;">@(Constants.Person1 + " (Actual)")</th>
+                    <th style="font-size:3vw;">@(Constants.Person2 + " (Actual)")</th>
+                    <th style="font-size:3vw;">Total (Actual)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <select class="custom-select" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="MonthYear" title="Pick a Month Year ">
+                            <option value="@string.Empty" selected disabled="disabled">(Choose Month Year)</option>
+                            @foreach (var my in Goals)
+                            {
+                                @if (my.TotalActual < 0)
+                                {
+                                    <option value="@my.MonthYear()">@my.MonthYear()</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td><input type="number" style="width:10vw;font-size:3vw;" @bind=NewPerson1 /></td>
+                    <td><input type="number" style="width:10vw;font-size:3vw;" @bind=NewPerson2 /></td>
+                    <td style="font-size:3vw;">@(Pretty(NewTotal))</td>
+                </tr>
+                <tr>
+                    <td colspan=4>
+                        <div style="display:flex;justify-content:center">
+                            <button class="btn btn-primary" @onclick=Submit>Submit</button>
+                        </div>
+                    </td>
+                </tr>
+                @foreach (var goal in Goals)
+                {
+                    <tr>
+                        <td style="font-size:3vw;">@(goal.Month.Substring(0,3) + " " + goal.Year)</td>
+                        @if (goal.TotalActual > 0)
+                        {
+                            <td style="font-size:3vw;">@Pretty(goal.Person1Actual)</td>
+                            <td style="font-size:3vw;">@Pretty(goal.Person2Actual)</td>
+                            <td style="font-size:3vw;">@Pretty(goal.TotalActual)</td>
+                        }
+                        else
+                        {
+                            <td style='color:@(Constants.DarkMode ? "lightseagreen" : "blue");font-size:3vw;'>
+                                @Pretty(-1 * goal.Person1Actual)
+                            </td>
+                            <td style='color:@(Constants.DarkMode ? "lightseagreen" : "blue");font-size:3vw;'>
+                                @Pretty(-1 * goal.Person2Actual)
+                            </td>
+                            <td style='color:@(Constants.DarkMode ? "lightseagreen" : "blue");font-size:3vw;'>@Pretty(-1 * goal.TotalActual)</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <br />
+    }
+}
+
+@code {
+    private double[] NeedForHome { get; set; }
+    private List<ProjectedDatum> Goals { get; set; }
+    private List<ProjectedDatum> ActualValues => Constants.ProjectedData;
+    private string MonthYear { get; set; }
+    private double NewPerson1 { get; set; }
+    private double NewPerson2 { get; set; }
+    private double NewTotal => NewPerson1 + NewPerson2;
+
+    private bool mobile { get; set; }
+
+    private string[] Months = new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        int Month = 10;
+        int Year = 2021;
+
+        NeedForHome = new double[] { 370000, 400000, 435000, 455000, 470000, 480000, 500000, 600000 };
+        Goals = new List<ProjectedDatum>();
+
+        Goals.Add(new ProjectedDatum
+            {
+                Person1Actual = 8000,
+                Person1Projected = 8000,
+                Person2Actual = 17000,
+                Person2Projected = 17000,
+                Month = Months[Month],
+                Year = Year
+            });
+
+        ProjectedDatum pro;
+        ProjectedDatum newPro;
+        int index = 1;
+        ProjectedDatum HasActual = null;
+        bool first = true;
+        while (!(Month == 4 && Year == 2023))
+        {
+            Month = (Month + 1) % Months.Length;
+            if (Month == 0)
+                Year++;
+
+            pro = Goals[index - 1];
+
+            newPro = new ProjectedDatum(pro, Months[Month], Year);
+
+            // Vacation
+            if (!(Month == 6 && Year == 2022))
+            {
+                newPro.Person1Projected += Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1).Goal;
+                newPro.Person2Projected += Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2).Goal;
+            }
+
+            HasActual = ActualValues.FirstOrDefault(av => av.MonthYear() == (Months[Month] + " " + Year.ToString()));
+            if (HasActual != null)
+            {
+                newPro.Person1Actual = HasActual.Person1Actual;
+                newPro.Person2Actual = HasActual.Person2Actual;
+            }
+            else
+            {
+                if (first)
+                {
+                    MonthYear = Months[Month] + " " + Year;
+                    first = false;
+                }
+
+                if (!(Month == 6 && Year == 2022))
+                {
+                    //Not Vacation
+                    newPro.Person1Actual += -1 * (Math.Abs(pro.Person1Actual) + Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1).Goal);
+                    newPro.Person2Actual += -1 * (Math.Abs(pro.Person2Actual) + Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2).Goal);
+                }
+                else
+                {
+                    // Vacation
+                    newPro.Person1Actual += -1 * Math.Abs(pro.Person1Actual);
+                    newPro.Person2Actual += -1 * Math.Abs(pro.Person2Actual);
+                }
+            }
+
+            Goals.Add(newPro);
+            index++;
+        }
+
+        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+    }
+
+    private async void Submit()
+    {
+        if (NewPerson1 <= 0 || NewPerson2 <= 0)
+            return;
+
+        Monthly NewProjectedData = new Monthly
+            {
+                Name = MonthYear,
+                Person1Amount = NewPerson1,
+                Person2Amount = NewPerson2,
+                Dynamic = "PROJECTED DATA"
+            };
+
+        var monthlies = await MonthlyRepo.AddOrUpdateAsync(NewProjectedData);
+        Constants.SetMonthlies(monthlies);
+
+        NewPerson1 = 0;
+        NewPerson2 = 0;
+        string[] splitter = MonthYear.Split(" ");
+        int indexOfMonth = Array.IndexOf(Months, splitter[0]);
+        indexOfMonth = (indexOfMonth + 1) % 12;
+        MonthYear = Months[indexOfMonth] + " " + splitter[1];
+
+        StateHasChanged();
+    }
+
+    public string Pretty(double num)
+    {
+        return Constants.Pretty(num);
+    }
+}

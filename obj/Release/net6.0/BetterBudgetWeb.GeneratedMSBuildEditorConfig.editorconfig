@@ -1,0 +1,95 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property._SupportedPlatformList = browser
+build_property.EnableSingleFileAnalyzer = 
+build_property.EnableTrimAnalyzer = true
+build_property.IncludeAllContentForSelfExtract = 
+build_property.RootNamespace = BetterBudgetWeb
+build_property.RootNamespace = BetterBudgetWeb
+build_property.ProjectDir = C:\Users\nateg\source\repos\BetterBudgetWeb\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\nateg\source\repos\BetterBudgetWeb
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/MainMenuItems/IdealEmergencyFund.razor]
+build_metadata.AdditionalFiles.TargetPath = TWFpbk1lbnVJdGVtc1xJZGVhbEVtZXJnZW5jeUZ1bmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/MainMenuItems/MonthlySpending.razor]
+build_metadata.AdditionalFiles.TargetPath = TWFpbk1lbnVJdGVtc1xNb250aGx5U3BlbmRpbmcucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/MainMenuItems/SavingsGoalsTable.razor]
+build_metadata.AdditionalFiles.TargetPath = TWFpbk1lbnVJdGVtc1xTYXZpbmdzR29hbHNUYWJsZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/MainMenuItems/SetMonthlyTable.razor]
+build_metadata.AdditionalFiles.TargetPath = TWFpbk1lbnVJdGVtc1xTZXRNb250aGx5VGFibGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Pages/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Pages/Input.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5wdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Pages/Projections.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvamVjdGlvbnMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/BalanceBlock.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEJhbGFuY2VCbG9jay5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/DeleteConfirm.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXERlbGV0ZUNvbmZpcm0ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/EditorModalDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEVkaXRvck1vZGFsRGlhbG9nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/InputBalance.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXElucHV0QmFsYW5jZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/InputMonthlyCost.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXElucHV0TW9udGhseUNvc3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/InputSecurity.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXElucHV0U2VjdXJpdHkucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/InputTransaction.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXElucHV0VHJhbnNhY3Rpb24ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/SurveyPrompt.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-zc58m2cyuw
+
+[C:/Users/nateg/source/repos/BetterBudgetWeb/Shared/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-yzjk6vx8oe

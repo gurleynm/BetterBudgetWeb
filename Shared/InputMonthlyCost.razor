@@ -1,0 +1,212 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+<style>
+    .food {
+        background-color: deeppink;
+    }
+
+    .gas {
+        background-color: coral;
+    }
+
+    .fun {
+        background-color: green;
+    }
+
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+    input{
+        color: black;
+    }
+</style>
+@if (Mobile)
+{
+    <br />
+    <br />
+    <div>
+        <label>Monthly Variety:</label>
+        <br />
+        <select @bind="Dyna">
+            <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
+            <option value="DYNAMIC">Dynamic Monthly Cost</option>
+            <option value="STATIC">Set Monthly Cost</option>
+            <option value="SAVINGS">Savings Goals</option>
+        </select>
+    </div>
+    <br />
+    <div>
+        <label>When:</label>
+        <br />
+        <select @bind="SelectMonthYear">
+            @foreach (var item in Months)
+            {
+                <option value="@item">@item</option>
+            }
+        </select>
+    </div>
+    @if (ShowName)
+    {
+        <br />
+        <div>
+            <label>Monthly Name:</label>
+            <br />
+            <input type="text" placeholder="Cause of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
+        </div>
+    }
+    <br />
+    <div>
+        <label>@(Constants.Person1 + " Amount:")</label>
+        <br />
+        <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+    </div>
+    <br />
+    <div>
+        <label>@(Constants.Person2 + " Amount:")</label>
+        <br />
+        <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+    </div>
+    <br style="clear:both;" />
+
+    <br style="clear:both" />
+    <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+    <br />
+    @if (!string.IsNullOrEmpty(ErrorMsg))
+    {
+        <p style="color:@ErrorColor">@ErrorMsg</p>
+    }
+}
+else
+{
+    <div class="tabcontent">
+        <div style="float:left;margin-right:10vw;">
+            <label>Monthly Variety:</label>
+            <br />
+            <select @bind="Dyna">
+                <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
+                <option value="DYNAMIC">Dynamic Monthly Cost</option>
+                <option value="STATIC">Set Monthly Cost</option>
+                <option value="SAVINGS">Savings Goals</option>
+            </select>
+        </div>
+        <div style="float:left;margin-right:10vw;">
+            <label>When:</label>
+            <br />
+            <select @bind="SelectMonthYear">
+                @foreach (var item in Months)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+        </div>
+        @if (ShowName)
+        {
+            <div style="float:left; margin-right:10vw;">
+                <label>Monthly Name:</label>
+                <br />
+                <input type="text" placeholder="Cause of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
+            </div>
+        }
+        <br style="clear:both;" />
+        <br />
+        <div style="float:left;margin-right:10vw;">
+            <label>@(Constants.Person1 + " Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+        </div>
+        <div>
+            <label>@(Constants.Person2 + " Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+        </div>
+        <br style="clear:both;" />
+
+        <br style="clear:both" />
+        <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+        <br />
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p style="color:@ErrorColor">@ErrorMsg</p>
+        }
+    </div>
+}
+<br />
+<br />
+
+@code {
+    [Parameter]
+    public string StaticName { get; set; }
+    [Parameter]
+    public string Person1Amount { get; set; }
+    [Parameter]
+    public string Person2Amount { get; set; }
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    bool ShowName => Dyna != "SAVINGS";
+
+    List<string> Months { get; set; } = new List<string>();
+    string SelectMonthYear { get; set; } = "All";
+    string Dyna { get; set; }
+    private List<Balance> Balances => BalanceRepo.GetBalances();
+
+    private string ErrorMsg { get; set; } = string.Empty;
+    private string ErrorColor { get; set; } = "red";
+
+    protected override Task OnInitializedAsync()
+    {
+        List<string> theMons = new List<string>{"January", "February",
+                                            "March", "April", "May", "June", "July", "August", "September",
+                                            "October", "November", "December"};
+        int thisYear = DateTime.Now.Year;
+
+        Months.Add("All");
+        int startMonth = DateTime.Now.Month - 1;
+        for (int index = startMonth; index < startMonth + 12; index++)
+        {
+            if (theMons[index % 12] == "January" && DateTime.Now.Month != 1)
+                thisYear++;
+
+            Months.Add(theMons[index % 12] + " " + thisYear.ToString());
+        }
+
+        return base.OnInitializedAsync();
+    }
+
+    public async void Submit()
+    {
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+        bool tpNAmount = double.TryParse(Person1Amount, out double nam);
+        bool tpLAmount = double.TryParse(Person2Amount, out double lam);
+
+        ErrorMsg += Dyna != "SAVINGS" && string.IsNullOrEmpty(StaticName) ? "Static Name must be set. " : "";
+        ErrorMsg += !tpNAmount ? $"{Constants.Person1} Amount must be a number. " : "";
+        ErrorMsg += !tpLAmount ? $"{Constants.Person2} Amount must be a number. " : "";
+        ErrorMsg += string.IsNullOrEmpty(Dyna) ? "Cost Type must be specified. " : "";
+        //ErrorMsg += !string.IsNullOrEmpty(ExpenseType) && ExpenseType == "Debt" ? "APR must be a number. " : "";
+        //ErrorMsg += string.IsNullOrEmpty(Color) ? "Color must be set." : "";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            string mon;
+            string year;
+            await MonthlyRepo.AddOrUpdateAsync(Dyna == "SAVINGS" ? "SAVINGS" : StaticName, nam, lam, Dyna, SelectMonthYear);
+
+            ErrorColor = "green";
+            ErrorMsg = StaticName + " Static was added!";
+
+            StaticName = string.Empty;
+            Person1Amount = string.Empty;
+            Person2Amount = string.Empty;
+
+            await Constants.Init();
+            StateHasChanged();
+        }
+    }
+}
+

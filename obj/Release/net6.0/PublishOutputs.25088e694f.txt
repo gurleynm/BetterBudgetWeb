@@ -1,0 +1,1 @@
+C:\Users\nateg\source\repos\BetterBudgetWeb\obj\Release\net6.0\browser-wasm\PubTmp\Out\web.config

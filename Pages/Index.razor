@@ -1,0 +1,746 @@
+﻿@page "/"
+@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems
+@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Runner
+@inject IJSRuntime JSRuntime
+
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+    input{
+        color: black;
+    }
+    button{
+        color:black;
+    }
+</style>
+
+<PageTitle>Index</PageTitle>
+<div class="@AddConfirmClass" style="display:flex;justify-content:center">
+    @if (AddConfirmClass != "collapse")
+    {
+        <div style="display:flex;
+                justify-content:center;
+                margin:auto 0;
+                width:fit-content;
+                padding: 1vw;
+                height:100%;
+                background-color:green;
+                border-radius:5px;
+                color:white;
+                text-align:center;
+                pointer-events:none;
+                z-index:10;">
+            <span>Add was successfully completed</span><span>&#160;&#10003;&#10003;&#10003;</span>
+        </div>
+    }
+</div>
+
+<h1 style="text-align:center;color:@GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
+<div>
+    <h2 style="float:left;text-align:center">
+        <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person1NetWorth)">@(Pretty(Person1NetWorth))</span>
+    </h2>
+
+    <h2 style="float:right;text-align:center">
+        <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
+    </h2>
+</div>
+<br />
+<br />
+@if (!mobile)
+{
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;width:95vw;">
+        @if (Balances != null)
+        {
+            @foreach (var balance in Balances.OrderByDescending(b => b.Value))
+            {
+                <BalanceBlock TheBalance="@balance" OnDelete="@(() => ShowDeleteBalBtn(balance))" />
+            }
+
+        }
+    </div>
+    <br style="clear:both;" />
+
+    <div style="display:flex;justify-content:start;">
+        <!-- Monthly Spending -->
+    <div style="width:50%;float:left; margin-right:1vw; margin-bottom:2vh;">
+        <MonthlySpending Mobile=mobile 
+                            @bind-Transactions=Transactions
+                            @bind-FilteredTransactions=FilteredTransactions
+                            @bind-Balances=Balances
+                            />
+        <!--
+            @if (!string.IsNullOrEmpty(ErrorMsg))
+            {
+                @foreach (var err in ErrorMsg.Split('\n'))
+                {
+                    <span style="color:red">@err</span>
+                    <br />
+                }
+            }
+            <table>
+                <tr>
+                    <th colspan="6" style="background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
+                </tr>
+                <tr style="height:3vw">
+                    <th style="cursor:pointer" @onclick='() => Order("Expense")'>@ExpenseHeaderTxt</th>
+                    <th style="cursor:pointer" @onclick='() => Order("Name")'>@NameHeaderTxt</th>
+                    <th style="cursor:pointer" @onclick='() => Order("Person1")'>@Person1HeaderTxt</th>
+                    <th style="cursor:pointer" @onclick='() => Order("Person2")'>@Person2HeaderTxt</th>
+                    <th style="cursor:pointer" @onclick='() => Order("Total")'>@TotalHeaderTxt</th>
+                    <th>
+                        @if (filtered)
+                        {
+                            <button style="margin:5px" @onclick='() => ResetFilters(true)'>Clear Filter</button>
+                        }
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="NewExpense" title="Pick an Expense Type ">
+                            <option value="@string.Empty" selected disabled="disabled">Expense</option>
+                            <option value="Static Cost">Static Cost</option>
+                            <option value="Income">Income</option>
+                            <option value="Food">Food</option>
+                            <option value="Fun">Fun</option>
+                            <option value="Gas">Gas</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" placeholder="Name" style="width:5vw;" @bind="NewName" />
+                    </td>
+                    <td>
+                        <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson1Amount" />
+                        <br />
+                        <select class="custom-select" style="width:8vw;margin-bottom:1vh;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
+                            <option value="@string.Empty" selected disabled="disabled">Payment</option>
+                            @if (Balances != null)
+                            {
+                                @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1))
+                                {
+                                    <option value="@pay.Name">@pay.Name</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" style="width:5vw; margin-top:1vh;" @bind="NewPerson2Amount" />
+                        <br />
+                        <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson2PaidWith" title="Pick a payment type ">
+                            <option value="@string.Empty" selected disabled="disabled">Payment</option>
+                            @if (Balances != null)
+                            {
+                                @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2))
+                                {
+                                    <option value="@pay.Name">@pay.Name</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        @(NewPerson1Amount + NewPerson2Amount)
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="Add">ADD</button>
+                    </td>
+                </tr>
+                @if (FilteredTransactions != null)
+                {
+                    @foreach (var transaction in FilteredTransactions)
+                    {
+                        <tr>
+                            <td style="cursor:pointer" @onclick='() => Filter(transaction.ExpenseType)'>@transaction.ExpenseType</td>
+                            <td>@transaction.Name</td>
+                            <td>
+                                <span class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</span>
+                                @if (!string.IsNullOrEmpty(transaction.PaidWithPerson1))
+                                {
+                                    <br />
+                                    @(string.Format("({0})", transaction.PaidWithPerson1))
+                                }
+                            </td>
+                            <td>
+                                <span class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</span>
+                                @if (!string.IsNullOrEmpty(transaction.PaidWithPerson2))
+                                {
+                                    <br />
+                                    @(string.Format("({0})", transaction.PaidWithPerson2))
+                                }
+                            </td>
+                            <td style="padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
+                            <td style="padding:.5vw 1vw;">
+                                <button class="btn btn-secondary" style="margin-bottom:.5vh;" @onclick="(() => OpenModal(transaction))">Edit</button>
+                                <button class="btn btn-secondary" @onclick="(() => ShowDeleteBtn(transaction))">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                <tr>
+                    <td colspan="6">=</td>
+                </tr>
+                @if (FilteredTransactions != null)
+                {
+                    @if (TotalIncomeSum > 0)
+                    {
+                        <tr>
+                            <td colspan="2"><strong>Total of Income</strong></td>
+                            <td class='@TranColor("Income", Person1IncomeSum)'>
+                                @Pretty(Person1IncomeSum)
+                            </td>
+                            <td class='@TranColor("Income", Person2IncomeSum)'>
+                                @Pretty(Person2IncomeSum)
+                            </td>
+                            <td class='@TranColor("Income", TotalIncomeSum)'>
+                                @Pretty(TotalIncomeSum)
+                            </td>
+                            <td></td>
+                        </tr>
+                    }
+                    @if (TotalExpenseSum > 0)
+                    {
+                        <tr>
+                            <td colspan="2"><strong>Total of Expenses</strong></td>
+                            <td class='@TranColor("Expense", Person1ExpenseSum)'>
+                                @Pretty(Person1ExpenseSum).Trim('-')
+                            </td>
+                            <td class='@TranColor("Expense", Person2ExpenseSum)'>
+                                @Pretty(Person2ExpenseSum).Trim('-')
+                            </td>
+                            <td class='@TranColor("Expense", TotalExpenseSum)'>
+                                @Pretty(TotalExpenseSum).Trim('-')
+                            </td>
+                            <td></td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="2"><strong>Net</strong></td>
+                        <td class='@TranColor("Income", NetPerson1Sum)'>
+                            @Pretty(NetPerson1Sum)
+                        </td>
+                        <td class='@TranColor("Income", NetPerson2Sum)'>
+                            @Pretty(NetPerson2Sum)
+                        </td>
+                        <td class='@TranColor("Income", NetTotalSum)'>
+                            @Pretty(NetTotalSum)
+                        </td>
+                        <td></td>
+                    </tr>
+                }
+            </table>
+            -->
+        </div>
+        <div style="display:inline-block;margin-right:1vw;">
+
+            <!-- Dynamic Costs -->
+        <div style="width:100%; margin-right:1vw;">
+                <table>
+                    <tr>
+                        <th colspan="4" style="background-color:magenta;"><i>Dynamic Monthly Costs</i></th>
+                    </tr>
+                    <tr>
+                        <th>Expense</th>
+                        <th>Total Budget Amount</th>
+                        <th>Left This Month</th>
+                        <th style="padding:0 5px">Spend/Day</th>
+                    </tr>
+                    @foreach (var dci in Constants.DynamicCostItems)
+                    {
+                        @if (dci.Name.Contains("EXAMPLE DATA"))
+                        {
+                            <tr>
+                                <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'><i>@dci.Name</i></td>
+                                <td>@Pretty(dci.Amount)</td>
+                                <td>@Pretty(dci.Left)</td>
+                                <td>@Pretty(dci.Left/DaysLeft)</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'>@dci.Name</td>
+                                <td>@Pretty(dci.Amount)</td>
+                                <td>@Pretty(dci.Left)</td>
+                                <td>@Pretty(dci.Left/DaysLeft)</td>
+                            </tr>
+                        }
+                    }
+                    <tr>
+                        <td colspan="4">=</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td>@Pretty(Constants.DynamicCostItems.Sum(d => d.Amount))</td>
+                        <td>@Pretty(Constants.DynamicCostItems.Sum(d => d.Left))</td>
+                        <td>@Pretty(Constants.DynamicCostItems.Sum(d => d.Left)/DaysLeft)</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- Savings Goals-->
+        <SavingsGoalsTable />
+
+            <!-- Ideal Emergency Fund-->
+        <IdealEmergencyFund OneMonthPerson1="@(Constants.DynamicCostItems.Sum(d => d.Person1Amount) + Constants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
+                            OneMonthPerson2="@(Constants.DynamicCostItems.Sum(d => d.Person2Amount) + Constants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
+        </div>
+        <!-- Set Monthly Costs Goals-->
+    <div style="display:inline-block">
+            <SetMonthlyTable Trans=Transactions />
+            <br style="clear:both" />
+            <br />
+            <div style="float:right; margin-bottom:1vh;margin-right:1vw;">
+                <select class="custom-select" @bind="SelectedDownload" title="Pick a Download Timeframe ">
+                    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                    <option value="All">All</option>
+                    @foreach (var dt in FoundMonths)
+                    {
+                        <option value="@dt">@dt</option>
+                    }
+                </select>
+                <button class="btn btn-secondary" style="margin-left:1vw" @onclick="DownloadCSV">Download CSV file</button>
+            </div>
+        </div>
+    </div>
+
+
+    @if (ShowModal)
+    {
+        <EditorModalDialog Title="@(string.Format("{0} (By: {1})","Penis", "Deez Nuts"))"
+                   Text="Story"
+                   Transact="@SelectedTransaction"
+                   OnClose="@CloseModal">
+
+        </EditorModalDialog>
+    }
+    @if (ShowDelete)
+    {
+        <DeleteConfirm Transact="@SelectedTransaction"
+               OnClose="@Delete">
+
+        </DeleteConfirm>
+    }
+    @if (ShowDeleteBal)
+    {
+        <DeleteConfirm Balan="@SelectedBalance"
+               OnClose="@DeleteBalance">
+
+        </DeleteConfirm>
+    }
+}
+else
+{
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;width:95vw;">
+        @if (Balances != null)
+        {
+            @foreach (var balance in Balances.OrderByDescending(b => b.Value))
+            {
+                <BalanceBlock TheBalance="@balance" FontSize="5" />
+            }
+
+        }
+    </div>
+    <br />
+    <!-- Monthly Spending -->
+    <div style="width:100%;float:left;margin-bottom:2vh;">
+        <MonthlySpending Mobile=mobile 
+                            @bind-Transactions=Transactions
+                            @bind-FilteredTransactions=FilteredTransactions
+                            @bind-Balances=Balances
+                            />
+        <!--<table>
+            <tr>
+                <th colspan="5" style="font-size:3vw;background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
+            </tr>
+            <tr>
+                <th style="font-size:3vw">Expense</th>
+                <th style="font-size:3vw;">Name</th>
+                <th style="font-size:3vw">@Constants.Person1</th>
+                <th style="font-size:3vw">@Constants.Person2</th>
+                <th style="font-size:3vw">Total</th>
+            </tr>
+            @if (FilteredTransactions != null)
+            {
+                @foreach (var transaction in FilteredTransactions)
+                {
+                    <tr>
+                        <td style="font-size:3vw;cursor:pointer" @onclick='() => Filter(transaction.ExpenseType)'>@transaction.ExpenseType</td>
+                        <td style="font-size:3vw;padding:0 1vw;">@transaction.Name</td>
+                        <td style="font-size:3vw;padding:0 1vw;">
+                            <span class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))" style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.Person1Amount)</span>
+                            @if (!string.IsNullOrEmpty(transaction.PaidWithPerson1))
+                            {
+                                <br />
+                                @(string.Format("({0})", transaction.PaidWithPerson1))
+                            }
+                        </td>
+                        <td style="font-size:3vw;padding:0 1vw;">
+                            <span class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))" style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.Person2Amount)</span>
+                            @if (!string.IsNullOrEmpty(transaction.PaidWithPerson2))
+                            {
+                                <br />
+                                @(string.Format("({0})", transaction.PaidWithPerson2))
+                            }
+                        </td>
+                        <td style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
+                    </tr>
+                }
+
+            }
+            <tr>
+                <td colspan="5" style="font-size:3vw">=</td>
+            </tr>
+            @if (FilteredTransactions != null)
+            {
+                @if (TotalIncomeSum > 0)
+                {
+                    <tr>
+                        <td colspan="2" style="font-size:3vw"><strong>Total of Income</strong></td>
+                        <td class='@TranColor("Income", Person1IncomeSum)' style="font-size:3vw;">
+                            @Pretty(Person1IncomeSum)
+                        </td>
+                        <td class='@TranColor("Income", Person2IncomeSum)' style="font-size:3vw;">
+                            @Pretty(Person2IncomeSum)
+                        </td>
+                        <td class='@TranColor("Income", TotalIncomeSum)' style="font-size:3vw;">
+                            @Pretty(TotalIncomeSum)
+                        </td>
+                    </tr>
+                }
+                @if (TotalExpenseSum > 0)
+                {
+                    <tr>
+                        <td colspan="2" style="font-size:3vw"><strong>Total of Expenses</strong></td>
+                        <td class='@TranColor("Expense", Person1ExpenseSum)' style="font-size:3vw;">
+                            @Pretty(Person1ExpenseSum)
+                        </td>
+                        <td class='@TranColor("Expense", Person2ExpenseSum)' style="font-size:3vw;">
+                            @Pretty(Person2ExpenseSum)
+                        </td>
+                        <td class='@TranColor("Expense", TotalExpenseSum)' style="font-size:3vw;">
+                            @Pretty(TotalExpenseSum)
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="2" style="font-size:3vw"><strong>Net</strong></td>
+                    <td class='@TranColor("Income", NetPerson1Sum)' style="font-size:3vw;color:">
+                        @Pretty(NetPerson1Sum)
+                    </td>
+                    <td class='@TranColor("Income", NetPerson2Sum)' style="font-size:3vw;">
+                        @Pretty(NetPerson2Sum)
+                    </td>
+                    <td class='@TranColor("Income", NetTotalSum)' style="font-size:3vw;">
+                        @Pretty(NetTotalSum)
+                    </td>
+                </tr>
+            }
+        </table>-->
+    </div>
+
+    <br />
+
+    <!-- Dynamic Costs -->
+    <div style="width:100%;">
+        <table>
+            <tr>
+                <th colspan="4" style="background-color:magenta;font-size:3vw;"><i>Dynamic Monthly Costs</i></th>
+            </tr>
+            <tr>
+                <th style="font-size:3vw;">Expense</th>
+                <th style="font-size:3vw;">Total Budget Amount</th>
+                <th style="font-size:3vw;">Left This Month</th>
+                <th style="font-size:3vw;padding:0 5px">Spend/Day</th>
+            </tr>
+            @foreach (var dci in Constants.DynamicCostItems)
+            {
+                @if (dci.Name.Contains("EXAMPLE DATA"))
+                {
+                    <tr>
+                        <td style="font-size:3vw;padding:.5vw 1vw;"><i>@dci.Name</i></td>
+                        <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Left)</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Left/DaysLeft)</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td style="font-size:3vw;padding:.5vw 1vw;">@dci.Name</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Left)</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Left/DaysLeft)</td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td style="font-size:3vw;" colspan="4">=</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;"><strong>Total</strong></td>
+                <td style="font-size:3vw;">@Pretty(Constants.DynamicCostItems.Sum(d => d.Amount))</td>
+                <td style="font-size:3vw;">@Pretty(Constants.DynamicCostItems.Sum(d => d.Left))</td>
+                <td style="font-size:3vw;">@Pretty(Constants.DynamicCostItems.Sum(d => d.Left)/DaysLeft)</td>
+            </tr>
+        </table>
+    </div>
+
+    <br />
+
+    <!-- Savings Goals-->
+    <SavingsGoalsTable Mobile=true />
+
+    <br />
+
+    <!-- Ideal Emergency Fund-->
+    <IdealEmergencyFund Mobile=true OneMonthPerson1="@(Constants.DynamicCostItems.Sum(d => d.Person1Amount) + Constants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
+                    OneMonthPerson2="@(Constants.DynamicCostItems.Sum(d => d.Person2Amount) + Constants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
+
+    <br />
+
+    <!-- Set Monthly Costs Goals-->
+    <SetMonthlyTable Trans=FilteredTransactions Mobile=true />
+
+    <br />
+    <br />
+}
+
+@code {
+    private DateTime StartDate => DateTime.Now;
+    private DateTime EndDate => new DateTime(StartDate.Year,
+                                             StartDate.Month,
+                                             DateTime.DaysInMonth(StartDate.Year,
+                                             StartDate.Month));
+    private int DaysLeft => (EndDate - StartDate).TotalDays > 0 ? (int)(EndDate - StartDate).TotalDays : 1;
+
+    private List<Transaction> Transactions;
+    private List<Transaction> FilteredTransactions;
+    private List<Balance> Balances;
+    private List<Security> Securities;
+    private List<Monthly> Monthlies;
+    private double Person1NetWorth => CalculateNetWorth(Constants.Person1);
+    private double Person2NetWorth => CalculateNetWorth(Constants.Person2);
+
+    private Transaction SelectedTransaction;
+    private Balance SelectedBalance;
+    private string SelectedDownload { get; set; } = (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
+
+    private bool ShowModal = false;
+    private bool ShowDelete = false;
+    private bool ShowDeleteBal = false;
+
+    private string NewExpense;
+    private string NewName;
+    private double NewPerson1Amount;
+    private string NewPerson1PaidWith;
+    private double NewPerson2Amount;
+    private string NewPerson2PaidWith;
+    private string MonthYear => (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
+
+    private double Person1IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
+    private double Person2IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
+    private double TotalIncomeSum => Person1IncomeSum + Person2IncomeSum;
+
+    private double Person1ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType != "Income" && t.ExpenseType != "Debt" && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
+    private double Person2ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType != "Income" && t.ExpenseType != "Debt" && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
+    private double TotalExpenseSum => Person1ExpenseSum + Person2ExpenseSum;
+
+    private double NetPerson1Sum => Person1IncomeSum - Person1ExpenseSum;
+    private double NetPerson2Sum => Person2IncomeSum - Person2ExpenseSum;
+    private double NetTotalSum => TotalIncomeSum - TotalExpenseSum;
+
+    private string ErrorMsg = string.Empty;
+    private bool mobile;
+
+    private List<string> FoundMonths => GetMonths();
+
+    private string ExpenseHeaderTxt = "Expense";
+    private string NameHeaderTxt = "Name";
+    private string Person1HeaderTxt = @Constants.Person1;
+    private string Person2HeaderTxt = @Constants.Person2;
+    private string TotalHeaderTxt = "Total";
+
+    private bool filtered;
+    private string AddConfirmClass = "collapse";
+
+    protected override async Task OnInitializedAsync()
+    {
+        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+        Balances = await BalanceRepo.GetBalancesAsync();
+        Transactions = await TransactionRepo.GetTransactionsAsync();
+        FilteredTransactions = new List<Transaction>(Transactions);
+        FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+        Monthlies = await MonthlyRepo.GetMonthliesAsync();
+        ErrorMsg = string.Empty;
+
+        StateHasChanged();
+    }
+
+    private string GoodOrBad(double money)
+    {
+        return money <= 0 ? "red" : "forestgreen";
+    }
+    private string Pretty(double num)
+    {
+        return Constants.Pretty(num);
+    }
+    private string TranColor(string et, double amount)
+    {
+        return IndexRunner.TranColor(et, amount);
+    }
+    private void OpenModal(Transaction trans)
+    {
+        SelectedTransaction = new Transaction(trans);
+        ShowModal = true;
+        StateHasChanged();
+    }
+    private void CloseModal(bool accepted)
+    {
+        ShowModal = false;
+        if (accepted)
+        {
+            Transactions = Constants.Transactions;
+            FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+            Balances = Constants.Balances;
+            StateHasChanged();
+        }
+    }
+    private async void Add()
+    {
+        var nt = IndexRunner.Add(ref ErrorMsg, ref NewExpense, ref NewName, ref NewPerson1Amount, ref NewPerson2Amount,
+                                    ref NewPerson1PaidWith, ref NewPerson2PaidWith);
+
+        if (nt != null)
+        {
+            Transactions = await TransactionRepo.AddOrUpdateAsync(nt);
+            FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+            Balances = await BalanceRepo.GetBalancesAsync();
+
+            await Constants.Init();
+            AddConfirm();
+        }
+
+        StateHasChanged();
+    }
+    private void ShowDeleteBalBtn(Balance b)
+    {
+        SelectedBalance = b;
+        ShowDeleteBal = true;
+    }
+    private void ShowDeleteBtn(Transaction t)
+    {
+        SelectedTransaction = t;
+        ShowDelete = true;
+    }
+    private async void Delete(bool accepted)
+    {
+        if (accepted)
+        {
+            Transactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
+            FilteredTransactions = Transactions.OrderByDescending(ft => ft.DateOfTransaction).ToList();
+            Balances = await BalanceRepo.GetBalancesAsync();
+        }
+        ShowDelete = false;
+        StateHasChanged();
+    }
+    private async void DeleteBalance(bool accepted)
+    {
+        if (accepted)
+        {
+            Balances = await BalanceRepo.RemoveAsync(SelectedBalance);
+        }
+        ShowDeleteBal = false;
+        StateHasChanged();
+    }
+    private double CalculateNetWorth(string person)
+    {
+        return IndexRunner.CalculateNetWorth(person, Balances);
+    }
+
+    private List<string> GetMonths()
+    {
+        return IndexRunner.GetMonths(Transactions);
+    }
+
+    private void Order(string orderBy)
+    {
+        IndexRunner.Order(ref ExpenseHeaderTxt, ref NameHeaderTxt,
+                                    ref Person1HeaderTxt, ref Person2HeaderTxt, ref TotalHeaderTxt,
+                                    ref FilteredTransactions, orderBy);
+
+        StateHasChanged();
+    }
+
+    private void Filter(string filter)
+    {
+        if (mobile)
+        {
+            if (filtered)
+                ResetFilters(true);
+            else
+            {
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+                filtered = true;
+            }
+        }
+        else
+        {
+            FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+            filtered = true;
+        }
+        StateHasChanged();
+    }
+
+    private void Filter(DynamicCostItem filter)
+    {
+        IndexRunner.Filter(ref filter, ref Transactions, ref FilteredTransactions, ref filtered);
+
+        StateHasChanged();
+    }
+
+    private void ResetFilters(bool BtnPress = false)
+    {
+        FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+        filtered = false;
+
+        if (BtnPress)
+        {
+            string FilterIndicatorTxt = " (ON)";
+            for (int index = 0; index < Constants.DynamicCostItems.Count; index++)
+            {
+                if (Constants.DynamicCostItems[index].Name.Contains(FilterIndicatorTxt))
+                {
+                    Constants.DynamicCostItems[index].Name = Constants.DynamicCostItems[index].Name.Replace(FilterIndicatorTxt, "");
+                }
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async void AddConfirm()
+    {
+        AddConfirmClass = "floaty";
+        await Task.Delay(3000);
+
+        AddConfirmClass = "floaty-rev";
+        StateHasChanged();
+    }
+
+    async Task DownloadCSV()
+    {
+        if (string.IsNullOrEmpty(SelectedDownload))
+            return;
+
+        string fileString = CSVBuilder.Build(Transactions, SelectedDownload);
+
+        byte[] file = System.Text.Encoding.UTF8.GetBytes(fileString);
+        string FileSaveName = SelectedDownload == "All" ? "All_Transactions.csv" : SelectedDownload.Replace(" ", "_") + "_Transactions.csv";
+        await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", FileSaveName, "text/csv", file);
+    }
+}

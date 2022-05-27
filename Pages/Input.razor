@@ -1,0 +1,180 @@
+﻿@page "/input"
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Input</PageTitle>
+
+<h1>Input</h1>
+@if (!mobile)
+{
+    <div class="tab">
+        @if (NoBalances)
+        {
+            <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
+        }
+        else
+        {
+            <button class="tablinks @TransClass" @onclick="@ShowTransaction">Transaction</button>
+            <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
+            <button class="tablinks @MonthClass" @onclick="@ShowStaticCost">Monthly</button>
+        }
+    </div>
+}
+else
+{
+    @if (NoBalances)
+        {
+            <button class="btn btn-primary" @onclick="@ShowBalance">Balance</button>
+        }
+        else
+        {
+            <button class="btn btn-primary" @onclick="@ShowTransaction">Transaction</button>
+            <button class="btn btn-primary" @onclick="@ShowBalance">Balance</button>
+            <button class="btn btn-primary" @onclick="@ShowStaticCost">Monthly</button>
+        }
+}
+@if (ShowTrans)
+{
+    <InputTransaction TransactionName="@TransactionName"
+                  ExpenseType="@ExpenseType"
+                  PaidOffPerson1="@PaidOffPerson1"
+                  PaidOffPerson2="@PaidOffPerson2"
+                  PaidWithPerson1="@PaidWithPerson1"
+                  PaidWithPerson2="@PaidWithPerson2"
+                  Person1Amount="@Person1Amount"
+                  Person2Amount="@Person2Amount"
+                  Preset="Preset"
+                  Mobile="@mobile">
+    </InputTransaction>
+}
+else if (ShowBal)
+{
+    <InputBalance BalName="@BalName"
+              APR="@APR"
+              Amount="@InitAmount"
+              BalanceType="@BalanceType"
+              Color="@Color"
+              Mobile="@mobile">
+    </InputBalance>
+}
+else if (ShowSec)
+{
+    <InputSecurity />
+}
+else if (ShowStatic)
+{
+    <InputMonthlyCost Mobile=@mobile />
+
+}
+
+<!-- <button class="btn btn-primary" @onclick="@ShowSecurity">Input Security</button> -->
+@code {
+    private bool mobile { get; set; }
+
+    private string TransactionName;
+    private string ExpenseType;
+    private string PaidOffPerson1;
+    private string PaidOffPerson2;
+    private string PaidWithPerson1;
+    private string PaidWithPerson2;
+    private string Person1Amount;
+    private string Person2Amount;
+
+    private string BalName;
+    private string BalanceType;
+    private string APR;
+    private string InitAmount;
+    private string color = "#32A852";
+    private string Color
+    {
+        get { return color; }
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+                value = "#32A852";
+            else if (value[0] != '#')
+                value = "#" + value;
+
+            if (value.Length > 7)
+                value.Substring(0, 7);
+
+            color = value;
+        }
+    }
+
+    private bool ShowTrans { get; set; } = true;
+    private bool ShowBal { get; set; }
+    private bool ShowSec { get; set; }
+    private bool ShowStatic { get; set; }
+
+    private string TransClass => ShowTrans ? "active" : "";
+    private string BalClass => ShowBal ? "active" : "";
+    private string MonthClass => ShowStatic ? "active" : "";
+
+    private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+    }
+
+    private void ShowTransaction()
+    {
+        ShowTrans = !ShowTrans;
+        ShowBal = false;
+        ShowSec = false;
+        ShowStatic = false;
+    }
+    private void ShowBalance()
+    {
+        ShowBal = !ShowBal;
+        ShowSec = false;
+        ShowTrans = false;
+        ShowStatic = false;
+    }
+    private void ShowStaticCost()
+    {
+        ShowStatic = !ShowStatic;
+        ShowSec = false;
+        ShowTrans = false;
+        ShowBal = false;
+    }
+    private void ShowSecurity()
+    {
+        ShowSec = !ShowSec;
+        ShowTrans = false;
+        ShowBal = false;
+        ShowStatic = false;
+    }
+
+    private void Refresh(bool accepted)
+    {
+        if (accepted)
+        {
+            NoBalances = Constants.Balances == null || Constants.Balances.Count == 0;
+            StateHasChanged();
+        }
+    }
+
+    private void Preset(string pre)
+    {
+        // 0 - Trans Name
+        // 1 - ExpenseType
+        // 2 - Paid With Person1
+        // 3 - Paid With Person2
+        // 4 - Person1Amount
+        // 5 - Person2Amount
+        // 6 - Paid Off Person1
+        // 7 - Paid Off Person2
+
+        string[] vals = Constants.HandlePresets(pre);
+        TransactionName = vals[0];
+        ExpenseType = vals[1];
+        PaidWithPerson1 = vals[2];
+        PaidWithPerson2 = vals[3];
+        Person1Amount = vals[4];
+        Person2Amount = vals[5];
+        PaidOffPerson1 = vals[6];
+        PaidOffPerson2 = vals[7];
+        StateHasChanged();
+    }
+}

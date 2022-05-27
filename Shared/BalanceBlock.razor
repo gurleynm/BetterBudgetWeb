@@ -1,0 +1,47 @@
+﻿@using System.Globalization
+@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+
+<div class="bal-block" style="display:flex;justify-content:center;margin-right:1vw;margin-bottom:1vw;">
+    <div style="border-radius:5px;width:@(FontSize*5 + "vw;");background-color:@(string.IsNullOrEmpty(Color) ? "#32A852" : Color);color:@TextColor">  
+        <h1 style="text-align:center;font-size:@(FontSize + "vw;")">
+            @(string.IsNullOrEmpty(BalName) ? "Savings" : BalName)
+            <br />
+            Balance
+        </h1>
+        @if (double.TryParse(APR, out double apr) && apr > 0)
+        {
+            <h4 style="text-align:center; font-size:@(FontSize/2 + "vw");margin:0px;color:@TextColor">@(string.Format("(APR: {0}%)", Math.Round(apr,2)))</h4>
+        }
+        <hr style="margin-top:0vw;color:@TextColor"/>
+        <h2 style="text-align:center;font-size:@(FontSize/1.5 + "vw");margin-bottom:5vh;color:@TextColor">@(double.TryParse(Amount, out double AM) ? AM.ToString("C", CultureInfo.CurrentCulture) : "$0.00")</h2>
+        @if (ShowDelete)
+        {
+            <button class="btn btn-danger" style="position:relative;bottom:0;float:right;" @onclick=Delete>Delete</button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Balance TheBalance { get; set; }
+    [Parameter]
+    public double FontSize { get; set; } = 2;
+    [Parameter]
+    public EventCallback<bool> OnDelete { get; set; }
+
+    public string BalName => TheBalance.Name;
+    public string Color => TheBalance.HexColor;
+    public string TextColor => TheBalance.TextColor;
+    public string APR => TheBalance.APR.ToString();
+    public string Amount => TheBalance.Value.ToString();
+
+    public bool ShowDelete => OnDelete.HasDelegate;
+
+    private Task Delete()
+    {
+        BalanceRepoCaller brc = new BalanceRepoCaller();
+        brc.RemoveAsync(TheBalance);
+        return OnDelete.InvokeAsync(true);
+    }
+}
