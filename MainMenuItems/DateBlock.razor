@@ -1,0 +1,35 @@
+﻿@using System.Globalization;
+
+@if (!Mobile)
+{
+    <span>
+        @DayOfWeek
+        <br />
+        @MonthDay
+        <br />
+        @Year
+    </span>
+}
+else
+{
+    <span style="font-size:3vw">
+        @DayOfWeek
+        <br />
+        @MonthDay
+        <br />
+        @Year
+    </span>
+}
+
+@code {
+    [Parameter]
+    public DateTime TheDate { get; set; }
+    
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    private string[] names => CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedDayNames;
+    private string DayOfWeek => names[(int) TheDate.DayOfWeek];
+    private string MonthDay => TheDate.ToString("MMMM") + " " + TheDate.Day + ",";
+    private string Year => TheDate.Year.ToString();
+}

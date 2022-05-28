@@ -5,41 +5,36 @@ namespace BetterBudgetWeb.Runner
 {
     public class IndexRunner
     {
-        public static void Order(ref string ExpenseHeaderTxt, ref string NameHeaderTxt, 
+        public static List<Transaction> Order(ref string DateHeaderTxt, ref string NameHeaderTxt, 
                                     ref string Person1HeaderTxt, ref string Person2HeaderTxt, ref string TotalHeaderTxt,
-                                    ref List<Transaction> FilteredTransactions, string orderBy)
+                                    List<Transaction> FilteredTransactions, string orderBy)
         {
             switch (orderBy)
             {
-                case "Expense":
-                    if (ExpenseHeaderTxt == "Expense")
+                case "Date":
+                    if (DateHeaderTxt == "Date")
                     {
-                        FilteredTransactions = FilteredTransactions.OrderBy(ft => ft.ExpenseType).ToList();
-                        ExpenseHeaderTxt = "Expense ↑";
-                    }
-                    else if (ExpenseHeaderTxt == "Expense ↑")
-                    {
-                        FilteredTransactions = FilteredTransactions.OrderByDescending(ft => ft.ExpenseType).ToList();
-                        ExpenseHeaderTxt = "Expense ↓";
+                        FilteredTransactions = FilteredTransactions.OrderBy(ft => ft.DateOfTransaction).ToList();
+                        DateHeaderTxt = "Date ↓";
                     }
                     else
                     {
                         FilteredTransactions = FilteredTransactions.OrderByDescending(ft => ft.DateOfTransaction).ToList();
-                        ExpenseHeaderTxt = "Expense";
+                        DateHeaderTxt = "Date";
                     }
 
                     break;
-
+                
                 case "Name":
                     if (NameHeaderTxt == "Name")
                     {
                         FilteredTransactions = FilteredTransactions.OrderBy(ft => ft.Name).ToList();
-                        NameHeaderTxt = "Name ↑";
+                        NameHeaderTxt = "Name ↓";
                     }
-                    else if (NameHeaderTxt == "Name ↑")
+                    else if (NameHeaderTxt == "Name ↓")
                     {
                         FilteredTransactions = FilteredTransactions.OrderByDescending(ft => ft.Name).ToList();
-                        NameHeaderTxt = "Name ↓";
+                        NameHeaderTxt = "Name ↑";
                     }
                     else
                     {
@@ -56,12 +51,12 @@ namespace BetterBudgetWeb.Runner
                     if (Person1HeaderTxt == Constants.Person1)
                     {
                         FilteredTransactions = FilteredTransactions.OrderBy(ft => ft.Person1Amount).ToList();
-                        Person1HeaderTxt = testUp;
+                        Person1HeaderTxt = testDown;
                     }
-                    else if (Person1HeaderTxt == testUp)
+                    else if (Person1HeaderTxt == testDown)
                     {
                         FilteredTransactions = FilteredTransactions.OrderByDescending(ft => ft.Person1Amount).ToList();
-                        Person1HeaderTxt = testDown;
+                        Person1HeaderTxt = testUp;
                     }
                     else
                     {
@@ -77,12 +72,12 @@ namespace BetterBudgetWeb.Runner
                     if (Person2HeaderTxt == Constants.Person2)
                     {
                         FilteredTransactions = FilteredTransactions.OrderBy(ft => ft.Person2Amount).ToList();
-                        Person2HeaderTxt = test2Up;
+                        Person2HeaderTxt = test2Down;
                     }
-                    else if (Person2HeaderTxt == test2Up)
+                    else if (Person2HeaderTxt == test2Down)
                     {
                         FilteredTransactions = FilteredTransactions.OrderByDescending(ft => ft.Person2Amount).ToList();
-                        Person2HeaderTxt = test2Down;
+                        Person2HeaderTxt = test2Up;
                     }
                     else
                     {
@@ -96,12 +91,12 @@ namespace BetterBudgetWeb.Runner
                     if (TotalHeaderTxt == "Total")
                     {
                         FilteredTransactions = FilteredTransactions.OrderBy(ft => ft.TotalAmount).ToList();
-                        TotalHeaderTxt = "Total ↑";
+                        TotalHeaderTxt = "Total ↓";
                     }
-                    else if (TotalHeaderTxt == "Total ↑")
+                    else if (TotalHeaderTxt == "Total ↓")
                     {
                         FilteredTransactions = FilteredTransactions.OrderByDescending(ft => ft.TotalAmount).ToList();
-                        TotalHeaderTxt = "Total ↓";
+                        TotalHeaderTxt = "Total ↑";
                     }
                     else
                     {
@@ -110,8 +105,9 @@ namespace BetterBudgetWeb.Runner
                     }
 
                     break;
-
             }
+
+            return FilteredTransactions;
         }
         public static string TranColor(string et, double amount)
         {
@@ -198,9 +194,11 @@ namespace BetterBudgetWeb.Runner
 
             return uniqueMonthYears;
         }
-        public static void Filter(ref DynamicCostItem filter, ref List<Transaction> Transactions,
-                                    ref List<Transaction> FilteredTransactions, ref bool filtered)
+        public static List<Transaction>[] Filter(ref DynamicCostItem filter, List<Transaction> Transactions,
+                                                    List<Transaction> FilteredTransactions, ref bool filtered)
         {
+            List<Transaction>[] catcher = new List<Transaction>[2];
+
             string FilterIndicatorTxt = " (ON)";
             for (int index = 0; index < Constants.DynamicCostItems.Count; index++)
             {
@@ -224,6 +222,10 @@ namespace BetterBudgetWeb.Runner
                 filter.Name += FilterIndicatorTxt;
                 filtered = true;
             }
+            catcher[0] = Transactions;
+            catcher[1] = FilteredTransactions;
+
+            return catcher;
         }
         private static void ResetFilters(ref List<Transaction> Transactions, ref List<Transaction> FilteredTransactions, ref bool filtered)
         {

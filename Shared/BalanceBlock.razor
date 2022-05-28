@@ -40,8 +40,6 @@
 
     private Task Delete()
     {
-        BalanceRepoCaller brc = new BalanceRepoCaller();
-        brc.RemoveAsync(TheBalance);
         return OnDelete.InvokeAsync(true);
     }
 }

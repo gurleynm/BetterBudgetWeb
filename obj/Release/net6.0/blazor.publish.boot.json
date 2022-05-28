@@ -7,7 +7,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "BetterBudgetWeb.dll": "sha256-kSeDn\/ZYXPHAt5qk8B2D09TGgRu66qOcKJMTlNveqeE=",
+      "BetterBudgetWeb.dll": "sha256-\/ADaPa7vIQfo4t9B\/9W1IBk6NtV\/jt3aNH1rc4SEXgo=",
       "Blazored.SessionStorage.dll": "sha256-XkZNIC6OGMeHZDbBGnhfc9yXdLIvGa8LlKDd4ZPWkS8=",
       "Microsoft.AspNetCore.Components.dll": "sha256-E66J+3x5zVDbykeFJKgnNZ5W2w8xZbbmdz0veDntlJI=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-etbNqUMnFo7sGWyTtfNSWce4AKwoLfm8t1Js7Kv4gss=",

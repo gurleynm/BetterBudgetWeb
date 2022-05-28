@@ -1,17 +1,35 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+
+    button {
+        color: black;
+    }
+</style>
+
 <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
     <div class="modal-dialog" role="document">
         <div class="modal-content" style="width:30vw;margin:25vh 0vw 0 0;background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
             <div class="modal-header">
-                <h5 class="modal-title" style="font-size:large;font-family:Papyrus">
+                <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
                     <strong>Are you sure?</strong>
                 </h5>
                 <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                 </button>
             </div>
-            <div class="modal-body" style="width:fit-content">
+            <div class="modal-body" style="width:fit-content;color:black;">
                 <div>
                     @if(Balan != null)
                     {

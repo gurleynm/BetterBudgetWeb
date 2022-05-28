@@ -35,7 +35,7 @@
             <th colspan="6" style="background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
         </tr>
         <tr style="height:3vw">
-            <th style="cursor:pointer" @onclick='() => Order("Expense")'>@ExpenseHeaderTxt</th>
+            <th style="cursor:pointer" @onclick='() => Order("Date")'>@DateHeaderTxt</th>
             <th style="cursor:pointer" @onclick='() => Order("Name")'>@NameHeaderTxt</th>
             <th style="cursor:pointer" @onclick='() => Order("Person1")'>@Person1HeaderTxt</th>
             <th style="cursor:pointer" @onclick='() => Order("Person2")'>@Person2HeaderTxt</th>
@@ -48,8 +48,11 @@
             </th>
         </tr>
         <tr>
+            <td></td>
             <td>
-                <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="NewExpense" title="Pick an Expense Type ">
+                <input type="text" placeholder="Name" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewName" />
+                <br />
+                <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="NewExpense" title="Pick an Expense Type ">
                     <option value="@string.Empty" selected disabled="disabled">Expense</option>
                     <option value="Static Cost">Static Cost</option>
                     <option value="Income">Income</option>
@@ -60,12 +63,9 @@
                 </select>
             </td>
             <td>
-                <input type="text" placeholder="Name" style="width:5vw;" @bind="NewName" />
-            </td>
-            <td>
                 <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson1Amount" />
                 <br />
-                <select class="custom-select" style="width:8vw;margin-bottom:1vh;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
+                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
@@ -77,7 +77,7 @@
                 </select>
             </td>
             <td>
-                <input type="number" style="width:5vw; margin-top:1vh;" @bind="NewPerson2Amount" />
+                <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson2Amount" />
                 <br />
                 <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson2PaidWith" title="Pick a payment type ">
                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
@@ -94,7 +94,7 @@
                 @(NewPerson1Amount + NewPerson2Amount)
             </td>
             <td>
-                <button class="btn btn-secondary" @onclick="Add">ADD</button>
+                <button class="btn btn-primary" @onclick="Add"><span class="oi oi-plus"></span></button>
             </td>
         </tr>
         @if (FilteredTransactions != null)
@@ -102,8 +102,14 @@
             @foreach (var transaction in FilteredTransactions)
             {
                 <tr>
-                    <td style="cursor:pointer" @onclick='() => Filter(transaction.ExpenseType)'>@transaction.ExpenseType</td>
-                    <td>@transaction.Name</td>
+                    <td style="width:6vw;margin:1vh 0 1vh 0;">
+                        <DateBlock TheDate=transaction.DateOfTransaction />
+                    </td>
+                    <td style="cursor:pointer;" @onclick='() => Filter(transaction.ExpenseType)'>
+                        @transaction.Name
+                        <br />
+                        @("("+ transaction.ExpenseType + ")")
+                    </td>
                     <td>
                         <span class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</span>
                         @if (!string.IsNullOrEmpty(transaction.PaidWithPerson1))
@@ -121,9 +127,14 @@
                         }
                     </td>
                     <td style="padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
-                    <td style="padding:.5vw 1vw;">
-                        <button class="btn btn-secondary" style="margin-bottom:.5vh;" @onclick="(() => OpenModal(transaction))">Edit</button>
-                        <button class="btn btn-secondary" @onclick="(() => ShowDeleteBtn(transaction))">Delete</button>
+                    <td style="width:8vw;padding:0 .5vw;">
+                        <div style="display:flex;justify-content:center;">
+                            @if (transaction.ExpenseType != "Debt")
+                            {
+                                <button class="btn btn-secondary" style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                            }
+                            <button class="btn btn-danger" style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
+                        </div>
                     </td>
                 </tr>
             }
@@ -185,93 +196,99 @@
 else
 {
     <table>
-            <tr>
-                <th colspan="5" style="font-size:3vw;background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
-            </tr>
-            <tr>
-                <th style="font-size:3vw">Expense</th>
-                <th style="font-size:3vw;">Name</th>
-                <th style="font-size:3vw">@Constants.Person1</th>
-                <th style="font-size:3vw">@Constants.Person2</th>
-                <th style="font-size:3vw">Total</th>
-            </tr>
-            @if (FilteredTransactions != null)
+        <tr>
+            <th colspan="5" style="font-size:3vw;background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
+        </tr>
+        <tr>
+            <th style="font-size:3vw">Date</th>
+            <th style="font-size:3vw;">Name</th>
+            <th style="font-size:3vw">@Constants.Person1</th>
+            <th style="font-size:3vw">@Constants.Person2</th>
+            <th style="font-size:3vw">Total</th>
+        </tr>
+        @if (FilteredTransactions != null)
+        {
+            @foreach (var transaction in FilteredTransactions)
             {
-                @foreach (var transaction in FilteredTransactions)
-                {
-                    <tr>
-                        <td style="font-size:3vw;cursor:pointer" @onclick='() => Filter(transaction.ExpenseType)'>@transaction.ExpenseType</td>
-                        <td style="font-size:3vw;padding:0 1vw;">@transaction.Name</td>
-                        <td style="font-size:3vw;padding:0 1vw;">
-                            <span class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))" style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.Person1Amount)</span>
-                            @if (!string.IsNullOrEmpty(transaction.PaidWithPerson1))
-                            {
-                                <br />
-                                @(string.Format("({0})", transaction.PaidWithPerson1))
-                            }
-                        </td>
-                        <td style="font-size:3vw;padding:0 1vw;">
-                            <span class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))" style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.Person2Amount)</span>
-                            @if (!string.IsNullOrEmpty(transaction.PaidWithPerson2))
-                            {
-                                <br />
-                                @(string.Format("({0})", transaction.PaidWithPerson2))
-                            }
-                        </td>
-                        <td style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
-                    </tr>
-                }
-
-            }
-            <tr>
-                <td colspan="5" style="font-size:3vw">=</td>
-            </tr>
-            @if (FilteredTransactions != null)
-            {
-                @if (TotalIncomeSum > 0)
-                {
-                    <tr>
-                        <td colspan="2" style="font-size:3vw"><strong>Total of Income</strong></td>
-                        <td class='@TranColor("Income", Person1IncomeSum)' style="font-size:3vw;">
-                            @Pretty(Person1IncomeSum)
-                        </td>
-                        <td class='@TranColor("Income", Person2IncomeSum)' style="font-size:3vw;">
-                            @Pretty(Person2IncomeSum)
-                        </td>
-                        <td class='@TranColor("Income", TotalIncomeSum)' style="font-size:3vw;">
-                            @Pretty(TotalIncomeSum)
-                        </td>
-                    </tr>
-                }
-                @if (TotalExpenseSum > 0)
-                {
-                    <tr>
-                        <td colspan="2" style="font-size:3vw"><strong>Total of Expenses</strong></td>
-                        <td class='@TranColor("Expense", Person1ExpenseSum)' style="font-size:3vw;">
-                            @Pretty(Person1ExpenseSum)
-                        </td>
-                        <td class='@TranColor("Expense", Person2ExpenseSum)' style="font-size:3vw;">
-                            @Pretty(Person2ExpenseSum)
-                        </td>
-                        <td class='@TranColor("Expense", TotalExpenseSum)' style="font-size:3vw;">
-                            @Pretty(TotalExpenseSum)
-                        </td>
-                    </tr>
-                }
                 <tr>
-                    <td colspan="2" style="font-size:3vw"><strong>Net</strong></td>
-                    <td class='@TranColor("Income", NetPerson1Sum)' style="font-size:3vw;color:">
-                        @Pretty(NetPerson1Sum)
+                    <td style="cursor:pointer;margin:1vh 0 1vh 0;">
+                        <DateBlock TheDate=transaction.DateOfTransaction Mobile=Mobile />
                     </td>
-                    <td class='@TranColor("Income", NetPerson2Sum)' style="font-size:3vw;">
-                        @Pretty(NetPerson2Sum)
+                    <td @onclick='() => Filter(transaction.ExpenseType)' style="font-size:3vw;width:2vw">
+                        @transaction.Name
+                        <br />
+                        @("("+ transaction.ExpenseType + ")")
                     </td>
-                    <td class='@TranColor("Income", NetTotalSum)' style="font-size:3vw;">
-                        @Pretty(NetTotalSum)
+                    <td style="font-size:3vw;padding:0 1vw;">
+                        <span class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))" style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.Person1Amount)</span>
+                        @if (!string.IsNullOrEmpty(transaction.PaidWithPerson1))
+                        {
+                            <br />
+                            @(string.Format("({0})", transaction.PaidWithPerson1))
+                        }
+                    </td>
+                    <td style="font-size:3vw;padding:0 1vw;">
+                        <span class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))" style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.Person2Amount)</span>
+                        @if (!string.IsNullOrEmpty(transaction.PaidWithPerson2))
+                        {
+                            <br />
+                            @(string.Format("({0})", transaction.PaidWithPerson2))
+                        }
+                    </td>
+                    <td style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
+                </tr>
+            }
+
+        }
+        <tr>
+            <td colspan="5" style="font-size:3vw">=</td>
+        </tr>
+        @if (FilteredTransactions != null)
+        {
+            @if (TotalIncomeSum > 0)
+            {
+                <tr>
+                    <td colspan="2" style="font-size:3vw"><strong>Total of Income</strong></td>
+                    <td class='@TranColor("Income", Person1IncomeSum)' style="font-size:3vw;">
+                        @Pretty(Person1IncomeSum)
+                    </td>
+                    <td class='@TranColor("Income", Person2IncomeSum)' style="font-size:3vw;">
+                        @Pretty(Person2IncomeSum)
+                    </td>
+                    <td class='@TranColor("Income", TotalIncomeSum)' style="font-size:3vw;">
+                        @Pretty(TotalIncomeSum)
                     </td>
                 </tr>
             }
-        </table>
+            @if (TotalExpenseSum > 0)
+            {
+                <tr>
+                    <td colspan="2" style="font-size:3vw"><strong>Total of Expenses</strong></td>
+                    <td class='@TranColor("Expense", Person1ExpenseSum)' style="font-size:3vw;">
+                        @Pretty(Person1ExpenseSum)
+                    </td>
+                    <td class='@TranColor("Expense", Person2ExpenseSum)' style="font-size:3vw;">
+                        @Pretty(Person2ExpenseSum)
+                    </td>
+                    <td class='@TranColor("Expense", TotalExpenseSum)' style="font-size:3vw;">
+                        @Pretty(TotalExpenseSum)
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="2" style="font-size:3vw"><strong>Net</strong></td>
+                <td class='@TranColor("Income", NetPerson1Sum)' style="font-size:3vw;color:">
+                    @Pretty(NetPerson1Sum)
+                </td>
+                <td class='@TranColor("Income", NetPerson2Sum)' style="font-size:3vw;">
+                    @Pretty(NetPerson2Sum)
+                </td>
+                <td class='@TranColor("Income", NetTotalSum)' style="font-size:3vw;">
+                    @Pretty(NetTotalSum)
+                </td>
+            </tr>
+        }
+    </table>
 }
 
 @if (ShowModal)
@@ -300,6 +317,9 @@ else
 
     [Parameter]
     public bool Mobile { get; set; }
+
+    [Parameter]
+    public EventCallback OnAddConfirm { get; set; }
 
     [Parameter]
     public List<Transaction> FilteredTransactions
@@ -358,7 +378,7 @@ else
     private double NetPerson2Sum => Person2IncomeSum - Person2ExpenseSum;
     private double NetTotalSum => TotalIncomeSum - TotalExpenseSum;
 
-    private string ExpenseHeaderTxt = "Expense";
+    private string DateHeaderTxt = "Date";
     private string NameHeaderTxt = "Name";
     private string Person1HeaderTxt = @Constants.Person1;
     private string Person2HeaderTxt = @Constants.Person2;
@@ -472,11 +492,9 @@ else
 
     private void Order(string orderBy)
     {
-        // FIX
-        List<Transaction> nt = new List<Transaction>();
-        IndexRunner.Order(ref ExpenseHeaderTxt, ref NameHeaderTxt,
+        FilteredTransactions = IndexRunner.Order(ref DateHeaderTxt, ref NameHeaderTxt,
                                     ref Person1HeaderTxt, ref Person2HeaderTxt, ref TotalHeaderTxt,
-                                    ref nt, orderBy);
+                                    FilteredTransactions, orderBy);
 
         StateHasChanged();
     }
@@ -503,10 +521,9 @@ else
 
     private void Filter(DynamicCostItem filter)
     {
-        // FIX
-        List<Transaction> nt = new List<Transaction>();
-        List<Transaction> nt1 = new List<Transaction>();
-        IndexRunner.Filter(ref filter, ref nt, ref nt1, ref filtered);
+        var catcher = IndexRunner.Filter(ref filter, Transactions, FilteredTransactions, ref filtered);
+        Transactions = catcher[0];
+        FilteredTransactions = catcher[1];
 
         StateHasChanged();
     }
@@ -532,11 +549,7 @@ else
 
     private async void AddConfirm()
     {
-        // FIX
-        //AddConfirmClass = "floaty";
-        await Task.Delay(3000);
-
-        //AddConfirmClass = "floaty-rev";
+        OnAddConfirm.InvokeAsync();
         StateHasChanged();
     }
 }
