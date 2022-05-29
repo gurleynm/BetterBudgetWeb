@@ -54,12 +54,10 @@
                 <br />
                 <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="NewExpense" title="Pick an Expense Type ">
                     <option value="@string.Empty" selected disabled="disabled">Expense</option>
-                    <option value="Static Cost">Static Cost</option>
-                    <option value="Income">Income</option>
-                    <option value="Food">Food</option>
-                    <option value="Fun">Fun</option>
-                    <option value="Gas">Gas</option>
-                    <option value="Other">Other</option>
+                    @foreach(var et in ExpenseTypes)
+                    {
+                        <option value="@et">@et</option>                        
+                    }
                 </select>
             </td>
             <td>
@@ -375,6 +373,8 @@ else
     [Parameter]
     public EventCallback<List<Balance>> BalancesChanged { get; set; }
 
+    private List<string> ExpenseTypes { get; set; } = new List<string>();
+
     private double Person1IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
     private double Person2IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
     private double TotalIncomeSum => Person1IncomeSum + Person2IncomeSum;
@@ -400,18 +400,26 @@ else
     private double NewPerson2Amount;
     private string NewPerson2PaidWith;
     private string MonthYear => (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
+    private string FilterIndicatorTxt = " (ON)";
 
     private Transaction SelectedTransaction;
-    private Balance SelectedBalance;
-    private string SelectedDownload { get; set; } = (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
-
     private bool ShowModal = false;
     private bool ShowDelete = false;
-    private bool ShowDeleteBal = false;
 
     private string ErrorMsg = string.Empty;
     private bool filtered;
 
+    protected override Task OnInitializedAsync()
+    {
+        ExpenseTypes.Add("Static Cost");
+        ExpenseTypes.Add("Income");
+
+        foreach (var dci in Constants.DynamicCostItems)
+            ExpenseTypes.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
+
+        ExpenseTypes.Add("Other");
+        return base.OnInitializedAsync();
+    }
 
     private string GoodOrBad(double money)
     {
@@ -459,11 +467,6 @@ else
 
         StateHasChanged();
     }
-    private void ShowDeleteBalBtn(Balance b)
-    {
-        SelectedBalance = b;
-        ShowDeleteBal = true;
-    }
     private void ShowDeleteBtn(Transaction t)
     {
         SelectedTransaction = t;
@@ -481,23 +484,9 @@ else
         ShowDelete = false;
         StateHasChanged();
     }
-    private async void DeleteBalance(bool accepted)
-    {
-        if (accepted)
-        {
-            Balances = await BalanceRepo.RemoveAsync(SelectedBalance);
-        }
-        ShowDeleteBal = false;
-        StateHasChanged();
-    }
     private double CalculateNetWorth(string person)
     {
         return IndexRunner.CalculateNetWorth(person, Balances);
-    }
-
-    private List<string> GetMonths()
-    {
-        return IndexRunner.GetMonths(Transactions);
     }
 
     private void Order(string orderBy)
@@ -553,7 +542,6 @@ else
 
         if (BtnPress)
         {
-            string FilterIndicatorTxt = " (ON)";
             for (int index = 0; index < Constants.DynamicCostItems.Count; index++)
             {
                 if (Constants.DynamicCostItems[index].Name.Contains(FilterIndicatorTxt))

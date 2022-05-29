@@ -276,7 +276,7 @@ else
                                              StartDate.Month,
                                              DateTime.DaysInMonth(StartDate.Year,
                                              StartDate.Month));
-    private int DaysLeft => (EndDate - StartDate).TotalDays > 0 ? (int)(EndDate - StartDate).TotalDays : 1;
+    private int DaysLeft => Math.Ceiling((EndDate - StartDate).TotalDays) > 0 ? (int)Math.Ceiling((EndDate - StartDate).TotalDays + 1) : 1;
 
     private List<Transaction> Transactions;
     private List<Transaction> FilteredTransactions;
@@ -286,33 +286,12 @@ else
     private double Person1NetWorth => CalculateNetWorth(Constants.Person1);
     private double Person2NetWorth => CalculateNetWorth(Constants.Person2);
 
-    private Transaction SelectedTransaction;
     private Balance SelectedBalance;
     private string SelectedDownload { get; set; } = (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
 
-    private bool ShowModal = false;
-    private bool ShowDelete = false;
     private bool ShowDeleteBal = false;
 
-    private string NewExpense;
-    private string NewName;
-    private double NewPerson1Amount;
-    private string NewPerson1PaidWith;
-    private double NewPerson2Amount;
-    private string NewPerson2PaidWith;
     private string MonthYear => (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
-
-    private double Person1IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
-    private double Person2IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
-    private double TotalIncomeSum => Person1IncomeSum + Person2IncomeSum;
-
-    private double Person1ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType != "Income" && t.ExpenseType != "Debt" && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
-    private double Person2ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType != "Income" && t.ExpenseType != "Debt" && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
-    private double TotalExpenseSum => Person1ExpenseSum + Person2ExpenseSum;
-
-    private double NetPerson1Sum => Person1IncomeSum - Person1ExpenseSum;
-    private double NetPerson2Sum => Person2IncomeSum - Person2ExpenseSum;
-    private double NetTotalSum => TotalIncomeSum - TotalExpenseSum;
 
     private string ErrorMsg = string.Empty;
     private bool mobile;
@@ -321,12 +300,6 @@ else
 
     private List<string> FoundMonths => GetMonths();
     private List<DataPoint> DataPoints = new List<DataPoint>();
-
-    private string ExpenseHeaderTxt = "Expense";
-    private string NameHeaderTxt = "Name";
-    private string Person1HeaderTxt = @Constants.Person1;
-    private string Person2HeaderTxt = @Constants.Person2;
-    private string TotalHeaderTxt = "Total";
 
     private bool filtered;
     private string AddConfirmClass = "collapse";
@@ -359,22 +332,6 @@ else
         SelectedBalance = b;
         ShowDeleteBal = true;
     }
-    private void ShowDeleteBtn(Transaction t)
-    {
-        SelectedTransaction = t;
-        ShowDelete = true;
-    }
-    private async void Delete(bool accepted)
-    {
-        if (accepted)
-        {
-            Transactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
-            FilteredTransactions = Transactions.OrderByDescending(ft => ft.DateOfTransaction).ToList();
-            Balances = await BalanceRepo.GetBalancesAsync();
-        }
-        ShowDelete = false;
-        StateHasChanged();
-    }
     private async void DeleteBalance(bool accepted)
     {
         if (accepted)
@@ -392,15 +349,6 @@ else
     private List<string> GetMonths()
     {
         return IndexRunner.GetMonths(Transactions);
-    }
-
-    private void Order(string orderBy)
-    {
-        FilteredTransactions = IndexRunner.Order(ref ExpenseHeaderTxt, ref NameHeaderTxt,
-                                                    ref Person1HeaderTxt, ref Person2HeaderTxt, ref TotalHeaderTxt,
-                                                    FilteredTransactions, orderBy);
-
-        StateHasChanged();
     }
 
     private void FilterDate(string filter) { Filter(filter, true); }
@@ -469,9 +417,9 @@ else
             DateTime PreviousDate = tr.DateOfTransaction;
             double MonthAmount = 0;
 
-            if(tr.ExpenseType == "Income")
+            if (tr.ExpenseType == "Income")
                 MonthAmount = tr.TotalAmount;
-            else if(tr.ExpenseType != "Debt")
+            else if (tr.ExpenseType != "Debt")
                 MonthAmount = tr.TotalAmount * -1;
 
             for (int index = 1; index < FilteredTransactions.Count; index++)

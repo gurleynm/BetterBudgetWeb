@@ -81,13 +81,17 @@
             <br />
             <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="ExpenseType" title="Pick an Expense Type ">
                 <option value="@string.Empty" selected disabled="disabled">Expense</option>
-                <option value="Static Cost">Static Cost</option>
-                <option value="Income">Income</option>
-                <option value="Debt">Paying Off Debt</option>
-                <option value="Food">Food</option>
-                <option value="Fun">Fun</option>
-                <option value="Gas">Gas</option>
-                <option value="Other">Other</option>
+                @foreach(var et in ExpenseTypes)
+                {
+                    @if (et == "Paying Off Debt")
+                    {
+                        <option value="Debt">@et</option>
+                    }
+                    else
+                    {
+                        <option value="@et">@et</option>
+                    }
+                }
             </select>
         </div>
         @if (ExpenseType == "Debt")
@@ -126,7 +130,14 @@
         <br style="clear:both;" />
         <br />
         <div>
-            <label>@($"{Constants.Person1} Paid With:")</label>
+            @if(ExpenseType == "Income")
+            {
+                <label>@($"{Constants.Person1} was Paid Into:")</label>
+            }
+            else
+            {
+                <label>@($"{Constants.Person1} Paid With:")</label>
+            }
             <br />
             <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
                 <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Paid)")</option>
@@ -142,7 +153,14 @@
         </div>
         <br />
         <div>
-            <label>@($"{Constants.Person2} Paid With:")</label>
+            @if(ExpenseType == "Income")
+            {
+                <label>@($"{Constants.Person2} was Paid Into:")</label>
+            }
+            else
+            {
+                <label>@($"{Constants.Person2} Paid With:")</label>
+            }
             <br />
             <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
                 <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Paid)")</option>
@@ -194,19 +212,23 @@ else
             <br />
             <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="ExpenseType" title="Pick an Expense Type ">
                 <option value="@string.Empty" selected disabled="disabled">Expense</option>
-                <option value="Static Cost">Static Cost</option>
-                <option value="Income">Income</option>
-                <option value="Debt">Paying Off Debt</option>
-                <option value="Food">Food</option>
-                <option value="Fun">Fun</option>
-                <option value="Gas">Gas</option>
-                <option value="Other">Other</option>
+                @foreach(var et in ExpenseTypes)
+                {
+                    @if (et == "Paying Off Debt")
+                    {
+                        <option value="Debt">@et</option>
+                    }
+                    else
+                    {
+                        <option value="@et">@et</option>
+                    }
+                }
             </select>
         </div>
         @if (ExpenseType == "Debt")
         {
             <div style="float:left; margin-left:1.4vw;">
-                <label><strong>@($"{Constants.Person1} Paid With:")</strong></label>
+                <label><strong>@($"What's {Constants.Person1} paying off:")</strong></label>
                 <br />
                 <select class="custom-select" @bind="PaidOffPerson1" title="Paid Off is required ">
                     <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
@@ -223,7 +245,14 @@ else
         <br style="clear:both;" />
         <br />
         <div style="float:left; margin-right:9.1vw;">
-            <label><strong>@($"{Constants.Person1} Paid With:")</strong></label>
+            @if(ExpenseType == "Income")
+            {
+                <label>@($"{Constants.Person1} was Paid Into:")</label>
+            }
+            else
+            {
+                <label>@($"{Constants.Person1} Paid With:")</label>
+            }
             <br />
             <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
                 <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Paid)")</option>
@@ -238,7 +267,14 @@ else
             </select>
         </div>
         <div style="float:left; margin-right:5.6vw;">
-            <label>@($"{Constants.Person2} Paid With:")</label>
+            @if(ExpenseType == "Income")
+            {
+                <label>@($"{Constants.Person2} was Paid Into:")</label>
+            }
+            else
+            {
+                <label>@($"{Constants.Person2} Paid With:")</label>
+            }
             <br />
             <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
                 <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Paid)")</option>
@@ -391,6 +427,22 @@ else
 
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";
+
+    private List<string> ExpenseTypes { get; set; } = new List<string>();
+
+    protected override Task OnInitializedAsync()
+    {
+        ExpenseTypes.Add("Static Cost");
+        ExpenseTypes.Add("Income");
+        ExpenseTypes.Add("Paying Off Debt");
+
+        foreach (var dci in Constants.DynamicCostItems)
+            ExpenseTypes.Add(dci.Name);
+
+        ExpenseTypes.Add("Other");
+
+        return base.OnInitializedAsync();
+    }
 
     public async void Submit()
     {
