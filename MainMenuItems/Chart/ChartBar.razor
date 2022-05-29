@@ -1,0 +1,128 @@
+﻿<style>
+    .chart-bar {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor:pointer;
+    }
+
+    .chart-bar__inner {
+        height: 100%;
+        width: 100%;
+        border: 1px solid #313131;
+        border-radius: 12px;
+        background-color: #c3b4f3;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .chart-bar__fill {
+        background-color: @Constants.ColorScheme["IncomeGood"];
+        width: 100%;
+        transition: all 0.3s ease-out;
+    }
+
+    .chart-bar__fill-bad {
+        background-color: red;
+        width: 100%;
+        transition: all 0.3s ease-out;
+    }
+
+    .chart-bar__label {
+        font-weight: bold;
+        font-size: 1rem;
+        text-align: center;
+        color: black;
+    }
+</style>
+<div class="chart-bar" @onclick=OnClick>
+    @if (Negative)
+    {
+        <div class="chart-bar__label" style="color:red">@Constants.Pretty(Value)</div>
+    }
+    else
+    {
+        <div class="chart-bar__label" style="color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(Value)</div>
+    }
+    <div class="chart-bar__inner">
+        @if (Negative)
+        {
+            <div class="chart-bar__fill-bad"
+             style="height:@BarFillHeight"></div>
+        }
+        else
+        {
+            <div class="chart-bar__fill"
+             style="height:@BarFillHeight"></div>
+        }
+    </div>
+    <div class="chart-bar__label">@Label</div>
+</div>
+
+@code {
+    [Parameter]
+    public string Label { get; set; }
+    [Parameter]
+    public bool Negative { get; set; }
+    [Parameter]
+    public EventCallback<string> DateBarClicked { get; set; }
+
+    public double val = 0;
+    public double maxVal = 0;
+
+    [Parameter]
+    public double Value
+    {
+        get { return val; }
+        set
+        {
+            val = value;
+
+            if (MaxValue > 0)
+            {
+                BarFillHeight = Math.Round((val / MaxValue) * 100) + "%";
+                StateHasChanged();
+            }
+        }
+    }
+
+    [Parameter]
+    public double MaxValue
+    {
+        get { return maxVal; }
+        set
+        {
+            maxVal = value;
+
+            if (maxVal > 0)
+            {
+                BarFillHeight = Math.Round((val / maxVal) * 100) + "%";
+                StateHasChanged();
+            }
+        }
+    }
+
+    public string BarFillHeight { get; set; } = "0%";
+
+    protected override Task OnInitializedAsync()
+    {
+        var c = Negative;
+        return base.OnInitializedAsync();
+    }
+
+    private void OnClick()
+    {
+        DateTime Now = DateTime.Now;
+
+        bool tp = int.TryParse(Label, out int day);
+        if (day == 0)
+            day = Now.Day;
+
+        DateTime FixedDate = new DateTime(Now.Year, Now.Month, day);
+
+        DateBarClicked.InvokeAsync(FixedDate.ToShortDateString());
+    }
+}

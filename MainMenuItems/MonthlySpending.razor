@@ -102,7 +102,7 @@
             @foreach (var transaction in FilteredTransactions)
             {
                 <tr>
-                    <td style="width:6vw;margin:1vh 0 1vh 0;">
+                    <td style="width:6vw;margin:1vh 0 1vh 0;cursor:pointer;" @onclick='() => Filter(transaction.DateOfTransaction.ToShortDateString(), true)'>
                         <DateBlock TheDate=transaction.DateOfTransaction />
                     </td>
                     <td style="cursor:pointer;" @onclick='() => Filter(transaction.ExpenseType)'>
@@ -211,7 +211,7 @@ else
             @foreach (var transaction in FilteredTransactions)
             {
                 <tr>
-                    <td style="cursor:pointer;margin:1vh 0 1vh 0;">
+                    <td style="float:none;cursor:pointer;padding:1vh 0;display:flex;justify-content:center;">
                         <DateBlock TheDate=transaction.DateOfTransaction Mobile=Mobile />
                     </td>
                     <td @onclick='() => Filter(transaction.ExpenseType)' style="font-size:3vw;width:2vw">
@@ -322,6 +322,9 @@ else
     public EventCallback OnAddConfirm { get; set; }
 
     [Parameter]
+    public EventCallback OnDeleteConfirm { get; set; }
+
+    [Parameter]
     public List<Transaction> FilteredTransactions
     {
         get => filteredTransactions;
@@ -329,6 +332,12 @@ else
         {
             if (filteredTransactions == value) return;
             filteredTransactions = value;
+            if (Transactions != null && filteredTransactions != null)
+            {
+                if (filteredTransactions.Count != Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList().Count)
+                    filtered = true;
+            }
+
             FilteredTransactionsChanged.InvokeAsync(value);
         }
     }
@@ -467,6 +476,7 @@ else
             Transactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
             FilteredTransactions = Transactions.OrderByDescending(ft => ft.DateOfTransaction).ToList();
             Balances = await BalanceRepo.GetBalancesAsync();
+            OnDeleteConfirm.InvokeAsync();
         }
         ShowDelete = false;
         StateHasChanged();
@@ -499,7 +509,7 @@ else
         StateHasChanged();
     }
 
-    private void Filter(string filter)
+    private void Filter(string filter, bool date = false)
     {
         if (Mobile)
         {
@@ -507,13 +517,21 @@ else
                 ResetFilters(true);
             else
             {
-                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+                if (date)
+                    FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
+                else
+                    FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+
                 filtered = true;
             }
         }
         else
         {
-            FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+            if (date)
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
+            else
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+
             filtered = true;
         }
         StateHasChanged();

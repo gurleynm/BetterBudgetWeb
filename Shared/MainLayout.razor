@@ -235,6 +235,31 @@
         border: 1px solid #ccc;
         border-top: none;
     }
+    
+    .arrow {
+        border: solid @Constants.ColorScheme["Text"];
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 1vh;
+    }
+
+    .right {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+    }
+
+    .down {
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+    }
+    
+    .spendchart-btn{
+        color:@Constants.ColorScheme["Text"];
+        width:20%;
+        background-color:transparent;
+        outline:none;
+        border:none;
+    }
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
@@ -245,10 +270,12 @@
         {
             <div style="display:inline-block;width:100vw;height:100vh;">
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);text-align:center">
-                    Enter password
+                    <h2 style="text-align:center">@($"Welcome {Constants.Person1} & {Constants.Person2}")</h2>
+                    <br />
+                    <span>Enter password</span>
                 </div>
                 <div style="display:flex;justify-content:center;width:100%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <input id="pwd" style="text-align:center" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
+                    <input id="pwd" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
                 </div>
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
                     <button class="btn btn-primary" @onclick="@CheckWeIn">Submit</button>
@@ -259,10 +286,12 @@
         {
             <div style="display:inline-block;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width:100vw">
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    Enter password
+                    <h2 style="text-align:center">@($"Welcome {Constants.Person1} & {Constants.Person2}")</h2>
+                    <br />
+                    <span>Enter password</span>
                 </div>
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <input id="pwd" style="text-align:center" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
+                    <input id="pwd" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
                 </div>
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
                     <button class="btn btn-primary" @onclick="@CheckWeIn">Submit</button>

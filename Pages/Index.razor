@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.MainMenuItems
+@using BetterBudgetWeb.MainMenuItems.Chart
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
 @inject IJSRuntime JSRuntime
@@ -69,12 +70,33 @@
         }
     </div>
     <br style="clear:both;" />
+    @if (DataPoints != null && DataPoints.Count > 0)
+    {
+        <button class="spendchart-btn" @onclick="@ToggleChartBtn">
+            @if (!ShowChart)
+            {
+                <h2>Spending Chart&nbsp;<i class="arrow right"></i></h2>
+            }
+            else
+            {
+                <h2>Spending Chart&nbsp;&nbsp;<i class="arrow down"></i></h2>
+            }
+        </button>
+        @if (ShowChart)
+        {
+            <Chart DPs=DataPoints BarClicked=FilterDate />
+        }
 
+        <br />
+        <br />
+        <br />
+    }
     <div style="display:flex;justify-content:start;">
         <!-- Monthly Spending -->
     <div style="width:50%;float:left; margin-right:1vw; margin-bottom:2vh;">
             <MonthlySpending Mobile=mobile
                          OnAddConfirm=AddConfirm
+                         OnDeleteConfirm=DeleteConfirm
                          @bind-Transactions=Transactions
                          @bind-FilteredTransactions=FilteredTransactions
                          @bind-Balances=Balances />
@@ -85,7 +107,7 @@
         <div style="width:100%; margin-right:1vw;">
                 <table>
                     <tr>
-                        <th colspan="4" style="background-color:magenta;"><i>Dynamic Monthly Costs</i></th>
+                        <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
                     </tr>
                     <tr>
                         <th>Expense</th>
@@ -146,7 +168,7 @@
                         <option value="@dt">@dt</option>
                     }
                 </select>
-                <button class="btn btn-secondary" style="margin-left:1vw" @onclick="DownloadCSV">Download CSV file</button>
+                <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV">Download CSV file</button>
             </div>
         </div>
     </div>
@@ -295,7 +317,10 @@ else
     private string ErrorMsg = string.Empty;
     private bool mobile;
 
+    private bool ShowChart;
+
     private List<string> FoundMonths => GetMonths();
+    private List<DataPoint> DataPoints = new List<DataPoint>();
 
     private string ExpenseHeaderTxt = "Expense";
     private string NameHeaderTxt = "Name";
@@ -315,6 +340,8 @@ else
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
         Monthlies = await MonthlyRepo.GetMonthliesAsync();
         ErrorMsg = string.Empty;
+
+        SetDataPoints();
 
         StateHasChanged();
     }
@@ -376,7 +403,8 @@ else
         StateHasChanged();
     }
 
-    private void Filter(string filter)
+    private void FilterDate(string filter) { Filter(filter, true); }
+    private void Filter(string filter, bool date = false)
     {
         if (mobile)
         {
@@ -384,13 +412,21 @@ else
                 ResetFilters(true);
             else
             {
-                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+                if (date)
+                    FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
+                else
+                    FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+
                 filtered = true;
             }
         }
         else
         {
-            FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+            if (date)
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
+            else
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+
             filtered = true;
         }
         StateHasChanged();
@@ -423,9 +459,73 @@ else
             StateHasChanged();
         }
     }
+    private void SetDataPoints(bool UpdateState = false)
+    {
+        DataPoints = new List<DataPoint>();
 
+        if (FilteredTransactions != null && FilteredTransactions.Count > 0)
+        {
+            Transaction tr = FilteredTransactions[0];
+            DateTime PreviousDate = tr.DateOfTransaction;
+            double MonthAmount = 0;
+
+            if(tr.ExpenseType == "Income")
+                MonthAmount = tr.TotalAmount;
+            else if(tr.ExpenseType != "Debt")
+                MonthAmount = tr.TotalAmount * -1;
+
+            for (int index = 1; index < FilteredTransactions.Count; index++)
+            {
+                if (FilteredTransactions[index].DateOfTransaction.ToShortDateString() != PreviousDate.ToShortDateString())
+                {
+                    var newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
+                    newDP.Negative = newDP.Value < 0;
+                    newDP.Value = Math.Abs(newDP.Value);
+
+                    if (newDP.Value != 0)
+                        DataPoints.Add(newDP);
+
+                    PreviousDate = FilteredTransactions[index].DateOfTransaction;
+                    if (FilteredTransactions[index].ExpenseType == "Income")
+                        MonthAmount = FilteredTransactions[index].TotalAmount;
+                    else if (FilteredTransactions[index].ExpenseType != "Debt")
+                        MonthAmount = FilteredTransactions[index].TotalAmount * -1;
+                    else
+                        MonthAmount = 0;
+                }
+                else
+                {
+                    if (FilteredTransactions[index].ExpenseType == "Income")
+                        MonthAmount += FilteredTransactions[index].TotalAmount;
+                    else if (FilteredTransactions[index].ExpenseType != "Debt")
+                        MonthAmount -= FilteredTransactions[index].TotalAmount;
+
+                    if (index == FilteredTransactions.Count - 1)
+                    {
+                        var newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
+                        newDP.Negative = newDP.Value < 0;
+                        newDP.Value = Math.Abs(newDP.Value);
+
+                        if (newDP.Value != 0)
+                            DataPoints.Add(newDP);
+                    }
+                }
+
+            }
+            DataPoints.Reverse();
+        }
+
+        if (UpdateState)
+            StateHasChanged();
+    }
+    private async void DeleteConfirm()
+    {
+        SetDataPoints(true);
+    }
     private async void AddConfirm()
     {
+
+        SetDataPoints();
 
         AddConfirmClass = "floaty";
         await Task.Delay(3000);
@@ -433,7 +533,10 @@ else
         AddConfirmClass = "floaty-rev";
         StateHasChanged();
     }
-
+    private void ToggleChartBtn()
+    {
+        ShowChart = !ShowChart;
+    }
     async Task DownloadCSV()
     {
         if (string.IsNullOrEmpty(SelectedDownload))
