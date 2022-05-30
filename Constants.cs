@@ -24,7 +24,7 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = false;
+        public static bool Us = true;
         private static bool Test = false;
         public static string Key { get; set; } = "";
 
@@ -131,33 +131,8 @@ namespace BetterBudgetWeb
                 }
                 else if (mon.Dynamic == "SAVINGS")
                 {
-                    if (CheckMonthYear(mon))
-                    {
-                        string[] currentMonthYear = MonthYear().Split(" ");
-                        var SGExists = SavingsGoals.FirstOrDefault(s => (s.Month == currentMonthYear[0] && s.Year == currentMonthYear[1]) ||
-                                                                            s.Month == "All");
-
-                        if (SGExists != null)
-                        {
-                            if (mon.Month == "All")
-                                continue;
-                            else
-                            {
-                                SavingsGoals.Remove(SGExists);
-
-                                //Check for Person2's goal
-                                SGExists = SavingsGoals.FirstOrDefault(s => s.Month == mon.Month && s.Year == mon.Year);
-                                if (SGExists != null)
-                                    SavingsGoals.Remove(SGExists);
-                            }
-                        }
-
-                        if (mon.Person1Amount >= 0)
-                            SavingsGoals.Add(new SavingsGoal(Person1, mon.Person1Amount, mon.Month, mon.Year));
-
-                        if (mon.Person2Amount >= 0)
-                            SavingsGoals.Add(new SavingsGoal(Person2, mon.Person2Amount, mon.Month, mon.Year));
-                    }
+                    SavingsGoals.Add(new SavingsGoal(Person1, mon.Person1Amount, mon.Month, mon.Year));
+                    SavingsGoals.Add(new SavingsGoal(Person2, mon.Person2Amount, mon.Month, mon.Year));
                 }
                 else if (mon.Dynamic == "PROJECTED DATA")
                 {
@@ -167,7 +142,7 @@ namespace BetterBudgetWeb
                     ProjectedData.Add(new ProjectedDatum(mon.Month, year, mon.Person1Amount, mon.Person2Amount));
                 }
             }
-
+            
             LoadDefaults();
 
             DynamicCostItems = DynamicCostItems.OrderByDescending(dci => dci.Amount).ToList();
@@ -251,7 +226,7 @@ namespace BetterBudgetWeb
                 ColorScheme["Text"] = "black";
                 ColorScheme["TableEven"] = "#dddddd";
                 ColorScheme["TableOdd"] = "#ffffff";
-                
+
                 ColorScheme["IncomeGood"] = "green";
                 ColorScheme["Debt"] = "blue";
 

@@ -1,6 +1,7 @@
 ﻿@page "/projections"
 @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Runner
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 
@@ -14,11 +15,13 @@
     select {
         color: black;
     }
-    input{
+
+    input {
         color: black;
     }
-    button{
-        color:black;
+
+    button {
+        color: black;
     }
 </style>
 
@@ -82,7 +85,7 @@ else
                     <th>@(Constants.Person1 + " (Actual)")</th>
                     <th>@(Constants.Person2 + " (Actual)")</th>
                     <th>Total (Actual)</th>
-                    <th></th>
+                    <th>Anticipated Expenses</th>
                 </tr>
             </thead>
             <tbody>
@@ -96,7 +99,7 @@ else
                             <option value="@string.Empty" selected disabled="disabled">(Choose Month Year)</option>
                             @foreach (var my in Goals)
                             {
-                                @if (my.TotalActual < 0)
+                                @if (my.IsProjected)
                                 {
                                     <option value="@my.MonthYear()">@my.MonthYear()</option>
                                 }
@@ -116,23 +119,24 @@ else
                         <td>@Pretty(goal.Person1Projected)</td>
                         <td>@Pretty(goal.Person2Projected)</td>
                         <td>@Pretty(goal.TotalProjected)</td>
-                        @if (goal.TotalActual > 0)
+                        @if (!goal.IsProjected)
                         {
                             <td>@Pretty(goal.Person1Actual)</td>
                             <td>@Pretty(goal.Person2Actual)</td>
                             <td>@Pretty(goal.TotalActual)</td>
+                            <td></td>
                         }
                         else
                         {
                             <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");">
-                                @Pretty(-1 * goal.Person1Actual)
+                                @Pretty(goal.Person1Actual)
                             </td>
                             <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");;">
-                                @Pretty(-1 * goal.Person2Actual)
+                                @Pretty(goal.Person2Actual)
                             </td>
-                            <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");">@Pretty(-1 * goal.TotalActual)</td>
+                            <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");">@Pretty(goal.TotalActual)</td>
+                            <td>@Pretty(goal.AnticipatedExpense)</td>
                         }
-                        <td></td>
                     </tr>
                 }
             </tbody>
@@ -243,14 +247,15 @@ else
 
 @code {
     private double[] NeedForHome { get; set; }
-    private List<ProjectedDatum> Goals { get; set; }
     private List<ProjectedDatum> ActualValues => Constants.ProjectedData;
-    private string MonthYear { get; set; }
     private double NewPerson1 { get; set; }
     private double NewPerson2 { get; set; }
     private double NewTotal => NewPerson1 + NewPerson2;
 
     private bool mobile { get; set; }
+
+    private List<ProjectedDatum> Goals;
+    private string MonthYear;
 
     private string[] Months = new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
@@ -272,59 +277,10 @@ else
                 Year = Year
             });
 
-        ProjectedDatum pro;
-        ProjectedDatum newPro;
-        int index = 1;
-        ProjectedDatum HasActual = null;
-        bool first = true;
-        while (!(Month == 4 && Year == 2023))
-        {
-            Month = (Month + 1) % Months.Length;
-            if (Month == 0)
-                Year++;
+        SavingsGoal Default1 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1 && sg.Month == "All");
+        SavingsGoal Default2 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2 && sg.Month == "All");
 
-            pro = Goals[index - 1];
-
-            newPro = new ProjectedDatum(pro, Months[Month], Year);
-
-            // Vacation
-            if (!(Month == 6 && Year == 2022))
-            {
-                newPro.Person1Projected += Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1).Goal;
-                newPro.Person2Projected += Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2).Goal;
-            }
-
-            HasActual = ActualValues.FirstOrDefault(av => av.MonthYear() == (Months[Month] + " " + Year.ToString()));
-            if (HasActual != null)
-            {
-                newPro.Person1Actual = HasActual.Person1Actual;
-                newPro.Person2Actual = HasActual.Person2Actual;
-            }
-            else
-            {
-                if (first)
-                {
-                    MonthYear = Months[Month] + " " + Year;
-                    first = false;
-                }
-
-                if (!(Month == 6 && Year == 2022))
-                {
-                    //Not Vacation
-                    newPro.Person1Actual += -1 * (Math.Abs(pro.Person1Actual) + Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1).Goal);
-                    newPro.Person2Actual += -1 * (Math.Abs(pro.Person2Actual) + Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2).Goal);
-                }
-                else
-                {
-                    // Vacation
-                    newPro.Person1Actual += -1 * Math.Abs(pro.Person1Actual);
-                    newPro.Person2Actual += -1 * Math.Abs(pro.Person2Actual);
-                }
-            }
-
-            Goals.Add(newPro);
-            index++;
-        }
+        ProjectionRunner.GetGoals(ref Default1, ref Default2, ref MonthYear, ref Goals);
 
         mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
     }

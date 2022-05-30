@@ -1,11 +1,12 @@
-﻿@if (Mobile)
+﻿@using BetterBudgetWeb.Data
+@if (Mobile)
 {
     <div style="width:100%; margin-right:2vw;">
         <table>
             <tr>
                 <th colspan="2" style="font-size:3vw;background-color:dodgerblue;color:white"><i>Savings Goals</i></th>
             </tr>
-            @foreach (var sg in Constants.SavingsGoals)
+            @foreach (var sg in ThisMonthSavingsGoals)
             {
                 <tr>
                     <td style="font-size:3vw;padding:.5vw 0;">@sg.Person</td>
@@ -29,7 +30,7 @@ else
             <tr>
                 <th colspan="2" style="background-color:dodgerblue;color:white"><i>Savings Goals</i></th>
             </tr>
-            @foreach (var sg in Constants.SavingsGoals)
+            @foreach (var sg in ThisMonthSavingsGoals)
             {
                 <tr>
                     <td style="padding:.5vw 0;">@sg.Person</td>
@@ -50,4 +51,28 @@ else
 @code {
     [Parameter]
     public bool Mobile { get; set; }
+
+    private List<SavingsGoal> ThisMonthSavingsGoals { get; set; } = new List<SavingsGoal>();
+
+    protected override Task OnInitializedAsync()
+    {
+        SavingsGoal Default1 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person1) && sg.Month == "All");
+        SavingsGoal Default2 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person2) && sg.Month == "All");
+
+        SavingsGoal ThisMonthPerson1 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1 && sg.MonthYear() == Constants.MonthYear());
+        SavingsGoal ThisMonthPerson2 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2 && sg.MonthYear() == Constants.MonthYear());
+
+        if (ThisMonthPerson1 == null)
+            ThisMonthSavingsGoals.Add(Default1);
+        else
+            ThisMonthSavingsGoals.Add(ThisMonthPerson1);
+
+        if (ThisMonthPerson2 == null)
+            ThisMonthSavingsGoals.Add(Default2);
+        else
+            ThisMonthSavingsGoals.Add(ThisMonthPerson2);
+
+
+        return base.OnInitializedAsync();
+    }
 }

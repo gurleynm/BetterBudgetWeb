@@ -44,12 +44,10 @@
                         <td>
                             <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="Transact.ExpenseType" title="Pick an Expense Type ">
                                 <option value="@string.Empty" selected disabled="disabled">Expense</option>
-                                <option value="Static Cost">Static Cost</option>
-                                <option value="Income">Income</option>
-                                <option value="Food">Food</option>
-                                <option value="Fun">Fun</option>
-                                <option value="Gas">Gas</option>
-                                <option value="Other">Other</option>
+                                @foreach (var et in ExpenseTypes)
+                                {
+                                    <option value="@et">@et</option>
+                                }
                             </select>
                         </td>
                         <td><input type="text" style="min-width:8vw; width:fit-content;margin:.5vw;" @bind="Transact.Name" /></td>
@@ -99,6 +97,21 @@
     [Parameter]
     public EventCallback<bool> OnClose { get; set; }
 
+    private List<string> ExpenseTypes { get; set; } = new List<string>();
+    private string FilterIndicatorTxt = " (ON)";
+
+
+    protected override Task OnInitializedAsync()
+    {
+        ExpenseTypes.Add("Static Cost");
+        ExpenseTypes.Add("Income");
+
+        foreach (var dci in Constants.DynamicCostItems)
+            ExpenseTypes.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
+
+        ExpenseTypes.Add("Other");
+        return base.OnInitializedAsync();
+    }
 
     private Task ModalCancel()
     {

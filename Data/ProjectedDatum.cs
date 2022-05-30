@@ -9,8 +9,9 @@
         public double TotalProjected => Person1Projected + Person2Projected;
         public double Person1Actual { get; set; } = -1;
         public double Person2Actual { get; set; } = -1;
+        public double AnticipatedExpense { get; set; }
         public double TotalActual => Person1Actual + Person2Actual;
-
+        public bool IsProjected {get;set;}
         public ProjectedDatum() { }
         public ProjectedDatum(ProjectedDatum other)
         {

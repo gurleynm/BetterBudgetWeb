@@ -6,6 +6,10 @@
         public double Goal { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
+        public string MonthYear()
+        {
+            return Month + " " + Year.ToString();
+        }
 
         public SavingsGoal() { }
         public SavingsGoal(string Person)
