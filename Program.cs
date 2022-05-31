@@ -1,4 +1,5 @@
 using BetterBudgetWeb;
+using BetterBudgetWeb.Simulation;
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -12,5 +13,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddBlazoredSessionStorage();
 
 await Constants.Init();
+await SimulatedConstants.Init();
 
 await builder.Build().RunAsync();

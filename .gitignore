@@ -6,3 +6,6 @@ obj
 packages
 .vs
 *.user
+BetterBudgetWeb.csproj.user
+Properties/PublishProfiles/BetterBudget - Web Deploy.pubxml.user
+Properties/PublishProfiles/DavidBetterBudget - Web Deploy.pubxml.user

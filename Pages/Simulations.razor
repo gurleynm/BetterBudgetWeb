@@ -1,0 +1,595 @@
+﻿@page "/simulations"
+@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems
+@using BetterBudgetWeb.MainMenuItems.Chart
+@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.Simulation
+@inject IJSRuntime JSRuntime
+
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+
+    button {
+        color: black;
+    }
+</style>
+
+<PageTitle>Index</PageTitle>
+<div style="display:flex;justify-content:space-around">
+    @if (!(DateTime.Now.Month == Month && DateTime.Now.Year == Year))
+    {
+        <button style="align-self:last baseline" @onclick=Prev>&lt;&lt;</button>
+    }
+    else
+    {
+        <br />
+    }
+    <h1 style="text-align:center">Month of: <i>@MonthYear</i></h1>
+    <button style="align-self:last baseline" @onclick=Next>&gt;&gt;</button>
+</div>
+
+<div style="display:flex;justify-content:space-around">
+    <input type="text" placeholder="Expected Income" @onkeydown="@Enter" @bind=ExpectedIncomeStr @oninput="@(async (ui) => { ExpectedIncomeStr = (string) ui.Value;})" style="align-self:flex-end">
+</div>
+
+<h1 style="text-align:center;color:@GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
+<div>
+    <h2 style="float:left;text-align:center">
+        <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person1NetWorth)">@(Pretty(Person1NetWorth))</span>
+    </h2>
+
+    <h2 style="float:right;text-align:center">
+        <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
+    </h2>
+</div>
+<br />
+<br />
+@if (!mobile)
+{
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;width:95vw;">
+        @if (Balances != null)
+        {
+            @foreach (var balance in Balances.OrderByDescending(b => b.Value))
+            {
+                <BalanceBlock TheBalance="@balance"
+                  OnClick="@(() => FilterBalance(balance.Name))" />
+            }
+
+        }
+    </div>
+    <br style="clear:both;" />
+
+    <div style="display:flex;justify-content:start;">
+        <!-- Monthly Spending -->
+    <div style="width:50%;float:left; margin-right:1vw; margin-bottom:2vh;">
+            <SimulatedMonthlySpending Mobile=mobile Month=Month Year=Year
+                                  @bind-Transactions=Transactions
+                                  @bind-FilteredTransactions=FilteredTransactions
+                                  @bind-Balances=Balances />
+        </div>
+        <div style="display:inline-block;margin-right:1vw;">
+
+            <!-- Dynamic Costs -->
+        <div style="width:100%; margin-right:1vw;">
+                <table>
+                    <tr>
+                        <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+                    </tr>
+                    <tr>
+                        <th>Expense</th>
+                        <th>Total Budget Amount</th>
+                        <th>Left This Month</th>
+                        <th style="padding:0 5px">Spend/Day</th>
+                    </tr>
+                    @foreach (var dci in SimulatedConstants.DynamicCostItems)
+                    {
+                        @if (dci.Name.Contains("EXAMPLE DATA"))
+                        {
+                            <tr>
+                                <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'><i>@dci.Name</i></td>
+                                <td>@Pretty(dci.Amount)</td>
+                                <td>@Pretty(dci.Left)</td>
+                                <td>@Pretty(dci.Left/DaysLeft)</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'>@dci.Name</td>
+                                <td>@Pretty(dci.Amount)</td>
+                                <td>@Pretty(dci.Left)</td>
+                                <td>@Pretty(dci.Left/DaysLeft)</td>
+                            </tr>
+                        }
+                    }
+                    <tr>
+                        <td colspan="4">=</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td>@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+                        <td>@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Left))</td>
+                        <td>@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Left)/DaysLeft)</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- Savings Goals-->
+        <SimulatedSavingsGoalsTable Month=Month Year=Year />
+
+            <!-- Ideal Emergency Fund-->
+        <IdealEmergencyFund OneMonthPerson1="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person1Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
+                            OneMonthPerson2="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person2Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
+        </div>
+        <!-- Set Monthly Costs Goals-->
+    <div style="display:inline-block">
+            <SimulatedSetMonthlyTable Trans=Transactions Month=Month Year=Year />
+            <br style="clear:both" />
+
+        </div>
+    </div>
+
+    @if (ShowDeleteBal)
+    {
+        <DeleteConfirm Balan="@SelectedBalance">
+
+        </DeleteConfirm>
+    }
+}
+else
+{
+    <div style="display:flex;justify-content:center;flex-wrap:wrap;width:95vw;">
+        @if (Balances != null)
+        {
+            @foreach (var balance in Balances.OrderByDescending(b => b.Value))
+            {
+                <BalanceBlock TheBalance="@balance" FontSize="5" />
+            }
+
+        }
+    </div>
+    <br />
+    <!-- Monthly Spending -->
+    <div style="width:100%;float:left;margin-bottom:2vh;">
+        <SimulatedMonthlySpending Mobile=mobile Month=Month Year=Year
+                              @bind-Transactions=Transactions
+                              @bind-FilteredTransactions=FilteredTransactions
+                              @bind-Balances=Balances />
+    </div>
+
+    <br />
+
+    <!-- Dynamic Costs -->
+    <div style="width:100%;">
+        <table>
+            <tr>
+                <th colspan="4" style="background-color:magenta;font-size:3vw;"><i>Dynamic Monthly Costs</i></th>
+            </tr>
+            <tr>
+                <th style="font-size:3vw;">Expense</th>
+                <th style="font-size:3vw;">Total Budget Amount</th>
+                <th style="font-size:3vw;">Left This Month</th>
+                <th style="font-size:3vw;padding:0 5px">Spend/Day</th>
+            </tr>
+            @foreach (var dci in SimulatedConstants.DynamicCostItems)
+            {
+                @if (dci.Name.Contains("EXAMPLE DATA"))
+                {
+                    <tr>
+                        <td style="font-size:3vw;padding:.5vw 1vw;"><i>@dci.Name</i></td>
+                        <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Left)</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Left/DaysLeft)</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td style="font-size:3vw;padding:.5vw 1vw;">@dci.Name</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Left)</td>
+                        <td style="font-size:3vw;">@Pretty(dci.Left/DaysLeft)</td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td style="font-size:3vw;" colspan="4">=</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;"><strong>Total</strong></td>
+                <td style="font-size:3vw;">@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+                <td style="font-size:3vw;">@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Left))</td>
+                <td style="font-size:3vw;">@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Left)/DaysLeft)</td>
+            </tr>
+        </table>
+    </div>
+
+    <br />
+
+    <!-- Savings Goals-->
+    <SavingsGoalsTable Mobile=true />
+
+    <br />
+
+    <!-- Ideal Emergency Fund-->
+    <IdealEmergencyFund Mobile=true OneMonthPerson1="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person1Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
+                    OneMonthPerson2="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person2Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
+
+    <br />
+
+    <!-- Set Monthly Costs Goals-->
+    <SetMonthlyTable Trans=FilteredTransactions Mobile=true />
+
+    <br />
+    <br />
+}
+
+@code {
+    private string[] Months = new string[] { "All", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
+    private DateTime StartDate => DateTime.Now;
+    private DateTime EndDate => new DateTime(StartDate.Year,
+                                             StartDate.Month,
+                                             DateTime.DaysInMonth(StartDate.Year,
+                                             StartDate.Month));
+    private int DaysLeft => DateTime.DaysInMonth(Year, Month);
+
+    private Dictionary<(int, int), double> PreviousDiscover { get; set; } = new Dictionary<(int, int), double>();
+    private Dictionary<(int, int), double> PreviousAmex { get; set; } = new Dictionary<(int, int), double>();
+    private Dictionary<(int, int), double> PreviousUSAA { get; set; } = new Dictionary<(int, int), double>();
+
+    private Dictionary<(int, int), double> PrevIncome { get; set; } = new Dictionary<(int, int), double>();
+
+    private List<Transaction> Transactions;
+    private List<Transaction> FilteredTransactions;
+    private List<Balance> Balances;
+    private List<Security> Securities;
+    private List<Monthly> Monthlies;
+    private double Person1NetWorth => CalculateNetWorth(Constants.Person1);
+    private double Person2NetWorth => CalculateNetWorth(Constants.Person2);
+
+    private Balance SelectedBalance;
+    private string SelectedDownload { get; set; } = (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
+
+    private bool ShowDeleteBal = false;
+
+    private int Month { get; set; } = DateTime.Now.Month;
+    private int Year { get; set; } = DateTime.Now.Year;
+
+    private string ExpectedIncomeStr { get; set; }
+    private double PrevExpectedIncome;
+    private double ExpectedIncome;
+
+    private string MonthYear => (new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString());
+
+    private string ErrorMsg = string.Empty;
+    private bool mobile;
+
+    private bool ShowChart;
+    private List<DataPoint> DataPoints = new List<DataPoint>();
+
+    private bool filtered;
+    private string AddConfirmClass = "collapse";
+
+    protected override async Task OnInitializedAsync()
+    {
+        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+        Balances = await BalanceRepo.GetBalancesAsync();
+        Transactions = await TransactionRepo.GetTransactionsAsync();
+        FilteredTransactions = new List<Transaction>(Transactions);
+        FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).OrderByDescending(t => t.DateOfTransaction).ToList();
+        SimulatedConstants.SetMonthlies(Month, Year);
+        ErrorMsg = string.Empty;
+
+        StateHasChanged();
+    }
+
+    private void Prev()
+    {
+        if (Month == 1)
+        {
+            Month = 12;
+            Year--;
+        }
+        else
+            Month--;
+
+        FilteredTransactions = new List<Transaction>(Transactions);
+        FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).OrderByDescending(t => t.DateOfTransaction).ToList();
+
+        UpdateBalancesPrev();
+
+        SimulatedConstants.SetMonthlies(Month, Year);
+
+        StateHasChanged();
+    }
+    private void Next()
+    {
+        if (Month == 12)
+        {
+            Month = 1;
+            Year++;
+        }
+        else
+            Month++;
+
+        FilteredTransactions = new List<Transaction>(Transactions);
+        FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).OrderByDescending(t => t.DateOfTransaction).ToList();
+
+        SimulatedConstants.SetMonthlies(Month, Year);
+
+        UpdateBalancesNext();
+
+        StateHasChanged();
+    }
+
+    private void UpdateBalancesPrev()
+    {
+        if(PrevIncome.ContainsKey((Month, Year)) && PrevIncome[(Month, Year)] != 0)
+        {
+            ExpectedIncomeStr = PrevIncome[(Month, Year)].ToString();
+            ExpectedIncome = PrevIncome[(Month, Year)];
+        }
+        else
+        {
+            ExpectedIncomeStr = "";
+            ExpectedIncome = 0;
+        }
+
+        var FifthThird = Balances.FirstOrDefault(bal => bal.Name == "Fifth Third");
+        var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
+        var Honda = Balances.FirstOrDefault(bal => bal.Name == "Honda");
+        var HotelPromised = Balances.FirstOrDefault(bal => bal.Name == "Hotel (Promised)");
+        var USAA = Balances.FirstOrDefault(bal => bal.Name == "USAA");
+        var Discover = Balances.FirstOrDefault(bal => bal.Name == "Discover");
+        var Amex = Balances.FirstOrDefault(bal => bal.Name == "Amex");
+
+        foreach (var mon in SimulatedConstants.Monthlies)
+        {
+            if (mon.Dynamic == "DYNAMIC")
+            {
+                Amex.Value -= mon.Person1Amount;
+                USAA.Value -= mon.Person2Amount;
+            }
+            else if (mon.Dynamic == "STATIC")
+            {
+                switch (mon.Name)
+                {
+                    case "Rent":
+                    case "Rent 2":
+                    case "Car":
+                    case "Electric":
+                        PNC.Value += mon.Person1Amount;
+                        FifthThird.Value += mon.Person2Amount;
+                        break;
+
+                    case "Phone":
+                    case "Subs":
+                    case "Car Insurance":
+                    case "Progressive":
+                        Discover.Value -= mon.Person1Amount;
+                        USAA.Value -= mon.Person2Amount;
+                        break;
+
+                    default:
+                        Amex.Value -= mon.Person1Amount;
+                        USAA.Value -= mon.Person2Amount;
+                        break;
+                }
+            }
+            else
+                continue;
+        }
+
+        int LastMonthDayTotal = DateTime.DaysInMonth(Year, Month);
+
+        Honda.Value = Honda.Value / (1 + Honda.APR / 100 / 365 * LastMonthDayTotal);
+
+        if (PreviousAmex.ContainsKey((Month, Year)))
+        {
+            PNC.Value += PreviousDiscover[(Month, Year)] + PreviousAmex[(Month, Year)];
+            Amex.Value = PreviousAmex[(Month, Year)];
+            Discover.Value = PreviousDiscover[(Month, Year)];
+
+            FifthThird.Value += PreviousUSAA[(Month, Year)];
+            USAA.Value = PreviousUSAA[(Month, Year)];
+        }
+
+        int ForMonth;
+        int ForYear;
+        if(Month == 12)
+        {
+            ForMonth = 1;
+            ForYear = Year + 1;
+        }
+        else
+        {
+            ForMonth = Month + 1;
+            ForYear = Year;
+        }
+
+        PNC.Value -= PrevIncome.ContainsKey((ForMonth, ForYear)) ? PrevIncome[(ForMonth, ForYear)] : 0;
+    }
+
+    private void UpdateBalancesNext()
+    {
+        if(PrevIncome.ContainsKey((Month, Year)) && PrevIncome[(Month, Year)] != 0)
+        {
+            ExpectedIncomeStr = PrevIncome[(Month, Year)].ToString();
+            ExpectedIncome = PrevIncome[(Month, Year)];
+        }
+        else
+        {
+            ExpectedIncomeStr = "";
+            ExpectedIncome = 0;
+        }
+
+        var FifthThird = Balances.FirstOrDefault(bal => bal.Name == "Fifth Third");
+        var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
+        var Honda = Balances.FirstOrDefault(bal => bal.Name == "Honda");
+        var HotelPromised = Balances.FirstOrDefault(bal => bal.Name == "Hotel (Promised)");
+        var USAA = Balances.FirstOrDefault(bal => bal.Name == "USAA");
+        var Discover = Balances.FirstOrDefault(bal => bal.Name == "Discover");
+        var Amex = Balances.FirstOrDefault(bal => bal.Name == "Amex");
+
+        (int, int) prevMonth = Month == 1 ? new(12, Year - 1) : new(Month - 1, Year);
+
+        PreviousDiscover[prevMonth] = Discover.Value + 0;
+        PreviousAmex[prevMonth] = Amex.Value + 0;
+        PreviousUSAA[prevMonth] = USAA.Value + 0;
+
+        PNC.Value -= Discover.Value + Amex.Value;
+        Amex.Value = 0;
+        Discover.Value = 0;
+
+        FifthThird.Value -= USAA.Value;
+        USAA.Value = 0;
+
+        Honda.Value += Honda.APR / 365 / 100 * DaysLeft * Honda.Value;
+
+        foreach (var mon in SimulatedConstants.Monthlies)
+        {
+            if (mon.Dynamic == "DYNAMIC")
+            {
+                Amex.Value += mon.Person1Amount;
+                USAA.Value += mon.Person2Amount;
+            }
+            else if (mon.Dynamic == "STATIC")
+            {
+                switch (mon.Name)
+                {
+                    case "Rent":
+                    case "Rent 2":
+                    case "Car":
+                    case "Electric":
+                        PNC.Value -= mon.Person1Amount;
+                        FifthThird.Value -= mon.Person2Amount;
+                        break;
+
+                    case "Phone":
+                    case "Subs":
+                    case "Car Insurance":
+                    case "Progressive":
+                        Discover.Value += mon.Person1Amount;
+                        USAA.Value += mon.Person2Amount;
+                        break;
+
+                    default:
+                        Amex.Value += mon.Person1Amount;
+                        USAA.Value += mon.Person2Amount;
+                        break;
+                }
+            }
+            else
+                continue;
+        }
+
+        PNC.Value += PrevIncome.ContainsKey((Month, Year)) ? PrevIncome[(Month, Year)] : 0;
+    }
+
+    private void UpdatePNC(bool prev = false)
+    {
+        var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
+
+        if (PrevIncome.ContainsKey((Month, Year)))
+            PNC.Value -= PrevIncome[(Month, Year)];
+
+        PNC.Value += ExpectedIncome;
+        PrevIncome[(Month, Year)] = ExpectedIncome;
+    }
+
+    private string GoodOrBad(double money)
+    {
+        return money <= 0 ? "red" : "forestgreen";
+    }
+    private string Pretty(double num)
+    {
+        return Constants.Pretty(num);
+    }
+    private double CalculateNetWorth(string person)
+    {
+        return IndexRunner.CalculateNetWorth(person, Balances);
+    }
+
+    private async void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            bool tp = double.TryParse(ExpectedIncomeStr, out ExpectedIncome);
+            if (tp) UpdatePNC();
+        }
+
+    }
+
+    private void FilterDate(string filter) { Filter(filter, true); }
+    private void FilterBalance(string filter) { Filter(filter, false, true); }
+    private void Filter(string filter, bool date = false, bool balance = false)
+    {
+        if (filtered)
+            ResetFilters(true);
+        else
+        {
+            if (date)
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
+            else if (balance)
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.PaidWithPerson1 == filter ||
+                                                                        ft.PaidWithPerson2 == filter ||
+                                                                        ft.PaidOffPerson1 == filter ||
+                                                                        ft.PaidOffPerson2 == filter).ToList();
+            else
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+
+            filtered = true;
+        }
+        StateHasChanged();
+    }
+
+    private void Filter(DynamicCostItem filter)
+    {
+        var catcher = IndexRunner.Filter(ref filter, Transactions, FilteredTransactions, ref filtered);
+        Transactions = catcher[0];
+        FilteredTransactions = catcher[1];
+
+        StateHasChanged();
+    }
+
+    private void ResetFilters(bool BtnPress = false)
+    {
+        FilteredTransactions = Transactions.Where(t => t.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).OrderByDescending(t => t.DateOfTransaction).ToList();
+        filtered = false;
+
+        if (BtnPress)
+        {
+            string FilterIndicatorTxt = " (ON)";
+            for (int index = 0; index < SimulatedConstants.DynamicCostItems.Count; index++)
+            {
+                if (SimulatedConstants.DynamicCostItems[index].Name.Contains(FilterIndicatorTxt))
+                {
+                    SimulatedConstants.DynamicCostItems[index].Name = SimulatedConstants.DynamicCostItems[index].Name.Replace(FilterIndicatorTxt, "");
+                }
+            }
+            StateHasChanged();
+        }
+    }
+    async Task DownloadCSV()
+    {
+        if (string.IsNullOrEmpty(SelectedDownload))
+            return;
+
+        string fileString = CSVBuilder.Build(Transactions, SelectedDownload);
+
+        byte[] file = System.Text.Encoding.UTF8.GetBytes(fileString);
+        string FileSaveName = SelectedDownload == "All" ? "All_Transactions.csv" : SelectedDownload.Replace(" ", "_") + "_Transactions.csv";
+        await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", FileSaveName, "text/csv", file);
+    }
+}

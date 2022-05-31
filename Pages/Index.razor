@@ -64,7 +64,9 @@
         {
             @foreach (var balance in Balances.OrderByDescending(b => b.Value))
             {
-                <BalanceBlock TheBalance="@balance" OnDelete="@(() => ShowDeleteBalBtn(balance))" />
+                <BalanceBlock TheBalance="@balance"
+                  OnClick="@(() => FilterBalance(balance.Name))"
+                  OnDelete="@(() => ShowDeleteBalBtn(balance))" />
             }
 
         }
@@ -352,26 +354,20 @@ else
     }
 
     private void FilterDate(string filter) { Filter(filter, true); }
-    private void Filter(string filter, bool date = false)
+    private void FilterBalance(string filter) { Filter(filter, false, true); }
+    private void Filter(string filter, bool date = false, bool balance = false)
     {
-        if (mobile)
-        {
-            if (filtered)
-                ResetFilters(true);
-            else
-            {
-                if (date)
-                    FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
-                else
-                    FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
-
-                filtered = true;
-            }
-        }
+        if (filtered)
+            ResetFilters(true);
         else
         {
             if (date)
                 FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
+            else if (balance)
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.PaidWithPerson1 == filter ||
+                                                                        ft.PaidWithPerson2 == filter ||
+                                                                        ft.PaidOffPerson1 == filter ||
+                                                                        ft.PaidOffPerson2 == filter).ToList();
             else
                 FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
 

@@ -1,4 +1,5 @@
 ﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
 <style>
@@ -32,7 +33,7 @@
     }
     <table>
         <tr>
-            <th colspan="6" style="background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
+            <th colspan="5" style="background-color:darkblue;color:white"><i>@(new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString())</i></th>
         </tr>
         <tr style="height:3vw">
             <th style="cursor:pointer" @onclick='() => Order("Date")'>@DateHeaderTxt</th>
@@ -40,60 +41,6 @@
             <th style="cursor:pointer" @onclick='() => Order("Person1")'>@Person1HeaderTxt</th>
             <th style="cursor:pointer" @onclick='() => Order("Person2")'>@Person2HeaderTxt</th>
             <th style="cursor:pointer" @onclick='() => Order("Total")'>@TotalHeaderTxt</th>
-            <th>
-                @if (filtered)
-                {
-                    <button style="margin:5px" @onclick='() => ResetFilters(true)'>Clear Filter</button>
-                }
-            </th>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="text" placeholder="Name" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewName" />
-                <br />
-                <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="NewExpense" title="Pick an Expense Type ">
-                    <option value="@string.Empty" selected disabled="disabled">Expense</option>
-                    @foreach (var et in ExpenseTypes)
-                    {
-                        <option value="@et">@et</option>
-                    }
-                </select>
-            </td>
-            <td>
-                <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson1Amount" />
-                <br />
-                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
-                    <option value="@string.Empty" selected disabled="disabled">Payment</option>
-                    @if (Balances != null)
-                    {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1))
-                        {
-                            <option value="@pay.Name">@pay.Name</option>
-                        }
-                    }
-                </select>
-            </td>
-            <td>
-                <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson2Amount" />
-                <br />
-                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson2PaidWith" title="Pick a payment type ">
-                    <option value="@string.Empty" selected disabled="disabled">Payment</option>
-                    @if (Balances != null)
-                    {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2))
-                        {
-                            <option value="@pay.Name">@pay.Name</option>
-                        }
-                    }
-                </select>
-            </td>
-            <td>
-                @(NewPerson1Amount + NewPerson2Amount)
-            </td>
-            <td>
-                <button class="btn btn-primary" @onclick="Add"><span class="oi oi-plus"></span></button>
-            </td>
         </tr>
         @if (FilteredTransactions != null)
         {
@@ -125,21 +72,12 @@
                         }
                     </td>
                     <td style="padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
-                    <td style="width:8vw;padding:0 .5vw;">
-                        <div style="display:flex;justify-content:center;">
-                            @if (transaction.ExpenseType != "Debt")
-                            {
-                                <button class="btn btn-secondary" style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
-                            }
-                            <button class="btn btn-danger" style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
-                        </div>
-                    </td>
                 </tr>
             }
 
         }
         <tr>
-            <td colspan="6">=</td>
+            <td colspan="5">=</td>
         </tr>
         @if (FilteredTransactions != null)
         {
@@ -315,6 +253,10 @@ else
 
     [Parameter]
     public bool Mobile { get; set; }
+    [Parameter]
+    public int Month { get; set; }
+    [Parameter]
+    public int Year { get; set; }
 
     [Parameter]
     public EventCallback OnAddConfirm { get; set; }

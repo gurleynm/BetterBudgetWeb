@@ -4,7 +4,7 @@
 
 <div class="bal-block" style="display:flex;justify-content:center;margin-right:1vw;margin-bottom:1vw;">
     <div style="border-radius:5px;width:@(FontSize*5 + "vw;");background-color:@(string.IsNullOrEmpty(Color) ? "#32A852" : Color);color:@TextColor">  
-        <h1 style="text-align:center;font-size:@(FontSize + "vw;")">
+        <h1 style="cursor:pointer;text-align:center;font-size:@(FontSize + "vw;")" @onclick=Clicked>
             @(string.IsNullOrEmpty(BalName) ? "Savings" : BalName)
             <br />
             Balance
@@ -28,6 +28,8 @@
     [Parameter]
     public double FontSize { get; set; } = 2;
     [Parameter]
+    public EventCallback<string> OnClick { get; set; }
+    [Parameter]
     public EventCallback<bool> OnDelete { get; set; }
 
     public string BalName => TheBalance.Name;
@@ -38,6 +40,10 @@
 
     public bool ShowDelete => OnDelete.HasDelegate;
 
+    private Task Clicked()
+    {
+        return OnClick.InvokeAsync(TheBalance.Name);
+    }
     private Task Delete()
     {
         return OnDelete.InvokeAsync(true);
