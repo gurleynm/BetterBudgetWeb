@@ -99,8 +99,8 @@
                             <tr>
                                 <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'><i>@dci.Name</i></td>
                                 <td>@Pretty(dci.Amount)</td>
-                                <td>@Pretty(dci.Left)</td>
-                                <td>@Pretty(dci.Left/DaysLeft)</td>
+                                <td>@Pretty(dci.Amount)</td>
+                                <td>@Pretty(dci.Amount/DaysLeft)</td>
                             </tr>
                         }
                         else
@@ -108,8 +108,8 @@
                             <tr>
                                 <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'>@dci.Name</td>
                                 <td>@Pretty(dci.Amount)</td>
-                                <td>@Pretty(dci.Left)</td>
-                                <td>@Pretty(dci.Left/DaysLeft)</td>
+                                <td>@Pretty(dci.Amount)</td>
+                                <td>@Pretty(dci.Amount/DaysLeft)</td>
                             </tr>
                         }
                     }
@@ -119,8 +119,8 @@
                     <tr>
                         <td><strong>Total</strong></td>
                         <td>@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Amount))</td>
-                        <td>@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Left))</td>
-                        <td>@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Left)/DaysLeft)</td>
+                        <td>@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+                        <td>@Pretty(SimulatedConstants.DynamicCostItems.Sum(d => d.Amount)/DaysLeft)</td>
                     </tr>
                 </table>
             </div>
@@ -346,15 +346,32 @@ else
             ExpectedIncome = 0;
         }
 
+        int ForMonth;
+        int ForYear;
+        if(Month == 12)
+        {
+            ForMonth = 1;
+            ForYear = Year + 1;
+        }
+        else
+        {
+            ForMonth = Month + 1;
+            ForYear = Year;
+        }
+
         var FifthThird = Balances.FirstOrDefault(bal => bal.Name == "Fifth Third");
         var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
-        var Honda = Balances.FirstOrDefault(bal => bal.Name == "Honda");
         var HotelPromised = Balances.FirstOrDefault(bal => bal.Name == "Hotel (Promised)");
         var USAA = Balances.FirstOrDefault(bal => bal.Name == "USAA");
         var Discover = Balances.FirstOrDefault(bal => bal.Name == "Discover");
         var Amex = Balances.FirstOrDefault(bal => bal.Name == "Amex");
 
-        foreach (var mon in SimulatedConstants.Monthlies)
+        var DesiredMonthlies = SimulatedConstants.GetNeededMonthlies(ForMonth, ForYear);
+
+        SimulatedConstants.Month = Month;
+        SimulatedConstants.Month = Year;
+
+        foreach (var mon in DesiredMonthlies)
         {
             if (mon.Dynamic == "DYNAMIC")
             {
@@ -367,13 +384,16 @@ else
                 {
                     case "Rent":
                     case "Rent 2":
-                    case "Car":
                     case "Electric":
                         PNC.Value += mon.Person1Amount;
                         FifthThird.Value += mon.Person2Amount;
                         break;
 
                     case "Phone":
+                        Discover.Value -= mon.Person1Amount;
+                        FifthThird.Value += mon.Person2Amount;
+                        break;
+
                     case "Subs":
                     case "Car Insurance":
                     case "Progressive":
@@ -393,8 +413,6 @@ else
 
         int LastMonthDayTotal = DateTime.DaysInMonth(Year, Month);
 
-        Honda.Value = Honda.Value / (1 + Honda.APR / 100 / 365 * LastMonthDayTotal);
-
         if (PreviousAmex.ContainsKey((Month, Year)))
         {
             PNC.Value += PreviousDiscover[(Month, Year)] + PreviousAmex[(Month, Year)];
@@ -403,19 +421,6 @@ else
 
             FifthThird.Value += PreviousUSAA[(Month, Year)];
             USAA.Value = PreviousUSAA[(Month, Year)];
-        }
-
-        int ForMonth;
-        int ForYear;
-        if(Month == 12)
-        {
-            ForMonth = 1;
-            ForYear = Year + 1;
-        }
-        else
-        {
-            ForMonth = Month + 1;
-            ForYear = Year;
         }
 
         PNC.Value -= PrevIncome.ContainsKey((ForMonth, ForYear)) ? PrevIncome[(ForMonth, ForYear)] : 0;
@@ -436,7 +441,6 @@ else
 
         var FifthThird = Balances.FirstOrDefault(bal => bal.Name == "Fifth Third");
         var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
-        var Honda = Balances.FirstOrDefault(bal => bal.Name == "Honda");
         var HotelPromised = Balances.FirstOrDefault(bal => bal.Name == "Hotel (Promised)");
         var USAA = Balances.FirstOrDefault(bal => bal.Name == "USAA");
         var Discover = Balances.FirstOrDefault(bal => bal.Name == "Discover");
@@ -455,9 +459,9 @@ else
         FifthThird.Value -= USAA.Value;
         USAA.Value = 0;
 
-        Honda.Value += Honda.APR / 365 / 100 * DaysLeft * Honda.Value;
+        var DesiredMonthlies = SimulatedConstants.GetNeededMonthlies(Month, Year);
 
-        foreach (var mon in SimulatedConstants.Monthlies)
+        foreach (var mon in DesiredMonthlies)
         {
             if (mon.Dynamic == "DYNAMIC")
             {
@@ -470,13 +474,16 @@ else
                 {
                     case "Rent":
                     case "Rent 2":
-                    case "Car":
                     case "Electric":
                         PNC.Value -= mon.Person1Amount;
                         FifthThird.Value -= mon.Person2Amount;
                         break;
 
                     case "Phone":
+                        Discover.Value += mon.Person1Amount;
+                        FifthThird.Value -= mon.Person2Amount;
+                        break;
+
                     case "Subs":
                     case "Car Insurance":
                     case "Progressive":

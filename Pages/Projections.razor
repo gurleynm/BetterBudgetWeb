@@ -261,10 +261,56 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        NeedForHome = new double[] { 370000, 400000, 435000, 455000, 470000, 480000, 500000, 600000 };
+
+        ReDrive();
+
+        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+    }
+
+    private async void Submit()
+    {
+        if (NewPerson1 <= 0 || NewPerson2 <= 0)
+            return;
+
+        string[] splitter = MonthYear.Split(" ");
+        int indexOfMonth = Array.IndexOf(Months, splitter[0]);
+        int yee = int.Parse(splitter[1]);
+
+
+        Monthly NewProjectedData = new Monthly
+            {
+                Name = MonthYear,
+                Person1Amount = NewPerson1,
+                Person2Amount = NewPerson2,
+                Month = Months[indexOfMonth],
+                Year = yee.ToString(),
+                Dynamic = "PROJECTED DATA"
+            };
+
+        var monthlies = await MonthlyRepo.AddOrUpdateAsync(NewProjectedData);
+        Constants.SetMonthlies(monthlies);
+
+        NewPerson1 = 0;
+        NewPerson2 = 0;
+        indexOfMonth = (indexOfMonth + 1) % 12;
+        if (indexOfMonth == 0)
+        {
+            splitter[1] = (yee + 1).ToString();
+        }
+        MonthYear = Months[indexOfMonth] + " " + splitter[1];
+
+        ReDrive();
+
+        StateHasChanged();
+    }
+
+    private void ReDrive()
+    {
+        
         int Month = 10;
         int Year = 2021;
 
-        NeedForHome = new double[] { 370000, 400000, 435000, 455000, 470000, 480000, 500000, 600000 };
         Goals = new List<ProjectedDatum>();
 
         Goals.Add(new ProjectedDatum
@@ -282,33 +328,6 @@ else
 
         ProjectionRunner.GetGoals(ref Default1, ref Default2, ref MonthYear, ref Goals);
 
-        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
-    }
-
-    private async void Submit()
-    {
-        if (NewPerson1 <= 0 || NewPerson2 <= 0)
-            return;
-
-        Monthly NewProjectedData = new Monthly
-            {
-                Name = MonthYear,
-                Person1Amount = NewPerson1,
-                Person2Amount = NewPerson2,
-                Dynamic = "PROJECTED DATA"
-            };
-
-        var monthlies = await MonthlyRepo.AddOrUpdateAsync(NewProjectedData);
-        Constants.SetMonthlies(monthlies);
-
-        NewPerson1 = 0;
-        NewPerson2 = 0;
-        string[] splitter = MonthYear.Split(" ");
-        int indexOfMonth = Array.IndexOf(Months, splitter[0]);
-        indexOfMonth = (indexOfMonth + 1) % 12;
-        MonthYear = Months[indexOfMonth] + " " + splitter[1];
-
-        StateHasChanged();
     }
 
     public string Pretty(double num)

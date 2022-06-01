@@ -23,6 +23,58 @@ namespace BetterBudgetWeb.Simulation
             Monthlies = await MonthlyRepo.GetMonthliesAsync();
             SetMonthlies(DateTime.Now.Month, DateTime.Now.Year);
         }
+        public static List<Monthly> GetNeededMonthlies(int month, int year)
+        {
+            Month = month;
+            Year = year;
+
+            var DesiredMonthlies = new List<Monthly>();
+            Monthly NewMonthly;
+
+            foreach (var mon in Monthlies)
+            {
+                if (mon.Dynamic == "DYNAMIC")
+                {
+                    if (CheckMonthYear(mon))
+                    {
+                        var DynamicMonthly = DesiredMonthlies.FirstOrDefault(d => d.Name == mon.Name);
+                        NewMonthly = new Monthly(mon);
+
+                        if (DynamicMonthly == null)
+                            DesiredMonthlies.Add(NewMonthly);
+                        else
+                        {
+                            if (mon.Month != "All")
+                            {
+                                DesiredMonthlies.Remove(DynamicMonthly);
+                                DesiredMonthlies.Add(NewMonthly);
+                            }
+                        }
+                    }
+                }
+                else if (mon.Dynamic == "STATIC")
+                {
+                    if (CheckMonthYear(mon))
+                    {
+                        var StaticMonthly = DesiredMonthlies.FirstOrDefault(s => s.Name == mon.Name);
+                        NewMonthly = new Monthly(mon);
+
+                        if (StaticMonthly == null)
+                            DesiredMonthlies.Add(NewMonthly);
+                        else
+                        {
+                            if (mon.Month != "All")
+                            {
+                                DesiredMonthlies.Remove(StaticMonthly);
+                                DesiredMonthlies.Add(NewMonthly);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return DesiredMonthlies;
+        }
 
         public static void SetMonthlies(int month, int year)
         {
@@ -96,6 +148,12 @@ namespace BetterBudgetWeb.Simulation
         }
         public static string MonthYear() { return new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString(); }
         public static string MonthYear(int month, int year) { return new DateTime(year, month, 1).ToString("MMMM") + " " + year.ToString(); }
+        public static bool CheckMonthYear(int mon, int year)
+        {
+            string currentMonthYear = MonthYear();
+
+            return MonthYear(mon, year) == currentMonthYear || MonthYear(mon, year).Contains("All");
+        }
         public static bool CheckMonthYear(Monthly mon)
         {
             string currentMonthYear = MonthYear();

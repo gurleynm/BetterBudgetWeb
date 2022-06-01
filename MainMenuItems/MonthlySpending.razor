@@ -479,7 +479,7 @@ else
         if (accepted)
         {
             Transactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
-            FilteredTransactions = Transactions.OrderByDescending(ft => ft.DateOfTransaction).ToList();
+            FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(ft => ft.DateOfTransaction).ToList();
             Balances = await BalanceRepo.GetBalancesAsync();
             OnDeleteConfirm.InvokeAsync();
         }
