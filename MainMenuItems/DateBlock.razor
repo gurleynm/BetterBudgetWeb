@@ -1,52 +1,39 @@
 ﻿@using System.Globalization;
 <style>
-.expense-date {
-    display: flex;
-    margin: 1vw auto;
-    flex-direction: column;
-    width: 7rem;
-    height: 7rem;
-    border: 1px solid #ececec;
-    background-color: #2a2a2a;
-    color: white;
-    border-radius: 12px;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .expense-date__month {
-    font-size: 1rem;
-    font-weight: bold;
-  }
-  
-  .expense-date__year {
-    font-size: 1rem;
-  }
-  
-  .expense-date__day {
-    font-size: 2.5rem;
-    font-weight: bold;
-  }
-  </style>
+    .expense-date {
+        display: flex;
+        margin: 1vw auto;
+        flex-direction: column;
+        width: 7rem;
+        height: 7rem;
+        border: 1px solid #ececec;
+        background-color: #2a2a2a;
+        color: white;
+        border-radius: 12px;
+        align-items: center;
+        justify-content: center;
+    }
 
-@if (!Mobile)
-{
-    <div class="expense-date">
-      <div class="expense-date__month">@DayOfWeek</div>
-      <div class="expense-date__year">@Month</div>
-      <div class="expense-date__day">@Day</div>
-    </div>
-}
-else
-{
-    <span style="font-size:3vw;width:5vw;">
-        @DayOfWeek
-        <br />
-        @MonthDay
-        <br />
-        @Year
-    </span>
-}
+    .expense-date__month {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    .expense-date__year {
+        font-size: 1rem;
+    }
+
+    .expense-date__day {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+</style>
+
+<div class="expense-date">
+    <div class="expense-date__month">@DayOfWeek</div>
+    <div class="expense-date__year">@Month</div>
+    <div class="expense-date__day">@Day</div>
+</div>
 
 @code {
     [Parameter]
@@ -56,7 +43,7 @@ else
     public bool Mobile { get; set; }
 
     private string[] names => CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedDayNames;
-    private string DayOfWeek => names[(int) TheDate.DayOfWeek];
+    private string DayOfWeek => names[(int)TheDate.DayOfWeek];
     private string Day => TheDate.Day.ToString();
     private string Month => TheDate.ToString("MMMM");
     private string MonthDay => Month + " " + Day + ",";

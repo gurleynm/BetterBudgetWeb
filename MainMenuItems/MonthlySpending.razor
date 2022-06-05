@@ -200,9 +200,14 @@ else
         <tr>
             <th style="font-size:3vw">Date</th>
             <th style="font-size:3vw;">Name</th>
-            <th style="font-size:3vw">@Constants.Person1</th>
-            <th style="font-size:3vw">@Constants.Person2</th>
+            <th style="font-size:3vw">
+                @Constants.Person1
+                <br />
+                <br />
+                @Constants.Person2
+            </th>
             <th style="font-size:3vw">Total</th>
+            <th style="font-size:3vw"></th>
         </tr>
         @if (FilteredTransactions != null)
         {
@@ -224,8 +229,8 @@ else
                             <br />
                             @(string.Format("({0})", transaction.PaidWithPerson1))
                         }
-                    </td>
-                    <td style="font-size:3vw;padding:0 1vw;">
+                        <br />
+                        <br />
                         <span class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))" style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.Person2Amount)</span>
                         @if (!string.IsNullOrEmpty(transaction.PaidWithPerson2))
                         {
@@ -234,6 +239,17 @@ else
                         }
                     </td>
                     <td style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
+                    <td style="width:8vw;padding:0 .5vw;">
+                        <div style="display:inline-block;">
+                            @if (transaction.ExpenseType != "Debt")
+                            {
+                                <button class="btn btn-secondary" style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                                <br />
+                                <br />
+                            }
+                            <button class="btn btn-danger" style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
+                        </div>
+                    </td>
                 </tr>
             }
 
@@ -256,6 +272,7 @@ else
                     <td class='@TranColor("Income", TotalIncomeSum)' style="font-size:3vw;">
                         @Pretty(TotalIncomeSum)
                     </td>
+                    <td></td>
                 </tr>
             }
             @if (TotalExpenseSum > 0)
@@ -271,6 +288,7 @@ else
                     <td class='@TranColor("Expense", TotalExpenseSum)' style="font-size:3vw;">
                         @Pretty(TotalExpenseSum)
                     </td>
+                    <td></td>
                 </tr>
             }
             <tr>
@@ -284,6 +302,7 @@ else
                 <td class='@TranColor("Income", NetTotalSum)' style="font-size:3vw;">
                     @Pretty(NetTotalSum)
                 </td>
+                <td></td>
             </tr>
         }
     </table>
@@ -293,6 +312,7 @@ else
 {
     <EditorModalDialog Title="@(string.Format("{0} (By: {1})","Penis", "Deez Nuts"))"
                    Text="Story"
+                   Mobile="Mobile"
                    Transact="@SelectedTransaction"
                    OnClose="@CloseModal">
 
@@ -302,6 +322,7 @@ else
 @if (ShowDelete)
 {
     <DeleteConfirm Transact="@SelectedTransaction"
+               Mobile=Mobile
                OnClose="@Delete">
 
     </DeleteConfirm>

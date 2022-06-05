@@ -290,6 +290,7 @@ else
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).OrderByDescending(t => t.DateOfTransaction).ToList();
         SimulatedConstants.SetMonthlies(Month, Year);
         ErrorMsg = string.Empty;
+        SubtractUnspent();
 
         StateHasChanged();
     }
@@ -335,7 +336,7 @@ else
 
     private void UpdateBalancesPrev()
     {
-        if(PrevIncome.ContainsKey((Month, Year)) && PrevIncome[(Month, Year)] != 0)
+        if (PrevIncome.ContainsKey((Month, Year)) && PrevIncome[(Month, Year)] != 0)
         {
             ExpectedIncomeStr = PrevIncome[(Month, Year)].ToString();
             ExpectedIncome = PrevIncome[(Month, Year)];
@@ -348,7 +349,7 @@ else
 
         int ForMonth;
         int ForYear;
-        if(Month == 12)
+        if (Month == 12)
         {
             ForMonth = 1;
             ForYear = Year + 1;
@@ -428,7 +429,7 @@ else
 
     private void UpdateBalancesNext()
     {
-        if(PrevIncome.ContainsKey((Month, Year)) && PrevIncome[(Month, Year)] != 0)
+        if (PrevIncome.ContainsKey((Month, Year)) && PrevIncome[(Month, Year)] != 0)
         {
             ExpectedIncomeStr = PrevIncome[(Month, Year)].ToString();
             ExpectedIncome = PrevIncome[(Month, Year)];
@@ -598,5 +599,41 @@ else
         byte[] file = System.Text.Encoding.UTF8.GetBytes(fileString);
         string FileSaveName = SelectedDownload == "All" ? "All_Transactions.csv" : SelectedDownload.Replace(" ", "_") + "_Transactions.csv";
         await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", FileSaveName, "text/csv", file);
+    }
+    private void SubtractUnspent()
+    {
+        var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
+        var FifthThird = Balances.FirstOrDefault(bal => bal.Name == "Fifth Third");
+
+        DynamicCostItem TheDCI;
+        StaticMonthlyCost TheSMC;
+
+        foreach (var sm in SimulatedConstants.StaticMonthlyCosts)
+        {
+            PNC.Value -= sm.Person1Amount;
+            FifthThird.Value -= sm.Person2Amount;
+        }
+        foreach (var dc in SimulatedConstants.DynamicCostItems)
+        {
+            PNC.Value -= dc.Person1Amount;
+            FifthThird.Value -= dc.Person2Amount;
+        }
+
+        foreach (Transaction t in FilteredTransactions)
+        {
+            TheDCI = SimulatedConstants.DynamicCostItems.FirstOrDefault(d => t.ExpenseType == d.Name);
+            if (TheDCI != null)
+            {
+                PNC.Value += t.Person1Amount;
+                FifthThird.Value += t.Person2Amount;
+            }
+
+            TheSMC = SimulatedConstants.StaticMonthlyCosts.FirstOrDefault(d => t.Name == d.Name);
+            if (TheSMC != null)
+            {
+                PNC.Value += t.Person1Amount;
+                FifthThird.Value += t.Person2Amount;
+            }
+        }
     }
 }

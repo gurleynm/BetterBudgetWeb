@@ -3,8 +3,8 @@
 @using BetterBudgetWeb.Repo
 
 <div class="bal-block" style="display:flex;justify-content:center;margin-right:1vw;margin-bottom:1vw;">
-    <div style="border-radius:5px;width:@(FontSize*5 + "vw;");background-color:@(string.IsNullOrEmpty(Color) ? "#32A852" : Color);color:@TextColor">  
-        <h1 style="cursor:pointer;text-align:center;font-size:@(FontSize + "vw;")" @onclick=Clicked>
+    <div style="display:flex;justify-content:flex-end; flex-direction:column;flex-wrap:wrap; border-radius:5px;width:@(FontSize*5 + "vw;");background-color:@(string.IsNullOrEmpty(Color) ? "#32A852" : Color);color:@TextColor">  
+        <h1 style="flex-grow:4;cursor:pointer;text-align:center;font-size:@(FontSize + "vw;")" @onclick=Clicked>
             @(string.IsNullOrEmpty(BalName) ? "Savings" : BalName)
             <br />
             Balance
@@ -17,7 +17,7 @@
         <h2 style="text-align:center;font-size:@(FontSize/1.5 + "vw");margin-bottom:5vh;color:@TextColor">@(double.TryParse(Amount, out double AM) ? AM.ToString("C", CultureInfo.CurrentCulture) : "$0.00")</h2>
         @if (ShowDelete)
         {
-            <button class="btn btn-danger" style="position:relative;bottom:0;float:right;" @onclick=Delete>Delete</button>
+            <button class="btn btn-danger" style="vertical-align:bottom;float:right;" @onclick=Delete>Remove</button>
         }
     </div>
 </div>
