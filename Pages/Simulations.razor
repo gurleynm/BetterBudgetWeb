@@ -722,7 +722,13 @@ else
             TheDCI = SimulatedConstants.DynamicCostItems.FirstOrDefault(d => t.ExpenseType == d.Name);
             if (TheDCI != null)
             {
-                if (RealValues.ContainsKey(t.Name))
+                /*
+                Check if the Expense Type for the Dynamic Cost Item already exists.
+
+                If yes, add current t.PersonXAmount values to each respective item
+                Otherwise, add it.
+                */
+                if (RealValues.ContainsKey(t.ExpenseType))
                     RealValues[t.ExpenseType] = (RealValues[t.ExpenseType].Item1 + t.Person1Amount, RealValues[t.ExpenseType].Item2 + t.Person2Amount);
                 else
                     RealValues[t.ExpenseType] = (t.Person1Amount, t.Person2Amount);
@@ -731,6 +737,12 @@ else
             TheSMC = SimulatedConstants.StaticMonthlyCosts.FirstOrDefault(d => t.Name == d.Name);
             if (TheSMC != null)
             {
+                /*
+                Check if the Name for the Static Cost exists.
+
+                If yes, add current t.PersonXAmount values.
+                */
+
                 RealValues[t.Name] = (t.Person1Amount, t.Person2Amount);
             }
         }
@@ -739,9 +751,13 @@ else
         {
             if (RealValues.ContainsKey(sm.Name))
             {
+                // If Person1 has 0 and they are expected to pay, use the expected (sm.Person1Amount) value
+                // Otherwise, do nothing because the value has already been subtracted when the transaction was added
                 if (RealValues[sm.Name].Item1 == 0 && sm.Person1Amount != 0)
                     Person1Income.Value -= sm.Person1Amount;
 
+                // If Person2 has 0 and they are expected to pay, use the expected (sm.Person2Amount) value
+                // Otherwise, do nothing because the value has already been subtracted when the transaction was added
                 if (RealValues[sm.Name].Item2 == 0 && sm.Person2Amount != 0)
                     Person2Income.Value -= sm.Person2Amount;
             }
@@ -755,11 +771,31 @@ else
         {
             if (RealValues.ContainsKey(dc.Name))
             {
-                Person1Income.Value -= Math.Max(RealValues[dc.Name].Item1, dc.Person1Amount);
-                Person2Income.Value -= Math.Max(RealValues[dc.Name].Item2, dc.Person2Amount);
+                // If Person1 is expected to spend more than they have spent, add current spending back and subtracted the 
+                // greater value
+                // Otherwise, do nothing because the real values (which would be greater than projected) have already been 
+                // subtracted when the transactions were added
+
+                if (RealValues[dc.Name].Item1 < dc.Person1Amount)
+                {
+                    Person1Income.Value += RealValues[dc.Name].Item1;
+                    Person1Income.Value -= dc.Person1Amount;
+                }
+
+                // If Person2 is expected to spend more than they have spent, add current spending back and subtracted the 
+                // greater value
+                // Otherwise, do nothing because the real values (which would be greater than projected) have already been 
+                // subtracted when the transactions were added
+
+                if (RealValues[dc.Name].Item2 < dc.Person2Amount)
+                {
+                    Person2Income.Value += RealValues[dc.Name].Item2;
+                    Person2Income.Value -= dc.Person2Amount;
+                }
             }
             else
             {
+                // If here, then no RealValue was found. Subtract the expected value fo the expense
                 Person1Income.Value -= dc.Person1Amount;
                 Person2Income.Value -= dc.Person2Amount;
             }

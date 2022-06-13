@@ -72,7 +72,7 @@
             {
                 Month = ",,,," + split[0] + "," + split[1] + "\n";
             }
-            else if(split.Length > 1 && all)
+            else if (split.Length > 1 && all)
             {
                 Month = ",,,,All,Transactions\n\n";
                 Month += ",,,," + split[0] + "," + split[1] + "\n";
@@ -81,22 +81,22 @@
             {
                 return "no";
             }
-                return Month + "Name," +
-                       "Expense," +
-                       "Person1 Amount," +
-                       "Person2 Amount," +
-                       "Total Amount," +
-                       "Person1 Paid With," +
-                       "Person2 Paid With," +
-                       "Person1 Paid Off," +
-                       "Person2 Paid Off," +
-                       "Date Of Transaction\n";
+            return Month + "Name," +
+                   "Expense," +
+                   $"{Constants.Person1} Amount," +
+                   $"{Constants.Person2} Amount," +
+                   "Total Amount," +
+                   $"{Constants.Person1} Paid With," +
+                   $"{Constants.Person2} Paid With," +
+                   $"{Constants.Person1} Paid Off," +
+                   $"{Constants.Person2} Paid Off," +
+                   "Date Of Transaction\n";
         }
         public override string ToString()
         {
             string pwn = (string.IsNullOrEmpty(PaidWithPerson1) || PaidWithPerson1 == "none") ? "-----------------" : PaidWithPerson1;
             string pwl = string.IsNullOrEmpty(PaidWithPerson2) || PaidWithPerson2 == "none" ? "-----------------" : PaidWithPerson2;
-            
+
             string pon = (string.IsNullOrEmpty(PaidOffPerson1) || PaidOffPerson1 == "none") ? "----------------" : PaidOffPerson1;
             string pol = string.IsNullOrEmpty(PaidOffPerson2) || PaidOffPerson2 == "none" ? "----------------" : PaidOffPerson2;
 

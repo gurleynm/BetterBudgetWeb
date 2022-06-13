@@ -51,13 +51,16 @@
                 la = DesiredTransactions.Where(dt => dt.ExpenseType == "Income").Sum(d => d.Person2Amount);
                 double tot = na + la;
                 if (na > 0 || la > 0)
-                    fileString += "Grand Income Total:,," + Pretty(na) + "," + Pretty(la) + "," + Pretty(tot) + "\n";
+                    fileString += "\nGrand Income Total:,," + Pretty(na) + "," + Pretty(la) + "," + Pretty(tot) + "\n";
 
                 double nae = DesiredTransactions.Where(dt => dt.ExpenseType != "Income" && dt.ExpenseType != "Debt").Sum(d => d.Person1Amount);
                 double lae = DesiredTransactions.Where(dt => dt.ExpenseType != "Income" && dt.ExpenseType != "Debt").Sum(d => d.Person2Amount);
                 double tote = nae + lae;
                 if (nae > 0 || lae > 0)
-                    fileString += "\nGrand Expense Total:,," + Pretty(-1 * nae) + "," + Pretty(-1 * lae) + "," + Pretty(-1 * tote) + "\n";
+                    if (na > 0 || la > 0)
+                        fileString += "Grand Expense Total:,," + Pretty(-1 * nae) + "," + Pretty(-1 * lae) + "," + Pretty(-1 * tote) + "\n";
+                    else
+                        fileString += "\nGrand Expense Total:,," + Pretty(-1 * nae) + "," + Pretty(-1 * lae) + "," + Pretty(-1 * tote) + "\n";
 
                 na = na - nae;
                 la = la - lae;
