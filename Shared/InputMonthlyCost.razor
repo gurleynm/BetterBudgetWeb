@@ -20,7 +20,8 @@
     select {
         color: black;
     }
-    input{
+
+    input {
         color: black;
     }
 </style>
@@ -40,14 +41,19 @@
     </div>
     <br />
     <div>
-        <label>When:</label>
+        <label>When (Month Year):</label>
         <br />
-        <select @bind="SelectMonthYear">
+        <select @bind="SelectMonth">
             @foreach (var item in Months)
             {
                 <option value="@item">@item</option>
             }
         </select>
+        <select @bind="SelectYear">
+                <option value="1">All</option>
+                <option value="@DateTime.Now.Year.ToString()">@DateTime.Now.Year</option>
+                <option value="@DateTime.Now.AddYears(1).Year.ToString()">@DateTime.Now.AddYears(1).Year</option>
+            </select>
     </div>
     @if (ShowName)
     {
@@ -94,13 +100,19 @@ else
             </select>
         </div>
         <div style="float:left;margin-right:10vw;">
-            <label>When:</label>
+            <label>When (Month Year):</label>
             <br />
-            <select @bind="SelectMonthYear">
+            <select @bind="SelectMonth">
                 @foreach (var item in Months)
                 {
                     <option value="@item">@item</option>
                 }
+            </select>
+
+            <select @bind="SelectYear">
+                <option value="1">All</option>
+                <option value="@DateTime.Now.Year.ToString()">@DateTime.Now.Year</option>
+                <option value="@DateTime.Now.AddYears(1).Year.ToString()">@DateTime.Now.AddYears(1).Year</option>
             </select>
         </div>
         @if (ShowName)
@@ -150,7 +162,8 @@ else
     bool ShowName => Dyna != "SAVINGS";
 
     List<string> Months { get; set; } = new List<string>();
-    string SelectMonthYear { get; set; } = "All";
+    string SelectMonth { get; set; } = "All";
+    string SelectYear { get; set; } = "1";
     string Dyna { get; set; }
     private List<Balance> Balances => BalanceRepo.GetBalances();
 
@@ -171,7 +184,7 @@ else
             if (theMons[index % 12] == "January" && DateTime.Now.Month != 1)
                 thisYear++;
 
-            Months.Add(theMons[index % 12] + " " + thisYear.ToString());
+            Months.Add(theMons[index % 12]);
         }
 
         return base.OnInitializedAsync();
@@ -195,7 +208,7 @@ else
         {
             string mon;
             string year;
-            await MonthlyRepo.AddOrUpdateAsync(Dyna == "SAVINGS" ? "SAVINGS" : StaticName, nam, lam, Dyna, SelectMonthYear);
+            await MonthlyRepo.AddOrUpdateAsync(Dyna == "SAVINGS" ? "SAVINGS" : StaticName, nam, lam, Dyna, SelectMonth + " " + SelectYear);
 
             ErrorColor = "green";
             ErrorMsg = StaticName + " Monthly was added!";

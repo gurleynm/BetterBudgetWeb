@@ -40,7 +40,49 @@
 </div>
 
 <div style="display:flex;justify-content:space-around">
-    <input type="text" placeholder="Expected Income" @onkeydown="@Enter" @bind=ExpectedIncomeStr @oninput="@(async (ui) => { ExpectedIncomeStr = (string) ui.Value;})" style="align-self:flex-end">
+    <div style='display:@(mobile ? "inline-block" : "flex");justify-content:space-around'>
+        <br />
+        <br />
+        <label style="float:left;margin-right:1vw;">@(Constants.Person1 + ":")</label>
+        <div style="display:table">
+            <input style="align-self:flex-end;display:table-cell" type="text" placeholder=@(Constants.Person1 + " Expected Income") @onkeydown="@Enter" @bind=ExpectedIncome1Str @oninput="@(async (ui) => { ExpectedIncome1Str = (string) ui.Value;})">
+            <br />
+            <br />
+            <select class="custom-select" style="margin-right:1vw;" @bind="PaidIntoPerson1" title="Where You Get Paid ">
+                <option value="@string.Empty" selected disabled="disabled">(Choose Where You Get Paid)</option>
+                @if (Balances != null)
+                {
+                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 && !b.BalanceType.Contains("Loan")))
+                    {
+                        <option value="@pay.Name">@pay.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <br />
+        <br />
+        <label style="float:left;margin-right:1vw;">@(Constants.Person2 + ":")</label>
+        <div style="display:table">
+            <input style="align-self:flex-end;display:table-cell" type="text" placeholder=@(Constants.Person2 + " Expected Income") @onkeydown="@Enter" @bind=ExpectedIncome2Str @oninput="@(async (ui) => { ExpectedIncome2Str = (string) ui.Value;})">
+            <br />
+            <br />
+            <select class="custom-select" style="margin-right:1vw;" @bind="PaidIntoPerson2" title="Where You Get Paid ">
+                <option value="@string.Empty" selected disabled="disabled">(Choose Where You Get Paid)</option>
+                @if (Balances != null)
+                {
+                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 && !b.BalanceType.Contains("Loan")))
+                    {
+                        <option value="@pay.Name">@pay.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <br />
+        <br />
+        <div style="display:flex;justify-content:center">
+            <button class="btn btn-primary" style="margin: auto" @onclick=GoGo>Enter</button>
+        </div>
+    </div>
 </div>
 
 <h1 style="text-align:center;color:@GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
@@ -235,6 +277,9 @@ else
 }
 
 @code {
+    private string PaidIntoPerson1 { get; set; }
+    private string PaidIntoPerson2 { get; set; }
+
     private string[] Months = new string[] { "All", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
     private DateTime StartDate => DateTime.Now;
@@ -248,7 +293,8 @@ else
     private Dictionary<(int, int), double> PreviousAmex { get; set; } = new Dictionary<(int, int), double>();
     private Dictionary<(int, int), double> PreviousUSAA { get; set; } = new Dictionary<(int, int), double>();
 
-    private Dictionary<(int, int), double> PrevIncome { get; set; } = new Dictionary<(int, int), double>();
+    private Dictionary<(int, int), double> PrevIncome1 { get; set; } = new Dictionary<(int, int), double>();
+    private Dictionary<(int, int), double> PrevIncome2 { get; set; } = new Dictionary<(int, int), double>();
 
     private List<Transaction> Transactions;
     private List<Transaction> FilteredTransactions;
@@ -266,9 +312,12 @@ else
     private int Month { get; set; } = DateTime.Now.Month;
     private int Year { get; set; } = DateTime.Now.Year;
 
-    private string ExpectedIncomeStr { get; set; }
-    private double PrevExpectedIncome;
-    private double ExpectedIncome;
+    private string ExpectedIncome1Str { get; set; }
+    private string ExpectedIncome2Str { get; set; }
+    private double PrevExpected1Income;
+    private double PrevExpected2Income;
+    private double Expected1Income;
+    private double Expected2Income;
 
     private string MonthYear => (new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString());
 
@@ -290,6 +339,10 @@ else
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).OrderByDescending(t => t.DateOfTransaction).ToList();
         SimulatedConstants.SetMonthlies(Month, Year);
         ErrorMsg = string.Empty;
+
+        PaidIntoPerson1 = Balances.Where(b => b.Person == Constants.Person1 && !b.BalanceType.Contains("Loan")).ToList()[0].Name;
+        PaidIntoPerson2 = Balances.Where(b => b.Person == Constants.Person2 && !b.BalanceType.Contains("Loan")).ToList()[0].Name;
+
         SubtractUnspent();
 
         StateHasChanged();
@@ -336,15 +389,26 @@ else
 
     private void UpdateBalancesPrev()
     {
-        if (PrevIncome.ContainsKey((Month, Year)) && PrevIncome[(Month, Year)] != 0)
+        if (PrevIncome1.ContainsKey((Month, Year)) && PrevIncome1[(Month, Year)] != 0)
         {
-            ExpectedIncomeStr = PrevIncome[(Month, Year)].ToString();
-            ExpectedIncome = PrevIncome[(Month, Year)];
+            ExpectedIncome1Str = PrevIncome1[(Month, Year)].ToString();
+            Expected1Income = PrevIncome1[(Month, Year)];
         }
         else
         {
-            ExpectedIncomeStr = "";
-            ExpectedIncome = 0;
+            ExpectedIncome1Str = "";
+            Expected1Income = 0;
+        }
+
+        if (PrevIncome2.ContainsKey((Month, Year)) && PrevIncome2[(Month, Year)] != 0)
+        {
+            ExpectedIncome2Str = PrevIncome2[(Month, Year)].ToString();
+            Expected2Income = PrevIncome2[(Month, Year)];
+        }
+        else
+        {
+            ExpectedIncome2Str = "";
+            Expected2Income = 0;
         }
 
         int ForMonth;
@@ -360,8 +424,9 @@ else
             ForYear = Year;
         }
 
-        var FifthThird = Balances.FirstOrDefault(bal => bal.Name == "Fifth Third");
-        var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
+        var Person1Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
+        var Person2Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
+
         var HotelPromised = Balances.FirstOrDefault(bal => bal.Name == "Hotel (Promised)");
         var USAA = Balances.FirstOrDefault(bal => bal.Name == "USAA");
         var Discover = Balances.FirstOrDefault(bal => bal.Name == "Discover");
@@ -386,13 +451,14 @@ else
                     case "Rent":
                     case "Rent 2":
                     case "Electric":
-                        PNC.Value += mon.Person1Amount;
-                        FifthThird.Value += mon.Person2Amount;
+                        Person1Income.Value += mon.Person1Amount;
+                        Person2Income.Value += mon.Person2Amount;
                         break;
 
                     case "Phone":
+                    case "Spotify":
                         Discover.Value -= mon.Person1Amount;
-                        FifthThird.Value += mon.Person2Amount;
+                        Person2Income.Value += mon.Person2Amount;
                         break;
 
                     case "Subs":
@@ -416,32 +482,45 @@ else
 
         if (PreviousAmex.ContainsKey((Month, Year)))
         {
-            PNC.Value += PreviousDiscover[(Month, Year)] + PreviousAmex[(Month, Year)];
+            Person1Income.Value += PreviousDiscover[(Month, Year)] + PreviousAmex[(Month, Year)];
             Amex.Value = PreviousAmex[(Month, Year)];
             Discover.Value = PreviousDiscover[(Month, Year)];
 
-            FifthThird.Value += PreviousUSAA[(Month, Year)];
+            Person2Income.Value += PreviousUSAA[(Month, Year)];
             USAA.Value = PreviousUSAA[(Month, Year)];
         }
 
-        PNC.Value -= PrevIncome.ContainsKey((ForMonth, ForYear)) ? PrevIncome[(ForMonth, ForYear)] : 0;
+        Person1Income.Value -= PrevIncome1.ContainsKey((ForMonth, ForYear)) ? PrevIncome1[(ForMonth, ForYear)] : 0;
+        Person2Income.Value -= PrevIncome2.ContainsKey((ForMonth, ForYear)) ? PrevIncome2[(ForMonth, ForYear)] : 0;
     }
 
     private void UpdateBalancesNext()
     {
-        if (PrevIncome.ContainsKey((Month, Year)) && PrevIncome[(Month, Year)] != 0)
+        if (PrevIncome1.ContainsKey((Month, Year)) && PrevIncome1[(Month, Year)] != 0)
         {
-            ExpectedIncomeStr = PrevIncome[(Month, Year)].ToString();
-            ExpectedIncome = PrevIncome[(Month, Year)];
+            ExpectedIncome1Str = PrevIncome1[(Month, Year)].ToString();
+            Expected1Income = PrevIncome1[(Month, Year)];
         }
         else
         {
-            ExpectedIncomeStr = "";
-            ExpectedIncome = 0;
+            ExpectedIncome1Str = "";
+            Expected1Income = 0;
         }
 
-        var FifthThird = Balances.FirstOrDefault(bal => bal.Name == "Fifth Third");
-        var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
+        if (PrevIncome2.ContainsKey((Month, Year)) && PrevIncome2[(Month, Year)] != 0)
+        {
+            ExpectedIncome2Str = PrevIncome2[(Month, Year)].ToString();
+            Expected2Income = PrevIncome2[(Month, Year)];
+        }
+        else
+        {
+            ExpectedIncome2Str = "";
+            Expected2Income = 0;
+        }
+
+        var Person1Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
+        var Person2Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
+
         var HotelPromised = Balances.FirstOrDefault(bal => bal.Name == "Hotel (Promised)");
         var USAA = Balances.FirstOrDefault(bal => bal.Name == "USAA");
         var Discover = Balances.FirstOrDefault(bal => bal.Name == "Discover");
@@ -453,11 +532,11 @@ else
         PreviousAmex[prevMonth] = Amex.Value + 0;
         PreviousUSAA[prevMonth] = USAA.Value + 0;
 
-        PNC.Value -= Discover.Value + Amex.Value;
+        Person1Income.Value -= Discover.Value + Amex.Value;
         Amex.Value = 0;
         Discover.Value = 0;
 
-        FifthThird.Value -= USAA.Value;
+        Person2Income.Value -= USAA.Value;
         USAA.Value = 0;
 
         var DesiredMonthlies = SimulatedConstants.GetNeededMonthlies(Month, Year);
@@ -476,13 +555,14 @@ else
                     case "Rent":
                     case "Rent 2":
                     case "Electric":
-                        PNC.Value -= mon.Person1Amount;
-                        FifthThird.Value -= mon.Person2Amount;
+                        Person1Income.Value -= mon.Person1Amount;
+                        Person2Income.Value -= mon.Person2Amount;
                         break;
 
                     case "Phone":
+                    case "Spotify":
                         Discover.Value += mon.Person1Amount;
-                        FifthThird.Value -= mon.Person2Amount;
+                        Person2Income.Value -= mon.Person2Amount;
                         break;
 
                     case "Subs":
@@ -502,18 +582,35 @@ else
                 continue;
         }
 
-        PNC.Value += PrevIncome.ContainsKey((Month, Year)) ? PrevIncome[(Month, Year)] : 0;
+        Person1Income.Value += PrevIncome1.ContainsKey((Month, Year)) ? PrevIncome1[(Month, Year)] : 0;
+        Person2Income.Value += PrevIncome2.ContainsKey((Month, Year)) ? PrevIncome2[(Month, Year)] : 0;
     }
 
-    private void UpdatePNC(bool prev = false)
+    private void UpdateIncomeBalances(bool prev = false)
     {
-        var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
+        bool tp1 = double.TryParse(ExpectedIncome1Str, out Expected1Income);
+        bool tp2 = double.TryParse(ExpectedIncome2Str, out Expected2Income);
 
-        if (PrevIncome.ContainsKey((Month, Year)))
-            PNC.Value -= PrevIncome[(Month, Year)];
+        var Person1Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
+        var Person2Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
 
-        PNC.Value += ExpectedIncome;
-        PrevIncome[(Month, Year)] = ExpectedIncome;
+        if (tp1)
+        {
+            if (PrevIncome1.ContainsKey((Month, Year)))
+                Person1Income.Value -= PrevIncome1[(Month, Year)];
+
+            Person1Income.Value += Expected1Income;
+            PrevIncome1[(Month, Year)] = Expected1Income;
+        }
+
+        if (tp2)
+        {
+            if (PrevIncome2.ContainsKey((Month, Year)))
+                Person2Income.Value -= PrevIncome2[(Month, Year)];
+
+            Person2Income.Value += Expected2Income;
+            PrevIncome2[(Month, Year)] = Expected2Income;
+        }
     }
 
     private string GoodOrBad(double money)
@@ -533,10 +630,14 @@ else
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
         {
-            bool tp = double.TryParse(ExpectedIncomeStr, out ExpectedIncome);
-            if (tp) UpdatePNC();
+            GoGo();
         }
 
+    }
+
+    private void GoGo()
+    {
+        UpdateIncomeBalances();
     }
 
     private void FilterDate(string filter) { Filter(filter, true); }
@@ -602,37 +703,65 @@ else
     }
     private void SubtractUnspent()
     {
-        var PNC = Balances.FirstOrDefault(bal => bal.Name == "PNC");
-        var FifthThird = Balances.FirstOrDefault(bal => bal.Name == "Fifth Third");
+        var Person1Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
+        var Person2Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
 
         DynamicCostItem TheDCI;
         StaticMonthlyCost TheSMC;
 
-        foreach (var sm in SimulatedConstants.StaticMonthlyCosts)
-        {
-            PNC.Value -= sm.Person1Amount;
-            FifthThird.Value -= sm.Person2Amount;
-        }
-        foreach (var dc in SimulatedConstants.DynamicCostItems)
-        {
-            PNC.Value -= dc.Person1Amount;
-            FifthThird.Value -= dc.Person2Amount;
-        }
+        Dictionary<string, (double, double)> RealValues = new Dictionary<string, (double, double)>();
+
+        double SMCDifference;
+        double DCIDifference;
+
+        double TotalForDS1;
+        double TotalForDS2;
 
         foreach (Transaction t in FilteredTransactions)
         {
             TheDCI = SimulatedConstants.DynamicCostItems.FirstOrDefault(d => t.ExpenseType == d.Name);
             if (TheDCI != null)
             {
-                PNC.Value += t.Person1Amount;
-                FifthThird.Value += t.Person2Amount;
+                if (RealValues.ContainsKey(t.Name))
+                    RealValues[t.ExpenseType] = (RealValues[t.ExpenseType].Item1 + t.Person1Amount, RealValues[t.ExpenseType].Item2 + t.Person2Amount);
+                else
+                    RealValues[t.ExpenseType] = (t.Person1Amount, t.Person2Amount);
             }
 
             TheSMC = SimulatedConstants.StaticMonthlyCosts.FirstOrDefault(d => t.Name == d.Name);
             if (TheSMC != null)
             {
-                PNC.Value += t.Person1Amount;
-                FifthThird.Value += t.Person2Amount;
+                RealValues[t.Name] = (t.Person1Amount, t.Person2Amount);
+            }
+        }
+
+        foreach (var sm in SimulatedConstants.StaticMonthlyCosts)
+        {
+            if (RealValues.ContainsKey(sm.Name))
+            {
+                if (RealValues[sm.Name].Item1 == 0 && sm.Person1Amount != 0)
+                    Person1Income.Value -= sm.Person1Amount;
+
+                if (RealValues[sm.Name].Item2 == 0 && sm.Person2Amount != 0)
+                    Person2Income.Value -= sm.Person2Amount;
+            }
+            else
+            {
+                Person1Income.Value -= sm.Person1Amount;
+                Person2Income.Value -= sm.Person2Amount;
+            }
+        }
+        foreach (var dc in SimulatedConstants.DynamicCostItems)
+        {
+            if (RealValues.ContainsKey(dc.Name))
+            {
+                Person1Income.Value -= Math.Max(RealValues[dc.Name].Item1, dc.Person1Amount);
+                Person2Income.Value -= Math.Max(RealValues[dc.Name].Item2, dc.Person2Amount);
+            }
+            else
+            {
+                Person1Income.Value -= dc.Person1Amount;
+                Person2Income.Value -= dc.Person2Amount;
             }
         }
     }

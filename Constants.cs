@@ -24,7 +24,7 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = false;
+        public static bool Us = true;
         private static bool Test = false;
         public static string Key { get; set; } = "";
 
@@ -153,8 +153,24 @@ namespace BetterBudgetWeb
         public static bool CheckMonthYear(Monthly mon)
         {
             string currentMonthYear = MonthYear();
+            string mCM = mon.MonthYear();
+            string[] splitter = mCM.Split(" ");
+            
+            string month = currentMonthYear.Split(" ")[0];
+            string year = DateTime.Now.Year.ToString();
+            bool everyYear = false;
 
-            return mon.MonthYear() == currentMonthYear || mon.MonthYear().Contains("All");
+            if (splitter.Length > 1)
+            {
+                month = splitter[0];
+                year = splitter[1];
+                everyYear = year == "1";
+            }
+
+            return mCM == currentMonthYear 
+                || (month == currentMonthYear.Split(" ")[0]  && everyYear) 
+                || (mCM.Contains("All") && everyYear) 
+                || (mCM.Contains("All") && year == DateTime.Now.Year.ToString());
         }
         public static string SHA256(string value)
         {

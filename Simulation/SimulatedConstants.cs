@@ -148,17 +148,35 @@ namespace BetterBudgetWeb.Simulation
         }
         public static string MonthYear() { return new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString(); }
         public static string MonthYear(int month, int year) { return new DateTime(year, month, 1).ToString("MMMM") + " " + year.ToString(); }
+
+        public static bool CheckMonthYear(Monthly mon)
+        {
+            string currentMonthYear = MonthYear();
+            string mCM = mon.MonthYear();
+            string[] splitter = mCM.Split(" ");
+
+            string month = currentMonthYear.Split(" ")[0];
+            string year = DateTime.Now.Year.ToString();
+            bool everyYear = false;
+
+            if (splitter.Length > 1)
+            {
+                month = splitter[0];
+                year = splitter[1];
+                everyYear = year == "1";
+            }
+
+            return mCM == currentMonthYear
+                || (month == currentMonthYear.Split(" ")[0] && everyYear)
+                || (mCM.Contains("All") && everyYear)
+                || (mCM.Contains("All") && year == DateTime.Now.Year.ToString());
+        }
+
         public static bool CheckMonthYear(int mon, int year)
         {
             string currentMonthYear = MonthYear();
 
             return MonthYear(mon, year) == currentMonthYear || MonthYear(mon, year).Contains("All");
-        }
-        public static bool CheckMonthYear(Monthly mon)
-        {
-            string currentMonthYear = MonthYear();
-
-            return mon.MonthYear() == currentMonthYear || mon.MonthYear().Contains("All");
         }
         public static bool CheckMonthYear(Monthly mon, string currentMonthYear)
         {

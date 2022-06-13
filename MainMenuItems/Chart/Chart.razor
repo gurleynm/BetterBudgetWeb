@@ -21,16 +21,32 @@
 </style>
 
 <div class="chart-back">
-    <div class="chart">
-        @foreach (var dp in DPs)
-        {
-            <ChartBar Value=@dp.Value
+    @if (!Mobile)
+    {
+        <div class="chart">
+            @foreach (var dp in DPs)
+            {
+                <ChartBar Value=@dp.Value
                   Label=@dp.Label
                   Negative=@dp.Negative
                   MaxValue=@MaxValue
-                  DateBarClicked=BarClicked/>
-        }
-    </div>
+                  DateBarClicked=BarClicked />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="chart" style="padding-left:30vw;overflow-x: auto;">
+            @foreach (var dp in DPs)
+            {
+                <ChartBar Value=@dp.Value
+                  Label=@dp.Label
+                  Negative=@dp.Negative
+                  MaxValue=@MaxValue
+                  DateBarClicked=BarClicked />
+            }
+        </div>
+    }
     <span style="color:black;">
         <strong>
             @(DateTime.Now.ToString("MMMM") + " (Day)")
@@ -44,6 +60,9 @@
 
     [Parameter]
     public EventCallback<string> BarClicked { get; set; }
+
+    [Parameter]
+    public bool Mobile { get; set; }
 
 
 

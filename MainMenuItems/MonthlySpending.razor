@@ -198,6 +198,53 @@ else
             <th colspan="5" style="font-size:3vw;background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
         </tr>
         <tr>
+            <td>
+                <input type="text" placeholder="Name" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="NewName" />
+                <br />
+                <select class="custom-select" style="font-size:3vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewExpense" title="Pick an Expense Type ">
+                    <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Expense</option>
+                    @foreach (var et in ExpenseTypes)
+                    {
+                        <option style="font-size:3vw;" value="@et">@et</option>
+                    }
+                </select>
+            </td>
+            <td>
+                <input type="number" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="NewPerson1Amount" />
+                <br />
+                <select class="custom-select" style="font-size:3vw;width:8vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
+                    <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Payment</option>
+                    @if (Balances != null)
+                    {
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1))
+                        {
+                            <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+            <td>
+                <input type="number" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="NewPerson2Amount" />
+                <br />
+                <select class="custom-select" style="font-size:3vw;width:8vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewPerson2PaidWith" title="Pick a payment type ">
+                    <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Payment</option>
+                    @if (Balances != null)
+                    {
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2))
+                        {
+                            <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                        }
+                    }
+                </select>
+            </td>
+            <td style="font-size:3vw;">
+                @(NewPerson1Amount + NewPerson2Amount)
+            </td>
+            <td>
+                <button class="btn btn-primary" @onclick="Add"><span class="oi oi-plus"></span></button>
+            </td>
+        </tr>
+        <tr>
             <th style="font-size:3vw">Date</th>
             <th style="font-size:3vw;">Name</th>
             <th style="font-size:3vw">

@@ -196,6 +196,28 @@ else
         }
     </div>
     <br />
+    <br style="clear:both;" />
+    @if (DataPoints != null && DataPoints.Count > 0)
+    {
+        <button class="spendchart-btn" @onclick="@ToggleChartBtn">
+            @if (!ShowChart)
+            {
+                <h2 style="float:left;">Spending Chart&nbsp;<i class="arrow right"></i></h2>
+            }
+            else
+            {
+                <h2 style="float:left;">Spending Chart&nbsp;&nbsp;<i class="arrow down"></i></h2>
+            }
+        </button>
+        @if (ShowChart)
+        {
+            <Chart DPs=DataPoints BarClicked=FilterDate Mobile=mobile />
+        }
+
+        <br />
+        <br />
+        <br />
+    }
     <!-- Monthly Spending -->
     <div style="width:100%;float:left;margin-bottom:2vh;">
         <MonthlySpending Mobile=mobile
