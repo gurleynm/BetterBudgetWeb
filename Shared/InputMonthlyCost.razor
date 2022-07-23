@@ -208,7 +208,7 @@ else
         {
             string mon;
             string year;
-            await MonthlyRepo.AddOrUpdateAsync(Dyna == "SAVINGS" ? "SAVINGS" : StaticName, nam, lam, Dyna, SelectMonth + " " + SelectYear);
+            var mons = await MonthlyRepo.AddOrUpdateAsync(Dyna == "SAVINGS" ? "SAVINGS" : StaticName, nam, lam, Dyna, SelectMonth + " " + SelectYear);
 
             ErrorColor = "green";
             ErrorMsg = StaticName + " Monthly was added!";
@@ -218,6 +218,7 @@ else
             Person2Amount = string.Empty;
 
             await Constants.Init();
+            Constants.SetMonthlies(mons);
             StateHasChanged();
         }
     }

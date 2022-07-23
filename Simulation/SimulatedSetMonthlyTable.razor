@@ -15,7 +15,7 @@
             </tr>
             @foreach (var smc in SimulatedConstants.StaticMonthlyCosts)
             {
-                @if (Trans != null && Trans.Where(tr => tr.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).Select(t => t.Name).Contains(smc.Name))
+                @if (Determine(smc))
                 {
                     <tr style="font-size:3vw;text-decoration:line-through;color:forestgreen">
                         <td style="font-size:3vw;padding:.5vw 1vw;">@smc.Name</td>
@@ -61,7 +61,7 @@ else
             </tr>
             @foreach (var smc in SimulatedConstants.StaticMonthlyCosts)
             {
-                @if (Trans != null && Trans.Where(tr => tr.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).Select(t => t.Name).Contains(smc.Name))
+                @if (Determine(smc))
                 {
                     <tr style="text-decoration:line-through;color:forestgreen">
                         <td style="padding:.5vw 1vw;">@smc.Name</td>
@@ -102,4 +102,25 @@ else
     public List<Transaction> Trans { get; set; } = new List<Transaction>();
     [Parameter]
     public bool Mobile { get; set; }
+
+    private bool Determine(StaticMonthlyCost smc)
+    {
+        if (Trans == null)
+            return false;
+
+        if (SimulatedConstants.MonthYear() != Constants.MonthYear())
+            return false;
+
+        var allMonthYears = Trans.Where(tr => tr.MonthYear() == Constants.MonthYear()).ToList();
+        
+        if (allMonthYears == null || allMonthYears.Count == 0)
+            return false;
+
+        var names = allMonthYears.Select(t => t.Name).ToList();
+        foreach (string s in names)
+            if (s.Contains(smc.Name))
+                return true;
+        
+        return false;
+    }
 }

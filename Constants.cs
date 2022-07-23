@@ -149,7 +149,9 @@ namespace BetterBudgetWeb
             StaticMonthlyCosts = StaticMonthlyCosts.OrderByDescending(smc => smc.TotalAmount).ToList();
             SavingsGoals = SavingsGoals.OrderByDescending(sg => sg.Goal).ToList();
         }
-        public static string MonthYear() { return DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString(); }
+        public static string MonthYear() {
+            return DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString(); 
+        }
         public static bool CheckMonthYear(Monthly mon)
         {
             string currentMonthYear = MonthYear();
