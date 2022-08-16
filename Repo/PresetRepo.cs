@@ -35,6 +35,8 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Preset>> AddOrUpdateAsync(Preset press)
         {
+            press.Name = press.Name.Trim();
+
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 

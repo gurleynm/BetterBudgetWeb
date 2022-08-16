@@ -16,6 +16,7 @@ namespace BetterBudgetWeb
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<Preset> Presets { get; set; } = new List<Preset>();
+        private static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
 
         public static bool DarkMode = Nighttime();
         public static Dictionary<string, string> ColorScheme = new Dictionary<string, string>();
@@ -46,7 +47,7 @@ namespace BetterBudgetWeb
                 Person2 = "Katie";
                 Key = "Doofenblast!";
             }
-            var Monthlies = await MonthlyRepo.GetMonthliesAsync();
+            Monthlies = await MonthlyRepo.GetMonthliesAsync();
             await PresetRepo.GetPresetsAsync();
 
             var fp = Presets;
@@ -82,6 +83,7 @@ namespace BetterBudgetWeb
                 Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Subs \n(EXAMPLE DATA)", 78, 0));
             }
         }
+        public static List<Monthly> GetMonthlies() { return Monthlies; }
         public static void SetMonthlies(List<Monthly> monthlies)
         {
             DynamicCostItems = new List<DynamicCostItem>();

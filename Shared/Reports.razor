@@ -1,0 +1,417 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.Simulation
+@using System.Globalization
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+
+    button {
+        color: black;
+    }
+
+    td {
+        padding: 0 2vw;
+    }
+</style>
+@if (!Mobile)
+{
+    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:fit-content;margin:0 -20vw 0;background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
+                        <strong>Your Reports</strong>
+                    </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    </button>
+                </div>
+                <div class="modal-body" style="width:fit-content;color:black;">
+                    @if (Years != null && Years.Count > 1)
+                    {
+                        <div class="tab" style="width:100%">
+                            @foreach (var y in Years)
+                            {
+                                <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
+                            }
+                            <div class="tab" style="width:100%">
+                                @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
+                                {
+                                    <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="tab" style="width:100%">
+                            @foreach (var mt in MonthTabs)
+                            {
+                                <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                            }
+                            <br style="clear:both" />
+                        </div>
+                        <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between">
+                            <table>
+                                <tr>
+                                    <th>
+                                        Statistic
+                                    </th>
+                                    <th>
+                                        @Constants.Person1
+                                    </th>
+                                    <th>
+                                        @Constants.Person2
+                                    </th>
+                                    <th>
+                                        Total
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td>Transactions:</td>
+                                    <td>@Person1TransCount</td>
+                                    <td>@Person2TransCount</td>
+                                    <td>
+                                        @Trans.Count()
+                                        @if (Person1TransCount + Person2TransCount > Trans.Count())
+                                        {
+                                            <br />
+                                            <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - Trans.Count()})")</span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Projected Expense Total:
+                                    </td>
+                                    <td>@Pretty(DCIs.Sum(d => d.Person1Amount) + SMCs.Sum(s => s.Person1Amount))</td>
+                                    <td>@Pretty(DCIs.Sum(d => d.Person2Amount) + SMCs.Sum(s => s.Person2Amount))</td>
+                                    <td>@Pretty(DCIs.Sum(d => d.Amount)        + SMCs.Sum(s => s.TotalAmount))</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Actual Expense Total:
+                                    </td>
+                                    <td class="income-bad">@Pretty(ReportRunner.GetMonthExpense(Trans, 1, SelectedMonth))</td>
+                                    <td class="income-bad">@Pretty(ReportRunner.GetMonthExpense(Trans, 2, SelectedMonth))</td>
+                                    <td class="income-bad">@Pretty(ReportRunner.GetMonthExpense(Trans, 0, SelectedMonth))</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Income Total:
+                                    </td>
+                                    <td class="income-good">@Pretty(Trans.Where(tr => tr.ExpenseType == "Income").Sum(t => t.Person1Amount))</td>
+                                    <td class="income-good">@Pretty(Trans.Where(tr => tr.ExpenseType == "Income").Sum(t => t.Person2Amount))</td>
+                                    <td class="income-good">@Pretty(Trans.Where(tr => tr.ExpenseType == "Income").Sum(t => t.TotalAmount))</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">=</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Net for Month:
+                                    </td>
+                                    <td class="@TranColor(ReportRunner.GetMonthNet(Trans, 1, SelectedMonth))">@Pretty(ReportRunner.GetMonthNet(Trans, 1, SelectedMonth))</td>
+                                    <td class="@TranColor(ReportRunner.GetMonthNet(Trans, 2, SelectedMonth))">@Pretty(ReportRunner.GetMonthNet(Trans, 2, SelectedMonth))</td>
+                                    <td class="@TranColor(ReportRunner.GetMonthNet(Trans, 0, SelectedMonth))">@Pretty(ReportRunner.GetMonthNet(Trans, 0, SelectedMonth))</td>
+                                </tr>
+                            </table>
+                            <br style="clear:both;" />
+                            <table style="margin-left:1vw;">
+                                <tr>
+                                    <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+                                </tr>
+                                <tr>
+                                    <th>Expense</th>
+                                    <th>Total Budget Amount</th>
+                                    <th>Spent</th>
+                                    <th>Difference</th>
+                                </tr>
+                                @foreach (var dci in DCIs)
+                                {
+                                    @if (dci.Name.Contains("EXAMPLE DATA"))
+                                    {
+                                        <tr>
+                                            <td style="padding:.5vw 1vw;cursor:pointer;"><i>@dci.Name</i></td>
+                                            <td>@Pretty(dci.Amount)</td>
+                                            <td>@Pretty(dci.SpentReport)</td>
+                                            <td>@Pretty(dci.Amount - dci.SpentReport)</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td style="padding:.5vw 1vw;cursor:pointer;">@dci.Name</td>
+                                            <td>@Pretty(dci.Amount)</td>
+                                            <td>@Pretty(dci.SpentReport)</td>
+                                            <td class="@TranColor(dci.Amount - dci.SpentReport)">@Pretty(dci.Amount - dci.SpentReport)</td>
+                                        </tr>
+                                    }
+                                }
+                                <tr>
+                                    <td colspan="4">=</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total</strong></td>
+                                    <td>@Pretty(DCIs.Sum(d => d.Amount))</td>
+                                    <td>@Pretty(DCIs.Sum(d => d.SpentReport))</td>
+                                    <td class="@TranColor(DCIs.Sum(d => d.Amount) - DCIs.Sum(d => d.SpentReport))">@Pretty(DCIs.Sum(d => d.Amount) - DCIs.Sum(d => d.SpentReport))</td>
+                                </tr>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:fit-content;margin:0 auto;background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
+                        <strong>Editting Transaction</strong>
+                    </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    </button>
+                </div>
+                <div class="modal-body" style="width:100%;color:black;">
+                    @if (Years != null && Years.Count > 1)
+                    {
+                        @foreach (var y in Years)
+                        {
+                            <button class="btn btn-primary" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
+                        }
+                        <div style="width:100%">
+                            @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
+                            {
+                                <button class="btn btn-secondary" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="width:100%">
+                            @foreach (var mt in MonthTabs)
+                            {
+                                <button class="btn btn-secondary" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    private List<MonthTab> MonthTabs { get; set; } = new List<MonthTab>();
+    private List<YearTab> Years = new List<YearTab>();
+
+    private List<Transaction> Trans = new List<Transaction>();
+
+    private int Person1TransCount => Trans.Where(t => t.Person1Amount > 0).Count();
+    private int Person2TransCount => Trans.Where(t => t.Person2Amount > 0).Count();
+
+    private string SelectedMonth { get; set; }
+    private string SelectedYear { get; set; }
+
+    private List<DynamicCostItem> DCIs = new List<DynamicCostItem>();
+    private List<StaticMonthlyCost> SMCs = new List<StaticMonthlyCost>();
+
+    protected override Task OnInitializedAsync()
+    {
+        var MonthYears = IndexRunner.GetMonths(Constants.Transactions);
+        if (MonthYears.Count > 0)
+        {
+            string[] splitter = MonthYears[MonthYears.Count - 1].Split();
+            string CurYear = splitter[1];
+            string ThisMonth = DateTime.Now.ToString("MMMM");
+
+            Years.Add(new YearTab { MyYear = CurYear, MyClass = CurYear == DateTime.Now.Year.ToString() ? "active" : "" });
+            MonthTabs.Add(new MonthTab { MyMonth = splitter[0], MyYear = splitter[1], MyClass = splitter[0] == ThisMonth ? "active" : "" });
+
+            for (int index = MonthYears.Count - 2; index >= 0; index--)
+            {
+                splitter = MonthYears[index].Split();
+
+                if (splitter[1] != CurYear)
+                {
+                    MonthTabs.Add(new MonthTab { MyMonth = "All", MyYear = CurYear, MyClass = "" });
+                    CurYear = splitter[1];
+                    Years.Add(new YearTab { MyYear = CurYear, MyClass = CurYear == DateTime.Now.Year.ToString() ? "active" : "" });
+                }
+
+                MonthTabs.Add(new MonthTab { MyMonth = splitter[0], MyYear = CurYear, MyClass = splitter[0] == ThisMonth ? "active" : "" });
+            }
+
+            MonthTabs.Add(new MonthTab { MyMonth = "All", MyYear = CurYear, MyClass = "" });
+        }
+
+
+        LoadTable();
+        return base.OnInitializedAsync();
+    }
+
+    private void LoadTable()
+    {
+        Trans.Clear();
+        DCIs.Clear();
+        SMCs.Clear();
+
+        int monthInt;
+        int yearInt;
+
+        SelectedMonth = MonthTabs.FirstOrDefault(m => m.MyClass == "active").MyMonth;
+        SelectedYear = Years.FirstOrDefault(y => y.MyClass == "active").MyYear;
+
+        if (SelectedMonth == "All")
+        {
+            Trans = new List<Transaction>(Constants.Transactions);
+            foreach (var mt in MonthTabs)
+            {
+                if (mt.MyYear == SelectedYear)
+                {
+                    if (mt.MyMonth == "All")
+                        continue;
+
+                    monthInt = DateTime.ParseExact(mt.MyMonth, "MMMM", CultureInfo.CurrentCulture).Month;
+                    yearInt = int.Parse(SelectedYear);
+                    ReportRunner.SetMonthlies(monthInt, yearInt);
+
+                    foreach (var d in ReportRunner.DynamicCostItems)
+                    {
+                        double[] dciSums = ReportRunner.SumForDynamic(Trans, d.Name);
+                        d.SpentReport = dciSums[0] + dciSums[1];
+                        var dcEx = DCIs.FirstOrDefault(dc => dc.Name == d.Name);
+
+                        if (dcEx == null)
+                            DCIs.Add(d);
+                        else
+                        {
+                            dcEx.Person1Amount += d.Person1Amount;
+                            dcEx.Person2Amount += d.Person2Amount;
+                            dcEx.SpentReport += d.SpentReport;
+                        }
+                    }
+
+                    foreach (var s in ReportRunner.StaticMonthlyCosts)
+                    {
+                        SMCs.Add(new StaticMonthlyCost { Person1Amount = s.Person1Amount, Person2Amount = s.Person2Amount });
+                    }
+                }
+            }
+        }
+        else
+        {
+            foreach (var trans in Constants.Transactions)
+            {
+                if (trans.MonthYear() == SelectedMonth + " " + SelectedYear)
+                    Trans.Add(trans);
+            }
+
+            if (Trans.Count > 0)
+            {
+                monthInt = Trans[0].DateOfTransaction.Month;
+                yearInt = Trans[0].DateOfTransaction.Year;
+                ReportRunner.SetMonthlies(monthInt, yearInt);
+
+                foreach (var d in ReportRunner.DynamicCostItems)
+                {
+                    double[] dciSums = ReportRunner.SumForDynamic(Trans, d.Name);
+                    d.SpentReport = dciSums[0] + dciSums[1];
+                }
+
+                DCIs = ReportRunner.DynamicCostItems;
+                SMCs = ReportRunner.StaticMonthlyCosts;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private string TranColor(double num)
+    {
+        if (num > 0)
+            return "income-good";
+        else
+            return "income-bad";
+    }
+
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalDecline()
+    {
+        await OnClose.InvokeAsync(false);
+    }
+
+    private void ToggleClasses(string Month)
+    {
+        foreach (var m in MonthTabs)
+        {
+            if (m.MyMonth == Month)
+                m.MyClass = "active";
+            else
+                m.MyClass = "";
+        }
+
+        LoadTable();
+    }
+
+    private void ToggleYClasses(string Year)
+    {
+        foreach (var y in Years)
+        {
+            if (y.MyYear == Year)
+                y.MyClass = "active";
+            else
+                y.MyClass = "";
+        }
+        StateHasChanged();
+    }
+
+    private string Pretty(double am)
+    {
+        return Constants.Pretty(am);
+    }
+
+    internal class MonthTab
+    {
+        public string MyMonth = "";
+        public string MyYear = "";
+        public string MyClass = "";
+    }
+
+    internal class YearTab
+    {
+        public string MyYear = "";
+        public string MyClass = "";
+    }
+}

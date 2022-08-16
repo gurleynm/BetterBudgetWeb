@@ -34,6 +34,7 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Monthly>> AddOrUpdateAsync(Monthly month)
         {
+            month.Name = month.Name.Trim();
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 

@@ -11,6 +11,7 @@ namespace BetterBudgetWeb.Data
         public double Left => Amount -  TransactionRepo.GetTransactions().Where(d => (d.ExpenseType == Name || (d.ExpenseType + " (ON)") == Name)  && 
                                                                                     d.DateOfTransaction.Month == DateTime.Now.Month)
                                                                         .Sum(c => c.Person1Amount + c.Person2Amount);
+        public double SpentReport { get; set; }
         public DynamicCostItem() { }
         public DynamicCostItem(string Name)
         {

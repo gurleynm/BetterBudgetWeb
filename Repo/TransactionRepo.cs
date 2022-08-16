@@ -35,6 +35,8 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Transaction>> AddOrUpdateAsync(Transaction trans)
         {
+            trans.Name = trans.Name.Trim();
+
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
             

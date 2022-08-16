@@ -95,6 +95,8 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Balance>> AddOrUpdateAsync(Balance bal)
         {
+            bal.Name = bal.Name.Trim();
+
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
