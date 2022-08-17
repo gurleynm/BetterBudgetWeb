@@ -14,6 +14,7 @@
         public double Person2AmountProjected { get; set; }
         public double Person1AmountActual { get; set; }
         public double Person2AmountActual { get; set; }
+        public string DynamicJSON { get; set; }
         public string PassKey { get; set; } = "no";
 
         public Snapshot() { }
@@ -32,6 +33,7 @@
             Person2AmountProjected = other.Person2AmountProjected;
             Person2AmountActual = other.Person2AmountActual;
             Person1AmountActual = other.Person1AmountActual;
+            DynamicJSON = other.DynamicJSON;
         }
     }
 }

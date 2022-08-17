@@ -3,6 +3,8 @@
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Simulation
 @using System.Globalization
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
 @inject IJSRuntime jsRuntime
 <style>
     option {
@@ -64,7 +66,7 @@
                             <br style="clear:both" />
                         </div>
                         <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;">
-                            @if (DCIs != null && DCIs.Count > 0)
+                            @if (SFDs != null && SFDs.Count > 0)
                             {
                                 <table>
                                     <tr>
@@ -141,24 +143,24 @@
                                         <th>Spent</th>
                                         <th>Difference</th>
                                     </tr>
-                                    @foreach (var dci in DCIs)
+                                    @foreach (var sfd in SFDs)
                                     {
-                                        @if (dci.Name.Contains("EXAMPLE DATA"))
+                                        @if (sfd.Name.Contains("EXAMPLE DATA"))
                                         {
                                             <tr>
-                                                <td style="padding:.5vw 1vw;cursor:pointer;"><i>@dci.Name</i></td>
-                                                <td>@Pretty(dci.Amount)</td>
-                                                <td>@Pretty(dci.SpentReport)</td>
-                                                <td>@Pretty(dci.Amount - dci.SpentReport)</td>
+                                                <td style="padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
+                                                <td>@Pretty(sfd.Projected)</td>
+                                                <td>@Pretty(sfd.Actual)</td>
+                                                <td>@Pretty(sfd.Projected - sfd.Actual)</td>
                                             </tr>
                                         }
                                         else
                                         {
                                             <tr>
-                                                <td style="padding:.5vw 1vw;cursor:pointer;">@dci.Name</td>
-                                                <td>@Pretty(dci.Amount)</td>
-                                                <td>@Pretty(dci.SpentReport)</td>
-                                                <td class="@TranColor(dci.Amount - dci.SpentReport)">@Pretty(dci.Amount - dci.SpentReport)</td>
+                                                <td style="padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
+                                                <td>@Pretty(sfd.Projected)</td>
+                                                <td>@Pretty(sfd.Actual)</td>
+                                                <td class="@TranColor(sfd.Projected - sfd.Actual)">@Pretty(sfd.Projected - sfd.Actual)</td>
                                             </tr>
                                         }
                                     }
@@ -167,9 +169,9 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Total</strong></td>
-                                        <td>@Pretty(DCIs.Sum(d => d.Amount))</td>
-                                        <td>@Pretty(DCIs.Sum(d => d.SpentReport))</td>
-                                        <td class="@TranColor(DCIs.Sum(d => d.Amount) - DCIs.Sum(d => d.SpentReport))">@Pretty(DCIs.Sum(d => d.Amount) - DCIs.Sum(d => d.SpentReport))</td>
+                                        <td>@Pretty(SFDs.Sum(d => d.Projected))</td>
+                                        <td>@Pretty(SFDs.Sum(d => d.Actual))</td>
+                                        <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
                                     </tr>
                                 </table>
                             }
@@ -243,9 +245,9 @@ else
 
     private List<Transaction> Trans = new List<Transaction>();
 
-    private int Person1TransCount { get; set; } //=> Trans.Where(t => t.Person1Amount > 0).Count();
-    private int Person2TransCount { get; set; } //=> Trans.Where(t => t.Person2Amount > 0).Count();
-    private int TotalTransCount { get; set; } //=> Trans.Where(t => t.Person2Amount > 0).Count();
+    private int Person1TransCount { get; set; }
+    private int Person2TransCount { get; set; }
+    private int TotalTransCount { get; set; }
 
     private double Person1Projected { get; set; }
     private double Person2Projected { get; set; }
@@ -261,6 +263,8 @@ else
 
     private string SelectedMonth { get; set; }
     private string SelectedYear { get; set; }
+
+    private List<SnapForDynamic> SFDs = new List<SnapForDynamic>();
 
     private List<DynamicCostItem> DCIs = new List<DynamicCostItem>();
     private List<StaticMonthlyCost> SMCs = new List<StaticMonthlyCost>();
@@ -298,14 +302,14 @@ else
             snaps = await SnapshotRepo.GetSnapshotsAsync();
         }
 
-        Task ss = SetSnapshot(DateTime.Now);
+        await SetSnapshot(DateTime.Now);
 
         Task lt = LoadTable();
 
         bool cat = DateTime.TryParse(LastHere, out DateTime LastHereDate);
 
-        if (cat && DateTime.Now.ToString("MMMM") != LastHereDate.ToString("MMMM")){
-            await ss;
+        if (cat && DateTime.Now.ToString("MMMM") != LastHereDate.ToString("MMMM"))
+        {
             await lt;
             SetSnapshot(LastHereDate);
         }
@@ -318,6 +322,11 @@ else
         Trans.Clear();
         DCIs.Clear();
         SMCs.Clear();
+
+        Dynamo dyna;
+        SFDs = new List<SnapForDynamic>();
+        SnapForDynamic sfd = new SnapForDynamic();
+
 
         int monthInt;
         int yearInt;
@@ -344,31 +353,29 @@ else
             Person1Income = snaps.Sum(sn => sn.Person1Income);
             Person2Income = snaps.Sum(sn => sn.Person2Income);
 
-            foreach (var mt in MonthTabs)
+            SnapForDynamic exists;
+
+            foreach (var dn in snaps.Select(s => s.DynamicJSON))
             {
-                if (mt.MyYear == SelectedYear)
+                dyna = (Dynamo)JsonConvert.DeserializeObject<Dynamo>(dn);
+
+                foreach (JObject key in dyna.DynamicCosts)
                 {
-                    if (mt.MyMonth == "All")
-                        continue;
-
-                    monthInt = DateTime.ParseExact(mt.MyMonth, "MMMM", CultureInfo.CurrentCulture).Month;
-                    yearInt = int.Parse(SelectedYear);
-                    ReportRunner.SetMonthlies(monthInt, yearInt);
-
-                    foreach (var d in ReportRunner.DynamicCostItems)
-                    {
-                        double[] dciSums = ReportRunner.SumForDynamic(Trans, d.Name);
-                        d.SpentReport = dciSums[0] + dciSums[1];
-                        var dcEx = DCIs.FirstOrDefault(dc => dc.Name == d.Name);
-
-                        if (dcEx == null)
-                            DCIs.Add(d);
-                        else
+                    sfd = new SnapForDynamic
                         {
-                            dcEx.Person1Amount += d.Person1Amount;
-                            dcEx.Person2Amount += d.Person2Amount;
-                            dcEx.SpentReport += d.SpentReport;
-                        }
+                            Name = key["Name"].ToString(),
+                            Projected = double.TryParse(key["Projected"].ToString(), out double pro) ? pro : 0,
+                            Actual = double.TryParse(key["Actual"].ToString(), out double act) ? act : 0
+                        };
+
+                    exists = SFDs.FirstOrDefault(s => s.Name.Trim() == sfd.Name.Trim());
+
+                    if (exists == null)
+                        SFDs.Add(sfd);
+                    else
+                    {
+                        exists.Projected += sfd.Projected;
+                        exists.Actual += sfd.Actual;
                     }
                 }
             }
@@ -391,6 +398,20 @@ else
 
             Person1Income = SelSnap.Person1Income;
             Person2Income = SelSnap.Person2Income;
+
+            dyna = (Dynamo)JsonConvert.DeserializeObject<Dynamo>(SelSnap.DynamicJSON);
+
+            foreach (JObject key in dyna.DynamicCosts)
+            {
+                sfd = new SnapForDynamic
+                    {
+                        Name = key["Name"].ToString(),
+                        Projected = double.TryParse(key["Projected"].ToString(), out double pro) ? pro : 0,
+                        Actual = double.TryParse(key["Actual"].ToString(), out double act) ? act : 0
+                    };
+
+                SFDs.Add(sfd);
+            }
 
             monthInt = DateTime.ParseExact(SelectedMonth, "MMMM", CultureInfo.CurrentCulture).Month;
             yearInt = int.Parse(SelectedYear);
@@ -445,6 +466,25 @@ else
         double TodayPerson1Income = Trans.Where(t => t.ExpenseType == "Income").Sum(d => d.Person1Amount);
         double TodayPerson2Income = Trans.Where(t => t.ExpenseType == "Income").Sum(d => d.Person2Amount);
 
+        Dynamo TodayDyno = new Dynamo
+            {
+                Month = thisMonth,
+                Year = thisYear,
+                DynamicCosts = new JArray()
+            };
+
+        foreach (var dci in ReportRunner.DynamicCostItems)
+        {
+            dynamic jsonObject = new JObject();
+            jsonObject.Name = dci.Name;
+            jsonObject.Projected = dci.Person1Amount + dci.Person2Amount;
+            jsonObject.Actual = dci.SpentReport;
+
+            TodayDyno.DynamicCosts.Add(jsonObject);
+        }
+
+        var test = (string)JsonConvert.SerializeObject(TodayDyno);
+
         Task ast = SnapshotRepo.AddOrUpdateAsync(new Snapshot
             {
                 Month = DateTime.Now.ToString("MMMM"),
@@ -457,8 +497,10 @@ else
                 Person1AmountProjected = TodayPerson1Projected,
                 Person2AmountProjected = TodayPerson2Projected,
                 Person1AmountActual = TodayPerson1Actual,
-                Person2AmountActual = TodayPerson2Actual
+                Person2AmountActual = TodayPerson2Actual,
+                DynamicJSON = test
             });
+
     }
     private string TranColor(double num)
     {
@@ -524,6 +566,20 @@ else
     private string Pretty(double am)
     {
         return Constants.Pretty(am);
+    }
+
+    internal class SnapForDynamic
+    {
+        public string Name;
+        public double Projected;
+        public double Actual;
+    }
+
+    internal class Dynamo
+    {
+        public string Month = "";
+        public string Year = "";
+        public JArray DynamicCosts;
     }
 
     internal class MonthTab
