@@ -235,7 +235,7 @@
         border: 1px solid #ccc;
         border-top: none;
     }
-    
+
     .arrow {
         border: solid @Constants.ColorScheme["Text"];
         border-width: 0 3px 3px 0;
@@ -252,13 +252,13 @@
         transform: rotate(45deg);
         -webkit-transform: rotate(45deg);
     }
-    
-    .spendchart-btn{
-        color:@Constants.ColorScheme["Text"];
-        width:20%;
-        background-color:transparent;
-        outline:none;
-        border:none;
+
+    .spendchart-btn {
+        color: @Constants.ColorScheme["Text"];
+        width: 20%;
+        background-color: transparent;
+        outline: none;
+        border: none;
     }
 </style>
 
@@ -273,12 +273,16 @@
                     <h2 style="text-align:center">@($"Welcome {Constants.Person1} & {Constants.Person2}")</h2>
                     <br />
                     <span>Enter password</span>
+                    @if (!string.IsNullOrEmpty(ErrorMsg))
+                    {
+                        <span class="income-bad">@ErrorMsg</span>
+                    }
                 </div>
                 <div style="display:flex;justify-content:center;width:100%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
                     <input id="pwd" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
                 </div>
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <button class="btn btn-primary" @onclick="@CheckWeIn">Submit</button>
+                    <button class="btn btn-primary" @onclick="@(() => CheckWeIn())">Submit</button>
                 </div>
             </div>
         }
@@ -288,13 +292,18 @@
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
                     <h2 style="text-align:center">@($"Welcome {Constants.Person1} & {Constants.Person2}")</h2>
                     <br />
-                    <span>Enter password</span>
+                    <p>Enter password</p>
                 </div>
+                @if (!string.IsNullOrEmpty(ErrorMsg))
+                    {
+                        <p class="income-bad" style="text-align:center">
+                            @ErrorMsg</p>
+                    }
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
                     <input id="pwd" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
                 </div>
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <button class="btn btn-primary" @onclick="@CheckWeIn">Submit</button>
+                    <button class="btn btn-primary" @onclick="@(() => CheckWeIn())">Submit</button>
                 </div>
             </div>
         }
@@ -371,8 +380,10 @@
 @code {
     private bool mobile { get; set; } = true;
     private string theView { get; set; }
+    private string ErrorMsg { get; set; }
     private bool WeIn { get; set; }
     private string password { get; set; }
+    private int pwdAttempts { get; set; }
     private bool darkMode { get; set; } = Constants.DarkMode;
     private bool DarkMode
     {
@@ -391,9 +402,12 @@
 
     protected override async Task OnInitializedAsync()
     {
+        ErrorMsg = "";
         mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
         theView = mobile ? "mobile-view" : "desktop-view";
+
         string BeenToggled = await ReadCookies("DarkModePreference");
+
 
         if (!string.IsNullOrEmpty(BeenToggled))
         {
@@ -405,6 +419,8 @@
             }
 
         }
+
+        await CheckWeIn(false);
     }
 
     protected async Task<string> ReadCookies(string CookieName)
@@ -441,7 +457,7 @@
         StateHasChanged();
     }
 
-    public async Task<bool> CheckWeIn()
+    public async Task<bool> CheckWeIn(bool countAttempt = true)
     {
         var tmpPass = await sessionStorage.GetItemAsync<string>("NoNo");
 
@@ -455,7 +471,15 @@
         WeIn = tmpPass == boom;
 
         if (WeIn)
+        {
+            ErrorMsg = "";
             await sessionStorage.SetItemAsync("NoNo", tmpPass);
+        }
+        else if (countAttempt)
+        {
+            pwdAttempts++;
+            ErrorMsg = "Incorrect Password. Attempts: " + pwdAttempts;
+        }
 
         Constants.PassKey = tmpPass;
 

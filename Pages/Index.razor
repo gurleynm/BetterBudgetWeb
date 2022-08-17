@@ -78,7 +78,10 @@ else
             }
         </div>
         <br style="clear:both;" />
-        <button class="btn btn-primary" @onclick=@(() => ViewReports = !ViewReports)>View Reports</button>
+        @if (FilteredTransactions != null && FilteredTransactions.Count > 0)
+        {
+            <button class="btn btn-primary" @onclick=@(() => ViewReports = !ViewReports)>View Reports</button>
+        }
         <br style="clear:both;" />
         @if (DataPoints != null && DataPoints.Count > 0)
         {
@@ -111,6 +114,8 @@ else
                          @bind-FilteredTransactions=FilteredTransactions
                          @bind-Balances=Balances />
             </div>
+
+            <br />
             <div style="display:inline-block;margin-right:1vw;">
 
                 <!-- Dynamic Costs -->
@@ -163,6 +168,9 @@ else
                 <!-- Ideal Emergency Fund-->
                 <IdealEmergencyFund OneMonthPerson1="@(Constants.DynamicCostItems.Sum(d => d.Person1Amount) + Constants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
                             OneMonthPerson2="@(Constants.DynamicCostItems.Sum(d => d.Person2Amount) + Constants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
+
+
+                <br />
             </div>
             <!-- Set Monthly Costs Goals-->
             <div style="display:inline-block">
@@ -250,7 +258,7 @@ else
         <div style="width:100%;">
             <table>
                 <tr>
-                    <th colspan="4" style="background-color:magenta;font-size:3vw;"><i>Dynamic Monthly Costs</i></th>
+                    <th colspan="4" style="background-color:magenta;font-size:3vw;color:white"><i>Dynamic Monthly Costs</i></th>
                 </tr>
                 <tr>
                     <th style="font-size:3vw;">Expense</th>
@@ -307,7 +315,7 @@ else
         <!-- Set Monthly Costs Goals-->
         <SetMonthlyTable Trans=FilteredTransactions Mobile=true />
 
-        <br />
+        <br style="clear:both" />
         <br />
     }
 }

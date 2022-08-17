@@ -3,6 +3,7 @@
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Simulation
 @using System.Globalization
+@inject IJSRuntime jsRuntime
 <style>
     option {
         color: black;
@@ -37,6 +38,7 @@
                     </button>
                 </div>
                 <div class="modal-body" style="width:fit-content;color:black;">
+
                     @if (Years != null && Years.Count > 1)
                     {
                         <div class="tab" style="width:100%">
@@ -54,120 +56,127 @@
                     }
                     else
                     {
-                        <div class="tab" style="width:100%">
+                        <div class="tab" style="width:100%;">
                             @foreach (var mt in MonthTabs)
                             {
                                 <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
                             }
                             <br style="clear:both" />
                         </div>
-                        <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between">
-                            <table>
-                                <tr>
-                                    <th>
-                                        Statistic
-                                    </th>
-                                    <th>
-                                        @Constants.Person1
-                                    </th>
-                                    <th>
-                                        @Constants.Person2
-                                    </th>
-                                    <th>
-                                        Total
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>Transactions:</td>
-                                    <td>@Person1TransCount</td>
-                                    <td>@Person2TransCount</td>
-                                    <td>
-                                        @Trans.Count()
-                                        @if (Person1TransCount + Person2TransCount > Trans.Count())
+                        <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;">
+                            @if (DCIs != null && DCIs.Count > 0)
+                            {
+                                <table>
+                                    <tr>
+                                        <th>
+                                            Statistic
+                                        </th>
+                                        <th>
+                                            @Constants.Person1
+                                        </th>
+                                        <th>
+                                            @Constants.Person2
+                                        </th>
+                                        <th>
+                                            Total
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td>Transactions:</td>
+                                        <td>@Person1TransCount</td>
+                                        <td>@Person2TransCount</td>
+                                        <td>
+                                            @TotalTransCount
+                                            @if (Person1TransCount + Person2TransCount > TotalTransCount)
+                                            {
+                                                <br />
+                                                <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Projected Expense Total:
+                                        </td>
+                                        <td>@Pretty(Person1Projected)</td>
+                                        <td>@Pretty(Person2Projected)</td>
+                                        <td>@Pretty(TotalProjected)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Actual Expense Total:
+                                        </td>
+                                        <td class="income-bad">@Pretty(Person1Actual)</td>
+                                        <td class="income-bad">@Pretty(Person2Actual)</td>
+                                        <td class="income-bad">@Pretty(TotalActual)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Income Total:
+                                        </td>
+                                        <td class="income-good">@Pretty(Person1Income)</td>
+                                        <td class="income-good">@Pretty(Person2Income)</td>
+                                        <td class="income-good">@Pretty(TotalIncome)</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">=</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Net for Month:
+                                        </td>
+                                        <td class="@TranColor(Person1Income - Person1Actual)">@Pretty(Person1Income - Person1Actual)</td>
+                                        <td class="@TranColor(Person2Income - Person2Actual)">@Pretty(Person2Income - Person2Actual)</td>
+                                        <td class="@TranColor(TotalIncome - TotalActual)">@Pretty(TotalIncome - TotalActual)</td>
+                                    </tr>
+                                </table>
+                                <br style="clear:both;" />
+                                <table style="margin-left:1vw;">
+                                    <tr>
+                                        <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+                                    </tr>
+                                    <tr>
+                                        <th>Expense</th>
+                                        <th>Total Budget Amount</th>
+                                        <th>Spent</th>
+                                        <th>Difference</th>
+                                    </tr>
+                                    @foreach (var dci in DCIs)
+                                    {
+                                        @if (dci.Name.Contains("EXAMPLE DATA"))
                                         {
-                                            <br />
-                                            <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - Trans.Count()})")</span>
+                                            <tr>
+                                                <td style="padding:.5vw 1vw;cursor:pointer;"><i>@dci.Name</i></td>
+                                                <td>@Pretty(dci.Amount)</td>
+                                                <td>@Pretty(dci.SpentReport)</td>
+                                                <td>@Pretty(dci.Amount - dci.SpentReport)</td>
+                                            </tr>
                                         }
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Projected Expense Total:
-                                    </td>
-                                    <td>@Pretty(DCIs.Sum(d => d.Person1Amount) + SMCs.Sum(s => s.Person1Amount))</td>
-                                    <td>@Pretty(DCIs.Sum(d => d.Person2Amount) + SMCs.Sum(s => s.Person2Amount))</td>
-                                    <td>@Pretty(DCIs.Sum(d => d.Amount)        + SMCs.Sum(s => s.TotalAmount))</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Actual Expense Total:
-                                    </td>
-                                    <td class="income-bad">@Pretty(ReportRunner.GetMonthExpense(Trans, 1, SelectedMonth))</td>
-                                    <td class="income-bad">@Pretty(ReportRunner.GetMonthExpense(Trans, 2, SelectedMonth))</td>
-                                    <td class="income-bad">@Pretty(ReportRunner.GetMonthExpense(Trans, 0, SelectedMonth))</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Income Total:
-                                    </td>
-                                    <td class="income-good">@Pretty(Trans.Where(tr => tr.ExpenseType == "Income").Sum(t => t.Person1Amount))</td>
-                                    <td class="income-good">@Pretty(Trans.Where(tr => tr.ExpenseType == "Income").Sum(t => t.Person2Amount))</td>
-                                    <td class="income-good">@Pretty(Trans.Where(tr => tr.ExpenseType == "Income").Sum(t => t.TotalAmount))</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4">=</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Net for Month:
-                                    </td>
-                                    <td class="@TranColor(ReportRunner.GetMonthNet(Trans, 1, SelectedMonth))">@Pretty(ReportRunner.GetMonthNet(Trans, 1, SelectedMonth))</td>
-                                    <td class="@TranColor(ReportRunner.GetMonthNet(Trans, 2, SelectedMonth))">@Pretty(ReportRunner.GetMonthNet(Trans, 2, SelectedMonth))</td>
-                                    <td class="@TranColor(ReportRunner.GetMonthNet(Trans, 0, SelectedMonth))">@Pretty(ReportRunner.GetMonthNet(Trans, 0, SelectedMonth))</td>
-                                </tr>
-                            </table>
-                            <br style="clear:both;" />
-                            <table style="margin-left:1vw;">
-                                <tr>
-                                    <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
-                                </tr>
-                                <tr>
-                                    <th>Expense</th>
-                                    <th>Total Budget Amount</th>
-                                    <th>Spent</th>
-                                    <th>Difference</th>
-                                </tr>
-                                @foreach (var dci in DCIs)
-                                {
-                                    @if (dci.Name.Contains("EXAMPLE DATA"))
-                                    {
-                                        <tr>
-                                            <td style="padding:.5vw 1vw;cursor:pointer;"><i>@dci.Name</i></td>
-                                            <td>@Pretty(dci.Amount)</td>
-                                            <td>@Pretty(dci.SpentReport)</td>
-                                            <td>@Pretty(dci.Amount - dci.SpentReport)</td>
-                                        </tr>
+                                        else
+                                        {
+                                            <tr>
+                                                <td style="padding:.5vw 1vw;cursor:pointer;">@dci.Name</td>
+                                                <td>@Pretty(dci.Amount)</td>
+                                                <td>@Pretty(dci.SpentReport)</td>
+                                                <td class="@TranColor(dci.Amount - dci.SpentReport)">@Pretty(dci.Amount - dci.SpentReport)</td>
+                                            </tr>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <tr>
-                                            <td style="padding:.5vw 1vw;cursor:pointer;">@dci.Name</td>
-                                            <td>@Pretty(dci.Amount)</td>
-                                            <td>@Pretty(dci.SpentReport)</td>
-                                            <td class="@TranColor(dci.Amount - dci.SpentReport)">@Pretty(dci.Amount - dci.SpentReport)</td>
-                                        </tr>
-                                    }
-                                }
-                                <tr>
-                                    <td colspan="4">=</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Total</strong></td>
-                                    <td>@Pretty(DCIs.Sum(d => d.Amount))</td>
-                                    <td>@Pretty(DCIs.Sum(d => d.SpentReport))</td>
-                                    <td class="@TranColor(DCIs.Sum(d => d.Amount) - DCIs.Sum(d => d.SpentReport))">@Pretty(DCIs.Sum(d => d.Amount) - DCIs.Sum(d => d.SpentReport))</td>
-                                </tr>
-                            </table>
+                                    <tr>
+                                        <td colspan="4">=</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Total</strong></td>
+                                        <td>@Pretty(DCIs.Sum(d => d.Amount))</td>
+                                        <td>@Pretty(DCIs.Sum(d => d.SpentReport))</td>
+                                        <td class="@TranColor(DCIs.Sum(d => d.Amount) - DCIs.Sum(d => d.SpentReport))">@Pretty(DCIs.Sum(d => d.Amount) - DCIs.Sum(d => d.SpentReport))</td>
+                                    </tr>
+                                </table>
+                            }
+                            else
+                            {
+                                <span>Loading...</span>
+                            }
                         </div>
                     }
                 </div>
@@ -234,17 +243,33 @@ else
 
     private List<Transaction> Trans = new List<Transaction>();
 
-    private int Person1TransCount => Trans.Where(t => t.Person1Amount > 0).Count();
-    private int Person2TransCount => Trans.Where(t => t.Person2Amount > 0).Count();
+    private int Person1TransCount { get; set; } //=> Trans.Where(t => t.Person1Amount > 0).Count();
+    private int Person2TransCount { get; set; } //=> Trans.Where(t => t.Person2Amount > 0).Count();
+    private int TotalTransCount { get; set; } //=> Trans.Where(t => t.Person2Amount > 0).Count();
+
+    private double Person1Projected { get; set; }
+    private double Person2Projected { get; set; }
+    private double TotalProjected { get; set; }
+
+    private double Person1Actual { get; set; }
+    private double Person2Actual { get; set; }
+    private double TotalActual { get; set; }
+
+    private double Person1Income { get; set; }
+    private double Person2Income { get; set; }
+    private double TotalIncome { get; set; }
 
     private string SelectedMonth { get; set; }
     private string SelectedYear { get; set; }
 
     private List<DynamicCostItem> DCIs = new List<DynamicCostItem>();
     private List<StaticMonthlyCost> SMCs = new List<StaticMonthlyCost>();
+    private List<Snapshot> snaps = new List<Snapshot>();
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
+        string LastHere = await ReadCookies("LastHere");
+
         var MonthYears = IndexRunner.GetMonths(Constants.Transactions);
         if (MonthYears.Count > 0)
         {
@@ -270,14 +295,25 @@ else
             }
 
             MonthTabs.Add(new MonthTab { MyMonth = "All", MyYear = CurYear, MyClass = "" });
+            snaps = await SnapshotRepo.GetSnapshotsAsync();
         }
 
+        Task ss = SetSnapshot(DateTime.Now);
 
-        LoadTable();
-        return base.OnInitializedAsync();
+        Task lt = LoadTable();
+
+        bool cat = DateTime.TryParse(LastHere, out DateTime LastHereDate);
+
+        if (cat && DateTime.Now.ToString("MMMM") != LastHereDate.ToString("MMMM")){
+            await ss;
+            await lt;
+            SetSnapshot(LastHereDate);
+        }
+
+        Task lastHereAysnc = WriteCookieAsync("LastHere", DateTime.Now.ToString("d"), 100);
     }
 
-    private void LoadTable()
+    private async Task LoadTable()
     {
         Trans.Clear();
         DCIs.Clear();
@@ -289,9 +325,25 @@ else
         SelectedMonth = MonthTabs.FirstOrDefault(m => m.MyClass == "active").MyMonth;
         SelectedYear = Years.FirstOrDefault(y => y.MyClass == "active").MyYear;
 
+        Trans = new List<Transaction>(Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()));
+
         if (SelectedMonth == "All")
         {
-            Trans = new List<Transaction>(Constants.Transactions);
+            Trans = new List<Transaction>(Constants.Transactions.Where(t => t.DateOfTransaction.Year.ToString() == SelectedYear));
+
+            Person1TransCount = snaps.Sum(sn => sn.Person1Transactions);
+            Person2TransCount = snaps.Sum(sn => sn.Person2Transactions);
+            TotalTransCount = snaps.Sum(sn => sn.TotalTransactions);
+
+            Person1Projected = snaps.Sum(sn => sn.Person1AmountProjected);
+            Person2Projected = snaps.Sum(sn => sn.Person2AmountProjected);
+
+            Person1Actual = snaps.Sum(sn => sn.Person1AmountActual);
+            Person2Actual = snaps.Sum(sn => sn.Person2AmountActual);
+
+            Person1Income = snaps.Sum(sn => sn.Person1Income);
+            Person2Income = snaps.Sum(sn => sn.Person2Income);
+
             foreach (var mt in MonthTabs)
             {
                 if (mt.MyYear == SelectedYear)
@@ -318,42 +370,96 @@ else
                             dcEx.SpentReport += d.SpentReport;
                         }
                     }
-
-                    foreach (var s in ReportRunner.StaticMonthlyCosts)
-                    {
-                        SMCs.Add(new StaticMonthlyCost { Person1Amount = s.Person1Amount, Person2Amount = s.Person2Amount });
-                    }
                 }
             }
         }
         else
         {
-            foreach (var trans in Constants.Transactions)
+            Trans = new List<Transaction>(Constants.Transactions.Where(t => t.MonthYear() == SelectedMonth + " " + SelectedYear));
+
+            Snapshot SelSnap = snaps.FirstOrDefault(sn => sn.Month == SelectedMonth);
+
+            Person1TransCount = SelSnap.Person1Transactions;
+            Person2TransCount = SelSnap.Person2Transactions;
+            TotalTransCount = SelSnap.TotalTransactions;
+
+            Person1Projected = SelSnap.Person1AmountProjected;
+            Person2Projected = SelSnap.Person2AmountProjected;
+
+            Person1Actual = SelSnap.Person1AmountActual;
+            Person2Actual = SelSnap.Person2AmountActual;
+
+            Person1Income = SelSnap.Person1Income;
+            Person2Income = SelSnap.Person2Income;
+
+            monthInt = DateTime.ParseExact(SelectedMonth, "MMMM", CultureInfo.CurrentCulture).Month;
+            yearInt = int.Parse(SelectedYear);
+
+            ReportRunner.SetMonthlies(monthInt, yearInt);
+
+            foreach (var d in ReportRunner.DynamicCostItems)
             {
-                if (trans.MonthYear() == SelectedMonth + " " + SelectedYear)
-                    Trans.Add(trans);
+                double[] dciSums = ReportRunner.SumForDynamic(Trans, d.Name);
+                d.SpentReport = dciSums[0] + dciSums[1];
             }
 
-            if (Trans.Count > 0)
-            {
-                monthInt = Trans[0].DateOfTransaction.Month;
-                yearInt = Trans[0].DateOfTransaction.Year;
-                ReportRunner.SetMonthlies(monthInt, yearInt);
-
-                foreach (var d in ReportRunner.DynamicCostItems)
-                {
-                    double[] dciSums = ReportRunner.SumForDynamic(Trans, d.Name);
-                    d.SpentReport = dciSums[0] + dciSums[1];
-                }
-
-                DCIs = ReportRunner.DynamicCostItems;
-                SMCs = ReportRunner.StaticMonthlyCosts;
-            }
+            DCIs = ReportRunner.DynamicCostItems;
         }
+
+        TotalActual = Person1Actual + Person2Actual;
+        TotalProjected = Person1Projected + Person2Projected;
+        TotalIncome = Person1Income + Person2Income;
 
         StateHasChanged();
     }
 
+    private async Task SetSnapshot(DateTime snapDate)
+    {
+        string thisMonth = snapDate.ToString("MMMM");
+        string thisYear = snapDate.Year.ToString();
+
+        Trans = new List<Transaction>(Constants.Transactions.Where(t => t.MonthYear() == thisMonth + " " + thisYear));
+
+        int monthInt = snapDate.Month;
+        int yearInt = snapDate.Year;
+        ReportRunner.SetMonthlies(monthInt, yearInt);
+        int TodayTransTotal = Trans.Count();
+        int TodayTransPerson1Total = Trans.Where(t => t.Person1Amount > 0).Count();
+        int TodayTransPerson2Total = Trans.Where(t => t.Person2Amount > 0).Count();
+
+        foreach (var d in ReportRunner.DynamicCostItems)
+        {
+            double[] dciSums = ReportRunner.SumForDynamic(Trans, d.Name);
+            d.SpentReport = dciSums[0] + dciSums[1];
+        }
+
+        var TodayDCIs = new List<DynamicCostItem>(ReportRunner.DynamicCostItems);
+        var TodaySMCs = new List<StaticMonthlyCost>(ReportRunner.StaticMonthlyCosts);
+
+        double TodayPerson1Projected = TodayDCIs.Sum(d => d.Person1Amount) + TodaySMCs.Sum(d => d.Person1Amount);
+        double TodayPerson2Projected = TodayDCIs.Sum(d => d.Person2Amount) + TodaySMCs.Sum(d => d.Person2Amount);
+
+        double TodayPerson1Actual = Trans.Where(t => t.ExpenseType != "Debt" && t.ExpenseType != "Income").Sum(d => d.Person1Amount);
+        double TodayPerson2Actual = Trans.Where(t => t.ExpenseType != "Debt" && t.ExpenseType != "Income").Sum(d => d.Person2Amount);
+
+        double TodayPerson1Income = Trans.Where(t => t.ExpenseType == "Income").Sum(d => d.Person1Amount);
+        double TodayPerson2Income = Trans.Where(t => t.ExpenseType == "Income").Sum(d => d.Person2Amount);
+
+        Task ast = SnapshotRepo.AddOrUpdateAsync(new Snapshot
+            {
+                Month = DateTime.Now.ToString("MMMM"),
+                Year = DateTime.Now.Year,
+                Person1Income = TodayPerson1Income,
+                Person2Income = TodayPerson2Income,
+                Person1Transactions = TodayTransPerson1Total,
+                Person2Transactions = TodayTransPerson2Total,
+                TotalTransactions = TodayTransTotal,
+                Person1AmountProjected = TodayPerson1Projected,
+                Person2AmountProjected = TodayPerson2Projected,
+                Person1AmountActual = TodayPerson1Actual,
+                Person2AmountActual = TodayPerson2Actual
+            });
+    }
     private string TranColor(double num)
     {
         if (num > 0)
@@ -395,6 +501,24 @@ else
                 y.MyClass = "";
         }
         StateHasChanged();
+    }
+    protected async Task<string> ReadCookies(string CookieName)
+    {
+        string response;
+        try
+        {
+            response = await jsRuntime.InvokeAsync<string>("ReadCookie", CookieName);
+        }
+        catch (Exception e)
+        {
+            response = null;
+        }
+
+        return response;
+    }
+    public async Task WriteCookieAsync(string name, string value, double days)
+    {
+        var test = await jsRuntime.InvokeAsync<object>("WriteCookie", name, value, days);
     }
 
     private string Pretty(double am)
