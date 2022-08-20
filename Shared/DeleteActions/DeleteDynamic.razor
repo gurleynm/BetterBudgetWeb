@@ -1,0 +1,400 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+<style>
+    .food {
+        background-color: deeppink;
+    }
+
+    .gas {
+        background-color: coral;
+    }
+
+    .fun {
+        background-color: green;
+    }
+
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+</style>
+@if (Mobile)
+{
+    <br />
+    <br />
+    <div>
+        <label>Dynamic Cost Name:</label>
+        <br />
+        <select @bind="Name">
+            <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
+            @foreach (var mon in MonthliesNames)
+            {
+                <option value="@mon">@mon</option>
+            }
+        </select>
+    </div>
+    <br />
+    @if (!string.IsNullOrEmpty(Name))
+    {
+        <div style="float:left;margin-right:10vw;">
+            <label>When (Month Year):</label>
+            <br />
+            <select @bind="SelectMonth">
+                <option value="@string.Empty" disabled="disabled">(Choose Month)</option>
+                @foreach (var item in MonthsToShow)
+                {
+                    <option value="@item">@item</option>
+                }
+            </select>
+            @if (!string.IsNullOrEmpty(SelectMonth))
+            {
+                <select @bind="SelectYear">
+                    <option value="@string.Empty" disabled="disabled">(Choose Year)</option>
+                    @foreach (var item in YearsToShow)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            }
+        </div>
+    }
+    <br />
+    <!--
+    <div>
+        <label>@(Constants.Person1 + " Amount:")</label>
+        <br />
+        <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+    </div>
+    <br />
+    <div>
+        <label>@(Constants.Person2 + " Amount:")</label>
+        <br />
+        <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+    </div>
+    <br style="clear:both;" />
+
+    <br style="clear:both" />
+    <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+    <br />
+    -->
+    @if (!string.IsNullOrEmpty(ErrorMsg))
+    {
+        <p style="color:@ErrorColor">@ErrorMsg</p>
+    }
+}
+else
+{
+    <div class="tabcontent">
+        <div style="float:left;margin-right:10vw;">
+            <label>Dynamic Cost Name:</label>
+            <br />
+            <select @bind="Name">
+                <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
+                @foreach (var mon in MonthliesNames)
+                {
+                    <option value="@mon">@mon</option>
+                }
+            </select>
+        </div>
+        @if (!string.IsNullOrEmpty(Name))
+        {
+            <div style="float:left;margin-right:10vw;">
+                <label>When (Month Year):</label>
+                <br />
+                <select @bind="SelectMonth">
+                    <option value="@string.Empty" disabled="disabled">(Choose Month)</option>
+                    @foreach (var item in MonthsToShow)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+                @if (!string.IsNullOrEmpty(SelectMonth))
+                {
+                    <select @bind="SelectYear">
+                        <option value="@string.Empty" disabled="disabled">(Choose Year)</option>
+                        @foreach (var item in YearsToShow)
+                        {
+                            <option value="@item">@item</option>
+                        }
+                    </select>
+                }
+            </div>
+        }
+        <br style="clear:both;" />
+        <br />
+        <!--
+        <div style="float:left;margin-right:10vw;">
+            <label>@(Constants.Person1 + " Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+        </div>
+        <div>
+            <label>@(Constants.Person2 + " Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+        </div>
+        <br style="clear:both;" />
+
+        -->
+        <br style="clear:both" />
+        <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+        <br />
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p style="color:@ErrorColor">@ErrorMsg</p>
+        }
+    </div>
+}
+<br />
+<br />
+
+@code {
+    [Parameter]
+    public string Person1Amount { get; set; }
+    [Parameter]
+    public string Person2Amount { get; set; }
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    List<Monthly> Monthlies { get; set; }
+    List<string> MonthliesNames { get; set; }
+    List<string> Months { get; set; } = new List<string>();
+
+    List<string> MonthsToShow { get; set; } = new List<string>();
+    List<string> YearsToShow { get; set; } = new List<string>();
+
+    string selectMonth { get; set; } = "All";
+    string SelectMonth
+    {
+        get { return selectMonth; }
+        set
+        {
+            bool AllAll = Monthlies.FirstOrDefault(m => m.Name == Name && m.Month == "All" && m.Year == "1") != null;
+            bool All1Yr = Monthlies.FirstOrDefault(m => m.Name == Name && m.Month == "All") != null && !AllAll;
+            List<Monthly> ChosensPossibles = Monthlies.Where(m => m.Name == Name && m.Month == value)?.ToList();
+
+            if (AllAll)
+                YearsToShow = new List<string> { "All", DateTime.Now.Year.ToString(), (DateTime.Now.Year + 1).ToString() };
+            else if (All1Yr)
+            {
+                YearsToShow = new List<string>();
+                string TheAllYearForMonth = Monthlies.FirstOrDefault(m => m.Name == Name && m.Month == "All").Year;
+                if (ChosensPossibles != null && ChosensPossibles.Count > 0)
+                {
+                    if (string.Compare(ChosensPossibles[0].Year, TheAllYearForMonth) < 0){
+                        YearsToShow.Add(ChosensPossibles[0].Year);
+                        YearsToShow.Add(TheAllYearForMonth);
+                    }
+                    else{
+                        YearsToShow.Add(TheAllYearForMonth);
+                        YearsToShow.Add(ChosensPossibles[0].Year);
+                    }
+                }
+                else
+                {
+                    YearsToShow.Add(TheAllYearForMonth);
+                }
+            }
+            else
+            {
+                YearsToShow = new List<string>();
+                foreach (var cp in ChosensPossibles.OrderBy(m => m.Year).Select(mo => mo.Year))
+                {
+                    if (cp == "1")
+                    {
+                        YearsToShow = new List<string> { "All", DateTime.Now.Year.ToString(), (DateTime.Now.Year + 1).ToString() };
+                    }
+                    else
+                    {
+                        YearsToShow.Add(cp);
+                    }
+                }
+            }
+
+
+            SelectYear = YearsToShow.Count == 1 ? YearsToShow[0] : string.Empty;
+            selectMonth = value;
+        }
+    }
+
+    string SelectYear { get; set; } = "1";
+
+
+    private string name;
+    string Name
+    {
+        get { return name; }
+        set
+        {
+            name = value;
+
+            var allMonthlyEntries = Monthlies.Where(m => m.Name == name).ToList();
+
+            MonthsToShow.Clear();
+            YearsToShow.Clear();
+
+            foreach (var m in allMonthlyEntries)
+            {
+                if (m.Month == "All")
+                    MonthsToShow = new List<string>(Months);
+                else
+                {
+                    MonthsToShow.Add(m.Month);
+                }
+                /*
+                if (m.Year == "All" || m.Year == "1")
+                    YearsToShow = new List<string> { "All", DateTime.Now.Year.ToString(), (DateTime.Now.Year + 1).ToString() };
+                else
+                    YearsToShow.Add(m.Year);*/
+            }
+
+            MonthsToShow = MonthsToShow.Distinct().ToList();
+            //YearsToShow = YearsToShow.Distinct().ToList();
+
+
+            MonthsToShow.Sort(Constants.SortMonths);
+
+            SelectMonth = MonthsToShow.Count == 1 ? MonthsToShow[0] : string.Empty;
+        }
+    }
+
+    private string ErrorMsg { get; set; } = string.Empty;
+    private string ErrorColor { get; set; } = "red";
+
+    protected override Task OnInitializedAsync()
+    {
+        List<string> theMons = new List<string>{"January", "February",
+                                            "March", "April", "May", "June", "July", "August", "September",
+                                            "October", "November", "December"};
+        int thisYear = DateTime.Now.Year;
+
+        Months.Add("All");
+        int startMonth = DateTime.Now.Month - 1;
+        for (int index = startMonth; index < startMonth + 12; index++)
+        {
+            if (theMons[index % 12] == "January" && DateTime.Now.Month != 1)
+                thisYear++;
+
+            Months.Add(theMons[index % 12]);
+        }
+
+        MonthsToShow.Sort(Constants.SortMonths);
+
+        Monthlies = Constants.GetMonthlies().Where(mon => mon.Dynamic == "DYNAMIC").ToList();
+        MonthliesNames = Monthlies.OrderBy(mo => mo.Name).Select(m => m.Name).Distinct().ToList();
+
+        return base.OnInitializedAsync();
+    }
+
+    public async Task Submit()
+    {
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+
+        if (string.IsNullOrEmpty(Name))
+            ErrorMsg += "Please select a monthly expense.\n";
+
+        if (string.IsNullOrEmpty(SelectMonth))
+            ErrorMsg += "Please select a month.\n";
+
+        if (string.IsNullOrEmpty(SelectYear))
+            ErrorMsg += "Please select a year.";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            var ChosenOnes = Monthlies.Where(m => m.Name == Name).ToList();
+            Monthly ChosenOne;
+
+            ChosenOne = ChosenOnes.FirstOrDefault(m => m.Month == SelectMonth && (m.Year == SelectYear
+                                                        || (m.Year == "1" && SelectYear == "All")));
+
+            if (ChosenOne == null)
+            {
+                /*
+                * Monthly had an ALL either in the Month or Year and now we are only deleting one of the cases
+                *
+                * Progressive       January     2022
+                * Progressive       June        2022
+                * Progressive       January     2023
+                * Progressive       June        2023
+                *
+                * Saved as:
+                *   Progressive    January      1
+                *   Progressive    June         1       (TESTED - Good)     (TESTED - Good)
+                *
+                *
+                * OR
+                *
+                *
+                * FOOD              ALL         1       (TESTED - Good)     (TESTED - Good)     ~~~ CHECK WHEN MONTH = ALL & 1 Year ~~~
+                *
+                *
+                * OR
+                *
+                *
+                * IPVanish          DECEMBER    1       (TESTED - Good)     (TESTED - Good)
+                *
+                *
+                * OR
+                *
+                *
+                * FUN               ALL         2022    (TESTED - Good)     (TESTED - Good)     ~~~ CHECK WHEN MONTH = ALL ~~~
+                *
+                */
+
+                if (ChosenOnes.Count > 1 && ChosenOnes.Where(m => m.Month == "All") == null)
+                {
+                    // Multiple (not all) months over multiple years
+                    foreach (var ch in ChosenOnes)
+                    {
+                        if (ch.Month == SelectMonth)
+                        {
+                            ChosenOne = ch;
+                            break;
+                        }
+                    }
+
+                    ChosenOne.Year = "1-" + SelectYear;
+                }
+                else if (ChosenOnes[0].Month != "All" && ChosenOnes[0].Year == "1")
+                {
+                    // Single month over multiple years
+                    ChosenOne = new Monthly(ChosenOnes[0]);
+
+                    ChosenOne.Year = "1-" + SelectYear;
+                }
+                else if (ChosenOnes[0].Month == "All" && ChosenOnes[0].Year == "1")
+                {
+                    // Multiple (all) months over multiple years
+                    ChosenOne = new Monthly(ChosenOnes[0]);
+
+                    ChosenOne.Month = "All-" + SelectMonth;
+                    ChosenOne.Year = "1-" + SelectYear;
+                }
+                else
+                {
+                    // Multiple months over 1 year
+                    ChosenOne = new Monthly(ChosenOnes.FirstOrDefault(m => m.Month == "All"));
+
+                    ChosenOne.Month = "All-" + SelectMonth;
+                }
+            }
+
+            var holder = await MonthlyRepo.RemoveAsync(ChosenOne);
+            Constants.SetMonthlies(holder);
+            Monthlies = Constants.GetMonthlies().Where(mon => mon.Dynamic == "DYNAMIC").ToList();
+            MonthliesNames = Monthlies.OrderBy(mo => mo.Name).Select(m => m.Name).Distinct().ToList();
+            Name = string.Empty;
+        }
+
+        StateHasChanged();
+    }
+}
+

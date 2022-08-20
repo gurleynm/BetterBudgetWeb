@@ -30,6 +30,11 @@ namespace BetterBudgetWeb
         public static string Key { get; set; } = "";
 
         public static string PassKey { get; set; } = "no";
+
+        private static readonly List<string> Months = new List<string>{"January", "February", "March", "April", "May",
+                                                                "June", "July", "August", "September",
+                                                                "October", "November", "December"};
+
         public static async Task Init()
         {
             DetermineDarkLight();
@@ -86,6 +91,7 @@ namespace BetterBudgetWeb
         public static List<Monthly> GetMonthlies() { return Monthlies; }
         public static void SetMonthlies(List<Monthly> monthlies)
         {
+            Monthlies = new List<Monthly>(monthlies);
             DynamicCostItems = new List<DynamicCostItem>();
             SavingsGoals = new List<SavingsGoal>();
             StaticMonthlyCosts = new List<StaticMonthlyCost>();
@@ -144,22 +150,23 @@ namespace BetterBudgetWeb
                     ProjectedData.Add(new ProjectedDatum(mon.Month, year, mon.Person1Amount, mon.Person2Amount));
                 }
             }
-            
+
             LoadDefaults();
 
             DynamicCostItems = DynamicCostItems.OrderByDescending(dci => dci.Amount).ToList();
             StaticMonthlyCosts = StaticMonthlyCosts.OrderByDescending(smc => smc.TotalAmount).ToList();
             SavingsGoals = SavingsGoals.OrderByDescending(sg => sg.Goal).ToList();
         }
-        public static string MonthYear() {
-            return DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString(); 
+        public static string MonthYear()
+        {
+            return DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString();
         }
         public static bool CheckMonthYear(Monthly mon)
         {
             string currentMonthYear = MonthYear();
             string mCM = mon.MonthYear();
             string[] splitter = mCM.Split(" ");
-            
+
             string month = currentMonthYear.Split(" ")[0];
             string year = DateTime.Now.Year.ToString();
             bool everyYear = false;
@@ -171,9 +178,9 @@ namespace BetterBudgetWeb
                 everyYear = year == "1";
             }
 
-            return mCM == currentMonthYear 
-                || (month == currentMonthYear.Split(" ")[0]  && everyYear) 
-                || (mCM.Contains("All") && everyYear) 
+            return mCM == currentMonthYear
+                || (month == currentMonthYear.Split(" ")[0] && everyYear)
+                || (mCM.Contains("All") && everyYear)
                 || (mCM.Contains("All") && year == DateTime.Now.Year.ToString());
         }
         public static string SHA256(string value)
@@ -263,6 +270,53 @@ namespace BetterBudgetWeb
             TimeSpan now = DateTime.Now.TimeOfDay;
 
             return now > NinePM || now < NineAM;
+        }
+
+        public static int SortMonths(string month1, string month2)
+        {
+            if (month1 == null)
+            {
+                if (month2 == null)
+                {
+                    // If x is null and y is null, they're
+                    // equal.
+                    return 0;
+                }
+                else
+                {
+                    // If x is null and y is not null, y
+                    // is greater.
+                    return -1;
+                }
+            }
+            else
+            {
+                if (month2 == null)
+                // ...and y is null, x is greater.
+                {
+                    return 1;
+                }
+                else
+                {
+                    if (!Months.Contains(month1))
+                    {
+                        if (!Months.Contains(month2))
+                            return 0;
+                        else
+                            return -1;
+                    }
+
+                    int indexMonth1 = Months.IndexOf(month1);
+                    int indexMonth2 = Months.IndexOf(month2);
+
+                    if (indexMonth1 < indexMonth2)
+                        return -1;
+                    else if (indexMonth2 < indexMonth1)
+                        return 1;
+                    else
+                        return 0;
+                }
+            }
         }
     }
 }

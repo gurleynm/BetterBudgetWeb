@@ -1,0 +1,115 @@
+﻿@page "/delete"
+@using BetterBudgetWeb.Shared.DeleteActions
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Delete</PageTitle>
+
+<h1>Delete</h1>
+@if (!mobile)
+{
+    <div class="tab">
+        <button class="tablinks @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
+        <button class="tablinks @StaticClass" @onclick="@ShowStaticGoal">Set Monthly</button>
+        @*<button class="tablinks @SavingsClass" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
+    </div>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
+    <button class="btn btn-primary" @onclick="@ShowStaticGoal">Set Monthly</button>
+    @*<button class="btn btn-primary" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
+}
+@if (ShowDynamic)
+{
+    <DeleteDynamic Mobile=@mobile />
+}
+else if (ShowStatic)
+{
+    <DeleteStatic Mobile=@mobile />
+}
+else if (ShowSavings && false)
+{
+    <DeleteSavings Mobile=@mobile />
+}
+
+@if(mobile){
+    <div style="text-align:center">✨This page is in BETA. Updates will improve aesthetic over time.✨</div>
+}
+
+@code {
+    private bool mobile { get; set; }
+
+    private string TransactionName;
+    private string ExpenseType;
+    private string PaidOffPerson1;
+    private string PaidOffPerson2;
+    private string PaidWithPerson1;
+    private string PaidWithPerson2;
+    private string Person1Amount;
+    private string Person2Amount;
+
+    private string BalName;
+    private string BalanceType;
+    private string APR;
+    private string InitAmount;
+    private string color = "#32A852";
+    private string Color
+    {
+        get { return color; }
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+                value = "#32A852";
+            else if (value[0] != '#')
+                value = "#" + value;
+
+            if (value.Length > 7)
+                value.Substring(0, 7);
+
+            color = value;
+        }
+    }
+
+    private bool ShowDynamic { get; set; } = true;
+    private bool ShowStatic { get; set; }
+    private bool ShowSavings { get; set; }
+
+    private string DynamicClass => ShowDynamic ? "active" : "";
+    private string StaticClass => ShowStatic ? "active" : "";
+    private string SavingsClass => ShowSavings ? "active" : "";
+
+    private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+    }
+
+    private void ShowDynamicGoal()
+    {
+        ShowDynamic = !ShowDynamic;
+        ShowStatic = false;
+        ShowSavings = false;
+    }
+    private void ShowStaticGoal()
+    {
+        ShowStatic = !ShowStatic;
+        ShowDynamic = false;
+        ShowSavings = false;
+    }
+    private void ShowSavingsGoal()
+    {
+        ShowSavings = !ShowSavings;
+        ShowDynamic = false;
+        ShowStatic = false;
+    }
+
+    private void Refresh(bool accepted)
+    {
+        if (accepted)
+        {
+            NoBalances = Constants.Balances == null || Constants.Balances.Count == 0;
+            StateHasChanged();
+        }
+    }
+}

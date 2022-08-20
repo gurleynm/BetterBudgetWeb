@@ -490,8 +490,6 @@ else
         ErrorMsg += string.IsNullOrEmpty(ExpenseType) ? "Please select an expense type. " : "";
         ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tpNAmount ? $"{Constants.Person1} Amount must be a number. " : "";
         ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tpLAmount ? $"{Constants.Person2} Amount must be a number. " : "";
-        //ErrorMsg += !string.IsNullOrEmpty(ExpenseType) && ExpenseType == "Debt" ? "APR must be a number. " : "";
-        //ErrorMsg += string.IsNullOrEmpty(Color) ? "Color must be set." : "";
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
