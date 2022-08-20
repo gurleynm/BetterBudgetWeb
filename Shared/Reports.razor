@@ -446,8 +446,8 @@ else
         int yearInt = snapDate.Year;
         ReportRunner.SetMonthlies(monthInt, yearInt);
         int TodayTransTotal = Trans.Count();
-        int TodayTransPerson1Total = Trans.Where(t => t.Person1Amount > 0).Count();
-        int TodayTransPerson2Total = Trans.Where(t => t.Person2Amount > 0).Count();
+        int TodayTransPerson1Total = Trans.Where(t => t.Person1Amount != 0).Count();
+        int TodayTransPerson2Total = Trans.Where(t => t.Person2Amount != 0).Count();
 
         foreach (var d in ReportRunner.DynamicCostItems)
         {

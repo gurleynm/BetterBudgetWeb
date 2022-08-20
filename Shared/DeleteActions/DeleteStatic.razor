@@ -234,9 +234,9 @@ else
                 /*
                 if (m.Year == "All" || m.Year == "1")
                     YearsToShow = new List<string> { "All", DateTime.Now.Year.ToString(), (DateTime.Now.Year + 1).ToString() };
-                else
+                    else
                     YearsToShow.Add(m.Year);
-                    */
+            */
             }
 
             MonthsToShow = MonthsToShow.Distinct().ToList();
@@ -376,6 +376,9 @@ else
             Monthlies = Constants.GetMonthlies().Where(mon => mon.Dynamic == "STATIC").ToList();
             MonthliesNames = Monthlies.OrderBy(mo => mo.Name).Select(m => m.Name).Distinct().ToList();
             Name = string.Empty;
+
+            ErrorColor = "green";
+            ErrorMsg = $"Set Monthly called {Name} was deleted!";
         }
 
         StateHasChanged();

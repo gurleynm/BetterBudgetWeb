@@ -392,6 +392,9 @@ else
             Monthlies = Constants.GetMonthlies().Where(mon => mon.Dynamic == "DYNAMIC").ToList();
             MonthliesNames = Monthlies.OrderBy(mo => mo.Name).Select(m => m.Name).Distinct().ToList();
             Name = string.Empty;
+
+            ErrorColor = "green";
+            ErrorMsg = $"Dyanmic Monthly called {Name} was deleted!";
         }
 
         StateHasChanged();
