@@ -186,6 +186,8 @@ else
             Months.Add(theMons[index % 12]);
         }
 
+        Months.Sort(Constants.SortMonths);
+
         return base.OnInitializedAsync();
     }
 
