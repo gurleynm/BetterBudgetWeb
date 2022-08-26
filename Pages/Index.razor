@@ -198,15 +198,15 @@ else
 
             </DeleteConfirm>
         }
-        @if (ViewReports)
+        @*@if (ViewReports)
         {
             <Reports Title="@(string.Format("{0} (By: {1})","Penis", "Deez Nuts"))"
-         Text="Story"
-         Mobile="mobile"
-         OnClose="@CloseModal">
+                Text="Story"
+                Mobile="mobile"
+                OnClose="@CloseModal">
 
             </Reports>
-        }
+        }*@
     }
     else
     {
@@ -221,6 +221,11 @@ else
             }
         </div>
         <br />
+        <br style="clear:both;" />
+        @if (FilteredTransactions != null && FilteredTransactions.Count > 0)
+        {
+            <button class="btn btn-primary" @onclick=@(() => ViewReports = !ViewReports)>View Reports</button>
+        }
         <br style="clear:both;" />
         @if (DataPoints != null && DataPoints.Count > 0)
         {
@@ -317,6 +322,15 @@ else
 
         <br style="clear:both" />
         <br />
+    }
+    @if (ViewReports)
+    {
+        <Reports Title="@(string.Format("{0} (By: {1})","Penis", "Deez Nuts"))"
+         Text="Story"
+         Mobile="mobile"
+         OnClose="@CloseModal">
+
+        </Reports>
     }
 }
 

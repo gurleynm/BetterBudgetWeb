@@ -21,16 +21,18 @@
 }
 else
 {
-    @if (NoBalances)
+    <div class="tab" style="width:fit-content">
+        @if (NoBalances)
         {
-            <button class="btn btn-primary" @onclick="@ShowBalance">Balance</button>
+            <button class="tablinks" @onclick="@ShowBalance">Balance</button>
         }
         else
         {
-            <button class="btn btn-primary" @onclick="@ShowTransaction">Transaction</button>
-            <button class="btn btn-primary" @onclick="@ShowBalance">Balance</button>
-            <button class="btn btn-primary" @onclick="@ShowStaticCost">Monthly</button>
+            <button class="tablinks" @onclick="@ShowTransaction">Transaction</button>
+            <button class="tablinks" @onclick="@ShowBalance">Balance</button>
+            <button class="tablinks" @onclick="@ShowStaticCost">Monthly</button>
         }
+    </div>
 }
 @if (ShowTrans)
 {

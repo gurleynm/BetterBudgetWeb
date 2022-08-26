@@ -68,7 +68,8 @@ namespace BetterBudgetWeb.Repo
 
             var tran = JsonConvert.DeserializeObject<Snapshot[]>(content).ToList();
             return tran;
-        }public static async Task<List<Snapshot>> RemoveAsync(string id)
+        }
+        public static async Task<List<Snapshot>> RemoveAsync(string id)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
