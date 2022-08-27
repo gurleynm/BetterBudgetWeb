@@ -40,7 +40,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
             
-            trans.PassKey = Constants.PassKey;
+            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -62,7 +62,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
             
-            trans.PassKey = Constants.PassKey;
+            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -83,7 +83,7 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var trans = Transactions.FirstOrDefault(t => t.Id == id);
-            trans.PassKey = Constants.PassKey;
+            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 

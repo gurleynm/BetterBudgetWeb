@@ -1,5 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -100,7 +101,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            bal.PassKey = Constants.PassKey;
+            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(bal);
 
@@ -120,7 +121,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
-            bal.PassKey = Constants.PassKey;
+            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(bal);
 
@@ -138,14 +139,14 @@ namespace BetterBudgetWeb.Repo
         }
         public static List<Balance> AddOrUpdate(Balance bal)
         {
-            bal.PassKey = Constants.PassKey;
+            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
 
             Task.Run(async () => await AddOrUpdateAsync(bal));
             return Balances;
         }
         public static List<Balance> Remove(Balance bal)
         {
-            bal.PassKey = Constants.PassKey;
+            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
 
             Task.Run(async () => await RemoveAsync(bal));
             return Balances;
@@ -154,7 +155,7 @@ namespace BetterBudgetWeb.Repo
         {
             var bal = Balances.FirstOrDefault(b => b.Id == id);
 
-            bal.PassKey = Constants.PassKey;
+            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
 
             Task.Run(async () => await RemoveAsync(bal));
             return Balances;

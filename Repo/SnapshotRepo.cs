@@ -1,5 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -36,7 +37,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            snap.PassKey = Constants.PassKey;
+            snap.PassKey = Constants.SHA256(snap.Month + snap.Year + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(snap);
 
@@ -55,7 +56,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
-            trans.PassKey = Constants.PassKey;
+            trans.PassKey = Constants.SHA256(trans.Month + trans.Year + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -75,7 +76,7 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var snaps = Snapshots.FirstOrDefault(t => t.Id == id);
-            snaps.PassKey = Constants.PassKey;
+            snaps.PassKey = Constants.SHA256(snaps.Month + snaps.Year + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(snaps);
 

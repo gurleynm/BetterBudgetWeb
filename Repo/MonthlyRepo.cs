@@ -1,5 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -38,7 +39,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            month.PassKey = Constants.PassKey;
+            month.PassKey = Constants.SHA256(month.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(month);
 
@@ -58,7 +59,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
-            trans.PassKey = Constants.PassKey;
+            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -80,7 +81,7 @@ namespace BetterBudgetWeb.Repo
 
             Monthly month = new Monthly(name, nathanAmount, lindseyAmount, dyna, monYear);
 
-            month.PassKey = Constants.PassKey;
+            month.PassKey = Constants.SHA256(month.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(month);
 
@@ -101,7 +102,7 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var trans = Monthlies.FirstOrDefault(t => t.Id == id);
-            trans.PassKey = Constants.PassKey;
+            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 

@@ -1,5 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -40,7 +41,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            press.PassKey = Constants.PassKey;
+            press.PassKey = Constants.SHA256(press.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(press);
 
@@ -61,7 +62,7 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
-            press.PassKey = Constants.PassKey;
+            press.PassKey = Constants.SHA256(press.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(press);
 
@@ -82,7 +83,7 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var press = Presets.FirstOrDefault(t => t.Id == id);
-            press.PassKey = Constants.PassKey;
+            press.PassKey = Constants.SHA256(press.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(press);
 
