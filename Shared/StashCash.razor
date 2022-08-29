@@ -1,0 +1,233 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+
+    button {
+        color: black;
+    }
+</style>
+@if (!Mobile)
+{
+    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:50vw;position: absolute;left: 50%; top: 50%;
+                        transform: translate(-50%, 0%);background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
+                        <strong>Stash Cash</strong>
+                    </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    </button>
+                </div>
+                <div class="modal-body" style="width:100%;color:black;">
+                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                        @if (Constants.Envelopes != null && Constants.Envelopes.Count > 0)
+                        {
+                            <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
+                                <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
+                                @foreach (var env in Constants.Envelopes)
+                                {
+                                    <option value=@env.Id>@env.Name</option>
+                                }
+                            </select>
+                            @if (SelectedEnv != null)
+                            {
+                                <br />
+                                <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%;">
+                                    <div style="display:flex;flex-direction:column;justify-content:space-evenly">
+                                        @if (SelectedEnv.Person1Account != "NONE")
+                                        {
+                                            <div>
+                                                <label>@Constants.Person1:</label>
+                                                <input type="number" placeholder="Amount" @bind="Person1Amount" />
+                                            </div>
+                                        }
+                                        @if (SelectedEnv.Person2Account != "NONE")
+                                        {
+                                            <div>
+                                                <label>@Constants.Person2:</label>
+                                                <input type="text" placeholder="Amount" @bind="Person2Amount" />
+                                            </div>
+                                        }
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;justify-content:center">
+                                        <img src="/images/StashArrow.png" style="height:3vw;cursor:pointer" @onclick=@(() => HandleStash()) />
+                                    </div>
+                                    <div style="align-content:flex-end">
+                                        <Envelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Open=true Adding=true
+                                      Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                                    </div>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(ErrorMsg))
+                            {
+                                <p style="color:@ErrorColor">@ErrorMsg</p>
+                            }
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:fit-content;margin:0 auto;background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
+                        <strong>Stash Cash</strong>
+                    </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    </button>
+                </div>
+                <div class="modal-body" style="width:100%;color:black;">
+                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                        @if (Constants.Envelopes != null && Constants.Envelopes.Count > 0)
+                        {
+                            <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
+                                <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
+                                @foreach (var env in Constants.Envelopes)
+                                {
+                                    <option value=@env.Id>@env.Name</option>
+                                }
+                            </select>
+                            @if (SelectedEnv != null)
+                            {
+                                <br />
+                                <div style="display:flex;flex-direction:column;justify-content:space-between;width:100%;">
+                                    <div style="display:flex;flex-direction:column;justify-content:space-evenly">
+                                        @if (SelectedEnv.Person1Account != "NONE")
+                                        {
+                                            <div>
+                                                <label>@Constants.Person1:</label>
+                                                <input type="number" placeholder="Amount" @bind="Person1Amount" />
+                                            </div>
+                                        }
+                                        @if (SelectedEnv.Person2Account != "NONE")
+                                        {
+                                            <div>
+                                                <label>@Constants.Person2:</label>
+                                                <input type="text" placeholder="Amount" @bind="Person2Amount" />
+                                            </div>
+                                        }
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;justify-content:center;height:auto">
+                                        <img src="/images/StashArrow.png" style="height:30vw;cursor:pointer" @onclick=@(() => HandleStash()) />
+                                    </div>
+                                    <div style="align-content:flex-end">
+                                        <Envelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Open=true Adding=true
+                                      Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                                    </div>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrEmpty(ErrorMsg))
+                            {
+                                <p style="color:@ErrorColor">@ErrorMsg</p>
+                            }
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    public double Person1Amount { get; set; }
+    public double Person2Amount { get; set; }
+    public bool Stashing { get; set; }
+
+    public string ErrorMsg { get; set; }
+    public string ErrorColor { get; set; }
+
+    private string selectedEnvID { get; set; }
+    private string SelectedEnvID
+    {
+        get { return selectedEnvID; }
+        set
+        {
+            SelectedEnv = Constants.Envelopes.FirstOrDefault(e => e.Id == value);
+            selectedEnvID = value;
+            StateHasChanged();
+        }
+    }
+    private Data.Envelope SelectedEnv { get; set; }
+
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    private async Task HandleStash()
+    {
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+
+        if (SelectedEnv.Person1Account != "NONE" && SelectedEnv.Person2Account != "NONE")
+        {
+            if(Person1Amount <= 0 && Person2Amount <= 0)
+                ErrorMsg += "At least one person must contribute. ";
+        }
+        else if (SelectedEnv.Person1Account != "NONE")
+        {
+            if(Person1Amount <= 0)
+                ErrorMsg += $"{Constants.Person1} must contribute. ";
+        }
+        else if (SelectedEnv.Person2Account != "NONE")
+        {
+            if(Person2Amount <= 0)
+                ErrorMsg += $"{Constants.Person2} must contribute. ";
+        }
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            Data.Envelope UpdateEnv = new Data.Envelope(SelectedEnv);
+            UpdateEnv.Person1Amount += Person1Amount;
+            UpdateEnv.Person2Amount += Person2Amount;
+
+            Stashing = true;
+            StateHasChanged();
+            Task runner = EnvelopeRepo.AddOrUpdateAsync(UpdateEnv);
+            await Task.Delay(2000);
+            SelectedEnv.Person1Amount += Person1Amount;
+            SelectedEnv.Person2Amount += Person2Amount;
+            StateHasChanged();
+            Stashing = false;
+            await runner;
+        }
+    }
+
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalDecline()
+    {
+        await OnClose.InvokeAsync(false);
+    }
+}

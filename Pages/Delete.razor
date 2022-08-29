@@ -10,14 +10,18 @@
     <div class="tab">
         <button class="tablinks @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
         <button class="tablinks @StaticClass" @onclick="@ShowStaticGoal">Set Monthly</button>
+        <button class="tablinks @EnvelopesClass" @onclick="@ShowEnvelopes">Goal Envelopes</button>
         @*<button class="tablinks @SavingsClass" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
     </div>
 }
 else
 {
-    <button class="btn btn-primary" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
-    <button class="btn btn-primary" @onclick="@ShowStaticGoal">Set Monthly</button>
-    @*<button class="btn btn-primary" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
+    <div class="tab" style="width:fit-content">
+        <button class="tablinks" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
+        <button class="tablinks" @onclick="@ShowStaticGoal">Set Monthly</button>
+        <button class="tablinks" @onclick="@ShowEnvelopes">Goal Envelopes</button>
+        @*<button class="btn btn-primary" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
+    </div>
 }
 @if (ShowDynamic)
 {
@@ -27,14 +31,15 @@ else if (ShowStatic)
 {
     <DeleteStatic Mobile=@mobile />
 }
+else if (ShowEnvelope)
+{
+    <DeleteEnvelope Mobile=@mobile />
+}
 else if (ShowSavings && false)
 {
     <DeleteSavings Mobile=@mobile />
 }
 
-@if(mobile){
-    <div style="text-align:center">✨This page is in BETA. Updates will improve aesthetic over time.✨</div>
-}
 
 @code {
     private bool mobile { get; set; }
@@ -72,10 +77,12 @@ else if (ShowSavings && false)
 
     private bool ShowDynamic { get; set; } = true;
     private bool ShowStatic { get; set; }
+    private bool ShowEnvelope { get; set; }
     private bool ShowSavings { get; set; }
 
     private string DynamicClass => ShowDynamic ? "active" : "";
     private string StaticClass => ShowStatic ? "active" : "";
+    private string EnvelopesClass => ShowEnvelope ? "active" : "";
     private string SavingsClass => ShowSavings ? "active" : "";
 
     private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
@@ -89,18 +96,28 @@ else if (ShowSavings && false)
     {
         ShowDynamic = !ShowDynamic;
         ShowStatic = false;
+        ShowEnvelope = false;
         ShowSavings = false;
     }
     private void ShowStaticGoal()
     {
         ShowStatic = !ShowStatic;
         ShowDynamic = false;
+        ShowEnvelope = false;
         ShowSavings = false;
     }
     private void ShowSavingsGoal()
     {
         ShowSavings = !ShowSavings;
         ShowDynamic = false;
+        ShowEnvelope = false;
+        ShowStatic = false;
+    }
+    private void ShowEnvelopes()
+    {
+        ShowEnvelope = !ShowEnvelope;
+        ShowDynamic = false;
+        ShowSavings = false;
         ShowStatic = false;
     }
 

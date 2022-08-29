@@ -3,7 +3,7 @@
 @using BetterBudgetWeb.Repo
 
 <div class="bal-block" style="display:flex;justify-content:center;margin-right:1vw;margin-bottom:1vw;">
-    <div style="display:flex;justify-content:flex-end; flex-direction:column;flex-wrap:wrap; border-radius:5px;width:@(FontSize*5 + "vw;");background-color:@(string.IsNullOrEmpty(Color) ? "#32A852" : Color);color:@TextColor">  
+    <div style="z-index:2;display:flex;justify-content:flex-end; flex-direction:column;flex-wrap:wrap; border-radius:5px;width:@(FontSize*5 + "vw;");background-color:@(string.IsNullOrEmpty(Color) ? "#32A852" : Color);color:@TextColor">
         <h1 style="flex-grow:4;cursor:pointer;text-align:center;font-size:@(FontSize + "vw;")" @onclick=Clicked>
             @(string.IsNullOrEmpty(BalName) ? "Savings" : BalName)
             <br />
@@ -11,9 +11,9 @@
         </h1>
         @if (double.TryParse(APR, out double apr) && apr > 0)
         {
-            <h4 style="text-align:center; font-size:@(FontSize/2 + "vw");margin:0px;color:@TextColor">@(string.Format("(APR: {0}%)", Math.Round(apr,2)))</h4>
+            <h4 style="text-align:center; font-size:@(FontSize/2 + "vw");margin:0px;color:@TextColor">@(string.Format("(APR: {0}%)", Math.Round(apr, 2)))</h4>
         }
-        <hr style="margin-top:0vw;color:@TextColor"/>
+        <hr style="margin-top:0vw;color:@TextColor" />
         <h2 style="text-align:center;font-size:@(FontSize/1.5 + "vw");margin-bottom:5vh;color:@TextColor">@(double.TryParse(Amount, out double AM) ? AM.ToString("C", CultureInfo.CurrentCulture) : "$0.00")</h2>
         @if (ShowDelete)
         {
@@ -26,6 +26,8 @@
     [Parameter]
     public Balance TheBalance { get; set; }
     [Parameter]
+    public bool IncludeGoals { get; set; }
+    [Parameter]
     public double FontSize { get; set; } = 2;
     [Parameter]
     public EventCallback<string> OnClick { get; set; }
@@ -36,9 +38,35 @@
     public string Color => TheBalance.HexColor;
     public string TextColor => TheBalance.TextColor;
     public string APR => TheBalance.APR.ToString();
-    public string Amount => TheBalance.Value.ToString();
+    public string Amount => GetAmount();
 
     public bool ShowDelete => OnDelete.HasDelegate;
+
+    private string GetAmount()
+    {
+        double amount = TheBalance.Value;
+
+        if (IncludeGoals)
+        {
+            List<Data.Envelope> envs;
+            int BalanceTypeModifier = TheBalance.BalanceType == "Loan" ? -1 : 1;
+
+            for (int counter = 0; counter < 2; counter++)
+            {
+                envs = Constants.Envelopes.Where(en => counter == 0 ? en.Person1Account == TheBalance.Id : 
+                                                                        en.Person2Account == TheBalance.Id).ToList();
+
+                foreach (var en in envs)
+                {
+                    amount -= (counter == 0 ? en.Person1Amount : en.Person2Amount) * BalanceTypeModifier;
+                }
+            }
+        }
+
+        string returnStr = amount.ToString();
+
+        return returnStr;
+    }
 
     private Task Clicked()
     {

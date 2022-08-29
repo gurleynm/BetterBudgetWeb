@@ -16,8 +16,8 @@
         background-position: center center;
         background-attachment: fixed;
         background-size: cover;
-        height: 100%;
-        overflow: hidden;
+        height: 100vh;
+        overflow: auto;
         background-repeat: no-repeat;
     }
 
@@ -260,6 +260,29 @@
         outline: none;
         border: none;
     }
+
+
+    /* width */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey;
+        border-radius: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #384152;
+        border-radius: 10px;
+    }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #203957;
+        }
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
@@ -295,10 +318,11 @@
                     <p>Enter password</p>
                 </div>
                 @if (!string.IsNullOrEmpty(ErrorMsg))
-                    {
-                        <p class="income-bad" style="text-align:center">
-                            @ErrorMsg</p>
-                    }
+                {
+                    <p class="income-bad" style="text-align:center">
+                        @ErrorMsg
+                    </p>
+                }
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
                     <input id="pwd" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
                 </div>
@@ -346,13 +370,13 @@
                                 <span class="oi oi-plus" aria-hidden="true"></span> Input
                             </a>
                         </li>
-                        
+
                         <li>
                             <a class="navbar-brand" href="delete" style="font-family:Papyrus; text-align:center;">
                                 <span class="oi oi-minus" aria-hidden="true"></span> Delete
                             </a>
                         </li>
-                        
+
                         @if (Constants.Us)
                         {
                             <li>

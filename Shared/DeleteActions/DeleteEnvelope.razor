@@ -1,0 +1,107 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+</style>
+@if (Mobile)
+{
+    <br />
+    <br />
+    <div>
+        <label>Envelope Name:</label>
+        <br />
+        <select @bind="Name">
+            <option value="@string.Empty" selected disabled="disabled">(Choose Goal)</option>
+            @foreach (var env in Envelopes)
+            {
+                <option value="@env.Name">@env.Name</option>
+            }
+        </select>
+    </div>
+    <br />
+    @if (!string.IsNullOrEmpty(ErrorMsg))
+    {
+        <p style="color:@ErrorColor">@ErrorMsg</p>
+    }
+    <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+}
+else
+{
+    <div class="tabcontent">
+        <div style="float:left;margin-right:10vw;">
+            <label>Envelope Name:</label>
+            <br />
+            <select @bind="Name">
+                <option value="@string.Empty" selected disabled="disabled">(Choose Goal)</option>
+                @foreach (var env in Envelopes)
+                {
+                    <option value="@env.Name">@env.Name</option>
+                }
+            </select>
+        </div>
+
+        <br style="clear:both" />
+        <br style="clear:both" />
+        <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+        <br />
+
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p style="color:@ErrorColor">@ErrorMsg</p>
+        }
+    </div>
+}
+<br />
+<br />
+
+@code {
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    private List<Data.Envelope> Envelopes { get; set; } = new List<Data.Envelope>();
+
+    private string name;
+    string Name { get; set; }
+
+    private string ErrorMsg { get; set; } = string.Empty;
+    private string ErrorColor { get; set; } = "red";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
+    }
+
+    public async Task Submit()
+    {
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+
+        if (string.IsNullOrEmpty(Name))
+            ErrorMsg += "Please select a goal envelopes.\n";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            var ChosenOne = Envelopes.FirstOrDefault(e => e.Name == Name);
+
+            Envelopes = await EnvelopeRepo.RemoveAsync(ChosenOne);
+            Constants.Envelopes = new List<Data.Envelope>(Envelopes);
+
+            ErrorColor = "green";
+            ErrorMsg = $"Goal Envelope called '{Name}' was deleted!";
+
+            Name = string.Empty;
+        }
+
+        StateHasChanged();
+    }
+}

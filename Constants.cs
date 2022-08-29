@@ -17,6 +17,7 @@ namespace BetterBudgetWeb
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         private static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
+        public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
 
         public static bool DarkMode = Nighttime();
         public static Dictionary<string, string> ColorScheme = new Dictionary<string, string>();
@@ -53,6 +54,7 @@ namespace BetterBudgetWeb
                 Key = "Doofenblast!";
             }
             Monthlies = await MonthlyRepo.GetMonthliesAsync();
+            Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
             await PresetRepo.GetPresetsAsync();
 
             var fp = Presets;

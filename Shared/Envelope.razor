@@ -1,0 +1,148 @@
+﻿@inject NavigationManager NaviMan
+
+<style>
+    .container-env {
+        position: relative;
+        text-align: center;
+        color: black;
+        margin-bottom: 2vh;
+    }
+
+    .bottom-left {
+        position: absolute;
+        bottom: 8px;
+        left: 16px;
+    }
+
+    .top-left {
+        position: absolute;
+        top: 8px;
+        left: 16px;
+    }
+
+    .top-right {
+        position: absolute;
+        top: 8px;
+        right: 16px;
+    }
+
+    .bottom-right {
+        position: absolute;
+        bottom: 8px;
+        right: 16px;
+    }
+
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .top-centered {
+        position: absolute;
+        top: 20%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .bottom-mid-centered {
+        position: absolute;
+        top: 70%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .bottom-centered {
+        position: absolute;
+        top: 80%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+
+<div class="container-env" style="height:auto;width:auto;padding:0;
+        cursor: @(OnClick == null ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
+    @if (Open && Adding)
+    {
+        <img src="@ImageSrc" alt="Open Full" style="width:@scale;height:auto;">
+    }
+    else
+    {
+        <img src="/images/Envelope.png" alt="Snow" style="width:@scale;height:auto">
+    }
+    @if (Goal != 0)
+    {
+        @if (!Open)
+        {
+            <div class="top-centered" style="background-color:white;font-size:@(Font_Size/2)vw;">
+                <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
+            </div>
+        }
+        else
+        {
+            <div class="bottom-mid-centered" style="background-color:white;font-size:@(Font_Size/2)vw;">
+                <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
+            </div>
+        }
+    }
+    @if (!Open)
+    {
+        <div class="centered" style="background-color:white;font-size:@(Font_Size)vw;">
+            @Name
+        </div>
+    }
+    @if (Goal != 0)
+    {
+        <div class="bottom-centered" style="background-color:white;font-size:@(Font_Size/2)vw;">
+            <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = "Centered";
+    [Parameter]
+    public double Scale { get; set; } = 20;
+    public string scale => Scale + "vw";
+    [Parameter]
+    public Action OnClick { get; set; }
+    [Parameter]
+    public double Goal { get; set; }
+    [Parameter]
+    public double Saved { get; set; }
+    [Parameter]
+    public double Font_Size { get; set; } = 2;
+    [Parameter]
+    public bool Open { get; set; }
+    [Parameter]
+    public bool Adding { get; set; }
+    [Parameter]
+    public bool Stashing { get; set; }
+
+    public string ImageSrc => DetermineState();
+
+    private void OnClickHandle()
+    {
+        if (OnClick != null)
+            OnClick();
+    }
+    private string GoodOrBad()
+    {
+        return Saved < Goal ? Saved < Goal * .9 ? "red" : "yellowgreen" : "limegreen";
+    }
+    private string DetermineState()
+    {
+        if (!Stashing && Saved > 0)
+            return "/images/Envelope-OpenF.png";
+        else if (Stashing && Saved <= 0)
+            return "/images/Fill1.gif";
+        else if (Stashing && Saved > 0)
+            return "/images/FillFull.gif";
+        else if (!Stashing && Saved <= 0)
+            return "/images/Envelope-OpenE.png";
+        else
+            return "/images/Envelope-OpenE.png";
+    }
+}

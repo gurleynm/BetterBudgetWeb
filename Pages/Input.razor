@@ -1,4 +1,5 @@
 ﻿@page "/input"
+@using BetterBudgetWeb.Shared.InputActions
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Input</PageTitle>
@@ -16,6 +17,7 @@
             <button class="tablinks @TransClass" @onclick="@ShowTransaction">Transaction</button>
             <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
             <button class="tablinks @MonthClass" @onclick="@ShowStaticCost">Monthly</button>
+            <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
         }
     </div>
 }
@@ -31,6 +33,7 @@ else
             <button class="tablinks" @onclick="@ShowTransaction">Transaction</button>
             <button class="tablinks" @onclick="@ShowBalance">Balance</button>
             <button class="tablinks" @onclick="@ShowStaticCost">Monthly</button>
+            <button class="tablinks" @onclick="@ShowEnvelope">Goal Envelope</button>
         }
     </div>
 }
@@ -58,9 +61,9 @@ else if (ShowBal)
               Mobile="@mobile">
     </InputBalance>
 }
-else if (ShowSec)
+else if (ShowEnv)
 {
-    <InputSecurity />
+    <InputEnvelope Mobile=@mobile />
 }
 else if (ShowStatic)
 {
@@ -68,7 +71,7 @@ else if (ShowStatic)
 
 }
 
-<!-- <button class="btn btn-primary" @onclick="@ShowSecurity">Input Security</button> -->
+<!-- <button class="btn btn-primary" @onclick="@ShowEnvurity">Input Security</button> -->
 @code {
     private bool mobile { get; set; }
 
@@ -105,12 +108,13 @@ else if (ShowStatic)
 
     private bool ShowTrans { get; set; } = true;
     private bool ShowBal { get; set; }
-    private bool ShowSec { get; set; }
     private bool ShowStatic { get; set; }
+    private bool ShowEnv { get; set; }
 
     private string TransClass => ShowTrans ? "active" : "";
     private string BalClass => ShowBal ? "active" : "";
     private string MonthClass => ShowStatic ? "active" : "";
+    private string EnvClass => ShowEnv ? "active" : "";
 
     private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
 
@@ -123,26 +127,26 @@ else if (ShowStatic)
     {
         ShowTrans = !ShowTrans;
         ShowBal = false;
-        ShowSec = false;
+        ShowEnv = false;
         ShowStatic = false;
     }
     private void ShowBalance()
     {
         ShowBal = !ShowBal;
-        ShowSec = false;
+        ShowEnv = false;
         ShowTrans = false;
         ShowStatic = false;
     }
     private void ShowStaticCost()
     {
         ShowStatic = !ShowStatic;
-        ShowSec = false;
+        ShowEnv = false;
         ShowTrans = false;
         ShowBal = false;
     }
-    private void ShowSecurity()
+    private void ShowEnvelope()
     {
-        ShowSec = !ShowSec;
+        ShowEnv = !ShowEnv;
         ShowTrans = false;
         ShowBal = false;
         ShowStatic = false;

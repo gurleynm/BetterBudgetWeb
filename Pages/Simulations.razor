@@ -340,8 +340,8 @@ else
         SimulatedConstants.SetMonthlies(Month, Year);
         ErrorMsg = string.Empty;
 
-        PaidIntoPerson1 = Balances.Where(b => b.Person == Constants.Person1 && !b.BalanceType.Contains("Loan")).ToList()[0].Name;
-        PaidIntoPerson2 = Balances.Where(b => b.Person == Constants.Person2 && !b.BalanceType.Contains("Loan")).ToList()[0].Name;
+        PaidIntoPerson1 = Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && !b.BalanceType.Contains("Loan")).ToList()[0].Name;
+        PaidIntoPerson2 = Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && !b.BalanceType.Contains("Loan")).ToList()[0].Name;
 
         SubtractUnspent();
 

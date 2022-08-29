@@ -67,7 +67,7 @@
                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1))
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
                         {
                             <option value="@pay.Name">@pay.Name</option>
                         }
@@ -81,7 +81,7 @@
                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2))
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
                         {
                             <option value="@pay.Name">@pay.Name</option>
                         }
@@ -216,7 +216,7 @@ else
                     <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1))
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
                         {
                             <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
                         }
@@ -230,7 +230,7 @@ else
                     <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2))
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
                         {
                             <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
                         }
