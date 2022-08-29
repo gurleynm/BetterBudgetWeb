@@ -609,7 +609,7 @@ else
 
         var test = (string)JsonConvert.SerializeObject(TodayDyno);
 
-        Task ast = SnapshotRepo.AddOrUpdateAsync(new Snapshot
+        await SnapshotRepo.AddOrUpdateAsync(new Snapshot
             {
                 Month = DateTime.Now.ToString("MMMM"),
                 Year = DateTime.Now.Year,
