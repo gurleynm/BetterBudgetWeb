@@ -40,35 +40,35 @@
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
                 </div>
-                <div class="modal-body" style="width:fit-content;color:black;">
-
-                    @if (Years != null && Years.Count > 1)
+                <div class="modal-body" style="width:fit-content;color:black;display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;width:100%">
+                @if (SFDs != null && SFDs.Count > 0)
                     {
-                        <div class="tab" style="width:100%">
-                            @foreach (var y in Years)
-                            {
-                                <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
-                            }
+                        @if (Years != null && Years.Count > 1)
+                        {
                             <div class="tab" style="width:100%">
-                                @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
+                                @foreach (var y in Years)
+                                {
+                                    <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
+                                }
+                                <div class="tab" style="width:100%">
+                                    @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
+                                    {
+                                        <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="tab" style="width:100%;">
+                                @foreach (var mt in MonthTabs)
                                 {
                                     <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
                                 }
+                                <br style="clear:both" />
                             </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="tab" style="width:100%;">
-                            @foreach (var mt in MonthTabs)
-                            {
-                                <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
-                            }
-                            <br style="clear:both" />
-                        </div>
-                        <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;">
-                            @if (SFDs != null && SFDs.Count > 0)
-                            {
+                            <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;">
+
                                 <table>
                                     <tr>
                                         <th>
@@ -175,11 +175,14 @@
                                         <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
                                     </tr>
                                 </table>
-                            }
-                            else
-                            {
-                                <span>Loading...</span>
-                            }
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
+                            <div style="text-align:center;font-size:1vw">Loading...</div>
                         </div>
                     }
                 </div>
@@ -201,33 +204,34 @@ else
                     </button>
                 </div>
                 <div class="modal-body" style="width:fit-content;max-height:85vh;color:black;overflow-y:scroll;">
-                    @if (Years != null && Years.Count > 1)
+                    @if (SFDs != null && SFDs.Count > 0)
                     {
-                        <div class="tab" style="width:100%">
-                            @foreach (var y in Years)
-                            {
-                                <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
-                            }
+                        @if (Years != null && Years.Count > 1)
+                        {
                             <div class="tab" style="width:100%">
-                                @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
+                                @foreach (var y in Years)
+                                {
+                                    <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
+                                }
+                                <div class="tab" style="width:100%">
+                                    @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
+                                    {
+                                        <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="tab" style="width:100%;">
+                                @foreach (var mt in MonthTabs)
                                 {
                                     <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
                                 }
+                                <br style="clear:both" />
                             </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="tab" style="width:100%;">
-                            @foreach (var mt in MonthTabs)
-                            {
-                                <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
-                            }
-                            <br style="clear:both" />
-                        </div>
-                        <div style="display:flex;flex-direction:column;justify-content:space-between;">
-                            @if (SFDs != null && SFDs.Count > 0)
-                            {
+                            <div style="display:flex;flex-direction:column;justify-content:space-between;">
+
                                 <div>
                                     <table>
                                         <tr>
@@ -338,12 +342,13 @@ else
                                         </tr>
                                     </table>
                                 </div>
-                            }
-                            else
-                            {
-                                <span>Loading...</span>
-                            }
-                        </div>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <span>Loading...</span>
                     }
                 </div>
             </div>
@@ -396,8 +401,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        string LastHere = await ReadCookies("LastHere");
-
         var MonthYears = IndexRunner.GetMonths(Constants.Transactions);
         if (MonthYears.Count > 0)
         {
@@ -406,7 +409,7 @@ else
             string ThisMonth = DateTime.Now.ToString("MMMM");
 
             Years.Add(new YearTab { MyYear = CurYear, MyClass = CurYear == DateTime.Now.Year.ToString() ? "active" : "" });
-            MonthTabs.Add(new MonthTab { MyMonth = splitter[0], MyYear = splitter[1], MyClass = splitter[0] == ThisMonth ? "active" : "" });
+            MonthTabs.Add(new MonthTab { MyMonth = splitter[0], MyYear = splitter[1], MyClass = "" });
 
             for (int index = MonthYears.Count - 2; index >= 0; index--)
             {
@@ -419,26 +422,26 @@ else
                     Years.Add(new YearTab { MyYear = CurYear, MyClass = CurYear == DateTime.Now.Year.ToString() ? "active" : "" });
                 }
 
-                MonthTabs.Add(new MonthTab { MyMonth = splitter[0], MyYear = CurYear, MyClass = splitter[0] == ThisMonth ? "active" : "" });
+                MonthTabs.Add(new MonthTab { MyMonth = splitter[0], MyYear = CurYear, MyClass = "" });
             }
 
-            MonthTabs.Add(new MonthTab { MyMonth = "All", MyYear = CurYear, MyClass = "" });
+            MonthTabs.Add(new MonthTab { MyMonth = "All", MyYear = CurYear, MyClass = "active" });
             snaps = await SnapshotRepo.GetSnapshotsAsync();
         }
 
-        await SetSnapshot(DateTime.Now);
-
-        Task lt = LoadTable();
-
-        bool cat = DateTime.TryParse(LastHere, out DateTime LastHereDate);
-
-        if (cat && DateTime.Now.ToString("MMMM") != LastHereDate.ToString("MMMM"))
+        int highest_month = 0;
+        foreach (var sn in snaps)
         {
-            await lt;
-            SetSnapshot(LastHereDate);
+            if (Constants.Months.IndexOf(sn.Month) >= highest_month && sn.Year == DateTime.Now.Year)
+                highest_month = Constants.Months.IndexOf(sn.Month);
         }
 
-        Task lastHereAysnc = WriteCookieAsync("LastHere", DateTime.Now.ToString("d"), 100);
+        if (Constants.Months.IndexOf(DateTime.Now.ToString("MMMM")) > highest_month)
+            await SetSnapshot(DateTime.Now.AddMonths(-1));
+
+        await SetSnapshot(DateTime.Now);
+
+        await LoadTable();
     }
 
     private async Task LoadTable()
@@ -457,8 +460,6 @@ else
 
         SelectedMonth = MonthTabs.FirstOrDefault(m => m.MyClass == "active").MyMonth;
         SelectedYear = Years.FirstOrDefault(y => y.MyClass == "active").MyYear;
-
-        Trans = new List<Transaction>(Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()));
 
         if (SelectedMonth == "All")
         {
@@ -608,11 +609,11 @@ else
         }
 
         var test = (string)JsonConvert.SerializeObject(TodayDyno);
-
-        await SnapshotRepo.AddOrUpdateAsync(new Snapshot
+        DateTime thisDateTime = new DateTime(yearInt, monthInt, 1);
+        snaps = await SnapshotRepo.AddOrUpdateAsync(new Snapshot
             {
-                Month = DateTime.Now.ToString("MMMM"),
-                Year = DateTime.Now.Year,
+                Month = thisDateTime.ToString("MMMM"),
+                Year = thisDateTime.Year,
                 Person1Income = TodayPerson1Income,
                 Person2Income = TodayPerson2Income,
                 Person1Transactions = TodayTransPerson1Total,

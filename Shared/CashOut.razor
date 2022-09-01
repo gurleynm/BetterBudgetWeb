@@ -202,7 +202,7 @@ else
 
     protected override Task OnInitializedAsync()
     {
-        Envelopes = new List<Data.Envelope>(Constants.Envelopes);
+        Envelopes = Constants.Envelopes.OrderBy(e => e.Name).ToList();
         Envelopes = Envelopes.Where(en => en.TotalAmount > 0).ToList();
         return base.OnInitializedAsync();
     }
@@ -244,11 +244,11 @@ else
 
             Cashing = true;
             StateHasChanged();
+            Task runner = EnvelopeRepo.AddOrUpdateAsync(UpdateEnv);
             await Task.Delay(2000);
-            /*
-             * Task runner = EnvelopeRepo.AddOrUpdateAsync(UpdateEnv);
-             * await runner;
-             */
+            
+            await runner;
+            
             StateHasChanged();
             Cashing = false;
         }

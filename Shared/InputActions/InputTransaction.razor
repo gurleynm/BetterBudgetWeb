@@ -465,7 +465,7 @@ else
         if (string.IsNullOrEmpty(ErrorMsg))
         {
             BalanceRepoCaller brc = new BalanceRepoCaller();
-            await TransactionRepo.AddOrUpdateAsync(new Transaction(TransactionName, ExpenseType, nam, lam, brc.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2)));
+            var tr = await TransactionRepo.AddOrUpdateAsync(new Transaction(TransactionName, ExpenseType, nam, lam, brc.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2)));
 
             ErrorColor = "green";
             ErrorMsg = TransactionName + " transaction was added!";
@@ -479,7 +479,7 @@ else
             PaidWithPerson2 = string.Empty;
             PaidWithPerson1 = string.Empty;
 
-            await Constants.Init();
+            Constants.Transactions = new List<Transaction>(tr);
             StateHasChanged();
         }
     }

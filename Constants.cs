@@ -26,13 +26,13 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = false;
+        public static bool Us = true;
         private static bool Test = false;
         public static string Key { get; set; } = "";
 
         public static string PassKey { get; set; } = "no";
 
-        private static readonly List<string> Months = new List<string>{"January", "February", "March", "April", "May",
+        public static readonly List<string> Months = new List<string>{"January", "February", "March", "April", "May",
                                                                 "June", "July", "August", "September",
                                                                 "October", "November", "December"};
 
@@ -93,15 +93,19 @@ namespace BetterBudgetWeb
             }
         }
         public static List<Monthly> GetMonthlies() { return Monthlies; }
-        public static void SetMonthlies(List<Monthly> monthlies)
+        public static async void SetMonthlies(List<Monthly> monthlies)
         {
             Monthlies = new List<Monthly>(monthlies);
+            Redrive();
+        }
+        public static void Redrive()
+        {
             DynamicCostItems = new List<DynamicCostItem>();
             SavingsGoals = new List<SavingsGoal>();
             StaticMonthlyCosts = new List<StaticMonthlyCost>();
             ProjectedData = new List<ProjectedDatum>();
 
-            foreach (var mon in monthlies)
+            foreach (var mon in Monthlies)
             {
                 if (mon.Dynamic == "DYNAMIC")
                 {

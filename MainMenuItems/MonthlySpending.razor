@@ -35,11 +35,11 @@
             <th colspan="6" style="background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
         </tr>
         <tr style="height:3vw">
-            <th style="cursor:pointer" @onclick='() => Order("Date")'>@DateHeaderTxt</th>
+            <th style="cursor:pointer;padding:.5vw 1vw" @onclick='() => Order("Date")'>@DateHeaderTxt</th>
             <th style="cursor:pointer" @onclick='() => Order("Name")'>@NameHeaderTxt</th>
             <th style="cursor:pointer" @onclick='() => Order("Person1")'>@Person1HeaderTxt</th>
             <th style="cursor:pointer" @onclick='() => Order("Person2")'>@Person2HeaderTxt</th>
-            <th style="cursor:pointer" @onclick='() => Order("Total")'>@TotalHeaderTxt</th>
+            <th style="cursor:pointer;padding:.5vw 1vw" @onclick='() => Order("Total")'>@TotalHeaderTxt</th>
             <th>
                 @if (filtered)
                 {
@@ -91,7 +91,7 @@
             <td>
                 @(NewPerson1Amount + NewPerson2Amount)
             </td>
-            <td>
+            <td style="padding:.5vw 1vw">
                 <button class="btn btn-primary" @onclick="Add"><span class="oi oi-plus"></span></button>
             </td>
         </tr>
@@ -531,7 +531,10 @@ else
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
             Balances = await BalanceRepo.GetBalancesAsync();
 
-            await Constants.Init();
+            Constants.Transactions = new List<Transaction>(Transactions);
+            Constants.Balances = new List<Balance>(Balances);
+            await MonthlyRepo.GetMonthliesAsync();
+
             AddConfirm();
         }
 
@@ -549,6 +552,11 @@ else
             Transactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(ft => ft.DateOfTransaction).ToList();
             Balances = await BalanceRepo.GetBalancesAsync();
+
+            Constants.Transactions = new List<Transaction>(Transactions);
+            Constants.Balances = new List<Balance>(Balances);
+            Constants.Redrive();
+
             OnDeleteConfirm.InvokeAsync();
         }
         ShowDelete = false;

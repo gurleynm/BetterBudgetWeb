@@ -203,7 +203,7 @@ else
 
     protected override Task OnInitializedAsync()
     {
-        Envelopes = new List<Data.Envelope>(Constants.Envelopes);
+        Envelopes = Constants.Envelopes.OrderBy(e => e.Name).ToList();
         return base.OnInitializedAsync();
     }
 

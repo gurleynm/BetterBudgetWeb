@@ -405,7 +405,6 @@ else
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
             Balances = await BalanceRepo.GetBalancesAsync();
 
-            await Constants.Init();
             AddConfirm();
         }
 
