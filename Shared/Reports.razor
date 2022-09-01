@@ -483,6 +483,8 @@ else
             foreach (var dn in snaps.Select(s => s.DynamicJSON))
             {
                 dyna = (Dynamo)JsonConvert.DeserializeObject<Dynamo>(dn);
+                if (!MonthTabs.Select(m => m.MyMonth).Contains(dyna.Month))
+                    continue;
 
                 foreach (JObject key in dyna.DynamicCosts)
                 {

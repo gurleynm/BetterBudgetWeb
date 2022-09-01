@@ -1,5 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using BetterBudgetWeb.Repo;
+using BetterBudgetWeb.Runner;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -27,7 +28,7 @@ namespace BetterBudgetWeb
         public static string Person2 { get; set; } = "Kaitie";
 
         public static bool Us = true;
-        private static bool Test = false;
+        private static bool Test = true;
         public static string Key { get; set; } = "";
 
         public static string PassKey { get; set; } = "no";
@@ -55,13 +56,28 @@ namespace BetterBudgetWeb
             }
 
             PassKey = Key;
-            Monthlies = await MonthlyRepo.GetMonthliesAsync();
-            Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
-            await PresetRepo.GetPresetsAsync();
-
-            var fp = Presets;
+            CatchAll catchAll = await CatchAllRunner.Grab();
+            
+            AssignCatches(catchAll);
 
             SetMonthlies(Monthlies);
+        }
+        public static void AssignCatches(CatchAll caught)
+        {
+            Transactions = caught.Transactions;
+            Balances = caught.Balances;
+            Monthlies = caught.Monthlies;
+            Envelopes = caught.Envelopes;
+            Presets = caught.Presets;
+
+            TransactionRepo.Transactions = caught.Transactions;
+            BalanceRepo.Balances = caught.Balances;
+            MonthlyRepo.Monthlies = caught.Monthlies;
+            EnvelopeRepo.Envelopes = caught.Envelopes;
+            PresetRepo.Presets = caught.Presets;
+            SnapshotRepo.Snapshots = caught.Snapshots;
+
+            Redrive();
         }
         private static void LoadDefaults()
         {

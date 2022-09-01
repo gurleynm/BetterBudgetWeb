@@ -161,7 +161,7 @@ else
     [Parameter]
     public bool Mobile { get; set; }
 
-    private List<Balance> Balances => BalanceRepo.GetBalances();
+    private List<Balance> Balances => Constants.Balances;
     private List<Data.Envelope> Envelopes { get; set; }
 
     private string ErrorMsg { get; set; } = string.Empty;

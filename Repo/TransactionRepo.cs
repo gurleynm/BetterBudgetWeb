@@ -33,6 +33,7 @@ namespace BetterBudgetWeb.Repo
             Task.Run(async () => await GetTransactionsAsync());
             return Transactions;
         }
+        // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
         public static async Task<List<Transaction>> AddOrUpdateAsync(Transaction trans)
         {
             trans.Name = trans.Name.Trim();
@@ -51,12 +52,14 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Transaction[]>(content).ToList();
-            Constants.Transactions = tran;
-            Constants.Balances = await BalanceRepo.GetBalancesAsync();
+            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var tran = ca.Transactions;
+
+            Constants.AssignCatches(ca);
 
             return tran;
         }
+        // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
         public static async Task<List<Transaction>> RemoveAsync(Transaction trans)
         {
             HttpClient _client = new HttpClient();
@@ -73,10 +76,13 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Transaction[]>(content).ToList();
-            Constants.Transactions = tran;
+            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var tran = ca.Transactions;
+
+            Constants.AssignCatches(ca);
             return tran;
         }
+        // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
         public static async Task<List<Transaction>> RemoveAsync(string id)
         {
             HttpClient _client = new HttpClient();
@@ -94,8 +100,10 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Transaction[]>(content).ToList();
-            Constants.Transactions = tran;
+            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var tran = ca.Transactions;
+            
+            Constants.AssignCatches(ca);
             return tran;
         }
     }

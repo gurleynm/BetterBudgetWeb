@@ -527,13 +527,11 @@ else
 
         if (nt != null)
         {
+            // TransactionRepo sets everything in Constants
             Transactions = await TransactionRepo.AddOrUpdateAsync(nt);
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
-            Balances = await BalanceRepo.GetBalancesAsync();
 
-            Constants.Transactions = new List<Transaction>(Transactions);
-            Constants.Balances = new List<Balance>(Balances);
-            await MonthlyRepo.GetMonthliesAsync();
+            Balances = Constants.Balances;
 
             AddConfirm();
         }
@@ -549,13 +547,11 @@ else
     {
         if (accepted)
         {
+            // TransactionRepo sets everything in Constants
             Transactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(ft => ft.DateOfTransaction).ToList();
-            Balances = await BalanceRepo.GetBalancesAsync();
-
-            Constants.Transactions = new List<Transaction>(Transactions);
-            Constants.Balances = new List<Balance>(Balances);
-            Constants.Redrive();
+            
+            Balances = Constants.Balances;
 
             OnDeleteConfirm.InvokeAsync();
         }

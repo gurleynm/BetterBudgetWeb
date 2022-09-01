@@ -333,8 +333,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
-        Balances = await BalanceRepo.GetBalancesAsync();
-        Transactions = await TransactionRepo.GetTransactionsAsync();
+        CatchAll catchAll = await CatchAllRunner.Grab();
+        Balances = catchAll.Balances;
+        Transactions = catchAll.Transactions;
         FilteredTransactions = new List<Transaction>(Transactions);
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).OrderByDescending(t => t.DateOfTransaction).ToList();
         SimulatedConstants.SetMonthlies(Month, Year);

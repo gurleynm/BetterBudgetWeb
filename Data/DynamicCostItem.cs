@@ -8,7 +8,7 @@ namespace BetterBudgetWeb.Data
         public double Person1Amount { get; set; }
         public double Person2Amount { get; set; }
         public double Amount => Person1Amount + Person2Amount;
-        public double Left => Amount -  TransactionRepo.GetTransactions().Where(d => (d.ExpenseType == Name || (d.ExpenseType + " (ON)") == Name)  && 
+        public double Left => Amount -  Constants.Transactions.Where(d => (d.ExpenseType == Name || (d.ExpenseType + " (ON)") == Name)  && 
                                                                                     d.DateOfTransaction.Month == DateTime.Now.Month)
                                                                         .Sum(c => c.Person1Amount + c.Person2Amount);
         public double SpentReport { get; set; }

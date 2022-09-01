@@ -427,7 +427,7 @@ else
     private string Hex { get; set; } = "#28A745";
     private string TextColor { get; set; } = "#FFFFFF";
 
-    private List<Balance> Balances => BalanceRepo.GetBalances();
+    private List<Balance> Balances => Constants.Balances;
 
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";
@@ -479,7 +479,6 @@ else
             PaidWithPerson2 = string.Empty;
             PaidWithPerson1 = string.Empty;
 
-            Constants.Transactions = new List<Transaction>(tr);
             StateHasChanged();
         }
     }

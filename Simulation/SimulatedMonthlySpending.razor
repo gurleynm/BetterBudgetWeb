@@ -259,9 +259,6 @@ else
     public int Year { get; set; }
 
     [Parameter]
-    public EventCallback OnAddConfirm { get; set; }
-
-    [Parameter]
     public EventCallback OnDeleteConfirm { get; set; }
 
     [Parameter]
@@ -394,22 +391,6 @@ else
             StateHasChanged();
         }
     }
-    private async void Add()
-    {
-        var nt = IndexRunner.Add(ref ErrorMsg, ref NewExpense, ref NewName, ref NewPerson1Amount, ref NewPerson2Amount,
-                                    ref NewPerson1PaidWith, ref NewPerson2PaidWith);
-
-        if (nt != null)
-        {
-            Transactions = await TransactionRepo.AddOrUpdateAsync(nt);
-            FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
-            Balances = await BalanceRepo.GetBalancesAsync();
-
-            AddConfirm();
-        }
-
-        StateHasChanged();
-    }
     private void ShowDeleteBtn(Transaction t)
     {
         SelectedTransaction = t;
@@ -487,11 +468,5 @@ else
             }
             StateHasChanged();
         }
-    }
-
-    private async void AddConfirm()
-    {
-        OnAddConfirm.InvokeAsync();
-        StateHasChanged();
     }
 }

@@ -57,7 +57,7 @@
                                 <input type="number" style="width:5vw;margin:.5vw" @bind="Transact.Person1Amount" />
                                 <select class="custom-select" style="width:8vw;margin:1vh;" @bind="Transact.PaidWithPerson1" title="Pick a payment type ">
                                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
-                                    @foreach (var pay in BalanceRepo.GetBalances().Where(b => b.Person == Constants.Person1))
+                                    @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person1))
                                     {
                                         <option value="@pay.Name">@pay.Name</option>
                                     }
@@ -67,7 +67,7 @@
                                 <input type="number" style="width:5vw;margin:.5vw" @bind="Transact.Person2Amount" />
                                 <select class="custom-select" style="width:8vw;margin:1vh;" @bind="Transact.PaidWithPerson2" title="Pick a payment type ">
                                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
-                                    @foreach (var pay in BalanceRepo.GetBalances().Where(b => b.Person == Constants.Person2))
+                                    @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person2))
                                     {
                                         <option value="@pay.Name">@pay.Name</option>
                                     }
@@ -128,7 +128,7 @@ else
                                 <br />
                                 <select class="custom-select" style="font-size:3vw;width:fit-content;margin:1vh;" @bind="Transact.PaidWithPerson1" title="Pick a payment type ">
                                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
-                                    @foreach (var pay in BalanceRepo.GetBalances().Where(b => b.Person == Constants.Person1))
+                                    @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person1))
                                     {
                                         <option value="@pay.Name">@pay.Name</option>
                                     }
@@ -142,7 +142,7 @@ else
                                 <br />
                                 <select class="custom-select" style="font-size:3vw;width:fit-content;margin:1vh;" @bind="Transact.PaidWithPerson2" title="Pick a payment type ">
                                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
-                                    @foreach (var pay in BalanceRepo.GetBalances().Where(b => b.Person == Constants.Person2))
+                                    @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person2))
                                     {
                                         <option value="@pay.Name">@pay.Name</option>
                                     }
@@ -210,7 +210,7 @@ else
 
     private async Task ModalAccept()
     {
-        Constants.Transactions = await TransactionRepo.AddOrUpdateAsync(Transact);
+        await TransactionRepo.AddOrUpdateAsync(Transact);
         await OnClose.InvokeAsync(true);
     }
 }
