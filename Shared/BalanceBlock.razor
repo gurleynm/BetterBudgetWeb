@@ -48,19 +48,7 @@
 
         if (IncludeGoals)
         {
-            List<Data.Envelope> envs;
-            int BalanceTypeModifier = TheBalance.BalanceType == "Loan" ? -1 : 1;
-
-            for (int counter = 0; counter < 2; counter++)
-            {
-                envs = Constants.Envelopes.Where(en => counter == 0 ? en.Person1Account == TheBalance.Id : 
-                                                                        en.Person2Account == TheBalance.Id).ToList();
-
-                foreach (var en in envs)
-                {
-                    amount -= (counter == 0 ? en.Person1Amount : en.Person2Amount) * BalanceTypeModifier;
-                }
-            }
+            amount = TheBalance.GetValueWithGoals();
         }
 
         string returnStr = amount.ToString();

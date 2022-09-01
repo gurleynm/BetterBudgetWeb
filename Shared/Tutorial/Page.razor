@@ -1,0 +1,22 @@
+﻿<div style="font-size:1.5vw;">
+    @if(!string.IsNullOrEmpty(TopText)){
+        <span>@TopText</span>
+    }
+    <br>
+    @if (!string.IsNullOrEmpty(BottomText))
+    {
+        <span>@BottomText</span>
+    }
+    @if (!string.IsNullOrEmpty(ImgSrc))
+    {
+        <img src=@ImgSrc style="width:auto;height:auto"/>
+    }
+</div>
+@code {
+    [Parameter]
+    public string TopText { get; set; }
+    [Parameter]
+    public string BottomText { get; set; }
+    [Parameter]
+    public string ImgSrc { get; set; }
+}

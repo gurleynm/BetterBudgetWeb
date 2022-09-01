@@ -1,0 +1,124 @@
+﻿@using BetterBudgetWeb.Data
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+
+    button {
+        color: black;
+    }
+</style>
+@if (!Mobile)
+{
+    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:50vw;position: absolute;left: 50%; top: 50%;
+                        transform: translate(-50%, 0%);background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
+                        <strong>Welcome to Couple's Better Budget</strong>
+                    </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalExit">
+                    </button>
+                </div>
+                <div class="modal-body" style="width:100%;color:black;">
+                    <div style="display:flex;flex-direction:column;justify-content:center;">
+                        @for (int index = 0; index < Pages.Count; index++)
+                        {
+                            @if (index == PageNum)
+                            {
+                                <Page TopText=@Pages[index].TopText BottomText=@Pages[index].BottomText ImgSrc=@Pages[index].ImgSrc />
+                            }
+                        }
+                        <br />
+                        <div style="display:flex;flex-direction:row;justify-content:space-between">
+                            @if (PageNum > 0)
+                            {
+                                <button class="btn btn-primary" style="align-self:flex-start;width:5vw" @onclick=@Retreat>@PreviousText</button>
+                            }
+                            @if (PageNum < 10)
+                            {
+                                <button class="btn btn-primary" style="align-self:flex-end;width:5vw" @onclick=@Progress>@ProgressionText</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display:flex;flex-direction:row;justify-content:center">
+                    <label style="color:black">Don't show again:</label>
+                    <input type="checkbox" @bind=@Seen />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:fit-content;margin:0 auto;background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
+                        <strong>Stash Cash</strong>
+                    </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalExit">
+                    </button>
+                </div>
+                <div class="modal-body" style="width:100%;color:black;">
+                    Hello World
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    private List<TutPage> Pages { get; set; }
+
+    private bool Seen { get; set; }
+
+    private string PreviousText { get; set; } = "Prev";
+    private string ProgressionText { get; set; } = "Next";
+
+    private int PageNum { get; set; } = 0;
+
+    protected override Task OnInitializedAsync()
+    {
+        Pages = new List<TutPage>();
+
+        Pages.Add(new TutPage
+            {
+                TopText = "Welcome!",
+                BottomText = "We with N-finity Gaming are excited to help you in your budgeting endevours." +
+                                                                          "Please, use this tutorial to help walk you through the many different aspects of this functional web app."
+            });
+
+        return base.OnInitializedAsync();
+    }
+
+    private async Task Retreat()
+    {
+        PageNum = PageNum == 0 ? 0 : PageNum - 1;
+    }
+    private async Task Progress()
+    {
+        PageNum = PageNum == 10 ? 10 : PageNum + 1;
+    }
+    private async Task ModalExit()
+    {
+        await OnClose.InvokeAsync(Seen);
+    }
+}

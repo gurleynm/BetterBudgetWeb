@@ -82,5 +82,23 @@
             APR = other.APR;
             HexColor = other.HexColor;
         }
+        public double GetValueWithGoals()
+        {
+            double amount = Value;
+            List<Data.Envelope> envs;
+            int BalanceTypeModifier = BalanceType == "Loan" ? -1 : 1;
+
+            for (int counter = 0; counter < 2; counter++)
+            {
+                envs = Constants.Envelopes.Where(en => counter == 0 ? en.Person1Account == Id :
+                                                                        en.Person2Account == Id).ToList();
+
+                foreach (var en in envs)
+                {
+                    amount -= (counter == 0 ? en.Person1Amount : en.Person2Amount) * BalanceTypeModifier;
+                }
+            }
+            return amount;
+        }
     }
 }

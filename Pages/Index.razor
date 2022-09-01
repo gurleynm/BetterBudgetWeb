@@ -4,6 +4,7 @@
 @using BetterBudgetWeb.MainMenuItems.Chart
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.Shared.Tutorial
 @inject IJSRuntime JSRuntime
 
 <style>
@@ -227,6 +228,10 @@ else
             {
                 <div style="display:inline-block">
                     <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => StashCashBool = !StashCashBool)>Stash Cash</button>
+                    <br style="clear:both"/>
+                    <br style="clear:both"/>
+                    <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => CashOutBool = !CashOutBool)>Cash Out</button>
+                    <br />
                     <br />
                     <div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between">
                         @foreach (var env in Constants.Envelopes)
@@ -234,6 +239,7 @@ else
                             <Envelope Name="@env.Name" Scale=12 Font_Size=1.5 Goal=@env.Goal Saved=@env.TotalAmount />
                         }
                     </div>
+                    <br />
                 </div>
             }
         </div>
@@ -312,6 +318,9 @@ else
         <br />
         <div style="display:inline-block;width:100%">
             <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => StashCashBool = !StashCashBool)>Stash Cash</button>
+            <br style="clear:both" />
+            <br style="clear:both" />
+            <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => CashOutBool = !CashOutBool)>Cash Out</button>
             <br />
             <div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
                 @foreach (var env in Constants.Envelopes)
@@ -319,6 +328,9 @@ else
                     <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@env.Goal Saved=@env.TotalAmount />
                 }
             </div>
+            <br />
+            <br style="clear:both" />
+            <br style="clear:both" />
         </div>
         <!-- Dynamic Costs -->
         <div style="width:100%;">
@@ -400,6 +412,22 @@ else
 
         </StashCash>
     }
+    @if (CashOutBool)
+    {
+        <CashOut Mobile="mobile"
+           OnClose="@CloseModal">
+
+        </CashOut>
+    }
+    @*
+    @if (ShowTutorial)
+    {
+        <TutorialModal Mobile="mobile"
+           OnClose="@CloseTutModal">
+
+        </TutorialModal>
+    }
+    *@
 }
 
 @code {
@@ -430,6 +458,8 @@ else
 
     private bool ShowChart;
 
+    private bool ShowTutorial;
+
     private List<string> FoundMonths => GetMonths();
     private List<DataPoint> DataPoints = new List<DataPoint>();
 
@@ -440,6 +470,7 @@ else
 
     private bool ViewReports { get; set; }
     private bool StashCashBool { get; set; }
+    private bool CashOutBool { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -450,6 +481,19 @@ else
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
         Monthlies = await MonthlyRepo.GetMonthliesAsync();
         ErrorMsg = string.Empty;
+
+        string GoalsOpen = await ReadCookies("GoalsOpen");
+        string TutorialSeen = await ReadCookies("TutorialSeen");
+
+        if (string.IsNullOrEmpty(GoalsOpen) || GoalsOpen == "NO")
+            Goals = false;
+        else
+            Goals = true;
+
+        if (string.IsNullOrEmpty(TutorialSeen))
+            ShowTutorial = true;
+        else
+            ShowTutorial = false;
 
         SetDataPoints();
 
@@ -616,15 +660,43 @@ else
     {
         ViewReports = false;
         StashCashBool = false;
+        CashOutBool = false;
+    }
+    private async void CloseTutModal(bool DontShowAgain)
+    {
+        if (DontShowAgain)
+            await WriteCookieAsync("TutorialSeen", "YES", 1000);
+        
+        ShowTutorial = false;
     }
     private void ToggleChartBtn()
     {
         ShowChart = !ShowChart;
     }
-    private void ToggleGoals()
+    private async void ToggleGoals()
     {
         Goals = !Goals;
+        await WriteCookieAsync("GoalsOpen", Goals ? "YES" : "NO", 1000);
         StateHasChanged();
+    }
+    protected async Task<string> ReadCookies(string CookieName)
+    {
+        string response;
+        try
+        {
+            response = await JSRuntime.InvokeAsync<string>("ReadCookie", CookieName);
+        }
+        catch (Exception e)
+        {
+            response = null;
+        }
+
+        return response;
+    }
+
+    public async Task WriteCookieAsync(string name, string value, double days)
+    {
+        var test = await JSRuntime.InvokeAsync<object>("WriteCookie", name, value, days);
     }
     async Task DownloadCSV()
     {

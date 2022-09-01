@@ -25,7 +25,7 @@
                         transform: translate(-50%, 0%);background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
-                        <strong>Stash Cash</strong>
+                        <strong>Cash Out</strong>
                     </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
@@ -45,6 +45,14 @@
                             {
                                 <br />
                                 <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%;">
+                                    <div style="align-content:flex-start">
+                                        <Envelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Open=true Adding=false
+                                      Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                                    </div>
+                                    <div style="display:flex;flex-direction:column;justify-content:center">
+                                        <img src="/images/CashArrow.png" style="height:3vw;cursor:pointer" @onclick=@(() => HandleCash()) />
+                                    </div>
+
                                     <div style="display:flex;flex-direction:column;justify-content:space-evenly">
                                         @if (SelectedEnv.Person1Account != "NONE")
                                         {
@@ -53,7 +61,7 @@
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person1Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
+                                                    <span style="font-style:italic;color:dimgray">Available Saved: @Constants.Pretty(SelectedEnv.Person1Amount)</span>
                                                 </div>
                                             </div>
                                         }
@@ -64,17 +72,10 @@
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person2Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
+                                                    <span style="font-style:italic;color:dimgray">Available Saved: @Constants.Pretty(SelectedEnv.Person2Amount)</span>
                                                 </div>
                                             </div>
                                         }
-                                    </div>
-                                    <div style="display:flex;flex-direction:column;justify-content:center">
-                                        <img src="/images/StashArrow.png" style="height:3vw;cursor:pointer" @onclick=@(() => HandleStash()) />
-                                    </div>
-                                    <div style="align-content:flex-end">
-                                        <Envelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Open=true Adding=true
-                                      Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
                                 </div>
                             }
@@ -98,7 +99,7 @@ else
             <div class="modal-content" style="width:fit-content;margin:0 auto;background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
-                        <strong>Stash Cash</strong>
+                        <strong>Cash Out</strong>
                     </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
@@ -126,7 +127,7 @@ else
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person1Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
+                                                    <span style="font-style:italic;color:dimgray">Available Saved: @Constants.Pretty(SelectedEnv.Person1Amount)</span>
                                                 </div>
                                             </div>
                                         }
@@ -141,17 +142,17 @@ else
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person2Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
+                                                    <span style="font-style:italic;color:dimgray">Available Saved: @Constants.Pretty(SelectedEnv.Person2Amount)</span>
                                                 </div>
                                             </div>
                                         }
                                     </div>
                                     <div style="display:flex;flex-direction:column;justify-content:center;height:auto">
-                                        <img src="/images/StashArrow.png" style="height:30vw;cursor:pointer" @onclick=@(() => HandleStash()) />
+                                        <img src="/images/CashArrowMobile.png" style="height:30vw;cursor:pointer" @onclick=@(() => HandleCash()) />
                                     </div>
                                     <div style="align-content:flex-end">
-                                        <Envelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Open=true Adding=true
-                                      Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                                        <Envelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Open=true Adding=false
+                                      Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
                                 </div>
                             }
@@ -178,7 +179,7 @@ else
 
     public double Person1Amount { get; set; }
     public double Person2Amount { get; set; }
-    public bool Stashing { get; set; }
+    public bool Cashing { get; set; }
 
     public string ErrorMsg { get; set; }
     public string ErrorColor { get; set; }
@@ -197,17 +198,16 @@ else
         }
     }
     private Data.Envelope SelectedEnv { get; set; }
-    private Balance Person1Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person1Account);
-    private Balance Person2Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person2Account);
 
 
     protected override Task OnInitializedAsync()
     {
         Envelopes = new List<Data.Envelope>(Constants.Envelopes);
+        Envelopes = Envelopes.Where(en => en.TotalAmount > 0).ToList();
         return base.OnInitializedAsync();
     }
 
-    private async Task HandleStash()
+    private async Task HandleCash()
     {
         ErrorMsg = string.Empty;
         ErrorColor = "red";
@@ -228,27 +228,29 @@ else
                 ErrorMsg += $"{Constants.Person2} must contribute. ";
         }
 
-        if (Person1Bal != null && Person1Bal.GetValueWithGoals() - Person1Amount < 0)
-            ErrorMsg += $"Stashed cash cannot exceed your balance, {Constants.Person1}. ";
-        if (Person2Bal != null && Person2Bal.GetValueWithGoals() - Person2Amount < 0)
-            ErrorMsg += $"Stashed cash cannot exceed your balance, {Constants.Person2}. ";
+        if (SelectedEnv.Person1Amount - Person1Amount < 0)
+            ErrorMsg += $"Envelope value for {Constants.Person1} cannot be less than zero. {Constants.Person1} has {Constants.Pretty(SelectedEnv.Person1Amount)} saved. ";
+        if (SelectedEnv.Person2Amount - Person2Amount < 0)
+            ErrorMsg += $"Envelope value for {Constants.Person2} cannot be less than zero. {Constants.Person2} has {Constants.Pretty(SelectedEnv.Person2Amount)} saved. ";
 
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
             Data.Envelope UpdateEnv = new Data.Envelope(SelectedEnv);
-            UpdateEnv.Person1Amount += Person1Amount;
-            UpdateEnv.Person2Amount += Person2Amount;
+            UpdateEnv.Person1Amount -= Person1Amount;
+            UpdateEnv.Person2Amount -= Person2Amount;
+            SelectedEnv.Person1Amount -= Person1Amount;
+            SelectedEnv.Person2Amount -= Person2Amount;
 
-            Stashing = true;
+            Cashing = true;
             StateHasChanged();
-            Task runner = EnvelopeRepo.AddOrUpdateAsync(UpdateEnv);
             await Task.Delay(2000);
-            SelectedEnv.Person1Amount += Person1Amount;
-            SelectedEnv.Person2Amount += Person2Amount;
+            /*
+             * Task runner = EnvelopeRepo.AddOrUpdateAsync(UpdateEnv);
+             * await runner;
+             */
             StateHasChanged();
-            Stashing = false;
-            await runner;
+            Cashing = false;
         }
     }
 

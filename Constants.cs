@@ -26,7 +26,7 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = true;
+        public static bool Us = false;
         private static bool Test = false;
         public static string Key { get; set; } = "";
 
@@ -53,6 +53,8 @@ namespace BetterBudgetWeb
                 Person2 = "Katie";
                 Key = "Doofenblast!";
             }
+
+            PassKey = Key;
             Monthlies = await MonthlyRepo.GetMonthliesAsync();
             Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
             await PresetRepo.GetPresetsAsync();
