@@ -37,6 +37,10 @@
             pointer-events: none;
         }
 
+        .no-scroll{
+            overflow:hidden;
+        }
+
         @keyframes fade-in {
             from {
                 opacity: 0;
@@ -70,7 +74,7 @@
 </head>
 
 <body>
-    <div id="app" ">
+    <div id="app">
         <div style="background-color: #111827; height: 100vh; display: inline-block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw;">
             <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
                 <img class="rotate" src="images/BetterBudgetLogo.jpg" style="border-radius:7vw;height:100%;width:100%" />
@@ -89,6 +93,14 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
+        function TurnOffScroll() {
+            document.body.style.overflow = 'hidden';
+            return false;
+        }
+        function TurnOnScroll() {
+            document.body.style.overflow = 'auto';
+            return false;
+        }
         function isDevice() {
             return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
         }

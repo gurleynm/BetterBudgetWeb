@@ -101,7 +101,7 @@ else
                 </button>
 
             }
-            <button class="btn btn-secondary" style="align-self:flex-end" @onclick=@(() => ViewReports = !ViewReports)>View Reports</button>
+            <button class="btn btn-secondary" style="align-self:flex-end" @onclick=@(() => ToggleReports())>View Reports</button>
         </div>
         @if (ShowChart)
         {
@@ -225,10 +225,10 @@ else
             else
             {
                 <div style="display:inline-block">
-                    <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => StashCashBool = !StashCashBool)>Stash Cash</button>
+                    <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                     <br style="clear:both" />
                     <br style="clear:both" />
-                    <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => CashOutBool = !CashOutBool)>Cash Out</button>
+                    <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
                     <br />
                     <br />
 
@@ -300,7 +300,7 @@ else
         <br style="clear:both;" />
         <br style="clear:both;" />
         <div style="display:flex;justify-content:center">
-            <button class="btn btn-secondary" @onclick=@(() => ViewReports = !ViewReports)>View Reports</button>
+            <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
         </div>
         <br style="clear:both;" />
         <br style="clear:both;" />
@@ -336,10 +336,10 @@ else
 
         <br />
         <div style="display:inline-block;width:100%">
-            <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => StashCashBool = !StashCashBool)>Stash Cash</button>
+            <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
             <br style="clear:both" />
             <br style="clear:both" />
-            <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => CashOutBool = !CashOutBool)>Cash Out</button>
+            <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
             <br />
             <br />
             <div style="display:flex;flex-direction:column;justify-content:center">
@@ -556,10 +556,11 @@ else
     {
         return Constants.Pretty(num);
     }
-    private void ShowDeleteBalBtn(Balance b)
+    private async void ShowDeleteBalBtn(Balance b)
     {
         SelectedBalance = b;
         ShowDeleteBal = true;
+        await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
     }
     private async void DeleteBalance(bool accepted)
     {
@@ -568,6 +569,7 @@ else
             Balances = await BalanceRepo.RemoveAsync(SelectedBalance);
         }
         ShowDeleteBal = false;
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         StateHasChanged();
     }
     private double CalculateNetWorth(string person)
@@ -645,7 +647,7 @@ else
             else if (tr.ExpenseType != "Debt")
                 MonthAmount = tr.TotalAmount * -1;
 
-            for (int index = 0; index < FilteredTransactions.Count; index++)
+            for (int index = 1; index < FilteredTransactions.Count; index++)
             {
                 if (FilteredTransactions[index].DateOfTransaction.ToShortDateString() != PreviousDate.ToShortDateString())
                 {
@@ -692,6 +694,7 @@ else
     private async void DeleteConfirm()
     {
         SetDataPoints(true);
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
     private async void AddConfirm()
     {
@@ -703,11 +706,12 @@ else
         AddConfirmClass = "floaty-rev";
         StateHasChanged();
     }
-    private void CloseModal(bool accepted)
+    private async void CloseModal(bool accepted)
     {
         ViewReports = false;
         StashCashBool = false;
         CashOutBool = false;
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
     private async void CloseTutModal(bool DontShowAgain)
     {
@@ -715,17 +719,7 @@ else
             await WriteCookieAsync("TutorialSeen", "YES", 1000);
 
         ShowTutorial = false;
-    }
-    private void ToggleChartBtn()
-    {
-        ShowChart = !ShowChart;
-    }
-    private async void ToggleGoals()
-    {
-        Goals = !Goals;
-        await WriteCookieAsync("GoalsOpen", Goals ? "YES" : "NO", 1000);
-        Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList();
-        StateHasChanged();
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
     protected async Task<string> ReadCookies(string CookieName)
     {
@@ -745,6 +739,42 @@ else
     public async Task WriteCookieAsync(string name, string value, double days)
     {
         var test = await JSRuntime.InvokeAsync<object>("WriteCookie", name, value, days);
+    }
+    private void ToggleChartBtn()
+    {
+        ShowChart = !ShowChart;
+    }
+    private async void ToggleGoals()
+    {
+        Goals = !Goals;
+        await WriteCookieAsync("GoalsOpen", Goals ? "YES" : "NO", 1000);
+        Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList();
+        StateHasChanged();
+    }
+    private async void ToggleReports()
+    {
+        ViewReports = !ViewReports;
+        if (ViewReports)
+            await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
+        else
+            await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+
+    }
+    private async void ToggleStash()
+    {
+        StashCashBool = !StashCashBool;
+        if (StashCashBool)
+            await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
+        else
+            await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+    }
+    private async void ToggleCash()
+    {
+        CashOutBool = !CashOutBool;
+        if (CashOutBool)
+            await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
+        else
+            await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
     async Task DownloadCSV()
     {

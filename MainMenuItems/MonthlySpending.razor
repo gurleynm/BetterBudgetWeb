@@ -1,6 +1,8 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
+@inject IJSRuntime JSRuntime
+
 <style>
     option {
         color: black;
@@ -106,7 +108,7 @@
                     <td style="cursor:pointer;" @onclick='() => Filter(transaction.ExpenseType)'>
                         @transaction.Name
                         <br />
-                        @("("+ transaction.ExpenseType + ")")
+                        @("(" + transaction.ExpenseType + ")")
                     </td>
                     <td>
                         <span class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</span>
@@ -267,7 +269,7 @@ else
                     <td @onclick='() => Filter(transaction.ExpenseType)' style="font-size:3vw;width:2vw">
                         @transaction.Name
                         <br />
-                        @("("+ transaction.ExpenseType + ")")
+                        @("(" + transaction.ExpenseType + ")")
                     </td>
                     <td style="font-size:3vw;padding:0 1vw;">
                         <span class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))" style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.Person1Amount)</span>
@@ -503,15 +505,17 @@ else
     {
         return IndexRunner.TranColor(et, amount);
     }
-    private void OpenModal(Transaction trans)
+    private async void OpenModal(Transaction trans)
     {
         SelectedTransaction = new Transaction(trans);
         ShowModal = true;
+        await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
         StateHasChanged();
     }
-    private void CloseModal(bool accepted)
+    private async void CloseModal(bool accepted)
     {
         ShowModal = false;
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         if (accepted)
         {
             Transactions = Constants.Transactions;
@@ -538,19 +542,21 @@ else
 
         StateHasChanged();
     }
-    private void ShowDeleteBtn(Transaction t)
+    private async void ShowDeleteBtn(Transaction t)
     {
         SelectedTransaction = t;
         ShowDelete = true;
+        await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
     }
     private async void Delete(bool accepted)
     {
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         if (accepted)
         {
             // TransactionRepo sets everything in Constants
             Transactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(ft => ft.DateOfTransaction).ToList();
-            
+
             Balances = Constants.Balances;
 
             OnDeleteConfirm.InvokeAsync();
