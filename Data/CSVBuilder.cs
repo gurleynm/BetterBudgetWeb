@@ -5,21 +5,21 @@
         public static string Build(List<Transaction> Transactions, string SelectedDownload)
         {
             List<Transaction> DesiredTransactions = new List<Transaction>();
-            Transaction previous = Transactions[0];
+            Transaction previous;
             string fileString;
 
             if (SelectedDownload != "All")
             {
                 DesiredTransactions = Transactions.Where(tr => tr.MonthYear() == SelectedDownload).OrderByDescending(t => t.DateOfTransaction).ToList();
+                previous = DesiredTransactions[0];
                 fileString = Transaction.ToString(SelectedDownload);
             }
             else
             {
                 DesiredTransactions = Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+                previous = DesiredTransactions[0];
                 fileString = Transaction.ToString(previous.MonthYear(), true);
             }
-
-            previous = DesiredTransactions[0];
 
             fileString += previous.ToString();
             Transaction current;
