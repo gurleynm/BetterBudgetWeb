@@ -58,6 +58,12 @@
                     }
                 }
             </select>
+            <br />
+            <br />
+            <div style="display:flex;justify-content:space-evenly;flex-direction:row;">
+                <label>Set for All Months:</label>
+                <input type="checkbox" @bind-value=@AllMonthsPerson1 />
+            </div>
         </div>
         <br />
         <br />
@@ -76,6 +82,12 @@
                     }
                 }
             </select>
+            <br />
+            <br />
+            <div style="display:flex;justify-content:space-evenly;flex-direction:row;">
+                <label>Set for All Months:</label>
+                <input type="checkbox" @bind-value=@AllMonthsPerson2 />
+            </div>
         </div>
         <br />
         <br />
@@ -114,7 +126,7 @@
 
     <div style="display:flex;justify-content:start;">
         <!-- Monthly Spending -->
-    <div style="width:50%;float:left; margin-right:1vw; margin-bottom:2vh;">
+        <div style="width:50%;float:left; margin-right:1vw; margin-bottom:2vh;">
             <SimulatedMonthlySpending Mobile=mobile Month=Month Year=Year
                                   @bind-Transactions=Transactions
                                   @bind-FilteredTransactions=FilteredTransactions
@@ -123,7 +135,7 @@
         <div style="display:inline-block;margin-right:1vw;">
 
             <!-- Dynamic Costs -->
-        <div style="width:100%; margin-right:1vw;">
+            <div style="width:100%; margin-right:1vw;">
                 <table>
                     <tr>
                         <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
@@ -141,8 +153,8 @@
                             <tr>
                                 <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'><i>@dci.Name</i></td>
                                 <td>@Pretty(dci.Amount)</td>
-                                <td>@Pretty(dci.Amount)</td>
-                                <td>@Pretty(dci.Amount/DaysLeft)</td>
+                                <td>@Pretty(Month == DateTime.Now.Month ? dci.Left : dci.Amount)</td>
+                                <td>@Pretty(Month == DateTime.Now.Month ? dci.Left/DaysLeft : dci.Amount/DaysLeft)</td>
                             </tr>
                         }
                         else
@@ -150,8 +162,8 @@
                             <tr>
                                 <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'>@dci.Name</td>
                                 <td>@Pretty(dci.Amount)</td>
-                                <td>@Pretty(dci.Amount)</td>
-                                <td>@Pretty(dci.Amount/DaysLeft)</td>
+                                <td>@Pretty(Month == DateTime.Now.Month ? dci.Left : dci.Amount)</td>
+                                <td>@Pretty(Month == DateTime.Now.Month ? dci.Left/DaysLeft : dci.Amount/DaysLeft)</td>
                             </tr>
                         }
                     }
@@ -167,14 +179,14 @@
                 </table>
             </div>
             <!-- Savings Goals-->
-        <SimulatedSavingsGoalsTable Month=Month Year=Year />
+            <SimulatedSavingsGoalsTable Month=Month Year=Year />
 
             <!-- Ideal Emergency Fund-->
-        <IdealEmergencyFund OneMonthPerson1="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person1Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
+            <IdealEmergencyFund OneMonthPerson1="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person1Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
                             OneMonthPerson2="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person2Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
         </div>
         <!-- Set Monthly Costs Goals-->
-    <div style="display:inline-block">
+        <div style="display:inline-block">
             <SimulatedSetMonthlyTable Trans=Transactions Month=Month Year=Year />
             <br style="clear:both" />
 
@@ -230,8 +242,8 @@ else
                     <tr>
                         <td style="font-size:3vw;padding:.5vw 1vw;"><i>@dci.Name</i></td>
                         <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
-                        <td style="font-size:3vw;">@Pretty(dci.Left)</td>
-                        <td style="font-size:3vw;">@Pretty(dci.Left/DaysLeft)</td>
+                        <td style="font-size:3vw;">@Pretty(Month == DateTime.Now.Month ? dci.Left : dci.Amount)</td>
+                        <td style="font-size:3vw;">@Pretty(Month == DateTime.Now.Month ? dci.Left/DaysLeft : dci.Amount/DaysLeft)</td>
                     </tr>
                 }
                 else
@@ -239,8 +251,8 @@ else
                     <tr>
                         <td style="font-size:3vw;padding:.5vw 1vw;">@dci.Name</td>
                         <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
-                        <td style="font-size:3vw;">@Pretty(dci.Left)</td>
-                        <td style="font-size:3vw;">@Pretty(dci.Left/DaysLeft)</td>
+                        <td style="font-size:3vw;">@Pretty(Month == DateTime.Now.Month ? dci.Left : dci.Amount)</td>
+                        <td style="font-size:3vw;">@Pretty(Month == DateTime.Now.Month ? dci.Left/DaysLeft : dci.Amount/DaysLeft)</td>
                     </tr>
                 }
             }
@@ -279,6 +291,10 @@ else
 @code {
     private string PaidIntoPerson1 { get; set; }
     private string PaidIntoPerson2 { get; set; }
+
+
+    private bool AllMonthsPerson1 { get; set; }
+    private bool AllMonthsPerson2 { get; set; }
 
     private string[] Months = new string[] { "All", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
@@ -504,8 +520,15 @@ else
         }
         else
         {
-            ExpectedIncome1Str = "";
-            Expected1Income = 0;
+            if (AllMonthsPerson1)
+            {
+                UpdateIncomeBalances();
+            }
+            else
+            {
+                ExpectedIncome1Str = "";
+                Expected1Income = 0;
+            }
         }
 
         if (PrevIncome2.ContainsKey((Month, Year)) && PrevIncome2[(Month, Year)] != 0)
@@ -515,8 +538,15 @@ else
         }
         else
         {
-            ExpectedIncome2Str = "";
-            Expected2Income = 0;
+            if (AllMonthsPerson2)
+            {
+                UpdateIncomeBalances();
+            }
+            else
+            {
+                ExpectedIncome2Str = "";
+                Expected2Income = 0;
+            }
         }
 
         var Person1Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
@@ -583,8 +613,8 @@ else
                 continue;
         }
 
-        Person1Income.Value += PrevIncome1.ContainsKey((Month, Year)) ? PrevIncome1[(Month, Year)] : 0;
-        Person2Income.Value += PrevIncome2.ContainsKey((Month, Year)) ? PrevIncome2[(Month, Year)] : 0;
+        Person1Income.Value += PrevIncome1.ContainsKey((Month, Year)) && !AllMonthsPerson1 ? PrevIncome1[(Month, Year)] : 0;
+        Person2Income.Value += PrevIncome2.ContainsKey((Month, Year)) && !AllMonthsPerson2 ? PrevIncome2[(Month, Year)] : 0;
     }
 
     private void UpdateIncomeBalances(bool prev = false)
@@ -772,9 +802,9 @@ else
         {
             if (RealValues.ContainsKey(dc.Name))
             {
-                // If Person1 is expected to spend more than they have spent, add current spending back and subtracted the 
+                // If Person1 is expected to spend more than they have spent, add current spending back and subtracted the
                 // greater value
-                // Otherwise, do nothing because the real values (which would be greater than projected) have already been 
+                // Otherwise, do nothing because the real values (which would be greater than projected) have already been
                 // subtracted when the transactions were added
 
                 if (RealValues[dc.Name].Item1 < dc.Person1Amount)
@@ -783,9 +813,9 @@ else
                     Person1Income.Value -= dc.Person1Amount;
                 }
 
-                // If Person2 is expected to spend more than they have spent, add current spending back and subtracted the 
+                // If Person2 is expected to spend more than they have spent, add current spending back and subtracted the
                 // greater value
-                // Otherwise, do nothing because the real values (which would be greater than projected) have already been 
+                // Otherwise, do nothing because the real values (which would be greater than projected) have already been
                 // subtracted when the transactions were added
 
                 if (RealValues[dc.Name].Item2 < dc.Person2Amount)
