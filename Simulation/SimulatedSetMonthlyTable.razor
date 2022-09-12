@@ -27,7 +27,26 @@
                 else
                 {
                     <tr>
-                        <td style="font-size:3vw;padding:.5vw 1vw;">@smc.Name</td>
+                        <td style="font-size:3vw;padding:.5vw 1vw;">
+                            <span>@smc.Name</span>
+                            <div style="padding:.5vw 1vw;display:flex;justify-content:end;text-align:start">
+                                @if (Constants.Balances != null)
+                                {
+                                    <select @onchange=@((ChangeEventArgs e) => BalanceChange1(e, smc))>
+                                        @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person == "JOINT").OrderBy(ba => ba.Name))
+                                        {
+                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                        }
+                                    </select>
+                                    <select @onchange=@((ChangeEventArgs e) => BalanceChange2(e, smc))>
+                                        @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person == "JOINT").OrderBy(ba => ba.Name))
+                                        {
+                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </td>
                         <td style="font-size:3vw;">@("$" + smc.Person1Amount)</td>
                         <td style="font-size:3vw;">@("$" + smc.Person2Amount)</td>
                         <td style="font-size:3vw;">@("$" + smc.TotalAmount)</td>
@@ -48,7 +67,7 @@
 }
 else
 {
-    <div style="width:25%; float:left;margin-right:1vw;">
+    <div style="width:35vw; float:left;margin-right:2vw;">
         <table>
             <tr>
                 <th colspan="4" style="background-color:green;color:white"><i>Set Monthly Costs</i></th>
@@ -73,7 +92,26 @@ else
                 else
                 {
                     <tr>
-                        <td style="padding:.5vw 1vw;">@smc.Name</td>
+                        <td style="padding:.5vw 1vw;">
+                            <span>@smc.Name</span>
+                            <div style="padding:.5vw 1vw;display:flex;justify-content:end;text-align:start">
+                                @if (Constants.Balances != null)
+                                {
+                                    <select @onchange=@((ChangeEventArgs e) => BalanceChange1(e, smc))>
+                                        @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person == "JOINT").OrderBy(ba => ba.Name))
+                                        {
+                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                        }
+                                    </select>
+                                    <select @onchange=@((ChangeEventArgs e) => BalanceChange2(e, smc))>
+                                        @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person == "JOINT").OrderBy(ba => ba.Name))
+                                        {
+                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                        </td>
                         <td>@("$" + smc.Person1Amount)</td>
                         <td>@("$" + smc.Person2Amount)</td>
                         <td>@("$" + smc.TotalAmount)</td>
@@ -103,6 +141,36 @@ else
     [Parameter]
     public bool Mobile { get; set; }
 
+    public Dictionary<string, (string, string)> staticMonthMap { get; set; }
+
+    [Parameter]
+    public Dictionary<string, (string, string)> StaticMonthMap
+    {
+        get => staticMonthMap;
+        set
+        {
+            if (staticMonthMap == value) return;
+            staticMonthMap = value;
+            StaticMonthMapChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<Dictionary<string, (string, string)>> StaticMonthMapChanged { get; set; }
+    [Parameter]
+    public Action<(string, string), (string, string), string> BalanceChanged { get; set; }
+
+    private string Person1Balance { get; set; }
+    private string Person2Balance { get; set; }
+
+
+    private ElementReference MySelect1;
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
     private bool Determine(StaticMonthlyCost smc)
     {
         if (Trans == null)
@@ -112,7 +180,7 @@ else
             return false;
 
         var allMonthYears = Trans.Where(tr => tr.MonthYear() == Constants.MonthYear()).ToList();
-        
+
         if (allMonthYears == null || allMonthYears.Count == 0)
             return false;
 
@@ -120,7 +188,25 @@ else
         foreach (string s in names)
             if (s.Contains(smc.Name))
                 return true;
-        
+
         return false;
+    }
+    private void BalanceChange1(ChangeEventArgs e, StaticMonthlyCost sm){
+        var oldBal = StaticMonthMap[sm.Name];
+
+        Person1Balance = e.Value.ToString();
+        if (StaticMonthMap.ContainsKey(sm.Name)){
+            StaticMonthMap[sm.Name] = new(Person1Balance, StaticMonthMap[sm.Name].Item2);
+            if (BalanceChanged != null) BalanceChanged(oldBal, StaticMonthMap[sm.Name], sm.Name);
+        }
+    }
+    private void BalanceChange2(ChangeEventArgs e, StaticMonthlyCost sm){
+        var oldBal = StaticMonthMap[sm.Name];
+
+        Person2Balance = e.Value.ToString();
+        if (StaticMonthMap.ContainsKey(sm.Name)){
+            StaticMonthMap[sm.Name] = new(StaticMonthMap[sm.Name].Item1, Person2Balance);
+            if (BalanceChanged != null) BalanceChanged(oldBal, StaticMonthMap[sm.Name], sm.Name);
+        }
     }
 }
