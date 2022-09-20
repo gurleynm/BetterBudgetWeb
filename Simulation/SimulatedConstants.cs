@@ -12,6 +12,7 @@ namespace BetterBudgetWeb.Simulation
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<ProjectedDatum> ProjectedData { get; set; }
+        public static List<SimulatedPrev> SimulatedPrevs { get; set; } = new List<SimulatedPrev>();
 
         public static int Month { get; set; } = DateTime.Now.Month;
         public static int Year { get; set; } = DateTime.Now.Year;

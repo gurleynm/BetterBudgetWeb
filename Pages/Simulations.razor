@@ -125,7 +125,6 @@
 
     <div style="display:flex;justify-content:start;margin-bottom:2vh">
         <div style="display:inline-block;margin-right:1vw;">
-
             <!-- Dynamic Costs -->
             <div style="width:40vw; margin-right:1vw;">
                 <table>
@@ -164,13 +163,27 @@
                                             <select @onchange=@((ChangeEventArgs e) => DynaChanged(e, dci.Name, 1))>
                                                 @foreach (var bal in Balances.Where(b => b.Person == Constants.Person1).OrderBy(ba => ba.Name))
                                                 {
-                                                    <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                                    @if (DynaMonthMap[dci.Name].Item1 == bal.Name)
+                                                    {
+                                                        <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                                    }
                                                 }
                                             </select>
                                             <select @onchange=@((ChangeEventArgs e) => DynaChanged(e, dci.Name, 2))>
                                                 @foreach (var bal in Balances.Where(b => b.Person == Constants.Person2).OrderBy(ba => ba.Name))
                                                 {
-                                                    <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                                    @if (DynaMonthMap[dci.Name].Item2 == bal.Name)
+                                                    {
+                                                        <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                                    }
                                                 }
                                             </select>
                                         }
@@ -256,13 +269,27 @@ else
                                     <select @onchange=@((ChangeEventArgs e) => DynaChanged(e, dci.Name, 1))>
                                         @foreach (var bal in Balances.Where(b => b.Person == Constants.Person1).OrderBy(ba => ba.Name))
                                         {
-                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            @if (DynaMonthMap[dci.Name].Item1 == bal.Name)
+                                            {
+                                                <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
                                         }
                                     </select>
                                     <select @onchange=@((ChangeEventArgs e) => DynaChanged(e, dci.Name, 2))>
                                         @foreach (var bal in Balances.Where(b => b.Person == Constants.Person2).OrderBy(ba => ba.Name))
                                         {
-                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            @if (DynaMonthMap[dci.Name].Item2 == bal.Name)
+                                            {
+                                                <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
                                         }
                                     </select>
                                 }
@@ -301,7 +328,7 @@ else
 
     <!-- Ideal Emergency Fund-->
     <IdealEmergencyFund OneMonthPerson1="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person1Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
-                            OneMonthPerson2="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person2Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
+                    OneMonthPerson2="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person2Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
 
     <br />
     <br />
@@ -362,6 +389,8 @@ else
     private Dictionary<(int, int), Dictionary<string, (string, string)>> PrevStaticMonthMap { get; set; } = new Dictionary<(int, int), Dictionary<string, (string, string)>>();
     private Dictionary<(int, int), Dictionary<string, (string, string)>> PrevDynaMonthMap { get; set; } = new Dictionary<(int, int), Dictionary<string, (string, string)>>();
 
+    private List<SimulatedPrev> SimPrevs { get; set; } = new List<SimulatedPrev>();
+
     private List<Transaction> Transactions;
     private List<Transaction> FilteredTransactions;
     private List<Balance> Balances;
@@ -406,17 +435,17 @@ else
         PrevStaticMonthMap = new Dictionary<(int, int), Dictionary<string, (string, string)>>();
         PrevDynaMonthMap = new Dictionary<(int, int), Dictionary<string, (string, string)>>();
 
+        SimPrevs = await SimulatedPrevRepo.GetSimulatedPrevsAsync();
+
+
         foreach (var smc in SimulatedConstants.StaticMonthlyCosts)
         {
             StaticMonthMap.Add(smc.Name, new(Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person1).Name,
                                              Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
         }
 
-        PrevStaticMonthMap[(Month, Year)] = new Dictionary<string, (string, string)>(StaticMonthMap);
-
         /*vvvvvvv  USE THESE TO HELP BUILD A DB TABLE vvvvvv*/
-        var curiousity = System.Text.Json.JsonSerializer.Serialize<Dictionary<string, (string, string)>>(StaticMonthMap);
-        var curiousityShown = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, (string, string)>>(curiousity);
+        //var staticMonthString = System.Text.Json.JsonSerializer.Serialize<Dictionary<string, (string, string)>>(StaticMonthMap);
         /*^^^^^^^  USE THESE TO HELP BUILD A DB TABLE ^^^^^^*/
 
         foreach (var dci in SimulatedConstants.DynamicCostItems)
@@ -425,15 +454,20 @@ else
                                              Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
         }
 
+        GetPreviousState();
+
         PrevDynaMonthMap[(Month, Year)] = new Dictionary<string, (string, string)>(DynaMonthMap);
+        PrevStaticMonthMap[(Month, Year)] = new Dictionary<string, (string, string)>(StaticMonthMap);
 
         SubtractUnspent();
 
         StateHasChanged();
     }
 
-    private void Prev()
+    private async void Prev()
     {
+        await SaveCurrentState();
+
         if (Month == 1)
         {
             Month = 12;
@@ -451,12 +485,28 @@ else
         StaticMonthMap = new Dictionary<string, (string, string)>(PrevStaticMonthMap[(Month, Year)]);
         DynaMonthMap = new Dictionary<string, (string, string)>(PrevDynaMonthMap[(Month, Year)]);
 
+
         StateHasChanged();
     }
-    private void Next()
+    private async void Next()
     {
         PrevStaticMonthMap[(Month, Year)] = new Dictionary<string, (string, string)>(StaticMonthMap);
         PrevDynaMonthMap[(Month, Year)] = new Dictionary<string, (string, string)>(DynaMonthMap);
+
+        Dictionary<string, string> tempStatic = new Dictionary<string, string>();
+        Dictionary<string, string> tempDyna = new Dictionary<string, string>();
+
+        foreach (var key in StaticMonthMap.Keys)
+            tempStatic.Add(key, StaticMonthMap[key].Item1 + "~" + StaticMonthMap[key].Item2);
+
+        foreach (var key in DynaMonthMap.Keys)
+            tempDyna.Add(key, DynaMonthMap[key].Item1 + "~" + DynaMonthMap[key].Item2);
+
+        var staticMonthString = System.Text.Json.JsonSerializer.Serialize<Dictionary<string, string>>(tempStatic);
+        var dynaMonthString = System.Text.Json.JsonSerializer.Serialize<Dictionary<string, string>>(tempDyna);
+
+        await SaveCurrentState();
+
 
         if (Month == 12)
         {
@@ -470,7 +520,6 @@ else
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == SimulatedConstants.MonthYear(Month, Year)).OrderByDescending(t => t.DateOfTransaction).ToList();
 
         SimulatedConstants.SetMonthlies(Month, Year);
-
 
         UpdateBalancesNext();
 
@@ -635,8 +684,6 @@ else
 
         (int, int) prevMonth = Month == 1 ? new(12, Year - 1) : new(Month - 1, Year);
 
-        Previous[("name", prevMonth.Item1, prevMonth.Item2)] = 10;
-
         foreach (var balance in Balances)
         {
             Previous[(balance.Name, prevMonth.Item1, prevMonth.Item2)] = balance.Value + 0; // The "+ 0" passes it by reference, not value
@@ -670,6 +717,8 @@ else
             DynaMonthMap.Add(dci.Name, new(Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person1).Name,
                                              Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
         }
+
+        GetPreviousState();
 
         foreach (var mon in DesiredMonthlies)
         {
@@ -756,6 +805,71 @@ else
             GoGo();
         }
 
+    }
+
+    private async Task SaveCurrentState()
+    {
+        // Save current state
+        if (SimPrevs != null)
+        {
+            Dictionary<string, string> tempStatic = new Dictionary<string, string>();
+            Dictionary<string, string> tempDyna = new Dictionary<string, string>();
+
+            var StaticSimPrev = SimPrevs.FirstOrDefault(sp => sp.MonthType == "STATIC" && sp.Month == Months[Month] && sp.Year == Year);
+            var DynamicSimPrev = SimPrevs.FirstOrDefault(sp => sp.MonthType == "DYNAMIC" && sp.Month == Months[Month] && sp.Year == Year);
+
+            foreach (var key in StaticMonthMap.Keys)
+                tempStatic.Add(key, StaticMonthMap[key].Item1 + "~" + StaticMonthMap[key].Item2);
+
+            foreach (var key in DynaMonthMap.Keys)
+                tempDyna.Add(key, DynaMonthMap[key].Item1 + "~" + DynaMonthMap[key].Item2);
+
+            var staticMonthString = System.Text.Json.JsonSerializer.Serialize<Dictionary<string, string>>(tempStatic);
+            var dynaMonthString = System.Text.Json.JsonSerializer.Serialize<Dictionary<string, string>>(tempDyna);
+
+            if (StaticSimPrev != null)
+            {
+                StaticSimPrev.JSONPrev = staticMonthString;
+                SimPrevs = await SimulatedPrevRepo.AddOrUpdateAsync(StaticSimPrev);
+            }
+            else
+                SimPrevs = await SimulatedPrevRepo.AddOrUpdateAsync(new SimulatedPrev
+                    {
+                        MonthType = "STATIC",
+                        Month = Months[Month],
+                        Year = Year,
+                        JSONPrev = staticMonthString
+                    });
+
+            if (DynamicSimPrev != null)
+            {
+                DynamicSimPrev.JSONPrev = dynaMonthString;
+                SimPrevs = await SimulatedPrevRepo.AddOrUpdateAsync(DynamicSimPrev);
+            }
+            else
+                SimPrevs = await SimulatedPrevRepo.AddOrUpdateAsync(new SimulatedPrev
+                    {
+                        MonthType = "DYNAMIC",
+                        Month = Months[Month],
+                        Year = Year,
+                        JSONPrev = dynaMonthString
+                    });
+        }
+    }
+
+    private void GetPreviousState()
+    {
+        if (SimPrevs != null)
+        {
+            var StaticSimPrev = SimPrevs.FirstOrDefault(sp => sp.MonthType == "STATIC" && sp.Month == Months[Month] && Year == Year);
+            var DynamicSimPrev = SimPrevs.FirstOrDefault(sp => sp.MonthType == "DYNAMIC" && sp.Month == Months[Month] && Year == Year);
+
+            if (StaticSimPrev != null)
+                UpdateSimPrev(ref StaticSimPrev, "STATIC");
+
+            if (DynamicSimPrev != null)
+                UpdateSimPrev(ref DynamicSimPrev, "DYNAMIC");
+        }
     }
 
     private void GoGo()
@@ -870,6 +984,24 @@ else
                 Balance2ToUpdate.Value -= dc.Person2Amount * LoanMultiplier1 - 2;
             }
         }
+    }
+
+    private void UpdateSimPrev(ref SimulatedPrev tempSimPrev, string monthType)
+    {
+        var tempMonthly = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(tempSimPrev.JSONPrev);
+
+        var holder = new Dictionary<string, (string, string)>();
+
+        foreach (var key in tempMonthly.Keys)
+        {
+            var splitter = tempMonthly[key].Split("~");
+            holder.Add(key, new(splitter[0], splitter[1]));
+        }
+
+        if (monthType == "STATIC")
+            StaticMonthMap = holder;
+        else
+            DynaMonthMap = holder;
     }
 
     private void DynaChanged(ChangeEventArgs e, string dciName, int person)

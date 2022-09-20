@@ -35,13 +35,27 @@
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange1(e, smc))>
                                         @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person == "JOINT").OrderBy(ba => ba.Name))
                                         {
-                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            @if (StaticMonthMap[smc.Name].Item1 == bal.Name)
+                                            {
+                                                <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
                                         }
                                     </select>
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange2(e, smc))>
                                         @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person == "JOINT").OrderBy(ba => ba.Name))
                                         {
-                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            @if (StaticMonthMap[smc.Name].Item2 == bal.Name)
+                                            {
+                                                <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
                                         }
                                     </select>
                                 }
@@ -100,13 +114,27 @@ else
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange1(e, smc))>
                                         @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person == "JOINT").OrderBy(ba => ba.Name))
                                         {
-                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            @if (StaticMonthMap.ContainsKey(smc.Name) && StaticMonthMap[smc.Name].Item1 == bal.Name)
+                                            {
+                                                <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
                                         }
                                     </select>
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange2(e, smc))>
                                         @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person == "JOINT").OrderBy(ba => ba.Name))
                                         {
-                                            <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            @if (StaticMonthMap.ContainsKey(smc.Name) && StaticMonthMap[smc.Name].Item2 == bal.Name)
+                                            {
+                                                <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
+                                            }
                                         }
                                     </select>
                                 }
@@ -191,20 +219,24 @@ else
 
         return false;
     }
-    private void BalanceChange1(ChangeEventArgs e, StaticMonthlyCost sm){
+    private void BalanceChange1(ChangeEventArgs e, StaticMonthlyCost sm)
+    {
         var oldBal = StaticMonthMap[sm.Name];
 
         Person1Balance = e.Value.ToString();
-        if (StaticMonthMap.ContainsKey(sm.Name)){
+        if (StaticMonthMap.ContainsKey(sm.Name))
+        {
             StaticMonthMap[sm.Name] = new(Person1Balance, StaticMonthMap[sm.Name].Item2);
             if (BalanceChanged != null) BalanceChanged(oldBal, StaticMonthMap[sm.Name], sm.Name);
         }
     }
-    private void BalanceChange2(ChangeEventArgs e, StaticMonthlyCost sm){
+    private void BalanceChange2(ChangeEventArgs e, StaticMonthlyCost sm)
+    {
         var oldBal = StaticMonthMap[sm.Name];
 
         Person2Balance = e.Value.ToString();
-        if (StaticMonthMap.ContainsKey(sm.Name)){
+        if (StaticMonthMap.ContainsKey(sm.Name))
+        {
             StaticMonthMap[sm.Name] = new(StaticMonthMap[sm.Name].Item1, Person2Balance);
             if (BalanceChanged != null) BalanceChanged(oldBal, StaticMonthMap[sm.Name], sm.Name);
         }
