@@ -77,7 +77,7 @@
         {
             <p style="color:@ErrorColor">@ErrorMsg</p>
         }
-        <button class="btn btn-secondary" @onclick=Submit>Submit</button>
+        <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
         <br />
         <br />
         <br />
@@ -141,7 +141,7 @@ else
         {
             <p style="color:@ErrorColor">@ErrorMsg</p>
         }
-        <button class="btn btn-secondary" @onclick=Submit>Submit</button>
+        <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
     </div>
     <br />
     <br />
@@ -167,6 +167,8 @@ else
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";
 
+    private bool Disabled;
+
     protected override async Task OnInitializedAsync()
     {
         Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
@@ -174,6 +176,7 @@ else
 
     public async void Submit()
     {
+        Disabled = true;
         ErrorMsg = string.Empty;
         ErrorColor = "red";
         bool tpAmount = double.TryParse(Amount, out double am);
@@ -207,5 +210,6 @@ else
             WillPayPerson2 = string.Empty;
             StateHasChanged();
         }
+        Disabled = false;
     }
 }

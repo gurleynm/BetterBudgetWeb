@@ -84,6 +84,9 @@
     <button class="btn btn-secondary" @onclick="Submit">Submit</button>
     <br />
     -->
+    <br style="clear:both" />
+    <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
+    <br />
     @if (!string.IsNullOrEmpty(ErrorMsg))
     {
         <p style="color:@ErrorColor">@ErrorMsg</p>
@@ -144,7 +147,7 @@ else
         -->
 
         <br style="clear:both" />
-        <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+        <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
         <br />
 
         @if (!string.IsNullOrEmpty(ErrorMsg))
@@ -253,6 +256,8 @@ else
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";
 
+    private bool Disabled;
+
     protected override Task OnInitializedAsync()
     {
         theMons = new List<string>{"January", "February", "March", "April", "May", "June", "July", "August", "September",
@@ -279,6 +284,7 @@ else
 
     public async Task Submit()
     {
+        Disabled = true;
         ErrorMsg = string.Empty;
         ErrorColor = "red";
 
@@ -380,7 +386,7 @@ else
             ErrorColor = "green";
             ErrorMsg = $"Set Monthly called {Name} was deleted!";
         }
-
+        Disabled = false;
         StateHasChanged();
     }
 }

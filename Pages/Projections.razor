@@ -109,7 +109,7 @@ else
                     <td><input type="number" @bind=NewPerson1 /></td>
                     <td><input type="number" @bind=NewPerson2 /></td>
                     <td>@(Pretty(NewTotal))</td>
-                    <td><button class="btn btn-primary" @onclick=Submit>Submit</button></td>
+                    <td><button class="btn btn-primary" disabled=@Disabled @onclick=Submit>Submit</button></td>
                 </tr>
                 @foreach (var goal in Goals)
                 {
@@ -212,7 +212,7 @@ else
                 <tr>
                     <td colspan=4>
                         <div style="display:flex;justify-content:center">
-                            <button class="btn btn-primary" @onclick=Submit>Submit</button>
+                            <button class="btn btn-primary" disabled=@Disabled @onclick=Submit>Submit</button>
                         </div>
                     </td>
                 </tr>
@@ -259,6 +259,8 @@ else
 
     private string[] Months = new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
+    private bool Disabled;
+
     protected override async Task OnInitializedAsync()
     {
         NeedForHome = new double[] { 250000, 275000, 300000, 325000, 350000, 375000, 400000, 500000 };
@@ -272,6 +274,8 @@ else
     {
         if (NewPerson1 <= 0 || NewPerson2 <= 0)
             return;
+
+        Disabled = true;
 
         string[] splitter = MonthYear.Split(" ");
         int indexOfMonth = Array.IndexOf(Months, splitter[0]);
@@ -301,7 +305,7 @@ else
         MonthYear = Months[indexOfMonth] + " " + splitter[1];
 
         ReDrive();
-
+        Disabled = false;
         StateHasChanged();
     }
 

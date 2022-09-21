@@ -45,9 +45,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Close</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="@ModalDecline">Nevermind</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Delete</button>
+                    <button type="button" disabled=@Disabled class="btn btn-secondary" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Close</button>
+                    <button type="button" disabled=@Disabled class ="btn btn-danger" data-dismiss="modal" @onclick="@ModalDecline">Nevermind</button>
+                    <button type="button" disabled=@Disabled class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Delete</button>
                 </div>
             </div>
         </div>
@@ -78,8 +78,8 @@ else
                     </div>
                 </div>
                 <div class="modal-footer" style="display:flex;justify-content:space-around">
-                    <button type="button" class="btn btn-danger" style="float:left" data-dismiss="modal" @onclick="@ModalCancel">Nevermind</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Delete</button>
+                    <button type="button" disabled=@Disabled class="btn btn-danger" style="float:left" data-dismiss="modal" @onclick="@ModalCancel">Nevermind</button>
+                    <button type="button" disabled=@Disabled class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Delete</button>
                 </div>
             </div>
         </div>
@@ -102,18 +102,23 @@ else
     [Parameter]
     public EventCallback<bool> OnClose { get; set; }
 
+    private bool Disabled;
+
     private Task ModalCancel()
     {
+        Disabled = true;
         return OnClose.InvokeAsync(false);
     }
 
     private async Task ModalDecline()
     {
+        Disabled = true;
         await OnClose.InvokeAsync(false);
     }
 
     private Task ModalAccept()
     {
+        Disabled = true;
         return OnClose.InvokeAsync(true);
     }
 }

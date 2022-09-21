@@ -94,7 +94,7 @@
                 @(NewPerson1Amount + NewPerson2Amount)
             </td>
             <td style="padding:.5vw 1vw">
-                <button class="btn btn-primary" @onclick="Add"><span class="oi oi-plus"></span></button>
+                <button class="btn btn-primary" disabled=@Disabled @onclick="Add"><span class="oi oi-plus"></span></button>
             </td>
         </tr>
         @if (FilteredTransactions != null)
@@ -131,9 +131,9 @@
                         <div style="display:flex;justify-content:center;">
                             @if (transaction.ExpenseType != "Debt")
                             {
-                                <button class="btn btn-secondary" style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                                <button class="btn btn-secondary" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
                             }
-                            <button class="btn btn-danger" style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
+                            <button class="btn btn-danger" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
                         </div>
                     </td>
                 </tr>
@@ -243,7 +243,7 @@ else
                 @(NewPerson1Amount + NewPerson2Amount)
             </td>
             <td>
-                <button class="btn btn-primary" @onclick="Add"><span class="oi oi-plus"></span></button>
+                <button class="btn btn-primary" disabled=@Disabled @onclick="Add"><span class="oi oi-plus"></span></button>
             </td>
         </tr>
         <tr>
@@ -292,11 +292,11 @@ else
                         <div style="display:inline-block;">
                             @if (transaction.ExpenseType != "Debt")
                             {
-                                <button class="btn btn-secondary" style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                                <button class="btn btn-secondary" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
                                 <br />
                                 <br />
                             }
-                            <button class="btn btn-danger" style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
+                            <button class="btn btn-danger" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
                         </div>
                     </td>
                 </tr>
@@ -481,6 +481,8 @@ else
     private string ErrorMsg = string.Empty;
     private bool filtered;
 
+    private bool Disabled;
+
     protected override Task OnInitializedAsync()
     {
         ExpenseTypes.Add("Static Cost");
@@ -526,6 +528,7 @@ else
     }
     private async void Add()
     {
+        Disabled = true;
         var nt = IndexRunner.Add(ref ErrorMsg, ref NewExpense, ref NewName, ref NewPerson1Amount, ref NewPerson2Amount,
                                     ref NewPerson1PaidWith, ref NewPerson2PaidWith);
 
@@ -539,7 +542,7 @@ else
 
             AddConfirm();
         }
-
+        Disabled = false;
         StateHasChanged();
     }
     private async void ShowDeleteBtn(Transaction t)

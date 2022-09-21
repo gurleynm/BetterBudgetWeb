@@ -193,7 +193,7 @@
 
             <br style="clear:both" />
             <div style="margin-bottom:2vh;">
-                <button class="btn btn-secondary" style="float:left" @onclick="Submit">Submit</button>
+                <button class="btn btn-secondary" style="float:left" disabled=@Disabled @onclick="Submit">Submit</button>
             </div>
             <br />
             @if (!string.IsNullOrEmpty(ErrorMsg))
@@ -382,7 +382,7 @@ else
         <br style="clear:both" />
         <br style="clear:both" />
         <div style="margin-bottom:2vh;">
-            <button class="btn btn-secondary" style="float:left;" @onclick="Submit">Submit</button>
+            <button class="btn btn-secondary" style="float:left;" disabled=@Disabled @onclick="Submit">Submit</button>
             @if (!string.IsNullOrEmpty(TransactionName))
             {
                 <button class="btn btn-primary" style="float:right;background-color:@Hex;color:@TextColor;" @onclick="AddPreset">
@@ -434,6 +434,8 @@ else
 
     private List<string> ExpenseTypes { get; set; } = new List<string>();
 
+    private bool Disabled;
+
     protected override Task OnInitializedAsync()
     {
         ExpenseTypes.Add("Static Cost");
@@ -450,6 +452,7 @@ else
 
     public async void Submit()
     {
+        Disabled = true;
         ErrorMsg = string.Empty;
         ErrorColor = "red";
         bool tpNAmount = double.TryParse(Person1Amount, out double nam);
@@ -481,6 +484,7 @@ else
 
             StateHasChanged();
         }
+        Disabled = false;
     }
     public async void AddPreset()
     {

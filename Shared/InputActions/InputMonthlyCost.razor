@@ -79,7 +79,7 @@
     <br style="clear:both;" />
 
     <br style="clear:both" />
-    <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+    <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
     <br />
     @if (!string.IsNullOrEmpty(ErrorMsg))
     {
@@ -138,7 +138,7 @@ else
         <br style="clear:both;" />
 
         <br style="clear:both" />
-        <button class="btn btn-secondary" @onclick="Submit">Submit</button>
+        <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
         <br />
         @if (!string.IsNullOrEmpty(ErrorMsg))
         {
@@ -165,6 +165,8 @@ else
     string SelectMonth { get; set; } = "All";
     string SelectYear { get; set; } = "1";
     string Dyna { get; set; }
+
+    bool Disabled;
 
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";
@@ -193,6 +195,7 @@ else
 
     public async void Submit()
     {
+        Disabled = true;
         ErrorMsg = string.Empty;
         ErrorColor = "red";
         bool tpNAmount = double.TryParse(Person1Amount, out double nam);
@@ -221,6 +224,8 @@ else
             Constants.SetMonthlies(mons);
             StateHasChanged();
         }
+
+        Disabled = false;
     }
 }
 

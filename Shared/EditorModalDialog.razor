@@ -78,9 +78,11 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Close</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="@ModalDecline">Decline</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Accept</button>
+
+                    <button type="button" disabled=@Disabled class="btn btn-secondary" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Close</button>
+                    <button type="button" disabled=@Disabled class="btn btn-danger" data-dismiss="modal" @onclick="@ModalDecline">Decline</button>
+                    <button type="button" disabled=@Disabled class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Accept</button>
+
                 </div>
             </div>
         </div>
@@ -158,8 +160,8 @@ else
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Decline</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Accept</button>
+                    <button type="button" disabled=@Disabled class="btn btn-danger" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Decline</button>
+                    <button type="button" disabled=@Disabled class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Accept</button>
                 </div>
             </div>
         </div>
@@ -185,6 +187,7 @@ else
     private List<string> ExpenseTypes { get; set; } = new List<string>();
     private string FilterIndicatorTxt = " (ON)";
 
+    private bool Disabled;
 
     protected override Task OnInitializedAsync()
     {
@@ -200,16 +203,19 @@ else
 
     private Task ModalCancel()
     {
+        Disabled = true;
         return OnClose.InvokeAsync(false);
     }
 
     private async Task ModalDecline()
     {
+        Disabled = true;
         await OnClose.InvokeAsync(false);
     }
 
     private async Task ModalAccept()
     {
+        Disabled = true;
         await TransactionRepo.AddOrUpdateAsync(Transact);
         await OnClose.InvokeAsync(true);
     }
