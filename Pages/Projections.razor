@@ -186,55 +186,121 @@ else
             <thead>
                 <tr>
                     <th style="font-size:3vw;">Month Year</th>
-                    <th style="font-size:3vw;">@(Constants.Person1 + " (Actual)")</th>
-                    <th style="font-size:3vw;">@(Constants.Person2 + " (Actual)")</th>
-                    <th style="font-size:3vw;">Total (Actual)</th>
+                    <th style="font-size:3vw;">
+                        Projected Values
+                    </th>
+                    <th style="font-size:3vw;">
+                        Actual Values
+                    </th>
+                    <th style="font-size:3vw;">Anticipated Expenses</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>
-                        <select class="custom-select" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="MonthYear" title="Pick a Month Year ">
+                    <td style="vertical-align:middle" colspan="2">
+                        <select class="custom-select" style="font-size:3vw;margin:1vh 0 1vh 0;" @bind="MonthYear" title="Pick a Month Year ">
                             <option value="@string.Empty" selected disabled="disabled">(Choose Month Year)</option>
                             @foreach (var my in Goals)
                             {
-                                @if (my.TotalActual < 0)
+                                @if (my.IsProjected)
                                 {
                                     <option value="@my.MonthYear()">@my.MonthYear()</option>
                                 }
                             }
                         </select>
                     </td>
-                    <td><input type="number" style="width:10vw;font-size:3vw;" @bind=NewPerson1 /></td>
-                    <td><input type="number" style="width:10vw;font-size:3vw;" @bind=NewPerson2 /></td>
-                    <td style="font-size:3vw;">@(Pretty(NewTotal))</td>
-                </tr>
-                <tr>
-                    <td colspan=4>
-                        <div style="display:flex;justify-content:center">
-                            <button class="btn btn-primary" disabled=@Disabled @onclick=Submit>Submit</button>
-                        </div>
+                    <td>
+                        <span style="font-size:3vw">
+                            @(Constants.Person1 + ":")
+                        </span>
+                        <input type="number" style="width:10vw;font-size:3vw;" @bind=NewPerson1 />
+                        <br />
+                        <br />
+                        <span style="font-size:3vw">
+                            @(Constants.Person2 + ":")
+                        </span>
+                        <input type="number" style="width:10vw;font-size:3vw;" @bind=NewPerson2 />
+                        <br/>
+                        <br/>
+                        <span style="font-size:3vw">
+                            @("Total:") @(Pretty(NewTotal))
+                        </span>
+                    </td>
+                    <td style="vertical-align:middle">
+                        <button class="btn btn-primary" disabled=@Disabled @onclick=Submit>Submit</button>
                     </td>
                 </tr>
                 @foreach (var goal in Goals)
                 {
                     <tr>
-                        <td style="font-size:3vw;">@(goal.Month.Substring(0,3) + " " + goal.Year)</td>
-                        @if (goal.TotalActual > 0)
+                        <td style="font-size:3vw;vertical-align:middle">@(goal.Month.Substring(0, 3) + " " + goal.Year)</td>
+                        @if (!goal.IsProjected)
                         {
-                            <td style="font-size:3vw;">@Pretty(goal.Person1Actual)</td>
-                            <td style="font-size:3vw;">@Pretty(goal.Person2Actual)</td>
-                            <td style="font-size:3vw;">@Pretty(goal.TotalActual)</td>
+                            <td style="font-size:3vw;">
+                                <span>
+                                    @(Constants.Person1 + ":") @Pretty(goal.Person1Projected)
+                                </span>
+                                <br />
+                                <br />
+                                <span>
+                                    @(Constants.Person2 + ":") @Pretty(goal.Person2Projected)
+                                </span>
+                                <br />
+                                <br />
+                                <span>
+                                    @("Total:") @Pretty(goal.TotalProjected)
+                                </span>
+                            </td>
+                            <td style="font-size:3vw;">
+                                <span>
+                                    @(Constants.Person1 + ":") @Pretty(goal.Person1Actual)
+                                </span>
+                                <br />
+                                <br />
+                                <span>
+                                    @(Constants.Person2 + ":") @Pretty(goal.Person2Actual)
+                                </span>
+                                <br />
+                                <br />
+                                <span>
+                                    @("Total:") @Pretty(goal.TotalActual)
+                                </span>
+                            </td>
+                            <td></td>
                         }
                         else
                         {
                             <td style='color:@(Constants.DarkMode ? "lightseagreen" : "blue");font-size:3vw;'>
-                                @Pretty(-1 * goal.Person1Actual)
+                                <span>
+                                    @(Constants.Person1 + ":") @Pretty(goal.Person1Projected)
+                                </span>
+                                <br />
+                                <br />
+                                <span>
+                                    @(Constants.Person2 + ":") @Pretty(goal.Person2Projected)
+                                </span>
+                                <br />
+                                <br />
+                                <span>
+                                    @("Total:") @Pretty(goal.TotalProjected)
+                                </span>
                             </td>
                             <td style='color:@(Constants.DarkMode ? "lightseagreen" : "blue");font-size:3vw;'>
-                                @Pretty(-1 * goal.Person2Actual)
+                                <span>
+                                    @(Constants.Person1 + ":") @Pretty(goal.Person1Actual)
+                                </span>
+                                <br />
+                                <br />
+                                <span>
+                                    @(Constants.Person2 + ":") @Pretty(goal.Person2Actual)
+                                </span>
+                                <br />
+                                <br />
+                                <span>
+                                    @("Total:") @Pretty(goal.TotalActual)
+                                </span>
                             </td>
-                            <td style='color:@(Constants.DarkMode ? "lightseagreen" : "blue");font-size:3vw;'>@Pretty(-1 * goal.TotalActual)</td>
+                            <td style="font-size:3vw;vertical-align:middle">@Pretty(goal.AnticipatedExpense)</td>
                         }
                     </tr>
                 }
