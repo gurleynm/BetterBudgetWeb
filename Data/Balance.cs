@@ -10,14 +10,15 @@
         {
             get
             {
-                if (APR == 0)
-                    return Math.Round(val,2);
-                else
-                {
-                    int ElapsedDays = DateTime.Now.Subtract(DateUpdated).Days;
-                    double retVal = Math.Round(ElapsedDays * APR / 36500 * val + val, 2);
-                    return retVal;
-                }
+                return Math.Round(val,2);
+                //if (APR == 0)
+                //    return Math.Round(val,2);
+                //else
+                //{
+                //    int ElapsedDays = DateTime.Now.Subtract(DateUpdated).Days;
+                //    double retVal = Math.Round(ElapsedDays * APR / 36500 * val + val, 2);
+                //    return retVal;
+                //}
             }
             set
             {

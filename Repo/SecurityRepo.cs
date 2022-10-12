@@ -9,95 +9,36 @@ namespace BetterBudgetWeb.Repo
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "Security";
-        public static List<Security> Securities { get; set; }
+        private static string baseURI = Constants.BaseUri + "Security?ticker={0}&SecType={1}";
+        public static List<Security> Securities { get; set; } = new List<Security>();
         public static async Task<List<Security>> GetSecuritiesAsync()
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var response = await client.GetAsync(baseURI);
+            var response = await client.GetAsync(string.Format(baseURI, "GME", "STOCK"));
             var content = await response.Content.ReadAsStringAsync();
+
             if (!response.IsSuccessStatusCode)
             {
                 throw new ApplicationException(content);
             }
-            var secs = System.Text.Json.JsonSerializer.Deserialize<List<Security>>(content, _options);
-            Securities = secs;
+            List<Security> smalls = System.Text.Json.JsonSerializer.Deserialize<List<Security>>(content, _options);
 
-            return secs;
+            Securities = smalls;
+            return smalls;
         }
         public static List<Security> GetSecurities()
         {
             Task.Run(async () => await GetSecuritiesAsync());
             return Securities;
         }
-        public static Security GetSecurityFromName(string name)
-        {
-            bool FirstLoad = false;
-            if (Securities == null)
-            {
-                Securities = GetSecurities();
-                if (Securities == null) return null;
-
-                FirstLoad = false;
-            }
-
-            var TheBal = Securities.FirstOrDefault(b => b.Name == name);
-
-            if (TheBal == null && !FirstLoad)
-            {
-                Securities = GetSecurities();
-                TheBal = Securities.FirstOrDefault(b => b.Name == name);
-            }
-
-            return TheBal;
-        }
-        public static string GetId(string name)
-        {
-            bool FirstLoad = false;
-            if (Securities == null)
-            {
-                Securities = GetSecurities();
-                if (Securities == null) return null;
-
-                FirstLoad = false;
-            }
-
-            var TheBal = Securities.FirstOrDefault(b => b.Name == name);
-
-            if (TheBal == null && !FirstLoad)
-            {
-                Securities = GetSecurities();
-                TheBal = Securities.FirstOrDefault(b => b.Name == name);
-            }
-
-            return TheBal == null ? null : TheBal.Id;
-        }
-        public static string GetName(string id)
-        {
-            bool FirstLoad = false;
-            if (Securities == null)
-            {
-                Securities = GetSecurities();
-                if (Securities == null) return "";
-
-                FirstLoad = false;
-            }
-
-            var TheBal = Securities.FirstOrDefault(b => b.Id == id);
-
-            if (TheBal == null && !FirstLoad)
-            {
-                Securities = GetSecurities();
-                TheBal = Securities.FirstOrDefault(b => b.Id == id);
-            }
-
-            return TheBal == null ? "" : TheBal.Name;
-        }
-        public static async Task<List<Security>> AddOrUpdateAsync(Security bal)
+        public static async Task<List<Security>> AddOrUpdateAsync(Security small)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
-            requestMessage.Content = JsonContent.Create(bal);
+
+            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
+
+            requestMessage.Content = JsonContent.Create(small);
 
             var response = await _client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
@@ -106,14 +47,17 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var Bals = JsonConvert.DeserializeObject<Security[]>(content).ToList();
-            return Bals;
+            var smalls = JsonConvert.DeserializeObject<Security[]>(content).ToList();
+            return smalls;
         }
-        public static async Task<List<Security>> RemoveAsync(Security bal)
+        public static async Task<List<Security>> RemoveAsync(Security small)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-            requestMessage.Content = JsonContent.Create(bal);
+
+            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
+
+            requestMessage.Content = JsonContent.Create(small);
 
             var response = await _client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
@@ -122,24 +66,28 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var Bals = JsonConvert.DeserializeObject<Security[]>(content).ToList();
-            Securities = Bals;
-            return Bals;
+            var smalls = JsonConvert.DeserializeObject<Security[]>(content).ToList();
+            return smalls;
         }
-        public static List<Security> AddOrUpdate(Security bal)
+        public static async Task<List<Security>> RemoveAsync(string id)
         {
-            Task.Run(async () => await AddOrUpdateAsync(bal));
-            return Securities;
-        }
-        public static List<Security> Remove(Security bal)
-        {
-            Task.Run(async () => await RemoveAsync(bal));
-            return Securities;
-        }
-        public static List<Security> Remove(string id)
-        {
-            Task.Run(async () => await RemoveAsync(Securities.FirstOrDefault(b => b.Id == id)));
-            return Securities;
+            HttpClient _client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
+
+            var small = Securities.FirstOrDefault(t => t.Id == id);
+            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
+
+            requestMessage.Content = JsonContent.Create(small);
+
+            var response = await _client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            var smalls = JsonConvert.DeserializeObject<Security[]>(content).ToList();
+            return smalls;
         }
     }
 }
