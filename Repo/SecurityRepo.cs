@@ -10,11 +10,12 @@ namespace BetterBudgetWeb.Repo
         private static HttpClient client = new HttpClient();
 
         private static string baseURI = Constants.BaseUri + "Security?ticker={0}&SecType={1}";
+        public static string delURI => baseURI.Substring(0, baseURI.IndexOf("?"));
         public static List<Security> Securities { get; set; } = new List<Security>();
         public static async Task<List<Security>> GetSecuritiesAsync()
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var response = await client.GetAsync(string.Format(baseURI, "GME", "STOCK"));
+            var response = await client.GetAsync(string.Format(baseURI, "BLACKAPPELA", "STOCK"));
             var content = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
@@ -53,7 +54,7 @@ namespace BetterBudgetWeb.Repo
         public static async Task<List<Security>> RemoveAsync(Security small)
         {
             HttpClient _client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, delURI);
 
             small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
 
@@ -72,7 +73,7 @@ namespace BetterBudgetWeb.Repo
         public static async Task<List<Security>> RemoveAsync(string id)
         {
             HttpClient _client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, delURI);
 
             var small = Securities.FirstOrDefault(t => t.Id == id);
             small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);

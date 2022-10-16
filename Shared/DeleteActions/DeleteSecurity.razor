@@ -1,0 +1,91 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+</style>
+@if (Mobile)
+{
+}
+else
+{
+    <div class="tabcontent">
+        <div style="float:left; margin-right:10vw;">
+            <label>Security Name:</label>
+            <br />
+            <select @bind="SecName">
+                <option value="@string.Empty" selected disabled="disabled">(Choose Security)</option>
+                @if (Securities != null)
+                {
+                    @foreach (var sec in Securities)
+                    {
+                        <option value="@sec.Name">@sec.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <br style="clear:both" />
+        <br />
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p style="color:@ErrorColor">@ErrorMsg</p>
+        }
+        <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
+    </div>
+    <br />
+    <br />
+    <br />
+    <br />
+}
+
+@code {
+    [Parameter]
+    public string SecName { get; set; }
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    private List<Data.Security> Securities { get; set; }
+
+    private string ErrorMsg { get; set; } = string.Empty;
+    private string ErrorColor { get; set; } = "red";
+
+    private bool Disabled;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Securities = await SecurityRepo.GetSecuritiesAsync();
+    }
+
+    public async void Submit()
+    {
+        Disabled = true;
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+
+        ErrorMsg += string.IsNullOrEmpty(SecName) ? "Security name must be set. " : "";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            var chosenOne = Securities.FirstOrDefault(e => e.Name == SecName);
+            Securities = await SecurityRepo.RemoveAsync(chosenOne);
+
+
+            ErrorColor = "green";
+            ErrorMsg = $"Security '{SecName}' was deleted!";
+
+            SecName = string.Empty;
+        }
+
+        Disabled = false;
+        StateHasChanged();
+    }
+}

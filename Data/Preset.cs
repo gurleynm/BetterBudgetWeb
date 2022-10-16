@@ -2,7 +2,7 @@
 
 namespace BetterBudgetWeb.Data
 {
-    public class Preset
+    public class Preset : IComparable<Preset>
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; }
@@ -116,6 +116,22 @@ namespace BetterBudgetWeb.Data
         public static string Pretty(double num)
         {
             return num.ToString("C", CultureInfo.CurrentCulture);
+        }
+
+        public int CompareTo(Preset? other)
+        {
+            // if this < other then = -1
+            // if this = other then = 0
+            // if this > other then = 1
+            if (this == null && other == null)
+                return 0;
+
+            if (this == null)
+                return 1;
+            if (other == null)
+                return -1;
+
+            return Name.CompareTo(other.Name);
         }
     }
 }

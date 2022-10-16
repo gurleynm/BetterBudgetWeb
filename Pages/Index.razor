@@ -55,7 +55,10 @@ else
 
     @if (!mobile)
     {
-        @*<button class="btn btn-primary" @onclick=@TestSec>Test</button>*@
+        @if (Constants.Test)
+        {
+            <button class="btn btn-primary" @onclick=@TestSec>Test</button>
+        }
         <h1 style="text-align:center;color:@GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
         <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
             <h2 style="text-align:center">
@@ -523,7 +526,8 @@ else
 
     private List<Data.Envelope> Envelopes { get; set; }
 
-    private async void TestSec(){
+    private async void TestSec()
+    {
         await SecurityRepo.GetSecuritiesAsync();
     }
 

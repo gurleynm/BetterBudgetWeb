@@ -15,7 +15,6 @@
 </style>
 @if (Mobile)
 {
-
     <br style="clear:both" />
     <div style="border: 2px solid green; width:90vw;height:fit-content;">
         <h1 style="text-align:center;">Envelope Preview:</h1>
@@ -208,8 +207,9 @@ else
             Amount = string.Empty;
             WillPayPerson1 = string.Empty;
             WillPayPerson2 = string.Empty;
-            StateHasChanged();
         }
+
         Disabled = false;
+        StateHasChanged();
     }
 }

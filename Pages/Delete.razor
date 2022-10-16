@@ -11,6 +11,10 @@
         <button class="tablinks @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
         <button class="tablinks @StaticClass" @onclick="@ShowStaticGoal">Set Monthly</button>
         <button class="tablinks @EnvelopesClass" @onclick="@ShowEnvelopes">Goal Envelopes</button>
+        @if (Constants.Test)
+        {
+            <button class="tablinks @SecClass" @onclick="@ShowSecurity">Security</button>
+        }
         @*<button class="tablinks @SavingsClass" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
     </div>
 }
@@ -20,6 +24,10 @@ else
         <button class="tablinks" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
         <button class="tablinks" @onclick="@ShowStaticGoal">Set Monthly</button>
         <button class="tablinks" @onclick="@ShowEnvelopes">Goal Envelopes</button>
+        @if (Constants.Test)
+        {
+            <button class="tablinks" @onclick="@ShowSecurity">Security</button>
+        }
         @*<button class="btn btn-primary" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
     </div>
 }
@@ -38,6 +46,10 @@ else if (ShowEnvelope)
 else if (ShowSavings && false)
 {
     <DeleteSavings Mobile=@mobile />
+}
+else if (ShowSec)
+{
+    <DeleteSecurity Mobile=@mobile />
 }
 
 
@@ -79,11 +91,13 @@ else if (ShowSavings && false)
     private bool ShowStatic { get; set; }
     private bool ShowEnvelope { get; set; }
     private bool ShowSavings { get; set; }
+    private bool ShowSec { get; set; }
 
     private string DynamicClass => ShowDynamic ? "active" : "";
     private string StaticClass => ShowStatic ? "active" : "";
     private string EnvelopesClass => ShowEnvelope ? "active" : "";
     private string SavingsClass => ShowSavings ? "active" : "";
+    private string SecClass => ShowSec ? "active" : "";
 
     private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
 
@@ -98,6 +112,7 @@ else if (ShowSavings && false)
         ShowStatic = false;
         ShowEnvelope = false;
         ShowSavings = false;
+        ShowSec = false;
     }
     private void ShowStaticGoal()
     {
@@ -105,6 +120,7 @@ else if (ShowSavings && false)
         ShowDynamic = false;
         ShowEnvelope = false;
         ShowSavings = false;
+        ShowSec = false;
     }
     private void ShowSavingsGoal()
     {
@@ -112,6 +128,7 @@ else if (ShowSavings && false)
         ShowDynamic = false;
         ShowEnvelope = false;
         ShowStatic = false;
+        ShowSec = false;
     }
     private void ShowEnvelopes()
     {
@@ -119,6 +136,15 @@ else if (ShowSavings && false)
         ShowDynamic = false;
         ShowSavings = false;
         ShowStatic = false;
+        ShowSec = false;
+    }
+    private void ShowSecurity()
+    {
+        ShowSec = !ShowSec;
+        ShowDynamic = false;
+        ShowSavings = false;
+        ShowStatic = false;
+        ShowEnvelope = false;
     }
 
     private void Refresh(bool accepted)

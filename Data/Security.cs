@@ -30,5 +30,19 @@
         {
             Value = cost * numShares;
         }
+        public Security(Security other)
+        {
+            Id = other.Id;
+            Name = other.Name;
+            NumShares = other.NumShares;
+            AvgCost = other.AvgCost;
+            Cost = other.Cost;
+            Value = other.Value;
+            StrikePrice = other.StrikePrice;
+            SecType = other.SecType;
+            Person = other.Person;
+            DateOfSecurity = other.DateOfSecurity;
+            PassKey = other.PassKey;
+        }
     }
 }
