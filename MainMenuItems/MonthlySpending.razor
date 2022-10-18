@@ -535,6 +535,7 @@ else
         if (nt != null)
         {
             // TransactionRepo sets everything in Constants
+            nt.DateOfTransaction = DateTime.Now;
             Transactions = await TransactionRepo.AddOrUpdateAsync(nt);
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
 
