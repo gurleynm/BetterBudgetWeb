@@ -126,30 +126,22 @@ else
                     <EditForm Model="@Transact">
                         <table>
                             <tr>
-                                <td>
+                                <td style="font-size:3vw;"><label style="text-decoration:underline">Parameter</label></td>
+                                <td style="font-size:3vw;"><label style="text-decoration:underline">Value</label></td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw">
                                     <label>Date</label>
                                 </td>
-                                <td>
-                                    <label>Expense Type</label>
-                                </td>
-                                <td>
-                                    <label>Name</label>
-                                </td>
-                                <td>
-                                    <label>@(Constants.Person1)</label>
-                                </td>
-                                <td>
-                                    <label>@(Constants.Person2)</label>
-                                </td>
-                                <td>
-                                    <label>Total</label>
+                                <td style="font-size:3vw;padding:1vw">
+                                    <InputDate @bind-Value="Transact.DateOfTransaction" />
                                 </td>
                             </tr>
                             <tr>
-                                <td style="padding:1vw">
-                                    <InputDate @bind-Value="Transact.DateOfTransaction" />
+                                <td style="font-size:3vw;padding:1vw">
+                                    <label>Expense Type</label>
                                 </td>
-                                <td style="padding:1vw">
+                                <td style="font-size:3vw;padding:1vw">
                                     <InputSelect id="expenses" @bind-Value="Transact.ExpenseType" style="align-self:flex-end">
                                         <option value="Static Cost">Static Cost</option>
                                         <option value="Income">Income</option>
@@ -161,11 +153,22 @@ else
                                         }
                                     </InputSelect>
                                 </td>
-                                <td style="padding:1vw">
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw">
+                                    <label>Name</label>
+                                </td>
+                                <td style="font-size:3vw;padding:1vw">
                                     <InputText @bind-Value="Transact.Name" />
                                 </td>
-                                <td style="padding:1vw">
-                                    <InputNumber @bind-Value="Transact.Person1Amount" style="width: 5vw;margin-bottom:.5vw" />
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw;padding:1vw;">
+                                    <label>@(Constants.Person1 + " Values")</label>
+                                </td>
+                                <td style="font-size:3vw;padding:1vw">
+                                    <InputNumber @bind-Value="Transact.Person1Amount" style="width: 15vw;margin-bottom:.5vw" />
+                                    <br />
                                     <InputSelect id="expenses" @bind-Value="Transact.PaidWithPerson1" style="align-self:flex-end">
                                         <option value="@string.Empty">Payment</option>
                                         @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person1))
@@ -174,8 +177,14 @@ else
                                         }
                                     </InputSelect>
                                 </td>
-                                <td style="padding:1vw">
-                                    <InputNumber @bind-Value="Transact.Person2Amount" style="width: 5vw;margin-bottom:.5vw" />
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw;padding:1vw;">
+                                    <label>@(Constants.Person2 + " Values")</label>
+                                </td>
+                                <td style="font-size:3vw;padding:1vw">
+                                    <InputNumber @bind-Value="Transact.Person2Amount" style="width: 15vw;margin-bottom:.5vw" />
+                                    <br />
                                     <InputSelect id="expenses" @bind-Value="Transact.PaidWithPerson2" style="align-self:flex-end">
                                         <option value="@string.Empty">Payment</option>
                                         @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person2))
@@ -184,7 +193,13 @@ else
                                         }
                                     </InputSelect>
                                 </td>
-                                <td style="padding:1vw">
+                            </tr>
+                            <tr>
+
+                                <td style="font-size:3vw">
+                                    <label>Total</label>
+                                </td>
+                                <td style="font-size:3vw;padding:1vw">
                                     <label>@Transact.TotalAmount</label>
                                 </td>
                             </tr>

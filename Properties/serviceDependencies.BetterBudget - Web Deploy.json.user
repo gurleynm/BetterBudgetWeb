@@ -1,0 +1,30 @@
+{
+  "dependencies": {},
+  "parameters": {
+    "BetterBudget.subscriptionId": {
+      "Name": "BetterBudget.subscriptionId",
+      "Type": "subscription",
+      "Value": "3b44fc4c-91ee-4ca6-bd67-71e6735bf7b7"
+    },
+    "BetterBudget.resourceGroupLocation": {
+      "Name": "BetterBudget.resourceGroupLocation",
+      "Type": null,
+      "Value": "eastus"
+    },
+    "subscriptionId": {
+      "Name": "subscriptionId",
+      "Type": "subscription",
+      "Value": "3b44fc4c-91ee-4ca6-bd67-71e6735bf7b7"
+    },
+    "BetterBudget.resourceName": {
+      "Name": "BetterBudget.resourceName",
+      "Type": null,
+      "Value": "BetterBudget"
+    },
+    "BetterBudget.resourceGroupName": {
+      "Name": "BetterBudget.resourceGroupName",
+      "Type": "resourceGroup",
+      "Value": "BetterBudResource"
+    }
+  }
+}
