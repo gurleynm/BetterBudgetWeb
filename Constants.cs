@@ -27,7 +27,7 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = false;
+        public static bool Us = true;
         public static bool Test = false;
         public static string Key { get; set; } = "";
 

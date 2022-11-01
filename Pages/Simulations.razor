@@ -999,9 +999,21 @@ else
         }
 
         if (monthType == "STATIC")
+        {
+            foreach (var key in StaticMonthMap.Keys)
+                if (!holder.ContainsKey(key))
+                    holder[key] = StaticMonthMap[key];
+
             StaticMonthMap = holder;
+        }
         else
+        {
+            foreach (var key in DynaMonthMap.Keys)
+                if (!holder.ContainsKey(key))
+                    holder[key] = DynaMonthMap[key];
+
             DynaMonthMap = holder;
+        }
     }
 
     private void DynaChanged(ChangeEventArgs e, string dciName, int person)
