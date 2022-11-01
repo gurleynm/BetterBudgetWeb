@@ -124,6 +124,7 @@ else
                 <MonthlySpending Mobile=mobile
                          OnAddConfirm=AddConfirm
                          OnDeleteConfirm=DeleteConfirm
+                         OnEditConfirm=@(() => SetDataPoints(true))
                          @bind-Transactions=Transactions
                          @bind-FilteredTransactions=FilteredTransactions
                          @bind-Balances=Balances />
@@ -181,7 +182,7 @@ else
                 {
                     <!-- Set Monthly Costs Goals-->
                     <br />
-                    <SetMonthlyTable Trans=Transactions />
+                    <SetMonthlyTable Trans=FilteredTransactions />
                     <br style="clear:both" />
                 }
 
@@ -213,7 +214,7 @@ else
             {
                 <!-- Set Monthly Costs Goals-->
                 <div style="display:inline-block">
-                    <SetMonthlyTable Trans=Transactions />
+                    <SetMonthlyTable Trans=FilteredTransactions />
                     <br style="clear:both" />
                     <br />
                     <div style="float:right; margin-bottom:1vh;margin-right:1vw;">

@@ -69,7 +69,7 @@
                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name))
                         {
                             <option value="@pay.Name">@pay.Name</option>
                         }
@@ -83,7 +83,7 @@
                     <option value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name))
                         {
                             <option value="@pay.Name">@pay.Name</option>
                         }
@@ -218,7 +218,7 @@ else
                     <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name))
                         {
                             <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
                         }
@@ -232,7 +232,7 @@ else
                     <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Payment</option>
                     @if (Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
+                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name))
                         {
                             <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
                         }
@@ -393,6 +393,9 @@ else
     public EventCallback OnDeleteConfirm { get; set; }
 
     [Parameter]
+    public EventCallback OnEditConfirm { get; set; }
+
+    [Parameter]
     public List<Transaction> FilteredTransactions
     {
         get => filteredTransactions;
@@ -491,7 +494,7 @@ else
         foreach (var dci in Constants.DynamicCostItems)
             ExpenseTypes.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
 
-        ExpenseTypes.Add("Other");
+        ExpenseTypes.Sort();
         return base.OnInitializedAsync();
     }
 
@@ -523,6 +526,7 @@ else
             Transactions = Constants.Transactions;
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
             Balances = Constants.Balances;
+            OnEditConfirm.InvokeAsync();
             StateHasChanged();
         }
     }
