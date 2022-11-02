@@ -150,6 +150,21 @@ namespace BetterBudgetWeb.Runner
             if (NewPerson2Amount > 0 && string.IsNullOrEmpty(NewPerson2PaidWith))
                 ErrorMsg += $"Must enter how {Constants.Person2}'s payment method.\n";
 
+            if(NewExpense == "Envelope")
+            {
+                string np1pw = NewPerson1PaidWith;
+                string np2pw = NewPerson2PaidWith;
+
+                Envelope env1 = Constants.Envelopes.FirstOrDefault(e => e.Name == np1pw);
+                Envelope env2 = Constants.Envelopes.FirstOrDefault(e => e.Name == np2pw);
+
+                if (env1 != null && NewPerson1Amount > env1.Person1Amount)
+                    ErrorMsg += $"{Constants.Person1} must enter an amount ≤ {Constants.Pretty(env1.Person1Amount)} for this envelope.\n";
+                
+                if (env2 != null && NewPerson2Amount > env2.Person2Amount)
+                    ErrorMsg += $"{Constants.Person2} must enter an amount ≤ {Constants.Pretty(env1.Person2Amount)} for this envelope.\n";
+            }
+
             if (string.IsNullOrEmpty(ErrorMsg))
             {
                 string nnpw = NewPerson1PaidWith == null ? "" : NewPerson1PaidWith;

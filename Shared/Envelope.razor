@@ -61,44 +61,75 @@
     }
 </style>
 
-<div class="container-env" style="height:auto;width:auto;padding:0;
-        cursor: @(OnClick == null ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
-    @if (Open)
-    {
-        <img src="@ImageSrc" alt="Open Full" style="width:@scale;height:auto;">
-    }
-    else
-    {
-        <img src="/images/Envelope.png" alt="Closed Envelope" style="width:@scale;height:auto">
-    }
-    @if (Goal != 0)
-    {
-        @if (!Open)
+@if (!ShowBack)
+{
+    <div class="container-env" style="height:auto;width:auto;padding:0;
+        cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
+        @if (Open)
         {
-            <div class="top-centered" style="z-index:1;background-color:transparent;font-size:@(Font_Size/2)vw;border-radius:15px;">
-                <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
-            </div>
+            <img src="@ImageSrc" alt="Open Full" style="width:@scale;height:auto;">
         }
         else
         {
-            <div class="bottom-mid-centered" style="z-index:1;background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;">
-                <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
+            <img src="/images/Envelope.png" alt="Closed Envelope" style="width:@scale;height:auto">
+        }
+        @if (Goal != 0)
+        {
+            @if (!Open)
+            {
+                <div class="top-centered" style="z-index:1;background-color:transparent;font-size:@(Font_Size/2)vw;border-radius:15px;">
+                    <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
+                </div>
+            }
+            else
+            {
+                <div class="bottom-mid-centered" style="z-index:1;background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;">
+                    <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
+                </div>
+            }
+        }
+        @if (!Open)
+        {
+            <div class="centered" style="background-color:white;font-size:@(Font_Size)vw;">
+                @Name
             </div>
         }
-    }
-    @if (!Open)
-    {
-        <div class="centered" style="background-color:white;font-size:@(Font_Size)vw;">
+        @if (Goal != 0)
+        {
+            <div class="bottom-centered" style="z-index:1;background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;">
+                <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="container-env" style="height:auto;width:auto;padding:0;
+        cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
+        <img src="/images/EnvelopeBack.png" alt="Closed Envelope" style="width:@scale;height:auto">
+        <div class="top-centered" style="background-color:white;font-size:@(Font_Size)vw;">
             @Name
         </div>
-    }
-    @if (Goal != 0)
-    {
-        <div class="bottom-centered" style="z-index:1;background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;">
-            <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
+        <div class="bottom-mid-centered" style="z-index:1;background-color:transparent;font-size:@(Font_Size/2)vw;display:inline">
+            <div style="float:left">
+                <strong>
+                    @(Constants.Person1 + ":")
+                    <br />
+                    <span style="color:limegreen;">@Constants.Pretty(Person1Amount)</span>
+                </strong>
+            </div>
+            <br />
+            <br />
+            <div style="float:right">
+                <strong>
+                    @(Constants.Person2 + ":")
+                    <br />
+                    <span style="color:@GoodOrBad()">@Constants.Pretty(Person2Amount)</span>
+                </strong>
+            </div>
         </div>
-    }
-</div>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -107,11 +138,29 @@
     public double Scale { get; set; } = 20;
     public string scale => Scale + "vw";
     [Parameter]
-    public Action OnClick { get; set; }
+    public Action OnClick
+    {
+        get; set;
+    }
+    private bool flipClick { get; set; } = false;
+
+    [Parameter]
+    public bool FlipClick
+    {
+        get { return flipClick; }
+        set
+        {
+            flipClick = value;
+        }
+    }
     [Parameter]
     public double Goal { get; set; }
     [Parameter]
     public double Saved { get; set; }
+    [Parameter]
+    public double Person1Amount { get; set; }
+    [Parameter]
+    public double Person2Amount { get; set; }
     [Parameter]
     public double Font_Size { get; set; } = 2;
     [Parameter]
@@ -123,12 +172,17 @@
     [Parameter]
     public bool Cashing { get; set; }
 
+    private bool ShowBack = false;
+
     public string ImageSrc => DetermineState();
 
     private void OnClickHandle()
     {
         if (OnClick != null)
             OnClick();
+
+        if (FlipClick)
+            Flip();
     }
     private string GoodOrBad()
     {
@@ -154,5 +208,9 @@
             return "/images/Envelope-OpenE.png";
         else
             return "/images/Envelope-OpenE.png";
+    }
+    public void Flip()
+    {
+        ShowBack = !ShowBack;
     }
 }

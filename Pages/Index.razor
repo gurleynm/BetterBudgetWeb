@@ -66,7 +66,7 @@ else
             </h2>
             @if (Envelopes != null && Envelopes.Count > 0)
             {
-                <Envelope Name="GOALS" Scale=8 Font_Size=1 OnClick=@ToggleGoals />
+                <Envelope Name="@GoalTxt" Scale=8 Font_Size=1 OnClick=@ToggleGoals />
             }
 
             <h2 style="text-align:center">
@@ -125,6 +125,7 @@ else
                          OnAddConfirm=AddConfirm
                          OnDeleteConfirm=DeleteConfirm
                          OnEditConfirm=@(() => SetDataPoints(true))
+                         @bind-Envelopes=Envelopes
                          @bind-Transactions=Transactions
                          @bind-FilteredTransactions=FilteredTransactions
                          @bind-Balances=Balances />
@@ -265,7 +266,10 @@ else
                     <div style="font-size:3vw;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
                         @foreach (var env in Envelopes)
                         {
-                            <Envelope Name="@env.Name" Scale=11 Font_Size=1.375 Goal=@env.Goal Saved=@env.TotalAmount />
+                            <Envelope Name="@env.Name" Scale=11 Font_Size=1.375 Goal=@env.Goal Saved=@env.TotalAmount
+                                FlipClick="true" 
+                                Person1Amount="@env.Person1Amount"
+                                Person2Amount="@env.Person2Amount"/>
                         }
                     </div>
                     <br />
@@ -340,6 +344,7 @@ else
         <div style="width:100%;float:left;margin-bottom:2vh;">
             <MonthlySpending Mobile=mobile
                      OnAddConfirm=AddConfirm
+                     @bind-Envelopes=Envelopes
                      @bind-Transactions=Transactions
                      @bind-FilteredTransactions=FilteredTransactions
                      @bind-Balances=Balances />
@@ -378,7 +383,9 @@ else
             <div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
                 @foreach (var env in Envelopes)
                 {
-                    <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@env.Goal Saved=@env.TotalAmount />
+                    <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@env.Goal Saved=@env.TotalAmount 
+                        FlipClick="true"
+                        Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount"/>
                 }
             </div>
             <br />
@@ -527,6 +534,8 @@ else
 
     private List<Data.Envelope> Envelopes { get; set; }
 
+    string GoalTxt = "GOALS";
+
     private async void TestSec()
     {
         await SecurityRepo.GetSecuritiesAsync();
@@ -553,6 +562,8 @@ else
             Goals = false;
         else
             Goals = true;
+
+        GoalTxt = Goals ? "GOALS (ON)" : "GOALS";
 
         if (string.IsNullOrEmpty(TutorialSeen))
             ShowTutorial = true;
@@ -763,6 +774,7 @@ else
     private async void ToggleGoals()
     {
         Goals = !Goals;
+        GoalTxt = Goals ? "GOALS (ON)" : "GOALS";
         await WriteCookieAsync("GoalsOpen", Goals ? "YES" : "NO", 1000);
         Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList();
         StateHasChanged();

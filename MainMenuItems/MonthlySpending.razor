@@ -426,6 +426,7 @@ else
     private List<Transaction> filteredTransactions;
     private List<Transaction> transactions;
     private List<Balance> balances;
+    private List<Data.Envelope> envelopes;
 
     [Parameter]
     public bool Mobile { get; set; }
@@ -492,6 +493,18 @@ else
             BalancesChanged.InvokeAsync(value);
         }
     }
+    [Parameter]
+    public List<Data.Envelope> Envelopes
+    {
+        get => envelopes;
+        set
+        {
+            if (envelopes == value) return;
+            envelopes = value;
+
+            EnvelopesChanged.InvokeAsync(value);
+        }
+    }
 
     [Parameter]
     public EventCallback<List<Transaction>> FilteredTransactionsChanged { get; set; }
@@ -501,6 +514,9 @@ else
 
     [Parameter]
     public EventCallback<List<Balance>> BalancesChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<List<Data.Envelope>> EnvelopesChanged { get; set; }
 
     private List<string> ExpenseTypes { get; set; } = new List<string>();
 
@@ -631,6 +647,7 @@ else
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
 
             Balances = Constants.Balances;
+            Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList(); ;
 
             AddConfirm();
         }
@@ -653,6 +670,7 @@ else
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(ft => ft.DateOfTransaction).ToList();
 
             Balances = Constants.Balances;
+            Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList(); ;
 
             OnDeleteConfirm.InvokeAsync();
         }
