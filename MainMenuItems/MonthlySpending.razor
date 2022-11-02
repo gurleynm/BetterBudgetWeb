@@ -66,12 +66,23 @@
                 <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson1Amount" />
                 <br />
                 <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
-                    <option value="@string.Empty" selected disabled="disabled">Payment</option>
-                    @if (Balances != null)
+                    @if (Person1Envelopes != null && Person1Envelopes.Count > 0 && NewExpense == "Envelope")
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name))
+                        <option selected value="@string.Empty" disabled>@Envelope1Header</option>
+                        @foreach (var pay in Person1Envelopes)
                         {
                             <option value="@pay.Name">@pay.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        @if (Person1Balances != null)
+                        {
+                            <option selected value="@string.Empty" disabled>@Balance1Header</option>
+                            @foreach (var pay in Person1Balances)
+                            {
+                                <option value="@pay.Name">@pay.Name</option>
+                            }
                         }
                     }
                 </select>
@@ -80,12 +91,23 @@
                 <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson2Amount" />
                 <br />
                 <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson2PaidWith" title="Pick a payment type ">
-                    <option value="@string.Empty" selected disabled="disabled">Payment</option>
-                    @if (Balances != null)
+                    @if (Person2Envelopes != null && Person2Envelopes.Count > 0 && NewExpense == "Envelope")
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name))
+                        <option selected value="@string.Empty" disabled>@Envelope2Header</option>
+                        @foreach (var pay in Person2Envelopes)
                         {
                             <option value="@pay.Name">@pay.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        @if (Person2Balances != null)
+                        {
+                            <option selected value="@string.Empty" disabled>@Balance2Header</option>
+                            @foreach (var pay in Person2Balances)
+                            {
+                                <option value="@pay.Name">@pay.Name</option>
+                            }
                         }
                     }
                 </select>
@@ -215,12 +237,23 @@ else
                 <input type="number" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="NewPerson1Amount" />
                 <br />
                 <select class="custom-select" style="font-size:3vw;width:8vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
-                    <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Payment</option>
-                    @if (Balances != null)
+                    @if (Person1Envelopes != null && Person1Envelopes.Count > 0 && NewExpense == "Envelope")
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name))
+                        <option selected value="@string.Empty" disabled>@Envelope1Header</option>
+                        @foreach (var pay in Person1Envelopes)
                         {
                             <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        @if (Person1Balances != null)
+                        {
+                            <option selected value="@string.Empty" disabled>@Balance1Header</option>
+                            @foreach (var pay in Person1Balances)
+                            {
+                                <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                            }
                         }
                     }
                 </select>
@@ -229,12 +262,23 @@ else
                 <input type="number" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="NewPerson2Amount" />
                 <br />
                 <select class="custom-select" style="font-size:3vw;width:8vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewPerson2PaidWith" title="Pick a payment type ">
-                    <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Payment</option>
-                    @if (Balances != null)
+                    @if (Person2Envelopes != null && Person2Envelopes.Count > 0 && NewExpense == "Envelope")
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name))
+                        <option selected value="@string.Empty" disabled>@Envelope1Header</option>
+                        @foreach (var pay in Person2Envelopes)
                         {
                             <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                        }
+                    }
+                    else
+                    {
+                        @if (Person2Balances != null)
+                        {
+                            <option selected value="@string.Empty" disabled>@Balance1Header</option>
+                            @foreach (var pay in Person2Balances)
+                            {
+                                <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                            }
                         }
                     }
                 </select>
@@ -427,6 +471,12 @@ else
         }
     }
 
+    public List<Data.Envelope> Person1Envelopes;
+    public List<Data.Envelope> Person2Envelopes;
+
+    public List<Balance> Person1Balances;
+    public List<Balance> Person2Balances;
+
     [Parameter]
     public List<Balance> Balances
     {
@@ -435,6 +485,10 @@ else
         {
             if (balances == value) return;
             balances = value;
+
+            Person1Balances = Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
+            Person2Balances = Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
+
             BalancesChanged.InvokeAsync(value);
         }
     }
@@ -486,15 +540,48 @@ else
 
     private bool Disabled;
 
+    private string Envelope1Header = "-- Envelopes --";
+    private string Balance1Header = "-- Payment --";
+    private string Envelope2Header = "-- Envelopes --";
+    private string Balance2Header = "-- Payment --";
+
     protected override Task OnInitializedAsync()
     {
         ExpenseTypes.Add("Static Cost");
         ExpenseTypes.Add("Income");
 
+        Person1Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).Where(e => e.Person1Amount > 0).ToList();
+        Person2Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).Where(e => e.Person2Amount > 0).ToList();
+
         foreach (var dci in Constants.DynamicCostItems)
             ExpenseTypes.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
 
+        if (Person1Envelopes.Count > 0 || Person2Envelopes.Count > 0)
+            ExpenseTypes.Add("Envelope");
+
         ExpenseTypes.Sort();
+        int maxP1B = Person1Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
+        int maxP1E = Person1Envelopes.Count > 0 ? Person1Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length : 0;
+        int maxP1 = Math.Max(maxP1B, maxP1E);
+
+        if (maxP1 > Envelope1Header.Length)
+        {
+            Envelope1Header = "Envelopes ".PadRight(maxP1, '-');
+
+            Balance1Header = "Payment ".PadRight(maxP1, '-');
+        }
+
+        int maxP2B = Person2Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
+        int maxP2E = Person2Envelopes.Count > 0 ? Person2Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length : 0;
+        int maxP2 = Math.Max(maxP2B, maxP2E);
+
+        if (maxP2 > Envelope2Header.Length)
+        {
+            Envelope2Header = "Envelopes ".PadRight(maxP2, '-');
+
+            Balance2Header = "Payment ".PadRight(maxP2, '-');
+        }
+
         return base.OnInitializedAsync();
     }
 

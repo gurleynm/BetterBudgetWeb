@@ -105,9 +105,9 @@
                     <br />
                     <select class="custom-select" @bind="PaidOffPerson1" title="Paid Off is required ">
                         <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                        @if (Balances != null)
+                        @if (Person1Balances != null)
                         {
-                            @foreach (var pay in Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType.Contains("Loan")))
+                            @foreach (var pay in Person1Balances.Where(b => b.BalanceType.Contains("Loan")))
                             {
                                 <option value="@pay.Id">@pay.Name</option>
                             }
@@ -120,9 +120,9 @@
                     <br />
                     <select class="custom-select" @bind="PaidOffPerson2" title="Paid Off is required ">
                         <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                        @if (Balances != null)
+                        @if (Person2Balances != null)
                         {
-                            @foreach (var pay in Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType.Contains("Loan")))
+                            @foreach (var pay in Person2Balances.Where(b => b.BalanceType.Contains("Loan")))
                             {
                                 <option value="@pay.Id">@pay.Name</option>
                             }
@@ -144,9 +144,9 @@
                 <br />
                 <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
                     <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Paid)")</option>
-                    @if (Balances != null)
+                    @if (Person1Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
+                        @foreach (var pay in Person1Balances)
                         {
                             <option value="@pay.Id">@pay.Name</option>
                         }
@@ -167,9 +167,9 @@
                 <br />
                 <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
                     <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Paid)")</option>
-                    @if (Balances != null)
+                    @if (Person2Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
+                        @foreach (var pay in Person2Balances)
                         {
                             <option value="@pay.Id">@pay.Name</option>
                         }
@@ -236,9 +236,9 @@ else
                 <br />
                 <select class="custom-select" @bind="PaidOffPerson1" title="Paid Off is required ">
                     <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                    @if (Balances != null)
+                    @if (Person1Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType.Contains("Loan")))
+                        @foreach (var pay in Person1Balances.Where(b => b.BalanceType.Contains("Loan")))
                         {
                             <option value="@pay.Id">@pay.Name</option>
                         }
@@ -260,9 +260,9 @@ else
             <br />
             <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
                 <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Paid)")</option>
-                @if (Balances != null)
+                @if (Person1Balances != null)
                 {
-                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
+                    @foreach (var pay in Person1Balances)
                     {
                         <option value="@pay.Id">@pay.Name</option>
                     }
@@ -282,9 +282,9 @@ else
             <br />
             <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
                 <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Paid)")</option>
-                @if (Balances != null)
+                @if (Person2Balances != null)
                 {
-                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
+                    @foreach (var pay in Person2Balances)
                     {
                         <option value="@pay.Id">@pay.Name</option>
                     }
@@ -299,9 +299,9 @@ else
                 <br />
                 <select class="custom-select" @bind="PaidOffPerson2" title="Paid Off is required ">
                     <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                    @if (Balances != null)
+                    @if (Person2Balances != null)
                     {
-                        @foreach (var pay in Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType.Contains("Loan")))
+                        @foreach (var pay in Person2Balances.Where(b => b.BalanceType.Contains("Loan")))
                         {
                             <option value="@pay.Id">@pay.Name</option>
                         }
@@ -446,6 +446,8 @@ else
     private string TextColor { get; set; } = "#FFFFFF";
 
     private List<Balance> Balances => Constants.Balances;
+    private List<Balance> Person1Balances => Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person2Balances => Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(p1b => p1b.Name).ToList();
 
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";

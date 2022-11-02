@@ -59,13 +59,9 @@
                                 </td>
                                 <td style="padding:1vw">
                                     <InputSelect id="expenses" @bind-Value="Transact.ExpenseType" style="align-self:flex-end">
-                                        <option value="Static Cost">Static Cost</option>
-                                        <option value="Income">Income</option>
-                                        @foreach (var dci in Constants.DynamicCostItems)
+                                        @foreach (var et in ExpenseTypes)
                                         {
-                                            <option value='@(dci.Name.Replace("*", ""))'>
-                                                @(dci.Name.Replace("*", ""))
-                                            </option>
+                                            <option value="@et">@et</option>
                                         }
                                     </InputSelect>
                                 </td>
@@ -75,20 +71,52 @@
                                 <td style="padding:1vw">
                                     <InputNumber @bind-Value="Transact.Person1Amount" style="width: 5vw;margin-bottom:.5vw" />
                                     <InputSelect id="expenses" @bind-Value="Transact.PaidWithPerson1" style="align-self:flex-end">
-                                        <option value="@string.Empty">Payment</option>
-                                        @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person1))
+                                        @if (Person1Envelopes != null && Person1Envelopes.Count > 0 && Transact.ExpenseType == "Envelope")
                                         {
-                                            <option value="@pay.Name">@pay.Name</option>
+                                            <option selected value="@string.Empty" disabled>@Envelope1Header</option>
+                                            @foreach (var pay in Person1Envelopes)
+                                            {
+                                                <option value="@pay.Name">@pay.Name</option>
+                                            }
+                                            <option value="none">Did not pay</option>
+                                        }
+                                        else
+                                        {
+                                            @if (Person1Balances != null)
+                                            {
+                                                <option selected value="@string.Empty" disabled>@Balance1Header</option>
+                                                @foreach (var pay in Person1Balances)
+                                                {
+                                                    <option value="@pay.Name">@pay.Name</option>
+                                                }
+                                                <option value="none">Did not pay</option>
+                                            }
                                         }
                                     </InputSelect>
                                 </td>
                                 <td style="padding:1vw">
                                     <InputNumber @bind-Value="Transact.Person2Amount" style="width: 5vw;margin-bottom:.5vw" />
                                     <InputSelect id="expenses" @bind-Value="Transact.PaidWithPerson2" style="align-self:flex-end">
-                                        <option value="@string.Empty">Payment</option>
-                                        @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person2))
+                                        @if (Person2Envelopes != null && Person2Envelopes.Count > 0 && Transact.ExpenseType == "Envelope")
                                         {
-                                            <option value="@pay.Name">@pay.Name</option>
+                                            <option selected value="@string.Empty" disabled>@Envelope2Header</option>
+                                            @foreach (var pay in Person2Envelopes)
+                                            {
+                                                <option value="@pay.Name">@pay.Name</option>
+                                            }
+                                            <option value="none">Did not pay</option>
+                                        }
+                                        else
+                                        {
+                                            @if (Person2Balances != null)
+                                            {
+                                                <option selected value="@string.Empty" disabled>@Balance2Header</option>
+                                                @foreach (var pay in Person2Balances)
+                                                {
+                                                    <option value="@pay.Name">@pay.Name</option>
+                                                }
+                                                <option value="none">Did not pay</option>
+                                            }
                                         }
                                     </InputSelect>
                                 </td>
@@ -98,6 +126,7 @@
                             </tr>
                         </table>
                     </EditForm>
+                    <p style="color:red">@ErrorMsg</p>
                 </div>
                 <div class="modal-footer">
 
@@ -143,13 +172,9 @@ else
                                 </td>
                                 <td style="font-size:3vw;padding:1vw">
                                     <InputSelect id="expenses" @bind-Value="Transact.ExpenseType" style="align-self:flex-end">
-                                        <option value="Static Cost">Static Cost</option>
-                                        <option value="Income">Income</option>
-                                        @foreach (var dci in Constants.DynamicCostItems)
+                                        @foreach (var et in ExpenseTypes)
                                         {
-                                            <option value='@(dci.Name.Replace("*", ""))'>
-                                                @(dci.Name.Replace("*", ""))
-                                            </option>
+                                            <option style="font-size:3vw;" value="@et">@et</option>
                                         }
                                     </InputSelect>
                                 </td>
@@ -170,10 +195,26 @@ else
                                     <InputNumber @bind-Value="Transact.Person1Amount" style="width: 15vw;margin-bottom:.5vw" />
                                     <br />
                                     <InputSelect id="expenses" @bind-Value="Transact.PaidWithPerson1" style="align-self:flex-end">
-                                        <option value="@string.Empty">Payment</option>
-                                        @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person1))
+                                        @if (Person1Envelopes != null && Person1Envelopes.Count > 0 && Transact.ExpenseType == "Envelope")
                                         {
-                                            <option value="@pay.Name">@pay.Name</option>
+                                            <option selected value="@string.Empty" disabled>@Envelope1Header</option>
+                                            @foreach (var pay in Person1Envelopes)
+                                            {
+                                                <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                                            }
+                                            <option value="none">Did not pay</option>
+                                        }
+                                        else
+                                        {
+                                            @if (Person1Balances != null)
+                                            {
+                                                <option selected value="@string.Empty" disabled>@Balance1Header</option>
+                                                @foreach (var pay in Person1Balances)
+                                                {
+                                                    <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                                                }
+                                                <option value="none">Did not pay</option>
+                                            }
                                         }
                                     </InputSelect>
                                 </td>
@@ -186,10 +227,26 @@ else
                                     <InputNumber @bind-Value="Transact.Person2Amount" style="width: 15vw;margin-bottom:.5vw" />
                                     <br />
                                     <InputSelect id="expenses" @bind-Value="Transact.PaidWithPerson2" style="align-self:flex-end">
-                                        <option value="@string.Empty">Payment</option>
-                                        @foreach (var pay in Constants.Balances.Where(b => b.Person == Constants.Person2))
+                                        @if (Person2Envelopes != null && Person2Envelopes.Count > 0 && Transact.ExpenseType == "Envelope")
                                         {
-                                            <option value="@pay.Name">@pay.Name</option>
+                                            <option selected value="@string.Empty" disabled>@Envelope2Header</option>
+                                            @foreach (var pay in Person2Envelopes)
+                                            {
+                                                <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                                            }
+                                            <option value="none">Did not pay</option>
+                                        }
+                                        else
+                                        {
+                                            @if (Person2Balances != null)
+                                            {
+                                                <option selected value="@string.Empty" disabled>@Balance2Header</option>
+                                                @foreach (var pay in Person2Balances)
+                                                {
+                                                    <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                                                }
+                                                <option value="none">Did not pay</option>
+                                            }
                                         }
                                     </InputSelect>
                                 </td>
@@ -205,6 +262,7 @@ else
                             </tr>
                         </table>
                     </EditForm>
+                    <p style="color:red">@ErrorMsg</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" disabled=@Disabled class="btn btn-danger" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Decline</button>
@@ -234,6 +292,27 @@ else
     private List<string> ExpenseTypes { get; set; } = new List<string>();
     private string FilterIndicatorTxt = " (ON)";
 
+    public List<Data.Envelope> Person1Envelopes;
+    public List<Data.Envelope> Person2Envelopes;
+
+    public List<Balance> Person1Balances;
+    public List<Balance> Person2Balances;
+
+    private string Envelope1Header = "-- Envelopes --";
+    private string Balance1Header = "-- Payment --";
+    private string Envelope2Header = "-- Envelopes --";
+    private string Balance2Header = "-- Payment --";
+
+    private string errorMsg = "";
+    private string ErrorMsg
+    {
+        get { return errorMsg; }
+        set
+        {
+            errorMsg = value;
+            StateHasChanged();
+        }
+    }
     private bool Disabled;
 
     protected override Task OnInitializedAsync()
@@ -241,10 +320,46 @@ else
         ExpenseTypes.Add("Static Cost");
         ExpenseTypes.Add("Income");
 
+        Person1Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).Where(e => e.Person1Amount > 0).ToList();
+        Person2Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).Where(e => e.Person2Amount > 0).ToList();
+
         foreach (var dci in Constants.DynamicCostItems)
             ExpenseTypes.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
 
-        ExpenseTypes.Add("Other");
+        if (Person1Envelopes.Count > 0 || Person2Envelopes.Count > 0)
+            ExpenseTypes.Add("Envelope");
+
+        ExpenseTypes.Sort();
+
+        Person1Balances = Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
+        Person2Balances = Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
+
+        int maxP1B = Person1Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
+        int maxP1E = Person1Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length;
+        int maxP1 = Math.Max(maxP1B, maxP1E);
+
+        if (maxP1 > Envelope1Header.Length)
+        {
+            Envelope1Header = " Envelopes ".PadLeft(maxP1 / 2, '-');
+            Envelope1Header = Envelope1Header.PadRight(maxP1, '-');
+
+            Balance1Header = " Payment ".PadLeft(maxP1 / 2, '-');
+            Balance1Header = Balance1Header.PadRight(maxP1, '-');
+        }
+
+        int maxP2B = Person2Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
+        int maxP2E = Person2Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length;
+        int maxP2 = Math.Max(maxP2B, maxP2E);
+
+        if (maxP2 > Envelope2Header.Length)
+        {
+            Envelope2Header = " Envelopes ".PadLeft(maxP2 / 2, '-');
+            Envelope2Header = Envelope2Header.PadRight(maxP2, '-');
+
+            Balance2Header = " Payment ".PadLeft(maxP2 / 2, '-');
+            Balance2Header = Balance2Header.PadRight(maxP2, '-');
+        }
+
         return base.OnInitializedAsync();
     }
 
@@ -262,7 +377,43 @@ else
 
     private async Task ModalAccept()
     {
+        ErrorMsg = "";
         Disabled = true;
+        string badType = "Envelope";
+        if (Transact.ExpenseType == "Envelope")
+        {
+            if (!string.IsNullOrEmpty(Transact.PaidWithPerson1) &&
+                Transact.PaidWithPerson1 != "none" &&
+                !Person1Envelopes.Select(e => e.Name).Contains(Transact.PaidWithPerson1))
+                Transact.PaidWithPerson1 = "";
+
+            if (!string.IsNullOrEmpty(Transact.PaidWithPerson2) &&
+                Transact.PaidWithPerson2 != "none" &&
+                !Person2Envelopes.Select(e => e.Name).Contains(Transact.PaidWithPerson2))
+                Transact.PaidWithPerson2 = "";
+            badType = "n Envelope";
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(Transact.PaidWithPerson1) &&
+                Transact.PaidWithPerson1 != "none" &&
+                !Person1Balances.Select(e => e.Name).Contains(Transact.PaidWithPerson1))
+                Transact.PaidWithPerson1 = "";
+
+            if (!string.IsNullOrEmpty(Transact.PaidWithPerson2) &&
+                Transact.PaidWithPerson2 != "none" &&
+                !Person2Balances.Select(e => e.Name).Contains(Transact.PaidWithPerson2))
+                Transact.PaidWithPerson2 = "";
+            badType = " Payment";
+        }
+
+        if (string.IsNullOrEmpty(Transact.PaidWithPerson1) && string.IsNullOrEmpty(Transact.PaidWithPerson2))
+        {
+            Disabled = false;
+            ErrorMsg = "Enter a" + badType + " value for at least 1 person.";
+            return;
+        }
+
         await TransactionRepo.AddOrUpdateAsync(Transact);
         await OnClose.InvokeAsync(true);
     }

@@ -49,7 +49,7 @@ namespace BetterBudgetWeb
             }
             else
             {
-                BaseUri = Test ? "https://localhost:7121/" : "https://davidbetterbudgetapi.azurewebsites.net/";
+                BaseUri = Test ? "https://localhost:7234/" : "https://davidbetterbudgetapi.azurewebsites.net/";
                 Person1 = "David";
                 Person2 = "Katie";
                 Key = "Doofenblast!";
@@ -341,6 +341,31 @@ namespace BetterBudgetWeb
                         return 0;
                 }
             }
+        }
+
+        public static string CENTER(string str, int length, char pad = ' ')
+        {
+            string retStr = "";
+            int leftSide;
+
+            if (str.Length < length)
+            {
+                str = str.ToUpper();
+
+                leftSide = (length - str.Length) / 2;
+
+                retStr = str.PadLeft(leftSide + str.Length, pad);
+                retStr = retStr.PadRight(length, pad);
+            }
+            else if (str.Length > length)
+            {
+                leftSide = (str.Length - length) / 2;
+                retStr = str.Substring(leftSide, length);
+            }
+            else
+                retStr = str;
+
+            return retStr;
         }
     }
 }
