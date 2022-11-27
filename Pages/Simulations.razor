@@ -5,6 +5,7 @@
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Simulation
+@using System.Data;
 @inject IJSRuntime JSRuntime
 
 <style>
@@ -760,8 +761,27 @@ else
 
     private void UpdateIncomeBalances(bool prev = false)
     {
-        bool tp1 = double.TryParse(ExpectedIncome1Str, out Expected1Income);
-        bool tp2 = double.TryParse(ExpectedIncome2Str, out Expected2Income);
+
+        DataTable dt = new DataTable();
+        bool tp1;
+        bool tp2;
+
+        try
+        {
+            tp1 = double.TryParse(dt.Compute(ExpectedIncome1Str, "").ToString(), out Expected1Income);
+        }
+        catch (Exception e)
+        {
+            tp1 = false;
+        }
+        try
+        {
+            tp2 = double.TryParse(dt.Compute(ExpectedIncome2Str, "").ToString(), out Expected2Income);
+        }
+        catch (Exception e)
+        {
+            tp2 = false;
+        }
 
         var Person1Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
         var Person2Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
