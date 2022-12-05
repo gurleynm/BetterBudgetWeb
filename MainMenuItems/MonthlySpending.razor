@@ -524,8 +524,8 @@ else
     private double Person2IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
     private double TotalIncomeSum => Person1IncomeSum + Person2IncomeSum;
 
-    private double Person1ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType != "Income" && t.ExpenseType != "Debt" && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
-    private double Person2ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType != "Income" && t.ExpenseType != "Debt" && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
+    private double Person1ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => !Constants.NotExpenses.Contains(t.ExpenseType) && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
+    private double Person2ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => !Constants.NotExpenses.Contains(t.ExpenseType) && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
     private double TotalExpenseSum => Person1ExpenseSum + Person2ExpenseSum;
 
     private double NetPerson1Sum => Person1IncomeSum - Person1ExpenseSum;
@@ -574,6 +574,9 @@ else
 
         if (Person1Envelopes.Count > 0 || Person2Envelopes.Count > 0)
             ExpenseTypes.Add("Envelope");
+
+        if(Balances.Count(bal => bal.BalanceType == "Equity") > 0)
+            ExpenseTypes.Add("Equity");
 
         ExpenseTypes.Sort();
         int maxP1B = Person1Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;

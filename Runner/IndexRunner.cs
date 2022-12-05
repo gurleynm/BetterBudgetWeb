@@ -120,6 +120,11 @@ namespace BetterBudgetWeb.Runner
                         return "income-good";
                     else
                         return "income-bad";
+                case "Equity":
+                    if (amount > 0)
+                        return "equity-good";
+                    else
+                        return "equity-bad";
                 case "Debt":
                     return "debt";
                 default:
@@ -186,10 +191,10 @@ namespace BetterBudgetWeb.Runner
             if (Balances == null)
                 return 0;
 
-            double positive = Balances.Where(bal => bal.Person == person && !bal.BalanceType.Contains("Loan")).Sum(b => b.Value);
+            double positive = Balances.Where(bal => bal.Person == person && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value);
             double negative = Balances.Where(bal => bal.Person == person && bal.BalanceType.Contains("Loan")).Sum(b => b.Value);
             double joint_neg = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && bal.BalanceType.Contains("Loan")).Sum(b => b.Value)/2;
-            double joint_pos = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && !bal.BalanceType.Contains("Loan")).Sum(b => b.Value)/2;
+            double joint_pos = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value)/2;
             return positive + joint_pos - joint_neg - negative;
         }
 

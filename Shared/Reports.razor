@@ -115,7 +115,7 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                Income Total:
+                                                Income + Equity Total:
                                             </td>
                                             <td class="income-good">@Pretty(Person1Income)</td>
                                             <td class="income-good">@Pretty(Person2Income)</td>
@@ -279,7 +279,7 @@ else
                                         </tr>
                                         <tr>
                                             <td style="font-size:3vw;padding:5px">
-                                                Income Total:
+                                                Income + Equity Total:
                                             </td>
                                             <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person1Income)</td>
                                             <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person2Income)</td>
@@ -587,11 +587,11 @@ else
         double TodayPerson1Projected = TodayDCIs.Sum(d => d.Person1Amount) + TodaySMCs.Sum(d => d.Person1Amount);
         double TodayPerson2Projected = TodayDCIs.Sum(d => d.Person2Amount) + TodaySMCs.Sum(d => d.Person2Amount);
 
-        double TodayPerson1Actual = Trans.Where(t => t.ExpenseType != "Debt" && t.ExpenseType != "Income").Sum(d => d.Person1Amount);
-        double TodayPerson2Actual = Trans.Where(t => t.ExpenseType != "Debt" && t.ExpenseType != "Income").Sum(d => d.Person2Amount);
+        double TodayPerson1Actual = Trans.Where(t => !Constants.NotExpenses.Contains(t.ExpenseType)).Sum(d => d.Person1Amount);
+        double TodayPerson2Actual = Trans.Where(t => !Constants.NotExpenses.Contains(t.ExpenseType)).Sum(d => d.Person2Amount);
 
-        double TodayPerson1Income = Trans.Where(t => t.ExpenseType == "Income").Sum(d => d.Person1Amount);
-        double TodayPerson2Income = Trans.Where(t => t.ExpenseType == "Income").Sum(d => d.Person2Amount);
+        double TodayPerson1Income = Trans.Where(t => t.ExpenseType == "Income" || t.ExpenseType == "Equity").Sum(d => d.Person1Amount);
+        double TodayPerson2Income = Trans.Where(t => t.ExpenseType == "Income" || t.ExpenseType == "Equity").Sum(d => d.Person2Amount);
 
         Dynamo TodayDyno = new Dynamo
             {

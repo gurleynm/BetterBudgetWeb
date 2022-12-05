@@ -86,13 +86,27 @@
                     <option value="@string.Empty" selected disabled="disabled">Expense</option>
                     @foreach (var et in ExpenseTypes)
                     {
-                        @if (et == "Paying Off Debt")
+                        @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --"))
                         {
-                            <option value="Debt">@et</option>
+                            <option value="et" disabled>@et</option>
                         }
                         else
                         {
-                            <option value="@et">@et</option>
+                            @if (et == "Paying Off Debt")
+                            {
+                                <option value="Debt">@et</option>
+                            }
+                            else
+                            {
+                                @if (et == "Transfer Between Accounts")
+                                {
+                                    <option value="Transfer">@et</option>
+                                }
+                                else
+                                {
+                                    <option value="@et">@et</option>
+                                }
+                            }
                         }
                     }
                 </select>
@@ -101,13 +115,13 @@
             {
                 <br />
                 <div>
-                    <label>@($"What's {Constants.Person1} paying off:")</label>
+                    <label>@($"What's {Constants.Person1} Paying Off:")</label>
                     <br />
                     <select class="custom-select" @bind="PaidOffPerson1" title="Paid Off is required ">
                         <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                        @if (Person1Balances != null)
+                        @if (Person1BalancesLoans != null)
                         {
-                            @foreach (var pay in Person1Balances.Where(b => b.BalanceType.Contains("Loan")))
+                            @foreach (var pay in Person1BalancesLoans)
                             {
                                 <option value="@pay.Id">@pay.Name</option>
                             }
@@ -116,13 +130,46 @@
                 </div>
                 <br />
                 <div>
-                    <label><strong>@($"What's {Constants.Person2} paying off:")</strong></label>
+                    <label><strong>@($"What's {Constants.Person2} Paying Off:")</strong></label>
                     <br />
                     <select class="custom-select" @bind="PaidOffPerson2" title="Paid Off is required ">
                         <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                        @if (Person2Balances != null)
+                        @if (Person2BalancesLoans != null)
                         {
-                            @foreach (var pay in Person2Balances.Where(b => b.BalanceType.Contains("Loan")))
+                            @foreach (var pay in Person2BalancesLoans)
+                            {
+                                <option value="@pay.Id">@pay.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            }
+            @if (ExpenseType == "Transfer")
+            {
+                <br />
+                <div>
+                    <label>@($"Where's {Constants.Person1} Transferring To:")</label>
+                    <br />
+                    <select class="custom-select" @bind="PaidOffPerson1" title="Transfer account is required ">
+                        <option value="@string.Empty" selected disabled="disabled">(Choose What You Are Transferring To)</option>
+                        @if (Person1BalancesNotLoans != null)
+                        {
+                            @foreach (var pay in Person1BalancesNotLoans)
+                            {
+                                <option value="@pay.Id">@pay.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <br />
+                <div>
+                    <label>@($"Where's {Constants.Person2} Transferring To:")</label>
+                    <br />
+                    <select class="custom-select" @bind="PaidOffPerson2" title="Transfer account required ">
+                        <option value="@string.Empty" selected disabled="disabled">(Choose What You Are Transferring To)</option>
+                        @if (Person2BalancesNotLoans != null)
+                        {
+                            @foreach (var pay in Person2BalancesNotLoans)
                             {
                                 <option value="@pay.Id">@pay.Name</option>
                             }
@@ -133,22 +180,42 @@
             <br style="clear:both;" />
             <br />
             <div>
-                @if (ExpenseType == "Income")
+                @if (ExpenseType == "Income" || ExpenseType == "Equity")
                 {
                     <label>@($"{Constants.Person1} was Paid Into:")</label>
                 }
                 else
                 {
-                    <label>@($"{Constants.Person1} Paid With:")</label>
+                    @if (ExpenseType == "Transfer")
+                    {
+                        <label>@($"Where's {Constants.Person1} Transferring From:")</label>
+                    }
+                    else
+                    {
+                        <label>@($"{Constants.Person1} Paid With:")</label>
+                    }
                 }
                 <br />
                 <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
-                    <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Paid)")</option>
-                    @if (Person1Balances != null)
+                    <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person1}'s Account)")</option>
+                    @if (ExpenseType == "Equity")
                     {
-                        @foreach (var pay in Person1Balances)
+                        @if (Person1BalancesEquities != null)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            @foreach (var pay in Person1BalancesEquities)
+                            {
+                                <option value="@pay.Id">@pay.Name</option>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        @if (Person1Balances != null)
+                        {
+                            @foreach (var pay in Person1Balances)
+                            {
+                                <option value="@pay.Id">@pay.Name</option>
+                            }
                         }
                     }
                     <option value="NONE">Did not pay</option>
@@ -156,22 +223,42 @@
             </div>
             <br />
             <div>
-                @if (ExpenseType == "Income")
+                @if (ExpenseType == "Income" || ExpenseType == "Equity")
                 {
                     <label>@($"{Constants.Person2} was Paid Into:")</label>
                 }
                 else
                 {
-                    <label>@($"{Constants.Person2} Paid With:")</label>
+                    @if (ExpenseType == "Transfer")
+                    {
+                        <label>@($"Where's {Constants.Person2} Transferring From:")</label>
+                    }
+                    else
+                    {
+                        <label>@($"{Constants.Person2} Paid With:")</label>
+                    }
                 }
                 <br />
                 <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
-                    <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Paid)")</option>
-                    @if (Person2Balances != null)
+                    <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person2}'s Account)")</option>
+                    @if (ExpenseType == "Equity")
                     {
-                        @foreach (var pay in Person2Balances)
+                        @if (Person2BalancesEquities != null)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            @foreach (var pay in Person2BalancesEquities)
+                            {
+                                <option value="@pay.Id">@pay.Name</option>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        @if (Person2Balances != null)
+                        {
+                            @foreach (var pay in Person2Balances)
+                            {
+                                <option value="@pay.Id">@pay.Name</option>
+                            }
                         }
                     }
                     <option value="NONE">Did not pay</option>
@@ -218,13 +305,27 @@ else
                 <option value="@string.Empty" selected disabled="disabled">Expense</option>
                 @foreach (var et in ExpenseTypes)
                 {
-                    @if (et == "Paying Off Debt")
+                    @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --"))
                     {
-                        <option value="Debt">@et</option>
+                        <option value="et" disabled>@et</option>
                     }
                     else
                     {
-                        <option value="@et">@et</option>
+                        @if (et == "Paying Off Debt")
+                        {
+                            <option value="Debt">@et</option>
+                        }
+                        else
+                        {
+                            @if (et == "Transfer Between Accounts")
+                            {
+                                <option value="Transfer">@et</option>
+                            }
+                            else
+                            {
+                                <option value="@et">@et</option>
+                            }
+                        }
                     }
                 }
             </select>
@@ -232,13 +333,30 @@ else
         @if (ExpenseType == "Debt")
         {
             <div style="float:left; margin-left:1.4vw;">
-                <label><strong>@($"What's {Constants.Person1} paying off:")</strong></label>
+                <label><strong>@($"What's {Constants.Person1} Paying Off:")</strong></label>
                 <br />
                 <select class="custom-select" @bind="PaidOffPerson1" title="Paid Off is required ">
                     <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                    @if (Person1Balances != null)
+                    @if (Person1BalancesLoans != null)
                     {
-                        @foreach (var pay in Person1Balances.Where(b => b.BalanceType.Contains("Loan")))
+                        @foreach (var pay in Person1BalancesLoans)
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        }
+        @if (ExpenseType == "Transfer")
+        {
+            <div style="float:left; margin-left:1.4vw;">
+                <label><strong>@($"Where's {Constants.Person1} Transferring To:")</strong></label>
+                <br />
+                <select class="custom-select" @bind="PaidOffPerson1" title="Transferring account is required ">
+                    <option value="@string.Empty" selected disabled="disabled">(Choose What You Are Transferring To)</option>
+                    @if (Person1BalancesNotLoans != null)
+                    {
+                        @foreach (var pay in Person1BalancesNotLoans)
                         {
                             <option value="@pay.Id">@pay.Name</option>
                         }
@@ -249,44 +367,84 @@ else
         <br style="clear:both;" />
         <br />
         <div style="float:left; margin-right:9.1vw;">
-            @if (ExpenseType == "Income")
+            @if (ExpenseType == "Income" || ExpenseType == "Equity")
             {
                 <label>@($"{Constants.Person1} was Paid Into:")</label>
             }
             else
             {
-                <label>@($"{Constants.Person1} Paid With:")</label>
+                @if (ExpenseType == "Transfer")
+                {
+                    <label>@($"Where's {Constants.Person1} Transferring From:")</label>
+                }
+                else
+                {
+                    <label>@($"{Constants.Person1} Paid With:")</label>
+                }
             }
             <br />
             <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
-                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Paid)")</option>
-                @if (Person1Balances != null)
+                <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person1}'s Account)")</option>
+                @if (ExpenseType == "Equity")
                 {
-                    @foreach (var pay in Person1Balances)
+                    @if (Person1BalancesEquities != null)
                     {
-                        <option value="@pay.Id">@pay.Name</option>
+                        @foreach (var pay in Person1BalancesEquities)
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
+                    }
+                }
+                else
+                {
+                    @if (Person1Balances != null)
+                    {
+                        @foreach (var pay in Person1Balances)
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
                     }
                 }
                 <option value="NONE">Did not pay</option>
             </select>
         </div>
         <div style="float:left; margin-right:5.6vw;">
-            @if (ExpenseType == "Income")
+            @if (ExpenseType == "Income" || ExpenseType == "Equity")
             {
                 <label>@($"{Constants.Person2} was Paid Into:")</label>
             }
             else
             {
-                <label>@($"{Constants.Person2} Paid With:")</label>
+                @if (ExpenseType == "Transfer")
+                {
+                    <label>@($"Where's {Constants.Person2} Transferring From:")</label>
+                }
+                else
+                {
+                    <label>@($"{Constants.Person2} Paid With:")</label>
+                }
             }
             <br />
             <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
-                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Paid)")</option>
-                @if (Person2Balances != null)
+                <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person2}'s Account)")</option>
+                @if (ExpenseType == "Equity")
                 {
-                    @foreach (var pay in Person2Balances)
+                    @if (Person1BalancesEquities != null)
                     {
-                        <option value="@pay.Id">@pay.Name</option>
+                        @foreach (var pay in Person1BalancesEquities)
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
+                    }
+                }
+                else
+                {
+                    @if (Person1Balances != null)
+                    {
+                        @foreach (var pay in Person1Balances)
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
                     }
                 }
                 <option value="NONE">Did not pay</option>
@@ -295,13 +453,30 @@ else
         @if (ExpenseType == "Debt")
         {
             <div style="float:left; margin-left:1.4vw;">
-                <strong>@($"What's {Constants.Person2} paying off:")</strong>
+                <strong>@($"What's {Constants.Person2} Paying Off:")</strong>
                 <br />
                 <select class="custom-select" @bind="PaidOffPerson2" title="Paid Off is required ">
                     <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                    @if (Person2Balances != null)
+                    @if (Person2BalancesLoans != null)
                     {
-                        @foreach (var pay in Person2Balances.Where(b => b.BalanceType.Contains("Loan")))
+                        @foreach (var pay in Person2BalancesLoans)
+                        {
+                            <option value="@pay.Id">@pay.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+        }
+        @if (ExpenseType == "Transfer")
+        {
+            <div style="float:left; margin-left:1.4vw;">
+                <label><strong>@($"Where's {Constants.Person2} Transferring To:")</strong></label>
+                <br />
+                <select class="custom-select" @bind="PaidOffPerson2" title="Transferring account is required ">
+                    <option value="@string.Empty" selected disabled="disabled">(Choose What You Are Transferring To)</option>
+                    @if (Person2BalancesNotLoans != null)
+                    {
+                        @foreach (var pay in Person2BalancesNotLoans)
                         {
                             <option value="@pay.Id">@pay.Name</option>
                         }
@@ -447,7 +622,15 @@ else
 
     private List<Balance> Balances => Constants.Balances;
     private List<Balance> Person1Balances => Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person1BalancesLoans => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Loan").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person1BalancesNotLoans => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType != "Loan").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person1BalancesIncomes => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Income").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person1BalancesEquities => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Equity").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person2Balances => Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person2BalancesLoans => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Loan").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person2BalancesNotLoans => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType != "Loan").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person2BalancesIncomes => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Income").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person2BalancesEquities => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Equity").OrderBy(p1b => p1b.Name).ToList();
 
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";
@@ -460,14 +643,43 @@ else
     {
         Presets = new List<Preset>(Constants.Presets);
         Presets.Sort();
-        ExpenseTypes.Add("Static Cost");
-        ExpenseTypes.Add("Income");
-        ExpenseTypes.Add("Paying Off Debt");
+
+        List<string> dcis = new List<string>();
+        List<string> others = new List<string>();
 
         foreach (var dci in Constants.DynamicCostItems)
-            ExpenseTypes.Add(dci.Name);
+            dcis.Add(dci.Name);
 
-        ExpenseTypes.Add("Other");
+        others.Add("Static Cost");
+        others.Add("Income");
+        others.Add("Equity");
+        others.Add("Transfer Between Accounts");
+        others.Add("Paying Off Debt");
+
+
+        dcis.Sort();
+
+        others.Sort();
+        others.Add("Other");
+        string DynaText = "-- Dynamic Costs --";
+
+        int longestDCI = dcis.OrderByDescending(s => s.Length).First().Length;
+        int longestOther = others.OrderByDescending(s => s.Length).First().Length;
+        int longestOfEach = Math.Max(longestDCI, longestOther);
+
+        if (longestOfEach > DynaText.Length)
+            ExpenseTypes.Add(Constants.CENTER(DynaText, longestOfEach, '-'));
+        else if (longestOfEach > 0)
+            ExpenseTypes.Add(DynaText);
+
+        foreach (var str in dcis)
+            ExpenseTypes.Add(str);
+
+        ExpenseTypes.Add(Constants.CENTER(" Others ", DynaText.Length, '-'));
+
+        foreach (var str in others)
+            ExpenseTypes.Add(str);
+
 
         return base.OnInitializedAsync();
     }

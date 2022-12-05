@@ -23,6 +23,8 @@ namespace BetterBudgetWeb
         public static bool DarkMode = Nighttime();
         public static Dictionary<string, string> ColorScheme = new Dictionary<string, string>();
 
+        public static string[] NotExpenses = new string[] { "Income", "Debt", "Equity", "Transfer" };
+
         public static string BaseUri = "https://davidbetterbudgetapi.azurewebsites.net/";
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
@@ -265,6 +267,7 @@ namespace BetterBudgetWeb
                 ColorScheme["TableOdd"] = "#384152";
 
                 ColorScheme["IncomeGood"] = "forestgreen";
+                ColorScheme["EquityGood"] = "yellow";
                 ColorScheme["Debt"] = "lightseagreen";
 
                 ColorScheme["Tab-Back"] = "#203957";
@@ -279,6 +282,7 @@ namespace BetterBudgetWeb
                 ColorScheme["TableOdd"] = "#ffffff";
 
                 ColorScheme["IncomeGood"] = "green";
+                ColorScheme["EquityGood"] = "goldenrod";
                 ColorScheme["Debt"] = "blue";
 
                 ColorScheme["Tab-Back"] = "#f1f1f1";
@@ -350,8 +354,6 @@ namespace BetterBudgetWeb
 
             if (str.Length < length)
             {
-                str = str.ToUpper();
-
                 leftSide = (length - str.Length) / 2;
 
                 retStr = str.PadLeft(leftSide + str.Length, pad);
