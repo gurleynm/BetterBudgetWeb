@@ -11,3 +11,4 @@ Properties/PublishProfiles/DavidBetterBudget - Web Deploy.pubxml.user
 Properties/PublishProfiles/*
 Properties/PublishProfiles/DavidBetterBudget - Web Deploy.pubxml.user
 Properties/PublishProfiles/BetterBudget - Web Deploy.pubxml.user
+*.user

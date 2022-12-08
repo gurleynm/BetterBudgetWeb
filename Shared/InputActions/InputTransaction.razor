@@ -24,6 +24,10 @@
     input {
         color: black;
     }
+
+    h4 {
+        margin-left: 1vw;
+    }
 </style>
 @if (Mobile)
 {
@@ -34,6 +38,7 @@
             <div style="border: 2px solid green; width:90vw;height:fit-content;right:1vw;top:15vh;">
                 <h1 style="text-align:center">Presets:</h1>
                 <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                    <h4>Food:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Grocery" || p.ExpenseType == "Eating Out"))
                         {
@@ -41,6 +46,7 @@
                         }
                     </div>
                     <br />
+                    <h4>Debts:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Debt"))
                         {
@@ -48,6 +54,7 @@
                         }
                     </div>
                     <br />
+                    <h4>Gas:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Gas"))
                         {
@@ -55,12 +62,15 @@
                         }
                     </div>
                     <br />
+                    <h4>Set Costs:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Static Cost"))
                         {
                             <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
                         }
                     </div>
+                    <br />
+                    <h4>Others:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType != "Eating Out" && p.ExpenseType != "Grovery" && p.ExpenseType != "Debt" && p.ExpenseType != "Gas" && p.ExpenseType != "Static Cost"))
                         {
@@ -611,8 +621,9 @@ else
         {
             <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
                 <h1 style="text-align:center">Presets:</h1>
-                <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                <div style="justify-content:flex-start;align-content:flex-start;flex-wrap:wrap;height:70%;overflow-y:auto;">
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                        <h4>Food:</h4>
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Grocery" || p.ExpenseType == "Eating Out"))
                         {
                             <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
@@ -620,12 +631,14 @@ else
                     </div>
                     <br />
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+                        <h4>Debts:</h4>
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Debt"))
                         {
                             <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
                         }
                     </div>
                     <br />
+                    <h4>Gas:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Gas"))
                         {
@@ -633,12 +646,15 @@ else
                         }
                     </div>
                     <br />
+                    <h4>Set Costs:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Static Cost"))
                         {
                             <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
                         }
                     </div>
+                    <br />
+                    <h4>Others:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType != "Eating Out" && p.ExpenseType != "Grocery" && p.ExpenseType != "Debt" && p.ExpenseType != "Gas" && p.ExpenseType != "Static Cost"))
                         {
