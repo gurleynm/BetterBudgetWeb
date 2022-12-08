@@ -170,7 +170,14 @@
             @if (TotalIncomeSum > 0)
             {
                 <tr>
-                    <td colspan="2"><strong>Total of Income</strong></td>
+                    @if (FilteredTransactions.Count(ft => ft.ExpenseType == "Equity") > 0)
+                    {
+                        <td colspan="2"><strong>Total of Income + Equity</strong></td>
+                    }
+                    else
+                    {
+                        <td colspan="2"><strong>Total of Income</strong></td>                        
+                    }
                     <td class='@TranColor("Income", Person1IncomeSum)'>
                         @Pretty(Person1IncomeSum)
                     </td>
@@ -355,7 +362,14 @@ else
             @if (TotalIncomeSum > 0)
             {
                 <tr>
-                    <td colspan="2" style="font-size:3vw"><strong>Total of Income</strong></td>
+                    @if (FilteredTransactions.Count(ft => ft.ExpenseType == "Equity") > 0)
+                    {
+                        <td colspan="2" style="font-size:3vw"><strong>Total of Income + Equity</strong></td>
+                    }
+                    else
+                    {
+                        <td colspan="2" style="font-size:3vw"><strong>Total of Income</strong></td>
+                    }
                     <td class='@TranColor("Income", Person1IncomeSum)' style="font-size:3vw;">
                         @Pretty(Person1IncomeSum)
                     </td>
@@ -520,8 +534,8 @@ else
 
     private List<string> ExpenseTypes { get; set; } = new List<string>();
 
-    private double Person1IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
-    private double Person2IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => t.ExpenseType == "Income" && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
+    private double Person1IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => (t.ExpenseType == "Income" || t.ExpenseType == "Equity") && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
+    private double Person2IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => (t.ExpenseType == "Income" || t.ExpenseType == "Equity") && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
     private double TotalIncomeSum => Person1IncomeSum + Person2IncomeSum;
 
     private double Person1ExpenseSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => !Constants.NotExpenses.Contains(t.ExpenseType) && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
@@ -575,7 +589,7 @@ else
         if (Person1Envelopes.Count > 0 || Person2Envelopes.Count > 0)
             ExpenseTypes.Add("Envelope");
 
-        if(Balances.Count(bal => bal.BalanceType == "Equity") > 0)
+        if (Balances.Count(bal => bal.BalanceType == "Equity") > 0)
             ExpenseTypes.Add("Equity");
 
         ExpenseTypes.Sort();

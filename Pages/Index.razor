@@ -669,9 +669,12 @@ else
             DateTime PreviousDate = tr.DateOfTransaction;
             double MonthAmount = 0;
 
-            if (tr.ExpenseType == "Income")
+            string[] NotExpenseOrIncome = new string[] { "Debt", "Transfer", "Equity" };
+            string[] IncomeOrEquity = new string[] { "Income", "Equity" };
+
+            if (IncomeOrEquity.Contains(tr.ExpenseType))
                 MonthAmount = tr.TotalAmount;
-            else if (tr.ExpenseType != "Debt")
+            else if (!NotExpenseOrIncome.Contains(tr.ExpenseType))
                 MonthAmount = tr.TotalAmount * -1;
 
             for (int index = 1; index < FilteredTransactions.Count; index++)
@@ -686,18 +689,18 @@ else
                         DataPoints.Add(newDP);
 
                     PreviousDate = FilteredTransactions[index].DateOfTransaction;
-                    if (FilteredTransactions[index].ExpenseType == "Income")
+                    if (IncomeOrEquity.Contains(FilteredTransactions[index].ExpenseType))
                         MonthAmount = FilteredTransactions[index].TotalAmount;
-                    else if (FilteredTransactions[index].ExpenseType != "Debt")
+                    else if (!NotExpenseOrIncome.Contains(FilteredTransactions[index].ExpenseType))
                         MonthAmount = FilteredTransactions[index].TotalAmount * -1;
                     else
                         MonthAmount = 0;
                 }
                 else
                 {
-                    if (FilteredTransactions[index].ExpenseType == "Income")
+                    if (IncomeOrEquity.Contains(FilteredTransactions[index].ExpenseType))
                         MonthAmount += FilteredTransactions[index].TotalAmount;
-                    else if (FilteredTransactions[index].ExpenseType != "Debt")
+                    else if (!NotExpenseOrIncome.Contains(FilteredTransactions[index].ExpenseType))
                         MonthAmount -= FilteredTransactions[index].TotalAmount;
 
                     if (index == FilteredTransactions.Count - 1)
