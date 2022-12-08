@@ -126,6 +126,7 @@ namespace BetterBudgetWeb.Runner
                     else
                         return "equity-bad";
                 case "Debt":
+                case "Transfer":
                     return "debt";
                 default:
                     if (amount > 0)

@@ -151,7 +151,7 @@
                     <td style="padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
                     <td style="width:8vw;padding:0 .5vw;">
                         <div style="display:flex;justify-content:center;">
-                            @if (transaction.ExpenseType != "Debt")
+                            @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                             {
                                 <button class="btn btn-secondary" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
                             }
@@ -334,7 +334,7 @@ else
                     <td style="font-size:3vw;padding:0 1vw;">@Pretty(transaction.TotalAmount)</td>
                     <td style="width:8vw;padding:0 .5vw;">
                         <div style="display:inline-block;">
-                            @if (transaction.ExpenseType != "Debt")
+                            @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                             {
                                 <button class="btn btn-secondary" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
                                 <br />
