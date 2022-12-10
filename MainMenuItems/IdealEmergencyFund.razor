@@ -1,4 +1,6 @@
-﻿@if (Mobile)
+﻿@using Simulation
+
+@if (Mobile)
 {
     <div style="width:100%; margin-right:2vw;">
     <table>
@@ -7,18 +9,18 @@
         </tr>
         <tr>
             <td style="font-size:3vw;padding:.5vw 0;">@Constants.Person1</td>
-            <td style="font-size:3vw;">@(Constants.Pretty(OneMonthPerson1*3) + " - " + Constants.Pretty(OneMonthPerson1*6))</td>
+            <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson1) + " - " + Constants.Pretty(SixMonthsPerson1))</td>
         </tr>
         <tr>
             <td style="font-size:3vw;padding:.5vw 0;">@Constants.Person2</td>
-            <td style="font-size:3vw;">@(Constants.Pretty(OneMonthPerson2*3) + " - " + Constants.Pretty(OneMonthPerson2*6))</td>
+            <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson2))</td>
         </tr>
         <tr>
             <td style="font-size:3vw;" colspan="2">=</td>
         </tr>
         <tr>
             <td style="font-size:3vw;"><strong>Total</strong></td>
-            <td style="font-size:3vw;">@(Constants.Pretty((OneMonthPerson1 + OneMonthPerson2)*3) + " - " + Constants.Pretty((OneMonthPerson1 + OneMonthPerson2)*6))</td>
+            <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2))</td>
         </tr>
     </table>
 </div>
@@ -32,18 +34,18 @@ else
             </tr>
             <tr>
                 <td style="padding:.5vw 0;">@Constants.Person1</td>
-                <td>@(Constants.Pretty(OneMonthPerson1*3) + " - " + Constants.Pretty(OneMonthPerson1*6))</td>
+                <td>@(Constants.Pretty(ThreeMonthsPerson1) + " - " + Constants.Pretty(SixMonthsPerson1))</td>
             </tr>
             <tr>
                 <td style="padding:.5vw 0;">@Constants.Person2</td>
-                <td>@(Constants.Pretty(OneMonthPerson2*3) + " - " + Constants.Pretty(OneMonthPerson2*6))</td>
+                <td>@(Constants.Pretty(ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson2))</td>
             </tr>
             <tr>
                 <td colspan="2">=</td>
             </tr>
             <tr>
                 <td><strong>Total</strong></td>
-                <td>@(Constants.Pretty((OneMonthPerson1 + OneMonthPerson2)*3) + " - " + Constants.Pretty((OneMonthPerson1 + OneMonthPerson2)*6))</td>
+                <td>@(Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2))</td>
             </tr>
         </table>
     </div>
@@ -51,9 +53,33 @@ else
 
 @code {
     [Parameter]
-    public double OneMonthPerson1 { get; set; }
-    [Parameter]
-    public double OneMonthPerson2 { get; set; }
-    [Parameter]
     public bool Mobile { get; set; }
+    public double ThreeMonthsPerson1 => GetTotalForMonths(3, Constants.Person1);
+    public double ThreeMonthsPerson2 => GetTotalForMonths(3, Constants.Person2);
+    public double SixMonthsPerson1 => GetTotalForMonths(6, Constants.Person1);
+    public double SixMonthsPerson2 => GetTotalForMonths(6, Constants.Person2);
+
+    private static double GetTotalForMonths(int months, string person)
+    {
+        double Total = 0;
+
+        int CurrentSimMonth = SimulatedConstants.Month;
+        int CurrentSimYear = SimulatedConstants.Year;
+
+        DateTime CurrentDate = DateTime.Now;
+        int month;
+        int year;
+
+        for(int step = 0; step < months; step++)
+        {
+            month = CurrentDate.AddMonths(step).Month;
+            year = CurrentDate.AddMonths(step).Year;
+            SimulatedConstants.SetMonthlies(month, year);
+            Total += person == Constants.Person1 ? SimulatedConstants.TotalPerson1Expenses : SimulatedConstants.TotalPerson2Expenses;
+        }
+
+        SimulatedConstants.SetMonthlies(CurrentSimMonth, CurrentSimYear);
+
+        return Total;
+    }
 }

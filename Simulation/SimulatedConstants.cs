@@ -13,6 +13,9 @@ namespace BetterBudgetWeb.Simulation
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<ProjectedDatum> ProjectedData { get; set; }
         public static List<SimulatedPrev> SimulatedPrevs { get; set; } = new List<SimulatedPrev>();
+        public static double TotalPerson1Expenses => GetTotalExpenses(Constants.Person1);
+        public static double TotalPerson2Expenses => GetTotalExpenses(Constants.Person2);
+        public static double TotalExpenses => GetTotalExpenses();
 
         public static int Month { get; set; } = DateTime.Now.Month;
         public static int Year { get; set; } = DateTime.Now.Year;
@@ -182,6 +185,31 @@ namespace BetterBudgetWeb.Simulation
         public static bool CheckMonthYear(Monthly mon, string currentMonthYear)
         {
             return mon.MonthYear() == currentMonthYear || mon.MonthYear().Contains("All");
+        }
+        private static double GetTotalExpenses(string person = "")
+        {
+            double total = 0;
+            foreach(var smc in StaticMonthlyCosts)
+            {
+                if (person == Constants.Person1)
+                    total += smc.Person1Amount;
+                else if (person == Constants.Person2)
+                    total += smc.Person2Amount;
+                else
+                    total += smc.TotalAmount;
+            }
+            
+            foreach(var dci in DynamicCostItems)
+            {
+                if (person == Constants.Person1)
+                    total += dci.Person1Amount;
+                else if (person == Constants.Person2)
+                    total += dci.Person2Amount;
+                else
+                    total += dci.Amount;
+            }
+            
+            return total;
         }
     }
 }

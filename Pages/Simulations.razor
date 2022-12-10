@@ -218,8 +218,7 @@
             <!-- Savings Goals-->
             <SimulatedSavingsGoalsTable Month=Month Year=Year />
             <!-- Ideal Emergency Fund-->
-            <IdealEmergencyFund OneMonthPerson1="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person1Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
-                            OneMonthPerson2="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person2Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
+            <IdealEmergencyFund />
         </div>
     </div>
 }
@@ -328,8 +327,7 @@ else
     <br />
 
     <!-- Ideal Emergency Fund-->
-    <IdealEmergencyFund OneMonthPerson1="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person1Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person1Amount))"
-                    OneMonthPerson2="@(SimulatedConstants.DynamicCostItems.Sum(d => d.Person2Amount) + SimulatedConstants.StaticMonthlyCosts.Sum(smc => smc.Person2Amount))" />
+    <IdealEmergencyFund />
 
     <br />
     <br />
