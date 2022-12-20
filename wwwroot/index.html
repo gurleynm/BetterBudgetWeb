@@ -92,6 +92,7 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
         function TurnOffScroll() {
             document.body.style.overflow = 'hidden';
@@ -102,7 +103,140 @@
             return false;
         }
         function isDevice() {
+            google.charts.load('current', { 'packages': ['sankey'] });
+
             return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
+        }
+        function drawChart(sankList) {
+            var data = new google.visualization.DataTable();
+            sankList = JSON.parse(sankList);
+            console.log(sankList);
+            const holder = [];
+            var temp = [];
+            var obj;
+            for (var i = 0; i < sankList.length; i++) {
+                temp = [];
+                obj = sankList[i];
+                console.log('obj-' + i + ':' + obj);
+                temp.push(obj['From']);
+                temp.push(obj['To']);
+                temp.push(obj['Amount']);
+                //temp.push("<text style='font-family:Arial;font-size:16'>" + obj['From'] + ' -> ' + obj['To'] + '<br/>$' + obj['Amount'] +"</text>");
+                holder.push(temp);
+            }
+
+            for (var j = 0; j < holder.length; j++) {
+                console.log('holder[' + j + ']:' + holder[j]);
+            }
+
+            data.addColumn('string', 'From');
+            data.addColumn('string', 'To');
+            data.addColumn('number', 'Amount');
+            //data.addColumn({ type: 'string', role: 'tooltip' });
+            data.addRows(
+                holder
+            );
+
+            // Sets chart options.
+            var options = {
+                width: 1500,
+                sankey: {
+                    iterations: 100,
+                    colors: [
+                        '#a6cee3',        // Custom color palette for sankey links.
+                        '#1f78b4',        // Nodes will cycle through this palette
+                        '#b2df8a',        // giving the links for that node the color.
+                        '#33a02c'
+                    ]
+                }
+                //tooltip: { isHtml: true }
+            };
+
+            // Instantiates and draws our chart, passing in some options.
+            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
+            chart.draw(data, options);
+        }
+        function CSVToArray(strData, strDelimiter) {
+            // Check to see if the delimiter is defined. If not,
+            // then default to comma.
+            strDelimiter = (strDelimiter || ",");
+
+            // Create a regular expression to parse the CSV values.
+            var objPattern = new RegExp(
+                (
+                    // Delimiters.
+                    "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+                    // Quoted fields.
+                    "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+                    // Standard fields.
+                    "([^\"\\" + strDelimiter + "\\r\\n]*))"
+                ),
+                "gi"
+            );
+
+
+            // Create an array to hold our data. Give the array
+            // a default empty first row.
+            var arrData = [[]];
+
+            // Create an array to hold our individual pattern
+            // matching groups.
+            var arrMatches = null;
+
+
+            // Keep looping over the regular expression matches
+            // until we can no longer find a match.
+            while (arrMatches = objPattern.exec(strData)) {
+
+                // Get the delimiter that was found.
+                var strMatchedDelimiter = arrMatches[1];
+
+                // Check to see if the given delimiter has a length
+                // (is not the start of string) and if it matches
+                // field delimiter. If id does not, then we know
+                // that this delimiter is a row delimiter.
+                if (
+                    strMatchedDelimiter.length &&
+                    strMatchedDelimiter !== strDelimiter
+                ) {
+
+                    // Since we have reached a new row of data,
+                    // add an empty row to our data array.
+                    arrData.push([]);
+
+                }
+
+                var strMatchedValue;
+
+                // Now that we have our delimiter out of the way,
+                // let's check to see which kind of value we
+                // captured (quoted or unquoted).
+                if (arrMatches[2]) {
+
+                    // We found a quoted value. When we capture
+                    // this value, unescape any double quotes.
+                    strMatchedValue = arrMatches[2].replace(
+                        new RegExp("\"\"", "g"),
+                        "\""
+                    );
+
+                } else {
+
+                    // We found a non-quoted value.
+                    strMatchedValue = arrMatches[3];
+
+                }
+
+
+                // Now that we have our value string, let's add
+                // it to the data array.
+                arrData[arrData.length - 1].push(strMatchedValue);
+            }
+
+            // Return the parsed data.
+            return (arrData);
         }
         function getTitle() {
             return document.title;

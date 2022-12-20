@@ -1,4 +1,6 @@
-﻿namespace BetterBudgetWeb.Data
+﻿using System.Globalization;
+
+namespace BetterBudgetWeb.Data
 {
     public class Transaction
     {
@@ -92,6 +94,16 @@
                    $"{Constants.Person2} Paid Off," +
                    "Date Of Transaction\n";
         }
+        public Flow ToFlow(string general = "")
+        {
+            if (ExpenseType == "Income")
+                return new Flow(Name, "Income", double.Parse(TotalAmount.ToString("C2").Trim('$').Replace(",", "")));
+
+            if (!string.IsNullOrEmpty(general))
+                return new Flow("Income", ExpenseType, double.Parse(TotalAmount.ToString("C2").Trim('$').Replace(",", "")));
+
+            return new Flow(ExpenseType, Name, double.Parse(TotalAmount.ToString("C2").Trim('$').Replace(",", "")));
+        }
         public override string ToString()
         {
             string pwn = (string.IsNullOrEmpty(PaidWithPerson1) || PaidWithPerson1 == "none") ? "-----------------" : PaidWithPerson1;
@@ -115,6 +127,16 @@
                    pon + "," +
                    pol + "," +
                    DateOfTransaction.Date.ToShortDateString() + "\n";
+        }
+        public string ToString(string version, string general = "")
+        {
+            if(ExpenseType == "Income")
+                return string.Join(",",Name, "[" + TotalAmount.ToString("C2").Trim('$').Replace(",","") + "]","Income") + "\n";
+            
+            if(!string.IsNullOrEmpty(general))
+                return string.Join(",", "Income", "[" + TotalAmount.ToString("C2").Trim('$').Replace(",", "") + "]", ExpenseType) + "\n";
+
+            return string.Join(",", ExpenseType, "[" + TotalAmount.ToString("C2").Trim('$').Replace(",", "") + "]", Name) + "\n";
         }
     }
 }

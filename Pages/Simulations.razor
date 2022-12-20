@@ -417,6 +417,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         CatchAll catchAll = await CatchAllRunner.Grab();
         Balances = catchAll.Balances;
         Transactions = catchAll.Transactions;

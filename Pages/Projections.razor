@@ -1,12 +1,11 @@
-﻿@page "/projections"
+﻿@page "/chart"
 @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 
-<PageTitle>Projections</PageTitle>
-
+<PageTitle>Sankey Chart</PageTitle>
 <style>
     option {
         color: black;
@@ -25,382 +24,217 @@
     }
 </style>
 
-@if (!mobile)
+<div id="sankey_basic" style="width: 100%; height: 75vh;background-color:aliceblue;overflow-x:auto;overflow-y:auto;
+        margin-bottom:5vh;margin-right:5vw;"></div>
+
+<select class="custom-select" @bind="SelectedDownload" title="Pick a Download Timeframe ">
+    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+    <option value="All">All</option>
+    @foreach (var dt in FoundMonths)
+    {
+        <option value="@dt">@dt</option>
+    }
+</select>
+@if (Levels != null && Levels.Count > 0)
 {
-    <h1>Savings Projections</h1>
-}
-else
-{
-    <h1 style="text-align:center">Savings Projections</h1>
+    <select class="custom-select" @bind="SelectedLevel" title="Pick a Level ">
+        <option value="@string.Empty" selected disabled="disabled">(Choose a level)</option>
+        <option value="All">All</option>
+        @foreach (var dt in Levels)
+        {
+            <option value="@dt">@dt</option>
+        }
+    </select>
 }
 
-@if (!mobile)
-{
-    <table class="table">
-        <tbody>
-            <tr>
-                <td>
-                    <strong>Home Price</strong>
-                </td>
-                @foreach (double need in NeedForHome)
-                {
-                    <td style="background-color:darkorange;color:black">
-                        <strong>
-                            @Pretty(need)
-                        </strong>
-                    </td>
-                }
-            </tr>
-            <tr>
-                <td>
-                    <strong>Down Payment</strong>
-                </td>
-                @foreach (double need in NeedForHome)
-                {
-                    <td style="background-color:darkorange;color:black">
-                        <strong>
-                            @Pretty(need*.2)
-                        </strong>
-                    </td>
-                }
-            </tr>
-        </tbody>
-    </table>
-    <br />
-    <br />
-    @if (Goals == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Year</th>
-                    <th>@(Constants.Person1 + " (Projected)")</th>
-                    <th>@(Constants.Person2 + " (Projected)")</th>
-                    <th>Total</th>
-                    <th>@(Constants.Person1 + " (Actual)")</th>
-                    <th>@(Constants.Person2 + " (Actual)")</th>
-                    <th>Total (Actual)</th>
-                    <th>Anticipated Expenses</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="MonthYear" title="Pick a Month Year ">
-                            <option value="@string.Empty" selected disabled="disabled">(Choose Month Year)</option>
-                            @foreach (var my in Goals)
-                            {
-                                @if (my.IsProjected)
-                                {
-                                    <option value="@my.MonthYear()">@my.MonthYear()</option>
-                                }
-                            }
-                        </select>
-                    </td>
-                    <td><input type="number" @bind=NewPerson1 /></td>
-                    <td><input type="number" @bind=NewPerson2 /></td>
-                    <td>@(Pretty(NewTotal))</td>
-                    <td><button class="btn btn-primary" disabled=@Disabled @onclick=Submit>Submit</button></td>
-                </tr>
-                @foreach (var goal in Goals)
-                {
-                    <tr>
-                        <td>@goal.Month</td>
-                        <td>@goal.Year</td>
-                        <td>@Pretty(goal.Person1Projected)</td>
-                        <td>@Pretty(goal.Person2Projected)</td>
-                        <td>@Pretty(goal.TotalProjected)</td>
-                        @if (!goal.IsProjected)
-                        {
-                            <td>@Pretty(goal.Person1Actual)</td>
-                            <td>@Pretty(goal.Person2Actual)</td>
-                            <td>@Pretty(goal.TotalActual)</td>
-                            <td></td>
-                        }
-                        else
-                        {
-                            <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");">
-                                @Pretty(goal.Person1Actual)
-                            </td>
-                            <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");;">
-                                @Pretty(goal.Person2Actual)
-                            </td>
-                            <td style="color:@(Constants.DarkMode ? "lightseagreen" : "blue");">@Pretty(goal.TotalActual)</td>
-                            <td>@Pretty(goal.AnticipatedExpense)</td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <br />
-        <br />
-    }
-}
-else
-{
-    <table class="table">
-        <tbody>
-            <tr>
-                <td style="font-size:3vw;text-align:center;border: 1px solid black;">
-                    <strong>Home Price</strong>
-                </td>
-                <td style="font-size:3vw;text-align:center;border: 1px solid black;">
-                    <strong>Down Payment</strong>
-                </td>
-            </tr>
-            @foreach (double need in NeedForHome)
-            {
-                <tr>
-                    <td style="font-size:3vw;background-color:darkorange;text-align:center;color:black;">
-                        <strong>
-                            @Pretty(need)
-                        </strong>
-                    </td>
-                    <td style="font-size:3vw;background-color:darkorange;text-align:center;border-left: 1px solid black;color:black;">
-                        <strong>
-                            @Pretty(need*.2)
-                        </strong>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <br />
-    <br />
-    @if (Goals == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th style="font-size:3vw;">Month Year</th>
-                    <th style="font-size:3vw;">
-                        Projected Values
-                    </th>
-                    <th style="font-size:3vw;">
-                        Actual Values
-                    </th>
-                    <th style="font-size:3vw;">Anticipated Expenses</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="vertical-align:middle" colspan="2">
-                        <select class="custom-select" style="font-size:3vw;margin:1vh 0 1vh 0;" @bind="MonthYear" title="Pick a Month Year ">
-                            <option value="@string.Empty" selected disabled="disabled">(Choose Month Year)</option>
-                            @foreach (var my in Goals)
-                            {
-                                @if (my.IsProjected)
-                                {
-                                    <option value="@my.MonthYear()">@my.MonthYear()</option>
-                                }
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <span style="font-size:3vw">
-                            @(Constants.Person1 + ":")
-                        </span>
-                        <input type="number" style="width:10vw;font-size:3vw;" @bind=NewPerson1 />
-                        <br />
-                        <br />
-                        <span style="font-size:3vw">
-                            @(Constants.Person2 + ":")
-                        </span>
-                        <input type="number" style="width:10vw;font-size:3vw;" @bind=NewPerson2 />
-                        <br/>
-                        <br/>
-                        <span style="font-size:3vw">
-                            @("Total:") @(Pretty(NewTotal))
-                        </span>
-                    </td>
-                    <td style="vertical-align:middle">
-                        <button class="btn btn-primary" disabled=@Disabled @onclick=Submit>Submit</button>
-                    </td>
-                </tr>
-                @foreach (var goal in Goals)
-                {
-                    <tr>
-                        <td style="font-size:3vw;vertical-align:middle">@(goal.Month.Substring(0, 3) + " " + goal.Year)</td>
-                        @if (!goal.IsProjected)
-                        {
-                            <td style="font-size:3vw;">
-                                <span>
-                                    @(Constants.Person1 + ":") @Pretty(goal.Person1Projected)
-                                </span>
-                                <br />
-                                <br />
-                                <span>
-                                    @(Constants.Person2 + ":") @Pretty(goal.Person2Projected)
-                                </span>
-                                <br />
-                                <br />
-                                <span>
-                                    @("Total:") @Pretty(goal.TotalProjected)
-                                </span>
-                            </td>
-                            <td style="font-size:3vw;">
-                                <span>
-                                    @(Constants.Person1 + ":") @Pretty(goal.Person1Actual)
-                                </span>
-                                <br />
-                                <br />
-                                <span>
-                                    @(Constants.Person2 + ":") @Pretty(goal.Person2Actual)
-                                </span>
-                                <br />
-                                <br />
-                                <span>
-                                    @("Total:") @Pretty(goal.TotalActual)
-                                </span>
-                            </td>
-                            <td></td>
-                        }
-                        else
-                        {
-                            <td style='color:@(Constants.DarkMode ? "lightseagreen" : "blue");font-size:3vw;'>
-                                <span>
-                                    @(Constants.Person1 + ":") @Pretty(goal.Person1Projected)
-                                </span>
-                                <br />
-                                <br />
-                                <span>
-                                    @(Constants.Person2 + ":") @Pretty(goal.Person2Projected)
-                                </span>
-                                <br />
-                                <br />
-                                <span>
-                                    @("Total:") @Pretty(goal.TotalProjected)
-                                </span>
-                            </td>
-                            <td style='color:@(Constants.DarkMode ? "lightseagreen" : "blue");font-size:3vw;'>
-                                <span>
-                                    @(Constants.Person1 + ":") @Pretty(goal.Person1Actual)
-                                </span>
-                                <br />
-                                <br />
-                                <span>
-                                    @(Constants.Person2 + ":") @Pretty(goal.Person2Actual)
-                                </span>
-                                <br />
-                                <br />
-                                <span>
-                                    @("Total:") @Pretty(goal.TotalActual)
-                                </span>
-                            </td>
-                            <td style="font-size:3vw;vertical-align:middle">@Pretty(goal.AnticipatedExpense)</td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <br />
-        <br />
-    }
-}
+<button class="btn btn-primary" style="margin: auto 5vw" @onclick=DrawChart>Enter</button>
+@*
+<table style="margin: auto 10vw; width:40vw; float:right">
+    <tr>
+        <th></th>
+        <th>Total In</th>
+        <th>Total Out</th>
+        <th>Difference</th>
+    </tr>
+    <tr>
+        <td>Thing</td>
+        <td>Thing</td>
+        <td>Thing</td>
+        <td>Thing</td>
+    </tr>
+</table>
+*@
 
 @code {
-    private double[] NeedForHome { get; set; }
-    private List<ProjectedDatum> ActualValues => Constants.ProjectedData;
-    private double NewPerson1 { get; set; }
-    private double NewPerson2 { get; set; }
-    private double NewTotal => NewPerson1 + NewPerson2;
-
-    private bool mobile { get; set; }
-
-    private List<ProjectedDatum> Goals;
-    private string MonthYear;
-
-    private string[] Months = new string[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
-
-    private bool Disabled;
-
-    protected override async Task OnInitializedAsync()
+    private string selectedDownload;
+    private string SelectedDownload
     {
-        NeedForHome = new double[] { 250000, 275000, 300000, 325000, 350000, 375000, 400000, 500000 };
+        get { return selectedDownload; }
+        set
+        {
+            if (value == null || value == selectedDownload)
+                return;
 
-        ReDrive();
+            List<Transaction> DesiredTransactions;
 
-        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+            selectedDownload = value;
+
+            if (SelectedDownload != "All")
+                DesiredTransactions = Constants.Transactions.Where(tr => tr.MonthYear() == SelectedDownload).OrderByDescending(t => t.DateOfTransaction).ToList();
+            else
+                DesiredTransactions = Constants.Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+
+            SelectedLevel = "All";
+
+            Levels = new List<string>();
+
+            string[] IgnoreThese = new string[] { "Debt", "Income", "Equity", "Envelope", "Transfer" };
+
+            foreach (var dt in DesiredTransactions)
+            {
+                if (Levels.Contains(dt.ExpenseType) || IgnoreThese.Contains(dt.ExpenseType))
+                    continue;
+
+                Levels.Add(dt.ExpenseType);
+            }
+        }
+    }
+    private string SelectedLevel { get; set; }
+
+    private List<string> FoundMonths => IndexRunner.GetMonths(Constants.Transactions);
+    private List<string> Levels = new List<string>();
+    private List<CashFlow> CashFlows = new List<CashFlow>();
+
+    protected override Task OnInitializedAsync()
+    {
+        SelectedDownload = "All";
+        DrawChart();
+        return base.OnInitializedAsync();
     }
 
-    private async void Submit()
+    public async void DrawChart()
     {
-        if (NewPerson1 <= 0 || NewPerson2 <= 0)
+        if (string.IsNullOrEmpty(SelectedLevel))
             return;
 
-        Disabled = true;
+        await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
+        List<Flow> objs = GetFlows(SelectedDownload);
 
-        string[] splitter = MonthYear.Split(" ");
-        int indexOfMonth = Array.IndexOf(Months, splitter[0]);
-        int yee = int.Parse(splitter[1]);
+        var json = System.Text.Json.JsonSerializer.Serialize(objs);
+        await JSRuntime.InvokeAsync<object>("drawChart", json);
+    }
 
+    private List<Flow> GetFlows(string SelectedDownload)
+    {
+        List<Flow> TheFlows = new List<Flow>();
+        List<Transaction> DesiredTransactions = new List<Transaction>();
+        Dictionary<string, Transaction> DesiredTransactionsDict = new Dictionary<string, Transaction>();
+        Dictionary<string, Transaction> DictIncome = new Dictionary<string, Transaction>();
 
-        Monthly NewProjectedData = new Monthly
-            {
-                Name = MonthYear,
-                Person1Amount = NewPerson1,
-                Person2Amount = NewPerson2,
-                Month = Months[indexOfMonth],
-                Year = yee.ToString(),
-                Dynamic = "PROJECTED DATA"
-            };
+        if (SelectedDownload != "All")
+            DesiredTransactions = Constants.Transactions.Where(tr => tr.MonthYear() == SelectedDownload).OrderByDescending(t => t.DateOfTransaction).ToList();
+        else
+            DesiredTransactions = Constants.Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
 
-        var monthlies = await MonthlyRepo.AddOrUpdateAsync(NewProjectedData);
-        Constants.SetMonthlies(monthlies);
+        if (SelectedLevel != "All")
+            DesiredTransactions = DesiredTransactions.Where(dt => dt.ExpenseType == SelectedLevel).ToList();
 
-        NewPerson1 = 0;
-        NewPerson2 = 0;
-        indexOfMonth = (indexOfMonth + 1) % 12;
-        if (indexOfMonth == 0)
+        string TKey;
+        string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer", "Envelope" };
+
+        foreach (var transact in DesiredTransactions)
         {
-            splitter[1] = (yee + 1).ToString();
-        }
-        MonthYear = Months[indexOfMonth] + " " + splitter[1];
+            if (IgnoreThese.Contains(transact.ExpenseType))
+                continue;
 
-        ReDrive();
-        Disabled = false;
-        StateHasChanged();
-    }
+            TKey = transact.Name;
 
-    private void ReDrive()
-    {
-        int Month = 10;
-        int Year = 2021;
-
-        Goals = new List<ProjectedDatum>();
-
-        Goals.Add(new ProjectedDatum
+            if (transact.ExpenseType == "Income")
             {
-                Person1Actual = 8000,
-                Person1Projected = 8000,
-                Person2Actual = 17000,
-                Person2Projected = 17000,
-                Month = Months[Month],
-                Year = Year
-            });
+                if (DictIncome.ContainsKey(TKey))
+                {
+                    DictIncome[TKey].Person1Amount += transact.Person1Amount;
+                    DictIncome[TKey].Person2Amount += transact.Person2Amount;
+                }
+                else
+                {
+                    DictIncome[TKey] = new Transaction(transact);
+                }
+                continue;
+            }
 
-        SavingsGoal Default1 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1 && sg.Month == "All");
-        SavingsGoal Default2 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2 && sg.Month == "All");
 
-        ProjectionRunner.GetGoals(ref Default1, ref Default2, ref MonthYear, ref Goals);
+            if (DesiredTransactionsDict.ContainsKey(TKey))
+            {
+                DesiredTransactionsDict[TKey].Person1Amount += transact.Person1Amount;
+                DesiredTransactionsDict[TKey].Person2Amount += transact.Person2Amount;
+            }
+            else
+            {
+                DesiredTransactionsDict[TKey] = new Transaction(transact);
+            }
+        }
 
+        Dictionary<string, Transaction> GeneralTransactions = new Dictionary<string, Transaction>();
+        Transaction trans;
+        var keys = DesiredTransactionsDict.Keys.ToArray();
+        Array.Sort(keys);
+        foreach (var key in keys)
+        {
+            if (DesiredTransactionsDict[key].TotalAmount < 0)
+                continue;
+
+            if (SelectedLevel != "All")
+                TheFlows.Add(DesiredTransactionsDict[key].ToFlow());
+
+            trans = DesiredTransactionsDict[key];
+
+            if (trans.ExpenseType == "Income")
+                continue;
+            else if (trans.ExpenseType == "Envelope")
+                TKey = trans.Name;
+            else if (IgnoreThese.Contains(trans.ExpenseType) || trans.ExpenseType == "Income")
+                continue;
+            else
+                TKey = trans.ExpenseType;
+
+            if (GeneralTransactions.ContainsKey(TKey))
+            {
+                GeneralTransactions[TKey].Person1Amount += trans.Person1Amount;
+                GeneralTransactions[TKey].Person2Amount += trans.Person2Amount;
+            }
+            else
+            {
+                if (trans.ExpenseType == "Envelope")
+                    GeneralTransactions[TKey] = new Transaction
+                        {
+                            Person1Amount = trans.Person1Amount,
+                            Person2Amount = trans.Person2Amount,
+                            ExpenseType = trans.Name,
+                            Name = trans.ExpenseType
+                        };
+                else
+                    GeneralTransactions[TKey] = new Transaction(trans);
+            }
+        }
+
+        if (SelectedLevel == "All")
+        {
+            foreach (var key in DictIncome.Keys)
+                TheFlows.Add(DictIncome[key].ToFlow());
+
+            foreach (var key in GeneralTransactions.Keys)
+                TheFlows.Add(GeneralTransactions[key].ToFlow("GENERAL"));
+        }
+
+        return TheFlows;
     }
 
-    public string Pretty(double num)
+    public class CashFlow
     {
-        return Constants.Pretty(num);
+        public string Name { get; set; }
+        public double In { get; set; }
+        public double Out { get; set; }
+        public CashFlow() {}
     }
 }

@@ -136,6 +136,7 @@ else if (ShowSec)
     protected override async Task OnInitializedAsync()
     {
         mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
 
     private void ShowTransaction()

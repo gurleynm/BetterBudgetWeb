@@ -186,7 +186,7 @@
     .income-bad, .equity-bad {
         color: red;
     }
-    
+
 
     .equity-good {
         color: @Constants.ColorScheme["EquityGood"];
@@ -381,14 +381,13 @@
                                 <span class="oi oi-minus" aria-hidden="true"></span> Delete
                             </a>
                         </li>
-
+                        <li>
+                            <a class="navbar-brand" href="chart" style="font-family:Papyrus; text-align:center;">
+                                <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Chart
+                            </a>
+                        </li>
                         @if (Constants.Us)
                         {
-                            <li>
-                                <a class="navbar-brand" href="projections" style="font-family:Papyrus; text-align:center;">
-                                    <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Projections
-                                </a>
-                            </li>
                             <li>
                                 <a class="navbar-brand" href="simulations" style="font-family:Papyrus; text-align:center;">
                                     <span class="oi oi-terminal"></span> Simulations

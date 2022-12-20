@@ -1,4 +1,6 @@
-﻿namespace BetterBudgetWeb.Data
+﻿using System.Diagnostics;
+
+namespace BetterBudgetWeb.Data
 {
     public class CSVBuilder
     {
@@ -68,6 +70,105 @@
                 if (na > 0 || la > 0)
                     fileString += "Grand Net Total:,," + Pretty(na) + "," + Pretty(la) + "," + Pretty(tot) + "\n";
             }
+
+            return fileString;
+        }
+        public static string BuildSankey(List<Transaction> Transactions, string SelectedDownload)
+        {
+            List<Transaction> DesiredTransactions = new List<Transaction>();
+            Dictionary<string,Transaction> DesiredTransactionsDict = new Dictionary<string, Transaction>();
+            Dictionary<string,Transaction> DictIncome = new Dictionary<string, Transaction>();
+            
+            string fileString = "";
+
+            if (SelectedDownload != "All")
+                DesiredTransactions = Transactions.Where(tr => tr.MonthYear() == SelectedDownload).OrderByDescending(t => t.DateOfTransaction).ToList();
+            else
+                DesiredTransactions = Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+
+            string TKey;
+            string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer", "Envelope" };
+
+            foreach (var transact in DesiredTransactions)
+            {
+                if (IgnoreThese.Contains(transact.ExpenseType))
+                    continue;
+                
+                TKey = transact.Name;
+
+                if(transact.ExpenseType == "Income")
+                {
+                    if (DictIncome.ContainsKey(TKey))
+                    {
+                        DictIncome[TKey].Person1Amount += transact.Person1Amount;
+                        DictIncome[TKey].Person2Amount += transact.Person2Amount;
+                    }
+                    else
+                    {
+                        DictIncome[TKey] = new Transaction(transact);
+                    }
+                    continue;
+                }
+
+
+                if (DesiredTransactionsDict.ContainsKey(TKey))
+                {
+                    DesiredTransactionsDict[TKey].Person1Amount += transact.Person1Amount;
+                    DesiredTransactionsDict[TKey].Person2Amount += transact.Person2Amount;
+                }
+                else
+                {
+                    DesiredTransactionsDict[TKey] = new Transaction(transact);
+                }
+            }
+
+            Dictionary<string, Transaction> GeneralTransactions = new Dictionary<string, Transaction>();
+            Transaction trans;
+            var keys = DesiredTransactionsDict.Keys.ToArray();
+            Array.Sort(keys);
+            foreach (var key in keys)
+            {
+                if (DesiredTransactionsDict[key].TotalAmount < 0)
+                    continue;
+
+                fileString += DesiredTransactionsDict[key].ToString("Sankey");
+
+                trans = DesiredTransactionsDict[key];
+
+                if (trans.ExpenseType == "Income")
+                    continue;
+                else if (trans.ExpenseType == "Envelope")
+                    TKey = trans.Name;
+                else if (IgnoreThese.Contains(trans.ExpenseType) || trans.ExpenseType == "Income")
+                    continue;
+                else
+                    TKey = trans.ExpenseType;
+
+                if (GeneralTransactions.ContainsKey(TKey))
+                {
+                    GeneralTransactions[TKey].Person1Amount += trans.Person1Amount;
+                    GeneralTransactions[TKey].Person2Amount += trans.Person2Amount;
+                }
+                else
+                {
+                    if (trans.ExpenseType == "Envelope")
+                        GeneralTransactions[TKey] = new Transaction
+                        {
+                            Person1Amount = trans.Person1Amount,
+                            Person2Amount = trans.Person2Amount,
+                            ExpenseType = trans.Name,
+                            Name = trans.ExpenseType
+                        };
+                    else
+                        GeneralTransactions[TKey] = new Transaction(trans);
+                }
+            }
+
+            foreach(var key in DictIncome.Keys)
+                fileString += DictIncome[key].ToString("Sankey");
+            
+            foreach(var key in GeneralTransactions.Keys)
+                fileString += GeneralTransactions[key].ToString("Sankey", "GENERAL");
 
             return fileString;
         }
