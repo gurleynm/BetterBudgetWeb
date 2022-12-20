@@ -185,7 +185,10 @@
                 continue;
 
             if (SelectedLevel != "All")
-                TheFlows.Add(DesiredTransactionsDict[key].ToFlow());
+            {
+                double Totals = DesiredTransactionsDict.Values.Sum(di => di.TotalAmount);
+                TheFlows.Add(DesiredTransactionsDict[key].ToFlow(Totals));
+            }
 
             trans = DesiredTransactionsDict[key];
 
@@ -220,11 +223,15 @@
 
         if (SelectedLevel == "All")
         {
+            double generalTotals = GeneralTransactions.Values.Sum(di => di.TotalAmount);
+            double incomeTotals = DictIncome.Values.Sum(di => di.TotalAmount);
+            double maxTotals = Math.Max(incomeTotals, generalTotals);
+
             foreach (var key in DictIncome.Keys)
-                TheFlows.Add(DictIncome[key].ToFlow());
+                TheFlows.Add(DictIncome[key].ToFlow(maxTotals));
 
             foreach (var key in GeneralTransactions.Keys)
-                TheFlows.Add(GeneralTransactions[key].ToFlow("GENERAL"));
+                TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL"));
         }
 
         return TheFlows;

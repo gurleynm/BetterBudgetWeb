@@ -94,15 +94,19 @@ namespace BetterBudgetWeb.Data
                    $"{Constants.Person2} Paid Off," +
                    "Date Of Transaction\n";
         }
-        public Flow ToFlow(string general = "")
+        public Flow ToFlow(double totalAmount = -1, string general = "")
         {
+            double tot = double.Parse(TotalAmount.ToString("C2").Trim('$').Replace(",", ""));
+            string totDollar = TotalAmount.ToString("C2");
+            string addString = totalAmount > 0 ? " (" + totalAmount.ToString("C2") + ")" : "";
+
             if (ExpenseType == "Income")
-                return new Flow(Name, "Income", double.Parse(TotalAmount.ToString("C2").Trim('$').Replace(",", "")));
+                return new Flow(Name + " (" + totDollar + ")", "Income" + addString, tot);
 
             if (!string.IsNullOrEmpty(general))
-                return new Flow("Income", ExpenseType, double.Parse(TotalAmount.ToString("C2").Trim('$').Replace(",", "")));
+                return new Flow("Income" + addString, ExpenseType + " (" + totDollar + ")", tot);
 
-            return new Flow(ExpenseType, Name, double.Parse(TotalAmount.ToString("C2").Trim('$').Replace(",", "")));
+            return new Flow(ExpenseType + addString, Name + " (" + totDollar + ")", tot);
         }
         public override string ToString()
         {
