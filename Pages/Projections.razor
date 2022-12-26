@@ -179,6 +179,8 @@
         Transaction trans;
         var keys = DesiredTransactionsDict.Keys.ToArray();
         Array.Sort(keys);
+        double Totals = 0;
+
         foreach (var key in keys)
         {
             if (DesiredTransactionsDict[key].TotalAmount < 0)
@@ -186,7 +188,7 @@
 
             if (SelectedLevel != "All")
             {
-                double Totals = DesiredTransactionsDict.Values.Sum(di => di.TotalAmount);
+                Totals = DesiredTransactionsDict.Values.Sum(di => di.TotalAmount);
                 TheFlows.Add(DesiredTransactionsDict[key].ToFlow(Totals));
             }
 
@@ -234,6 +236,33 @@
                 TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL"));
         }
 
+        string[] DecreaseAmount = new string[]{ "Eating Out", "Unexpected Adulting"};
+
+        if (DecreaseAmount.Contains(SelectedLevel) && TheFlows.Count > 30)
+        {
+            int numOfUnder25 = 0;
+            double totalOfUnder25 = 0;
+            string plural;
+
+            for (int step = TheFlows.Count - 1; step >= 0; step--)
+            {
+                if (TheFlows[step].Amount < 25)
+                {
+                    numOfUnder25++;
+                    totalOfUnder25 += TheFlows[step].Amount;
+                    TheFlows.RemoveAt(step);
+                }
+            }
+            plural = numOfUnder25 != 1 ? "s" : "";
+            TheFlows.Add(new Transaction
+                {
+                    Name = numOfUnder25 + " Item" + plural + " Under $25.00",
+                    Person1Amount = totalOfUnder25 / 2,
+                    Person2Amount = totalOfUnder25 / 2,
+                    ExpenseType = SelectedLevel
+                }
+                .ToFlow(Totals));
+        }
         return TheFlows;
     }
 
@@ -242,6 +271,6 @@
         public string Name { get; set; }
         public double In { get; set; }
         public double Out { get; set; }
-        public CashFlow() {}
+        public CashFlow() { }
     }
 }
