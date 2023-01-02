@@ -4,6 +4,8 @@ namespace BetterBudgetWeb.Data
 {
     public class CSVBuilder
     {
+        static string[] GoodUps = new string[] { "Income", "Equity" };
+        static string[] Ignores = new string[] { "Income", "Equity", "Transfer", "Debt" };
         public static string Build(List<Transaction> Transactions, string SelectedDownload)
         {
             List<Transaction> DesiredTransactions = new List<Transaction>();
@@ -49,14 +51,14 @@ namespace BetterBudgetWeb.Data
 
             if (SelectedDownload == "All")
             {
-                na = DesiredTransactions.Where(dt => dt.ExpenseType == "Income").Sum(d => d.Person1Amount);
-                la = DesiredTransactions.Where(dt => dt.ExpenseType == "Income").Sum(d => d.Person2Amount);
+                na = DesiredTransactions.Where(dt => GoodUps.Contains(dt.ExpenseType)).Sum(d => d.Person1Amount);
+                la = DesiredTransactions.Where(dt => GoodUps.Contains(dt.ExpenseType)).Sum(d => d.Person2Amount);
                 double tot = na + la;
                 if (na > 0 || la > 0)
                     fileString += "\nGrand Income Total:,," + Pretty(na) + "," + Pretty(la) + "," + Pretty(tot) + "\n";
 
-                double nae = DesiredTransactions.Where(dt => dt.ExpenseType != "Income" && dt.ExpenseType != "Debt").Sum(d => d.Person1Amount);
-                double lae = DesiredTransactions.Where(dt => dt.ExpenseType != "Income" && dt.ExpenseType != "Debt").Sum(d => d.Person2Amount);
+                double nae = DesiredTransactions.Where(dt => !Ignores.Contains(dt.ExpenseType)).Sum(d => d.Person1Amount);
+                double lae = DesiredTransactions.Where(dt => !Ignores.Contains(dt.ExpenseType)).Sum(d => d.Person2Amount);
                 double tote = nae + lae;
                 if (nae > 0 || lae > 0)
                     if (na > 0 || la > 0)
@@ -175,13 +177,13 @@ namespace BetterBudgetWeb.Data
 
         private static void LittleTotals(List<Transaction> DesiredTransactions, Transaction previous, ref string fileString)
         {
-            double na = DesiredTransactions.Where(dt => dt.MonthYear() == previous.MonthYear() && dt.ExpenseType == "Income").Sum(d => d.Person1Amount);
-            double la = DesiredTransactions.Where(dt => dt.MonthYear() == previous.MonthYear() && dt.ExpenseType == "Income").Sum(d => d.Person2Amount);
+            double na = DesiredTransactions.Where(dt => dt.MonthYear() == previous.MonthYear() && GoodUps.Contains(dt.ExpenseType)).Sum(d => d.Person1Amount);
+            double la = DesiredTransactions.Where(dt => dt.MonthYear() == previous.MonthYear() && GoodUps.Contains(dt.ExpenseType)).Sum(d => d.Person2Amount);
             double tot = na + la;
             fileString += "Income Total:,," + Pretty(na) + "," + Pretty(la) + "," + Pretty(tot) + "\n";
 
-            double nae = DesiredTransactions.Where(dt => dt.MonthYear() == previous.MonthYear() && dt.ExpenseType != "Income" && dt.ExpenseType != "Debt").Sum(d => d.Person1Amount);
-            double lae = DesiredTransactions.Where(dt => dt.MonthYear() == previous.MonthYear() && dt.ExpenseType != "Income" && dt.ExpenseType != "Debt").Sum(d => d.Person2Amount);
+            double nae = DesiredTransactions.Where(dt => dt.MonthYear() == previous.MonthYear() && !Ignores.Contains(dt.ExpenseType)).Sum(d => d.Person1Amount);
+            double lae = DesiredTransactions.Where(dt => dt.MonthYear() == previous.MonthYear() && !Ignores.Contains(dt.ExpenseType)).Sum(d => d.Person2Amount);
             double tote = nae + lae;
             fileString += "Expenses Total:,," + Pretty(-1 * nae) + "," + Pretty(-1 * lae) + "," + Pretty(-1 * tote) + "\n";
 

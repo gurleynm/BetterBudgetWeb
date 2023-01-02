@@ -68,6 +68,7 @@
                                     }
                                     <br style="clear:both" />
                                 </div>
+                            }
                                 <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;">
                                     <table>
                                         <tr>
@@ -176,7 +177,6 @@
                                         </tr>
                                     </table>
                                 </div>
-                            }
                         }
                         else
                         {
@@ -436,8 +436,11 @@ else
                 highest_month = Constants.Months.IndexOf(sn.Month);
         }
 
-        if (Constants.Months.IndexOf(DateTime.Now.ToString("MMMM")) > highest_month)
+        if ((Constants.Months.IndexOf(DateTime.Now.ToString("MMMM")) > highest_month) || (highest_month == 0 && DateTime.Now.Month == 1))
             await SetSnapshot(DateTime.Now.AddMonths(-1));
+
+        if (Years.Count == 1 && Years[0].MyClass != "active")
+            Years[0].MyClass = "active";
 
         await SetSnapshot(DateTime.Now);
 
@@ -465,22 +468,24 @@ else
         {
             Trans = new List<Transaction>(Constants.Transactions.Where(t => t.DateOfTransaction.Year.ToString() == SelectedYear));
 
-            Person1TransCount = snaps.Sum(sn => sn.Person1Transactions);
-            Person2TransCount = snaps.Sum(sn => sn.Person2Transactions);
-            TotalTransCount = snaps.Sum(sn => sn.TotalTransactions);
+            List<Snapshot> ThisYearSnaps = snaps.Where(sn => sn.Year.ToString() == SelectedYear).ToList();
 
-            Person1Projected = snaps.Sum(sn => sn.Person1AmountProjected);
-            Person2Projected = snaps.Sum(sn => sn.Person2AmountProjected);
+            Person1TransCount = ThisYearSnaps.Sum(sn => sn.Person1Transactions);
+            Person2TransCount = ThisYearSnaps.Sum(sn => sn.Person2Transactions);
+            TotalTransCount = ThisYearSnaps.Sum(sn => sn.TotalTransactions);
 
-            Person1Actual = snaps.Sum(sn => sn.Person1AmountActual);
-            Person2Actual = snaps.Sum(sn => sn.Person2AmountActual);
+            Person1Projected = ThisYearSnaps.Sum(sn => sn.Person1AmountProjected);
+            Person2Projected = ThisYearSnaps.Sum(sn => sn.Person2AmountProjected);
 
-            Person1Income = snaps.Sum(sn => sn.Person1Income);
-            Person2Income = snaps.Sum(sn => sn.Person2Income);
+            Person1Actual = ThisYearSnaps.Sum(sn => sn.Person1AmountActual);
+            Person2Actual = ThisYearSnaps.Sum(sn => sn.Person2AmountActual);
+
+            Person1Income = ThisYearSnaps.Sum(sn => sn.Person1Income);
+            Person2Income = ThisYearSnaps.Sum(sn => sn.Person2Income);
 
             SnapForDynamic exists;
 
-            foreach (var dn in snaps.Select(s => s.DynamicJSON))
+            foreach (var dn in ThisYearSnaps.Select(s => s.DynamicJSON))
             {
                 dyna = (Dynamo)JsonConvert.DeserializeObject<Dynamo>(dn);
                 if (!MonthTabs.Select(m => m.MyMonth).Contains(dyna.Month))
