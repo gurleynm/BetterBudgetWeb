@@ -676,6 +676,8 @@ else
             else if (!NotExpenseOrIncome.Contains(tr.ExpenseType))
                 MonthAmount = tr.TotalAmount * -1;
 
+            bool lastSwitch = false; // true if there is only 1 transaction for this date, and it's the last one
+
             for (int index = 1; index < FilteredTransactions.Count; index++)
             {
                 if (FilteredTransactions[index].DateOfTransaction.ToShortDateString() != PreviousDate.ToShortDateString())
@@ -687,6 +689,7 @@ else
                     if (newDP.Value != 0)
                         DataPoints.Add(newDP);
 
+                    lastSwitch = true;
                     PreviousDate = FilteredTransactions[index].DateOfTransaction;
                     if (IncomeOrEquity.Contains(FilteredTransactions[index].ExpenseType))
                         MonthAmount = FilteredTransactions[index].TotalAmount;
@@ -702,6 +705,8 @@ else
                     else if (!NotExpenseOrIncome.Contains(FilteredTransactions[index].ExpenseType))
                         MonthAmount -= FilteredTransactions[index].TotalAmount;
 
+                    lastSwitch = false;
+
                     if (index == FilteredTransactions.Count - 1)
                     {
                         var newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
@@ -713,6 +718,16 @@ else
                     }
                 }
 
+            }
+            if (lastSwitch)
+            {
+                int last = FilteredTransactions.Count - 1;
+                var newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
+                newDP.Negative = newDP.Value < 0;
+                newDP.Value = Math.Abs(newDP.Value);
+
+                if (newDP.Value != 0)
+                    DataPoints.Add(newDP);
             }
             DataPoints.Reverse();
         }

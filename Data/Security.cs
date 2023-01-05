@@ -11,6 +11,7 @@
         public double StrikePrice { get; set; }
         public string SecType { get; set; }
         public string Person { get; set; }
+        public string BalanceFrom { get; set; }
         public DateTime DateOfSecurity { get; set; } = DateTime.Now;
         public string PassKey { get; set; } = "no";
         public Security() { }

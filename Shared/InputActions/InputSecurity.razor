@@ -1,4 +1,5 @@
-﻿@using BetterBudgetWeb.Repo
+﻿@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.Repo
 <style>
     option {
         color: black;
@@ -38,6 +39,12 @@
         <br />
         <input type="number" placeholder="# of Shares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
     </div>
+    <div style="float:left; margin-right:10vw;">
+        <br />
+        <label>Average Cost:</label>
+        <br />
+        <input type="number" placeholder="Average Cost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
+    </div>
     @if (@SecType == "Call" || @SecType == "Put")
     {
         <div style="float:left; margin-right:10vw;">
@@ -46,7 +53,7 @@
             <br />
             <input type="number" placeholder="Strike Price" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
         </div>
-        <div style ="float:left; margin-right:10vw;">
+        <div style="float:left; margin-right:10vw;">
             <br />
             <label>Expiration Date:</label>
             <br />
@@ -81,49 +88,75 @@ else
         <div style="float:left; margin-right:10vw;">
             <label>Security Name:</label>
             <br />
-            <input type="text" placeholder="Security Name" style="text-transform:uppercase" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
+            @if (Balances != null)
+            {
+                <select class="custom-select" @bind="BalanceSelected" title="Select an Account">
+                    <option value="" selected disabled>Select Account</option>
+                    @foreach (var balance in Balances)
+                    {
+                        <option value="@balance.Id">@balance.Name</option>
+                    }
+                </select>
+            }
         </div>
-        <div style="float:left; margin-right:9vw;">
-            <label>Security Type:</label>
-            <br />
-            <select class="custom-select" @bind="SecType" title="Type of Balance is required ">
-                <option value="Stock" selected>Stock</option>
-                <option value="ETF">ETF</option>
-                <option value="Call">Call Option</option>
-                <option value="Put">Put Option</option>
-                <option value="Crypto">Crypto</option>
-            </select>
-        </div>
-        <div style="float:left; margin-right:10vw;">
-            <label># of Shares:</label>
-            <br />
-            <input type="number" placeholder="# of Shares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
-        </div>
-        @if (@SecType == "Call" || @SecType == "Put")
+        @if (!string.IsNullOrEmpty(BalanceSelected))
         {
+            <br style="clear:both" />
+            <br />
             <div style="float:left; margin-right:10vw;">
+                <label>Security Name:</label>
                 <br />
-                <label>Strike Price:</label>
-                <br />
-                <input type="number" placeholder="Strike Price" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
+                <input type="text" placeholder="Security Name" style="text-transform:uppercase" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
             </div>
-            <div>
-                <label>Expiration Date:</label>
+            <div style="float:left; margin-right:9vw;">
+                <label>Security Type:</label>
                 <br />
-                <input type="date" @bind="@ExpirationDate" />
+                <select class="custom-select" @bind="SecType" title="Type of Balance is required ">
+                    <option value="Stock" selected>Stock</option>
+                    <option value="ETF">ETF</option>
+                    <option value="Call">Call Option</option>
+                    <option value="Put">Put Option</option>
+                    <option value="Crypto">Crypto</option>
+                </select>
+            </div>
+            <div style="float:left; margin-right:10vw;">
+                <label># of Shares:</label>
+                <br />
+                <input type="number" placeholder="# of Shares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+            </div>
+            @if (@SecType == "Call" || @SecType == "Put")
+            {
+                <div style="float:left; margin-right:10vw;">
+                    <br />
+                    <label>Strike Price:</label>
+                    <br />
+                    <input type="number" placeholder="Strike Price" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
+                </div>
+                <div>
+                    <label>Expiration Date:</label>
+                    <br />
+                    <input type="date" @bind="@ExpirationDate" />
+                </div>
+            }
+            <br style="clear:both" />
+            <br />
+            <div style="float:left; margin-right:10vw;">
+                <label>Average Cost:</label>
+                <br />
+                <input type="number" placeholder="Average Cost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
+            </div>
+            <div style="float:left; margin-right:10vw;">
+                <label>Person:</label>
+                <br />
+                <select class="custom-select" @bind="Person" title="Person's Balance ">
+                    <option value="@Constants.Person1" selected>@Constants.Person1</option>
+                    <option value="@Constants.Person2">@Constants.Person2</option>
+                </select>
             </div>
         }
         <br style="clear:both" />
         <br />
-        <div style="float:left; margin-right:10vw;">
-            <label>Person:</label>
-            <br />
-            <select class="custom-select" @bind="Person" title="Person's Balance ">
-                <option value="@Constants.Person1" selected>@Constants.Person1</option>
-                <option value="@Constants.Person2">@Constants.Person2</option>
-            </select>
-        </div>
-        <br style="clear:both" />
+        <br />
         <br />
         @if (!string.IsNullOrEmpty(ErrorMsg))
         {
@@ -132,15 +165,15 @@ else
         <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
         <br />
         <br />
-        <br />
-        <br />
     </div>
 }
 @code {
     [Parameter]
     public bool Mobile { get; set; }
+    public string BalanceSelected { get; set; }
     public string Name { get; set; }
     public string NumShares { get; set; }
+    public string AvgCost { get; set; }
     public string StrikePrice { get; set; }
     public DateTime ExpirationDate { get; set; } = DateTime.Now;
     public string SecType { get; set; } = "Stock";
@@ -150,10 +183,13 @@ else
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";
 
+    private List<Balance> Balances = new List<Balance>();
+
     private bool Disabled;
 
     protected override Task OnInitializedAsync()
     {
+        Balances = Constants.Balances.Where(b => b.BalanceType == "Stocks").ToList();
         return base.OnInitializedAsync();
     }
 
@@ -164,6 +200,7 @@ else
 
         ErrorMsg += string.IsNullOrEmpty(Name) ? "Security Name must be set. " : "";
         ErrorMsg += !double.TryParse(NumShares, out double tp) || tp < 0 ? "Enter a valid number of shares. " : "";
+        ErrorMsg += !double.TryParse(AvgCost, out double tp2) || tp2 < 0 ? "Enter a valid number for your average cost. " : "";
         ErrorMsg += (SecType == "Put" || SecType == "Call") && (!double.TryParse(StrikePrice, out double tp1) || tp1 < 0) ? "Enter a valid strike price. " : "";
         ErrorMsg += (SecType == "Put" || SecType == "Call") && DateTime.Now.CompareTo(ExpirationDate) > 0 ? "Pick a valid expiration date. " : "";
 
@@ -174,9 +211,11 @@ else
                     Name = Name,
                     Person = Person,
                     NumShares = double.TryParse(NumShares, out double toss) ? toss : 0,
+                    AvgCost = double.TryParse(AvgCost, out double toss2) ? toss2 : 0,
                     SecType = SecType,
                     StrikePrice = double.TryParse(StrikePrice, out double toss1) ? toss1 : 0,
-                    DateOfSecurity = ExpirationDate
+                    DateOfSecurity = ExpirationDate,
+                    BalanceFrom = BalanceSelected
                 });
 
             ErrorColor = "green";
@@ -184,6 +223,7 @@ else
 
             Name = string.Empty;
             NumShares = "";
+            AvgCost = "";
             StrikePrice = "";
             SecType = "Stock";
             Person = Constants.Person1;
