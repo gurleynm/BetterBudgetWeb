@@ -101,5 +101,17 @@
             }
             return amount;
         }
+
+        public double GetValueWithStock()
+        {
+            double amount = Value;
+            if (BalanceType == "Stocks")
+            {
+                var Securities = Constants.Securities.Where(sec => sec.BalanceFrom.ToUpper() == Id.ToUpper()).ToList();
+                amount += Securities.Sum(s => s.Value);
+            }
+            
+            return amount;
+        }
     }
 }

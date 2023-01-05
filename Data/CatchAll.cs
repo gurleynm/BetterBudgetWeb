@@ -10,5 +10,6 @@ namespace BetterBudgetWeb.Data
         public List<Envelope> Envelopes { get; set; }
         public List<Preset> Presets { get; set; }
         public List<Snapshot> Snapshots { get; set; }
+        public List<Security> Securities { get; set; }
     }
 }

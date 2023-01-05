@@ -39,7 +39,8 @@ else
         {
             <p style="color:@ErrorColor">@ErrorMsg</p>
         }
-        <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
+        <button class="btn btn-danger" disabled=@Disabled @onclick=Delete>Delete</button>
+        <button class="btn btn-secondary" disabled=@Disabled @onclick=Sell>Sell</button>
     </div>
     <br />
     <br />
@@ -65,7 +66,7 @@ else
         Securities = await SecurityRepo.GetSecuritiesAsync();
     }
 
-    public async void Submit()
+    public async void Sell()
     {
         Disabled = true;
         ErrorMsg = string.Empty;
@@ -76,6 +77,31 @@ else
         if (string.IsNullOrEmpty(ErrorMsg))
         {
             var chosenOne = Securities.FirstOrDefault(e => e.Name == SecName);
+            Securities = await SecurityRepo.RemoveAsync(chosenOne);
+
+
+            ErrorColor = "green";
+            ErrorMsg = $"Security '{SecName}' was sold!";
+
+            SecName = string.Empty;
+        }
+
+        Disabled = false;
+        StateHasChanged();
+    }
+
+    public async void Delete()
+    {
+        Disabled = true;
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+
+        ErrorMsg += string.IsNullOrEmpty(SecName) ? "Security name must be set. " : "";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            var chosenOne = Securities.FirstOrDefault(e => e.Name == SecName);
+            chosenOne.Value = -1;
             Securities = await SecurityRepo.RemoveAsync(chosenOne);
 
 

@@ -19,6 +19,7 @@ namespace BetterBudgetWeb
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         private static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
+        public static List<Security> Securities { get; set; } = new List<Security>();
 
         public static bool DarkMode = Nighttime();
         public static Dictionary<string, string> ColorScheme = new Dictionary<string, string>();
@@ -30,7 +31,7 @@ namespace BetterBudgetWeb
         public static string Person2 { get; set; } = "Kaitie";
 
         public static bool Us = true;
-        public static bool Test = false;
+        public static bool Test = true;
         public static string Key { get; set; } = "";
 
         public static string PassKey { get; set; } = "no";
@@ -44,6 +45,7 @@ namespace BetterBudgetWeb
             DetermineDarkLight();
             if (Us)
             {
+                //BaseUri = "https://betterbudgetapi.azurewebsites.net/";
                 BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
                 Person1 = "Nathan";
                 Person2 = "Lindsey";
@@ -71,6 +73,7 @@ namespace BetterBudgetWeb
             Monthlies = caught.Monthlies;
             Envelopes = caught.Envelopes;
             Presets = caught.Presets;
+            Securities = caught.Securities;
 
             TransactionRepo.Transactions = caught.Transactions;
             BalanceRepo.Balances = caught.Balances;
@@ -78,6 +81,7 @@ namespace BetterBudgetWeb
             EnvelopeRepo.Envelopes = caught.Envelopes;
             PresetRepo.Presets = caught.Presets;
             SnapshotRepo.Snapshots = caught.Snapshots;
+            SecurityRepo.Securities = caught.Securities;
 
             Redrive();
         }

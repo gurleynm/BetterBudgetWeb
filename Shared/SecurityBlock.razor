@@ -1,0 +1,51 @@
+﻿@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.Runner;
+<hr style="margin:0" />
+<div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between;padding:0; margin: 0;">
+    <div style="align-self:flex-start">
+        <div style="display:flex;flex-direction:column;justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
+            <br />
+            <label style="font-size:medium;align-self:flex-start;margin:0;"><strong>@TheSecurity.Name</strong></label>
+            <label style="font-size:smaller;align-self:flex-start;margin:0">@Shares</label>
+        </div>
+    </div>
+    <div style="align-self:flex-end;padding:0; margin: 0;">
+        <div style="display:flex;flex-direction:column;justify-content:space-between;padding:0 .5vw 0 0; margin: 0">
+            <br />
+            <label style="font-size:medium;align-self:flex-start;margin:0">@Constants.Pretty(TheSecurity.Value)</label>
+            <label class="@(IndexRunner.TranColor("Income", PersonalPercentChange))" style="font-size:smaller;align-self:flex-end;margin:0">@(PersonalPercentChange + "%")</label>
+            <br />
+        </div>
+    </div>
+</div>
+<hr style="margin:0" />
+
+@code {
+    [Parameter]
+    public Security TheSecurity { get; set; }
+
+    public string Shares => GetShareString();
+    public double PersonalPercentChange => TheSecurity.CalculateReturn();
+
+    private string GetShareString()
+    {
+        string[] options = new string[] { "CALL", "PUT" };
+        //string[] shareable = new string[] { "ETF", "STOCK", "CRYPTO" };
+
+        if (!options.Contains(TheSecurity.SecType.ToUpper()))
+        {
+            return TheSecurity.NumShares == 1 ? "1 Share" : TheSecurity.NumShares + " Shares";
+        }
+        else
+        {
+            string datePortion;
+            if (TheSecurity.DateOfSecurity.Year != DateTime.Now.Year)
+                datePortion = TheSecurity.DateOfSecurity.ToString("M/d/y");
+            else
+                datePortion = TheSecurity.DateOfSecurity.ToString("M/d");
+
+            return datePortion + " Exp • " + TheSecurity.NumShares + " Buy";
+        }
+    }
+
+}

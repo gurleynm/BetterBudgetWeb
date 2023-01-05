@@ -48,8 +48,13 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var smalls = JsonConvert.DeserializeObject<Security[]>(content).ToList();
-            return smalls;
+            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var secs = ca.Securities;
+
+            Constants.AssignCatches(ca);
+            Securities = secs;
+
+            return secs;
         }
         public static async Task<List<Security>> RemoveAsync(Security small)
         {
@@ -67,8 +72,13 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var smalls = JsonConvert.DeserializeObject<Security[]>(content).ToList();
-            return smalls;
+            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var secs = ca.Securities;
+
+            Constants.AssignCatches(ca);
+            Securities = secs;
+
+            return secs;
         }
         public static async Task<List<Security>> RemoveAsync(string id)
         {
@@ -87,8 +97,13 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var smalls = JsonConvert.DeserializeObject<Security[]>(content).ToList();
-            return smalls;
+            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var secs = ca.Securities;
+
+            Constants.AssignCatches(ca);
+            Securities = secs;
+
+            return secs;
         }
     }
 }

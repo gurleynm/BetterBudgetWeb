@@ -45,5 +45,11 @@
             DateOfSecurity = other.DateOfSecurity;
             PassKey = other.PassKey;
         }
+
+        public double CalculateReturn()
+        {
+            return Math.Round((Value - AvgCost * NumShares) /
+                                                (NumShares * AvgCost) * 100, 2);
+        }
     }
 }

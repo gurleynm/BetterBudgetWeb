@@ -18,10 +18,6 @@
             <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
             <button class="tablinks @MonthClass" @onclick="@ShowStaticCost">Monthly</button>
             <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
-            @if (Constants.Test)
-            {
-                <button class="tablinks @SecClass" @onclick="@ShowSecurities">Security</button>
-            }
         }
     </div>
 }
@@ -38,10 +34,6 @@ else
             <button class="tablinks" @onclick="@ShowBalance">Balance</button>
             <button class="tablinks" @onclick="@ShowStaticCost">Monthly</button>
             <button class="tablinks" @onclick="@ShowEnvelope">Goal Envelope</button>
-            @if (Constants.Test)
-            {
-                <button class="tablinks" @onclick="@ShowSecurities">Security</button>
-            }
         }
     </div>
 }
@@ -76,11 +68,6 @@ else if (ShowEnv)
 else if (ShowStatic)
 {
     <InputMonthlyCost Mobile=@mobile />
-
-}
-else if (ShowSec)
-{
-    <InputSecurity Mobile=@mobile />
 
 }
 
@@ -123,13 +110,11 @@ else if (ShowSec)
     private bool ShowBal { get; set; }
     private bool ShowStatic { get; set; }
     private bool ShowEnv { get; set; }
-    private bool ShowSec { get; set; }
 
     private string TransClass => ShowTrans ? "active" : "";
     private string BalClass => ShowBal ? "active" : "";
     private string MonthClass => ShowStatic ? "active" : "";
     private string EnvClass => ShowEnv ? "active" : "";
-    private string SecClass => ShowSec ? "active" : "";
 
     private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
 
@@ -145,7 +130,6 @@ else if (ShowSec)
         ShowBal = false;
         ShowEnv = false;
         ShowStatic = false;
-        ShowSec = false;
     }
     private void ShowBalance()
     {
@@ -153,7 +137,6 @@ else if (ShowSec)
         ShowEnv = false;
         ShowTrans = false;
         ShowStatic = false;
-        ShowSec = false;
     }
     private void ShowStaticCost()
     {
@@ -161,20 +144,10 @@ else if (ShowSec)
         ShowEnv = false;
         ShowTrans = false;
         ShowBal = false;
-        ShowSec = false;
     }
     private void ShowEnvelope()
     {
         ShowEnv = !ShowEnv;
-        ShowTrans = false;
-        ShowBal = false;
-        ShowStatic = false;
-        ShowSec = false;
-    }
-    private void ShowSecurities()
-    {
-        ShowSec = !ShowSec;
-        ShowEnv = false;
         ShowTrans = false;
         ShowBal = false;
         ShowStatic = false;

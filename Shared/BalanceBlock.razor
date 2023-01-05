@@ -14,7 +14,9 @@
             <h4 style="text-align:center; font-size:@(FontSize/2 + "vw");margin:0px;color:@TextColor">@(string.Format("(APR: {0}%)", Math.Round(apr, 2)))</h4>
         }
         <hr style="margin-top:0vw;color:@TextColor" />
-        <h2 style="text-align:center;font-size:@(FontSize/1.5 + "vw");margin-bottom:5vh;color:@TextColor">@(double.TryParse(Amount, out double AM) ? AM.ToString("C", CultureInfo.CurrentCulture) : "$0.00")</h2>
+        <h2 style="text-align:center;font-size:@(FontSize/1.5 + "vw");margin-bottom:5vh;color:@TextColor">@(
+            double.TryParse(Amount, out double AM) ? AM.ToString("C", CultureInfo.CurrentCulture) : ".00"
+            )</h2>
         @if (ShowDelete)
         {
             <button class="btn btn-danger" style="vertical-align:bottom;float:right;" @onclick=Delete>Remove</button>
@@ -49,6 +51,12 @@
         if (IncludeGoals)
         {
             amount = TheBalance.GetValueWithGoals();
+        }
+
+        if(TheBalance.BalanceType == "Stocks")
+        {
+            var Securities = Constants.Securities.Where(sec => sec.BalanceFrom.ToUpper() == TheBalance.Id.ToUpper()).ToList();
+            amount += Securities.Sum(s => s.Value);
         }
 
         string returnStr = amount.ToString();
