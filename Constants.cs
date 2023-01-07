@@ -45,8 +45,8 @@ namespace BetterBudgetWeb
             DetermineDarkLight();
             if (Us)
             {
-                //BaseUri = "https://betterbudgetapi.azurewebsites.net/";
-                BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
+                BaseUri = "https://betterbudgetapi.azurewebsites.net/";
+                //BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
                 Person1 = "Nathan";
                 Person2 = "Lindsey";
                 Key = "Lindseylicious";

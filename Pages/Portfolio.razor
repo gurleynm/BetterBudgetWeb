@@ -6,11 +6,22 @@
 
 <PageTitle>Portfolio</PageTitle>
 
-<h1>Portfolio</h1>
 @if (!mobile)
 {
     <div style="display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between">
         <div style="width: auto; height:fit-content; max-height:80vh; overflow: auto; position: relative;border: solid gray 1px;padding:0">
+            <div class="tab" style="width:100%">
+                <button class="tablinks @BuyClass" @onclick="@ShowBuyTab">Buy</button>
+                <button class="tablinks @SellClass" @onclick="@ShowSellTab">Sell</button>
+            </div>
+            @if (ShowBuy)
+            {
+                <InputSecurity BalanceSelected="@SelectedBalance.Id" OnClick="UpdateEverything" />
+            }
+            @if (ShowSell)
+            {
+                <BetterBudgetWeb.Shared.DeleteActions.DeleteSecurity OnClick="UpdateEverything" />
+            }
             <label style="font-size:large;padding:.5vw">All Investment Accounts</label>
             @if (InvestmentAccounts != null && InvestmentAccounts.Count > 0)
             {
@@ -21,9 +32,6 @@
             }
         </div>
         <div style="overflow:auto">
-            <div>
-                <InputSecurity BalanceSelected="@SelectedBalance.Id"/>
-            </div>
             @if (AccountSecurities != null && AccountSecurities.Count > 0)
             {
                 <table style="width:100%;">
@@ -121,6 +129,12 @@ else
 @code {
     private bool mobile { get; set; }
 
+    private bool ShowBuy { get; set; } = true;
+    private bool ShowSell { get; set; }
+
+    private string BuyClass => ShowBuy ? "active" : "";
+    private string SellClass => ShowSell ? "active" : "";
+
     public List<Balance> InvestmentAccounts;
     public List<Security> Securities;
     public Balance SelectedBalance;
@@ -142,11 +156,31 @@ else
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
 
+    private void ShowBuyTab()
+    {
+        ShowBuy = !ShowBuy;
+        ShowSell = false;
+    }
+
+    private void ShowSellTab()
+    {
+        ShowSell = !ShowSell;
+        ShowBuy = false;
+    }
+
     private void UpdateSelectedBalance(Balance bal)
     {
         SelectedBalance = bal;
         AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
         StateHasChanged();
+    }
+
+    private void UpdateEverything()
+    {
+        Securities = SecurityRepo.GetSecurities();
+        InvestmentAccounts = Constants.Balances.Where(bal => bal.BalanceType.ToUpper() == "STOCKS").ToList();
+        AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
+        Reload();
     }
 
     private void Reload()

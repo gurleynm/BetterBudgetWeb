@@ -103,12 +103,13 @@ else
 {
     @if (!string.IsNullOrEmpty(BalanceSelected))
     {
-        <div style="float:left; margin-right:5vw;">
+        <br />
+        <div style="float:left; margin: 0 1vw;">
             <label>Security Name:</label>
             <br />
-            <input type="text" placeholder="Security Name" style="text-transform:uppercase" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
+            <input type="text" placeholder="Security Name" style="text-transform:uppercase" @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
         </div>
-        <div style="float:left; margin-right:5vw;">
+        <div style="float:left; margin-right:1vw;">
             <label>Security Type:</label>
             <br />
             <select class="custom-select" @bind="SecType" title="Type of Balance is required ">
@@ -119,72 +120,63 @@ else
                 <option value="Crypto">Crypto</option>
             </select>
         </div>
-        <div style="float:left; margin-right:5vw;">
-            <label># of Shares:</label>
-            <br />
-            <input type="number" placeholder="# of Shares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
-        </div>
+        <br style="clear:both" />
+        <br />
         @if (@SecType == "Call" || @SecType == "Put")
         {
-            <div style="float:left; margin-right:5vw;">
+            <div style="float:left; margin: 0 1vw;">
                 <label>Strike Price:</label>
                 <br />
-                <input type="number" placeholder="Strike Price" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
-            </div>
-            <br style="clear:both" />
-            <br />
-            
-            <div style="float:left; margin-right:5vw;">
-                <label>Cost Per Share:</label>
-                <br />
-                <input type="number" placeholder="Cost Per Share" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
-            </div>
-            <div style="float:left; margin-right:5vw;">
-                <label>Person:</label>
-                <br />
-                <select class="custom-select" @bind="Person" title="Person's Balance ">
-                    <option value="@Constants.Person1" selected>@Constants.Person1</option>
-                    <option value="@Constants.Person2">@Constants.Person2</option>
-                </select>
+                <input type="number" style="width:7vw" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
             </div>
             <div>
                 <label>Expiration Date:</label>
                 <br />
                 <input type="date" @bind="@ExpirationDate" />
             </div>
-        }
-        else
-        {
             <br style="clear:both" />
-            <br />
-            <div style="float:left; margin-right:5vw;">
-                <label>Cost Per Share:</label>
-                <br />
-                <input type="number" placeholder="Cost Per Share" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
-            </div>
-            <div style="float:left; margin-right:5vw;">
-                <label>Person:</label>
-                <br />
-                <select class="custom-select" @bind="Person" title="Person's Balance ">
-                    <option value="@Constants.Person1" selected>@Constants.Person1</option>
-                    <option value="@Constants.Person2">@Constants.Person2</option>
-                </select>
-            </div>
         }
+        <div style="float:left; margin: 0 1vw;">
+            <label># of Shares:</label>
+            <br />
+            <input type="number" style="width:7vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+        </div>
+        <div style="float:left; margin: 0 1vw;">
+            <label>Cost Per Share:</label>
+            <br />
+            <input type="number" style="width:8vw" placeholder="Cost Per Share" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
+        </div>
+        <br style="clear:both" />
+        <br />
+        <div style="float:left; margin: 0 1vw;">
+            <label>Person:</label>
+            <br />
+            <select class="custom-select" @bind="Person" title="Person's Balance ">
+                <option value="@Constants.Person1" selected>@Constants.Person1</option>
+                <option value="@Constants.Person2">@Constants.Person2</option>
+            </select>
+        </div>
     }
     <br style="clear:both" />
     <br />
     @if (!string.IsNullOrEmpty(ErrorMsg))
     {
-        <p style="color:@ErrorColor">@ErrorMsg</p>
+        <p style="margin:0 1vw;overflow-wrap:normal;color:@ErrorColor">@ErrorMsg</p>
     }
-    <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>@("Add to " + Balances.FirstOrDefault(b => b.Id == BalanceSelected).Name)</button>
+    <button class="btn btn-secondary" style="margin: 0 1vw;" disabled=@Disabled @onclick=Submit>
+        @("Buy in " + Balances.FirstOrDefault(b => b.Id == BalanceSelected).Name
+            )
+    </button>
+
     <br />
     <br />
 }
 @code {
     [Parameter]
     public bool Mobile { get; set; }
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
     private string balanceSelected { get; set; }
     [Parameter]
     public string BalanceSelected
@@ -192,6 +184,10 @@ else
         get { return balanceSelected; }
         set
         {
+            if (balanceSelected == value)
+                return;
+
+            ErrorMsg = "";
             balanceSelected = value;
             if (value == null)
             {
@@ -227,6 +223,7 @@ else
     protected override Task OnInitializedAsync()
     {
         Balances = Constants.Balances.Where(b => b.BalanceType == "Stocks").ToList();
+        NumericAmountToTrade = Balances.Count > 0 ? Balances[0].Value : 0;
         return base.OnInitializedAsync();
     }
 
@@ -262,7 +259,6 @@ else
 
             Balances = Constants.Balances.Where(b => b.BalanceType == "Stocks").ToList();
 
-            BalanceSelected = "";
             Name = string.Empty;
             NumShares = "";
             AvgCost = "";
@@ -270,8 +266,9 @@ else
             SecType = "Stock";
             Person = Constants.Person1;
         }
-
+        
         Disabled = false;
         StateHasChanged();
+        OnClick.InvokeAsync();
     }
 }

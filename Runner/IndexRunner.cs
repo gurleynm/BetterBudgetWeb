@@ -197,7 +197,14 @@ namespace BetterBudgetWeb.Runner
             double joint_neg = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && bal.BalanceType.Contains("Loan")).Sum(b => b.Value)/2;
             double joint_pos = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value)/2;
 
-            double stocks = Constants.Securities.Where(stock => stock.Person == person || stock.Person.ToUpper() == "JOINT").Sum(s => s.Value);
+            double stocks = 0;
+            try
+            {
+                stocks = Constants.Securities.Where(stock => stock.Person == person || stock.Person.ToUpper() == "JOINT").Sum(s => s.Value);
+            } catch(Exception e)
+            {
+
+            }
 
             return positive + joint_pos - joint_neg - negative + stocks;
         }

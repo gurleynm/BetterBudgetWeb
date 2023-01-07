@@ -55,9 +55,12 @@
 
         if(TheBalance.BalanceType == "Stocks")
         {
-            var Securities = Constants.Securities.Where(sec => sec.BalanceFrom.ToUpper() == TheBalance.Id.ToUpper()).ToList();
-            amount += Securities.Sum(s => s.Value);
-        }
+            try
+            {
+                var Securities = Constants.Securities.Where(sec => sec.BalanceFrom.ToUpper() == TheBalance.Id.ToUpper())?.ToList();
+                amount += Securities == null ? 0 : Securities.Sum(s => s.Value);
+            } catch(Exception e){}
+    }
 
         string returnStr = amount.ToString();
 
