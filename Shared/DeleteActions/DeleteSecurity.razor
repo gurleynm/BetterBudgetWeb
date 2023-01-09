@@ -15,6 +15,81 @@
 </style>
 @if (Mobile)
 {
+    <div style="float:left; margin:auto 0;width:100%;">
+        <div style="margin:2vh 0;width:100%;display:flex;flex-direction:row;justify-content:center">
+            <label style="margin:2vw">Sell</label>
+            <label class="switch">
+                <input type="checkbox" @bind=DeleteIsSet>
+                <span class="slider round" style="background-color:@GetColor();color:aqua"></span>
+            </label>
+            <label style="margin:2vw">Delete</label>
+        </div>
+
+        @if (!DeleteIsSet)
+        {
+            <div style="float:left; margin: 0 2vw 2vh 2vw;">
+                <div style="float:left; margin: 0 4vw;">
+                    <div style="float:left; margin: 0;">
+                        <label>Number of Shares:</label>
+                        <br />
+                        <br />
+                        <label>Share Price at Sale:</label>
+                        <br />
+                        <br />
+                        <label>Security Name:</label>
+                    </div>
+                </div>
+                <div style="float:left; margin: 0;">
+                    <input type="number" style="width:23vw" placeholder="Price per Share" @bind-value="@SalePrice" @oninput="@(async (ui) => { SalePrice = (string) ui.Value;})" />
+                    <br />
+                    <br />
+                    <input type="number" style="width:23vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+                    <br />
+                    <br />
+                    <select @bind="SecName">
+                        <option value="@string.Empty" selected disabled="disabled">(Choose Security)</option>
+                        @if (Securities != null)
+                        {
+                            @foreach (var sec in Securities)
+                            {
+                                <option value="@sec.Name">@sec.Name</option>
+                            }
+                        }
+                    </select>
+                    <br />
+                    <br />
+                    <button class="btn btn-success" style="margin:0 2vw;" disabled=@Disabled @onclick=Sell>Sell</button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div style="float:left;  margin: 0 2vw 2vh 2vw;">
+                <div style="float:left; margin: 0 2vw;padding:1vh 0 0 0;">
+                    <label>Security Name:</label>
+                </div>
+                <div style="float:left; margin: 0 2vw;">
+                    <select @bind="SecName">
+                        <option value="@string.Empty" selected disabled="disabled">(Choose Security)</option>
+                        @if (Securities != null)
+                        {
+                            @foreach (var sec in Securities)
+                            {
+                                <option value="@sec.Name">@sec.Name</option>
+                            }
+                        }
+                    </select>
+                    <button class="btn btn-danger" style="margin:0 2vw;" disabled=@Disabled @onclick=Delete>Delete</button>
+                </div>
+            </div>
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(ErrorMsg))
+    {
+        <br />
+        <p style="color:@ErrorColor">@ErrorMsg</p>
+        <br />
+    }
 }
 else
 {
@@ -61,7 +136,7 @@ else
     <br />
     @if (!string.IsNullOrEmpty(ErrorMsg))
     {
-        <p style="color:@ErrorColor">@ErrorMsg</p>
+        <p style="margin-left:1vw;color:@ErrorColor">@ErrorMsg</p>
     }
     @if (DeleteIsSet)
     {
@@ -138,6 +213,7 @@ else
             }
         }
 
+        OnClick.InvokeAsync();
         Disabled = false;
         StateHasChanged();
     }

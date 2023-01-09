@@ -230,8 +230,8 @@ else
                                 }
                                 <br style="clear:both" />
                             </div>
+                        }
                             <div style="display:flex;flex-direction:column;justify-content:space-between;">
-
                                 <div>
                                     <table>
                                         <tr>
@@ -344,7 +344,6 @@ else
                                 </div>
 
                             </div>
-                        }
                     }
                     else
                     {
@@ -674,6 +673,8 @@ else
             else
                 y.MyClass = "";
         }
+
+        ToggleClasses("All");
         StateHasChanged();
     }
     protected async Task<string> ReadCookies(string CookieName)

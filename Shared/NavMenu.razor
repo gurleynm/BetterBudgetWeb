@@ -19,13 +19,22 @@
                 <span class="oi oi-plus" aria-hidden="true"></span> Input
             </NavLink>
         </div>
-        
+
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="delete">
                 <span class="oi oi-minus" aria-hidden="true"></span> Delete
             </NavLink>
         </div>
-        
+
+        @if (Constants.Securities != null && Constants.Securities.Count > 0)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="portfolio">
+                    <span class="oi oi-dollar" aria-hidden="true"></span> Portfolio
+                </NavLink>
+            </div>
+        }
+
         @if (Constants.Us)
         {
             <div class="nav-item px-3">

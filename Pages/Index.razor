@@ -297,7 +297,7 @@ else
         <div style="display:flex;justify-content:center;flex-wrap:wrap;width:95vw;">
             @if (Balances != null)
             {
-                @foreach (var balance in Balances.OrderByDescending(b => b.Value))
+                @foreach (var balance in Balances)
                 {
                     <BalanceBlock TheBalance="@balance" FontSize="5" />
                 }
@@ -731,11 +731,13 @@ else
     private async void DeleteConfirm()
     {
         SetDataPoints(true);
+        Balances.Sort(CompareBalance);
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
     private async void AddConfirm()
     {
         SetDataPoints();
+        Balances.Sort(CompareBalance);
 
         AddConfirmClass = "floaty";
         await Task.Delay(3000);

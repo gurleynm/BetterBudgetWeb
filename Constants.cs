@@ -31,7 +31,7 @@ namespace BetterBudgetWeb
         public static string Person2 { get; set; } = "Kaitie";
 
         public static bool Us = true;
-        public static bool Test = true;
+        public static bool Test = false;
         public static string Key { get; set; } = "";
 
         public static string PassKey { get; set; } = "no";
@@ -45,8 +45,8 @@ namespace BetterBudgetWeb
             DetermineDarkLight();
             if (Us)
             {
-                BaseUri = "https://betterbudgetapi.azurewebsites.net/";
-                //BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
+                //BaseUri = "https://betterbudgetapi.azurewebsites.net/";
+                BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
                 Person1 = "Nathan";
                 Person2 = "Lindsey";
                 Key = "Lindseylicious";

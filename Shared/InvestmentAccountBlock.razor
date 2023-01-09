@@ -1,7 +1,13 @@
 ﻿@using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Runner;
+<style>
+    .selected-account {
+        background-color: @Constants.ColorScheme["Tab-Active"];
+    }
+</style>
+
 <hr style="margin:0" />
-<div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between;padding:0; margin: 0;cursor:pointer;" @onclick=Clicked>
+<div class="@SetClass" style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between;padding:0; margin: 0;cursor:pointer;" @onclick=Clicked>
     <div style="align-self:flex-start">
         <div style="display:flex;flex-direction:column;justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
             <label style="cursor:pointer;font-size:medium;align-self:flex-start;margin:0;"><strong>@TheBalance.Name</strong></label>
@@ -22,6 +28,8 @@
     public Balance TheBalance { get; set; }
     [Parameter]
     public EventCallback<Balance> OnClick { get; set; }
+    [Parameter]
+    public string SetClass { get; set; }
 
     private Task Clicked()
     {
