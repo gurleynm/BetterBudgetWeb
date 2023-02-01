@@ -34,7 +34,7 @@
 
         if (!options.Contains(TheSecurity.SecType.ToUpper()))
         {
-            return TheSecurity.NumShares == 1 ? "1 Share" : TheSecurity.NumShares + " Shares";
+            return TheSecurity.NumShares == 1 ? "1 Share" : Math.Round(TheSecurity.NumShares,2) + " Shares";
         }
         else
         {
