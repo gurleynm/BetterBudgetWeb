@@ -61,7 +61,7 @@
                             <th style="padding:1vw;">@Constants.Pretty(accsec.Value/accsec.NumShares)</th>
                             <th style="padding:1vw;">@(accsec.CalculateReturn() + "%")</th>
                             <th style="padding:1vw;">@Constants.Pretty(accsec.Value)</th>
-                            <th style="padding:1vw;">@accsec.NumShares</th>
+                            <th style="padding:1vw;">@Math.Round(accsec.NumShares,2)</th>
                             <th style="padding:1vw;">@Constants.Pretty(accsec.AvgCost * accsec.NumShares)</th>
                         </tr>
                     }
@@ -188,7 +188,7 @@ else
                             <th style="padding:1vw;">@(accsec.CalculateReturn() + "%")</th>
                             <th style="padding:1vw;">@Constants.Pretty(accsec.Value)</th>
                             <th style="padding:1vw;">@Constants.Pretty(accsec.AvgCost * accsec.NumShares)</th>
-                            <th style="padding:1vw;">@accsec.NumShares</th>
+                            <th style="padding:1vw;">@Math.Round(accsec.NumShares,2)</th>
                         </tr>
                     }
                     @if (SelectedBalance.Value > 0)
