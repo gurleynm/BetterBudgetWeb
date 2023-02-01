@@ -646,6 +646,7 @@ else
             Transactions = Constants.Transactions;
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
             Balances = Constants.Balances;
+            Balances.Sort(Constants.CompareBalance);
             OnEditConfirm.InvokeAsync();
             StateHasChanged();
         }

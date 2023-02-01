@@ -27,27 +27,77 @@
 <div id="sankey_basic" style="width: 100%; height: 75vh;background-color:aliceblue;overflow-x:auto;overflow-y:auto;
         margin-bottom:5vh;margin-right:5vw;"></div>
 
-<select class="custom-select" @bind="SelectedDownload" title="Pick a Download Timeframe ">
-    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-    <option value="All">All</option>
-    @foreach (var dt in FoundMonths)
-    {
-        <option value="@dt">@dt</option>
-    }
-</select>
-@if (Levels != null && Levels.Count > 0)
-{
-    <select class="custom-select" @bind="SelectedLevel" title="Pick a Level ">
-        <option value="@string.Empty" selected disabled="disabled">(Choose a level)</option>
-        <option value="All">All</option>
-        @foreach (var dt in Levels)
+<div style="float:left;margin-right:2vw">
+    <label>Month</label>
+    <br />
+    <select class="custom-select" @bind="SelectedMonth" title="Pick a Timeframe ">
+        <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option
+        @if (FoundMonths.Count > 1)
+        {
+            <option value="All">All</option>
+        }
+        @foreach (var dt in FoundMonths)
         {
             <option value="@dt">@dt</option>
         }
     </select>
+</div>
+<div style="float:left;margin-right:2vw">
+    <label>Year</label>
+    <br />
+    <select class="custom-select" @bind="SelectedYear" title="Pick a Timeframe ">
+        <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option>
+        @if (FoundYears.Count > 1)
+        {
+            <option value="All">All</option>
+        }
+        @foreach (var dt in FoundYears)
+        {
+            <option value="@dt">@dt</option>
+        }
+    </select>
+</div>
+@*
+<div style="float:left;margin-right:2vw">
+    <label>Person</label>
+    <br />
+    <select class="custom-select" @bind="SelectedPerson" title="Pick a Person ">
+        <option value="Both" selected>Both</option>
+        <option value="@Constants.Person1">@Constants.Person1</option>
+        <option value="@Constants.Person2">@Constants.Person2</option>
+    </select>
+</div>
+*@
+<div style="float:left;">
+    @if (Levels != null && Levels.Count > 0)
+    {
+    <label>Level</label>
+    <br />
+        <select class="custom-select" @bind="SelectedLevel" title="Pick a Level ">
+            <option value="@string.Empty" selected disabled="disabled">(Choose a level)</option>
+            @if (Levels.Count > 1)
+            {
+                <option value="All">All</option>
+            }
+            @foreach (var dt in Levels)
+            {
+                <option value="@dt">@dt</option>
+            }
+        </select>
+    }
+    else
+    {
+        <br />
+        <label style="color:red">No values for this combination.</label>
+    }
+</div>
+@if (Levels != null && Levels.Count > 0)
+{
+    <div style="float:left;margin-top:.5vw">
+        <button class="btn btn-primary" style="margin: auto 5vw" @onclick=DrawChart>Enter</button>
+    </div>
 }
 
-<button class="btn btn-primary" style="margin: auto 5vw" @onclick=DrawChart>Enter</button>
 @*
 <table style="margin: auto 10vw; width:40vw; float:right">
     <tr>
@@ -66,50 +116,80 @@
 *@
 
 @code {
-    private string selectedDownload;
-    private string SelectedDownload
+    private string selectedYear;
+    private string selectedMonth;
+    private string selectedPerson;
+    private string SelectedYear
     {
-        get { return selectedDownload; }
+        get { return selectedYear; }
         set
         {
-            if (value == null || value == selectedDownload)
+            if (value == null || value == selectedYear)
                 return;
 
             List<Transaction> DesiredTransactions;
 
-            selectedDownload = value;
+            selectedYear = value;
 
-            if (SelectedDownload != "All")
-                DesiredTransactions = Constants.Transactions.Where(tr => tr.MonthYear() == SelectedDownload).OrderByDescending(t => t.DateOfTransaction).ToList();
-            else
-                DesiredTransactions = Constants.Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+            DecideDesired();
+        }
+    }
+    private string SelectedMonth
+    {
+        get { return selectedMonth; }
+        set
+        {
+            if (value == null || value == selectedMonth)
+                return;
 
-            SelectedLevel = "All";
+            selectedMonth = value;
 
-            Levels = new List<string>();
+            DecideDesired();
+        }
+    }
+    private string SelectedPerson
+    {
+        get { return selectedPerson; }
+        set
+        {
+            if (value == null || value == selectedPerson)
+                return;
 
-            string[] IgnoreThese = new string[] { "Debt", "Income", "Equity", "Envelope", "Transfer" };
+            selectedPerson = value;
 
-            foreach (var dt in DesiredTransactions)
-            {
-                if (Levels.Contains(dt.ExpenseType) || IgnoreThese.Contains(dt.ExpenseType))
-                    continue;
-
-                Levels.Add(dt.ExpenseType);
-            }
+            DecideDesired();
         }
     }
     private string SelectedLevel { get; set; }
 
-    private List<string> FoundMonths => IndexRunner.GetMonths(Constants.Transactions);
+    private List<string> FoundMonths => GetMonths();
+    private List<string> FoundYears => GetYears();
     private List<string> Levels = new List<string>();
     private List<CashFlow> CashFlows = new List<CashFlow>();
 
     protected override Task OnInitializedAsync()
     {
-        SelectedDownload = "All";
+        SelectedMonth = "All";
+        SelectedYear = "All";
         DrawChart();
         return base.OnInitializedAsync();
+    }
+
+    private List<string> GetMonths()
+    {
+        return IndexRunner.GetMonths(Constants.Transactions, false);
+    }
+
+    private List<string> GetYears()
+    {
+        List<string> years = new List<string>();
+        foreach (var trans in Constants.Transactions)
+        {
+            if (!years.Contains(trans.DateOfTransaction.Year.ToString()))
+                years.Add(trans.DateOfTransaction.Year.ToString());
+        }
+
+        return years;
     }
 
     public async void DrawChart()
@@ -118,29 +198,43 @@
             return;
 
         await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
-        List<Flow> objs = GetFlows(SelectedDownload);
+        List<Flow> objs = GetFlows(SelectedMonth, SelectedYear);
 
         var json = System.Text.Json.JsonSerializer.Serialize(objs);
         await JSRuntime.InvokeAsync<object>("drawChart", json);
     }
 
-    private List<Flow> GetFlows(string SelectedDownload)
+    private List<Flow> GetFlows(string Month, string Year)
     {
         List<Flow> TheFlows = new List<Flow>();
         List<Transaction> DesiredTransactions = new List<Transaction>();
         Dictionary<string, Transaction> DesiredTransactionsDict = new Dictionary<string, Transaction>();
         Dictionary<string, Transaction> DictIncome = new Dictionary<string, Transaction>();
 
-        if (SelectedDownload != "All")
-            DesiredTransactions = Constants.Transactions.Where(tr => tr.MonthYear() == SelectedDownload).OrderByDescending(t => t.DateOfTransaction).ToList();
-        else
+        var SelectedDownload = SelectedMonth + " " + SelectedYear;
+
+        if (SelectedDownload == "All All")
             DesiredTransactions = Constants.Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+        else
+        {
+            if (SelectedDownload.Contains("All "))
+            {
+                DesiredTransactions = Constants.Transactions.Where(tr => tr.DateOfTransaction.Year.ToString() == SelectedYear).OrderByDescending(t => t.DateOfTransaction).ToList();
+            }
+            else if (SelectedDownload.Contains(" All"))
+                DesiredTransactions = Constants.Transactions.Where(tr => tr.DateOfTransaction.ToString("MMMM") == SelectedMonth).OrderByDescending(t => t.DateOfTransaction).ToList();
+            else
+                DesiredTransactions = Constants.Transactions.Where(tr => tr.MonthYear() == SelectedDownload).OrderByDescending(t => t.DateOfTransaction).ToList();
+        }
 
         if (SelectedLevel != "All")
             DesiredTransactions = DesiredTransactions.Where(dt => dt.ExpenseType == SelectedLevel).ToList();
 
         string TKey;
         string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer", "Envelope" };
+
+        bool firstPerson = SelectedPerson == "Both" || SelectedPerson == Constants.Person1;
+        bool secondPerson = SelectedPerson == "Both" || SelectedPerson == Constants.Person2;
 
         foreach (var transact in DesiredTransactions)
         {
@@ -236,7 +330,7 @@
                 TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL"));
         }
 
-        string[] DecreaseAmount = new string[]{ "Eating Out", "Unexpected Adulting"};
+        string[] DecreaseAmount = new string[] { "Eating Out", "Unexpected Adulting" };
 
         if (DecreaseAmount.Contains(SelectedLevel) && TheFlows.Count > 30)
         {
@@ -264,6 +358,51 @@
                 .ToFlow(Totals));
         }
         return TheFlows;
+    }
+
+    public void DecideDesired()
+    {
+        List<Transaction> DesiredTransactions;
+
+        if (SelectedYear != "All")
+            {
+                // Specific Year
+
+                if (SelectedMonth == "All")
+                    // All Months
+                    DesiredTransactions = Constants.Transactions.Where(tr => tr.DateOfTransaction.Year.ToString() == SelectedYear).OrderByDescending(t => t.DateOfTransaction).ToList();
+                else
+                    // Specific Month
+                    DesiredTransactions = Constants.Transactions.Where(tr => tr.MonthYear() == SelectedMonth + " " + SelectedYear).OrderByDescending(t => t.DateOfTransaction).ToList();
+            }
+            else
+            {
+                // All Years
+
+                if (SelectedMonth == "All")
+                    // All Months
+                    DesiredTransactions = Constants.Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+                else
+                    // Specific Month
+                    DesiredTransactions = Constants.Transactions.Where(tr => tr.DateOfTransaction.ToString("MMMM") == SelectedMonth).OrderByDescending(t => t.DateOfTransaction).ToList();
+            }
+                
+
+            SelectedLevel = "All";
+
+            Levels = new List<string>();
+
+            string[] IgnoreThese = new string[] { "Debt", "Income", "Equity", "Envelope", "Transfer" };
+
+            foreach (var dt in DesiredTransactions)
+            {
+                if (Levels.Contains(dt.ExpenseType) || IgnoreThese.Contains(dt.ExpenseType))
+                    continue;
+
+                Levels.Add(dt.ExpenseType);
+            }
+
+            StateHasChanged();
     }
 
     public class CashFlow

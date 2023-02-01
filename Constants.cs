@@ -61,7 +61,7 @@ namespace BetterBudgetWeb
 
             PassKey = Key;
             CatchAll catchAll = await CatchAllRunner.Grab();
-            
+
             AssignCatches(catchAll);
 
             SetMonthlies(Monthlies);
@@ -372,6 +372,64 @@ namespace BetterBudgetWeb
                 retStr = str;
 
             return retStr;
+        }
+        public static int CompareBalance(Balance first, Balance second)
+        {
+            // -1 means first is greater
+            // 0 means equal
+            // 1 means second is greater
+
+            if (first == null)
+                return second == null ? 0 : 1;
+
+            string[] best = new string[] { "Income", "Equity" };
+            string[] good = new string[] { "Stocks" };
+            string[] worst = new string[] { "Loan" };
+
+            /* Test scenarios:
+            * first = Income/Equity & second = Income/Equity -----> 0
+            * first = Income/Equity & second = Stocks -----> -1
+            * first = Income/Equity & second = Loan -----> -1
+            * first = Stocks & second = Income/Equity -----> 1
+            * first = Stocks & second = Stocks -----> 0
+            * first = Stocks & second = Loan -----> -1
+            * first = Loan & second = Income/Equity -----> 1
+            * first = Loan & second = Stocks -----> 1
+            * first = Loan & second = Loan -----> 0
+            */
+
+            // ================= Equals Start ================
+            if ((best.Contains(first.BalanceType) && best.Contains(second.BalanceType)) || // Both Best
+                (good.Contains(first.BalanceType) && good.Contains(second.BalanceType)) || // Both Good
+                (worst.Contains(first.BalanceType) && worst.Contains(second.BalanceType))) // Both Worst
+            {
+                /*
+                 * first = Income/Equity & second = Income/Equity
+                 * first = Stocks & second = Stocks
+                 * first = Loan & second = Loan
+                 */
+                return second.Value.CompareTo(first.Value);
+            }
+            //================= Equals End ================= 
+
+
+            if ((best.Contains(first.BalanceType) && !best.Contains(second.BalanceType)) ||
+                (good.Contains(first.BalanceType) && worst.Contains(second.BalanceType)))
+            {
+                /*
+                 * first = Income/Equity & second = Stocks
+                 * first = Income/Equity & second = Loan
+                 * first = Stocks & second = Loan
+                 */
+                return -1;
+            }
+
+            /*
+             * first = Stocks & second = Income/Equity
+             * first = Loan & second = Income/Equity
+             * first = Loan & second = Stocks
+             */
+            return 1;
         }
     }
 }

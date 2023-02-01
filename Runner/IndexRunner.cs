@@ -209,7 +209,7 @@ namespace BetterBudgetWeb.Runner
             return positive + joint_pos - joint_neg - negative + stocks;
         }
 
-        public static List<string> GetMonths(List<Transaction> Transactions)
+        public static List<string> GetMonths(List<Transaction> Transactions, bool includeYear = true)
         {
             List<string> uniqueMonthYears = new List<string>();
 
@@ -219,7 +219,8 @@ namespace BetterBudgetWeb.Runner
             string monthYear;
             foreach (var trans in Transactions.OrderByDescending(t => t.DateOfTransaction))
             {
-                monthYear = trans.DateOfTransaction.ToString("MMMM") + " " + trans.DateOfTransaction.Year.ToString();
+                monthYear = includeYear ? trans.DateOfTransaction.ToString("MMMM") + " " + trans.DateOfTransaction.Year.ToString() :
+                                            trans.DateOfTransaction.ToString("MMMM");
 
                 if (!uniqueMonthYears.Contains(monthYear))
                     uniqueMonthYears.Add(monthYear);

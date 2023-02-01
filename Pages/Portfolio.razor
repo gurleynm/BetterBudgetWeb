@@ -49,20 +49,31 @@
                     <tr style="height:3vw">
                         <th style="width:10vw;padding:1vw;">Symbol</th>
                         <th style="width:10vw;padding:1vw;">Last Price</th>
-                        <th style="width:10vw;padding:1vw;">Cost Basis</th>
-                        <th style="width:10vw;padding:1vw;">Quantity</th>
-                        <th style="width:10vw;padding:1vw;">Value</th>
                         <th style="width:10vw;padding:1vw;">% Gain/Loss</th>
+                        <th style="width:10vw;padding:1vw;">Value</th>
+                        <th style="width:10vw;padding:1vw;">Quantity</th>
+                        <th style="width:10vw;padding:1vw;">Cost Basis</th>
                     </tr>
                     @foreach (var accsec in AccountSecurities)
                     {
                         <tr style="height:3vw">
                             <th style="padding:1vw;">@accsec.Name</th>
                             <th style="padding:1vw;">@Constants.Pretty(accsec.Value/accsec.NumShares)</th>
-                            <th style="padding:1vw;">@Constants.Pretty(accsec.AvgCost)</th>
-                            <th style="padding:1vw;">@accsec.NumShares</th>
-                            <th style="padding:1vw;">@Constants.Pretty(accsec.Value)</th>
                             <th style="padding:1vw;">@(accsec.CalculateReturn() + "%")</th>
+                            <th style="padding:1vw;">@Constants.Pretty(accsec.Value)</th>
+                            <th style="padding:1vw;">@accsec.NumShares</th>
+                            <th style="padding:1vw;">@Constants.Pretty(accsec.AvgCost * accsec.NumShares)</th>
+                        </tr>
+                    }
+                    @if (SelectedBalance.Value > 0)
+                    {
+                        <tr>
+                            <th style="padding:1vw;">Cash</th>
+                            <th style="padding:1vw;">@Constants.Pretty(1)</th>
+                            <th style="padding:1vw;">---</th>
+                            <th style="padding:1vw;">@Constants.Pretty(SelectedBalance.Value)</th>
+                            <th style="padding:1vw;">@Constants.Pretty(SelectedBalance.Value).Trim('$')</th>
+                            <th style="padding:1vw;">---</th>
                         </tr>
                     }
                     <tr>
@@ -71,10 +82,10 @@
                     <tr style="height:3vw">
                         <th style="padding:1vw;">Total</th>
                         <th style="padding:1vw;"></th>
-                        <th style="padding:1vw;"></th>
-                        <th style="padding:1vw;"></th>
-                        <th style="padding:1vw;">@Constants.Pretty(AccountSecurities.Sum(acs => acs.Value))</th>
                         <th style="padding:1vw;">@(CalculateReturn() + "%")</th>
+                        <th style="padding:1vw;">@Constants.Pretty(AccountSecurities.Sum(acs => acs.Value) + SelectedBalance.Value)</th>
+                        <th style="padding:1vw;"></th>
+                        <th style="padding:1vw;"></th>
                     </tr>
                 </table>
             }
@@ -164,20 +175,31 @@ else
                     <tr style="height:3vw">
                         <th style="width:10vw;padding:1vw;">Symbol</th>
                         <th style="width:10vw;padding:1vw;">Last Price</th>
+                        <th style="width:10vw;padding:1vw;">% Gain/Loss</th>
+                        <th style="width:10vw;padding:1vw;">Value</th>
                         <th style="width:10vw;padding:1vw;">Cost Basis</th>
                         <th style="width:10vw;padding:1vw;">Quantity</th>
-                        <th style="width:10vw;padding:1vw;">Value</th>
-                        <th style="width:10vw;padding:1vw;">% Gain/Loss</th>
                     </tr>
                     @foreach (var accsec in AccountSecurities)
                     {
                         <tr style="height:3vw">
                             <th style="padding:1vw;">@accsec.Name</th>
                             <th style="padding:1vw;">@Constants.Pretty(accsec.Value/accsec.NumShares)</th>
-                            <th style="padding:1vw;">@Constants.Pretty(accsec.AvgCost)</th>
-                            <th style="padding:1vw;">@accsec.NumShares</th>
-                            <th style="padding:1vw;">@Constants.Pretty(accsec.Value)</th>
                             <th style="padding:1vw;">@(accsec.CalculateReturn() + "%")</th>
+                            <th style="padding:1vw;">@Constants.Pretty(accsec.Value)</th>
+                            <th style="padding:1vw;">@Constants.Pretty(accsec.AvgCost * accsec.NumShares)</th>
+                            <th style="padding:1vw;">@accsec.NumShares</th>
+                        </tr>
+                    }
+                    @if (SelectedBalance.Value > 0)
+                    {
+                        <tr>
+                            <th style="padding:1vw;">Cash</th>
+                            <th style="padding:1vw;">@Constants.Pretty(1)</th>
+                            <th style="padding:1vw;">---</th>
+                            <th style="padding:1vw;">@Constants.Pretty(SelectedBalance.Value)</th>
+                            <th style="padding:1vw;">---</th>
+                            <th style="padding:1vw;">@Constants.Pretty(SelectedBalance.Value).Trim('$')</th>
                         </tr>
                     }
                     <tr>
@@ -186,10 +208,10 @@ else
                     <tr style="height:3vw">
                         <th style="padding:1vw;">Total</th>
                         <th style="padding:1vw;"></th>
-                        <th style="padding:1vw;"></th>
-                        <th style="padding:1vw;"></th>
-                        <th style="padding:1vw;">@Constants.Pretty(AccountSecurities.Sum(acs => acs.Value))</th>
                         <th style="padding:1vw;">@(CalculateReturn() + "%")</th>
+                        <th style="padding:1vw;">@Constants.Pretty(AccountSecurities.Sum(acs => acs.Value) + SelectedBalance.Value)</th>
+                        <th style="padding:1vw;"></th>
+                        <th style="padding:1vw;"></th>
                     </tr>
                 </table>
             }
@@ -209,7 +231,7 @@ else
                 <DeleteSecurity OnClick="UpdateEverything" Mobile=mobile />
             }
         </div>
-        <br/>
+        <br />
         <div style="width: auto; height:fit-content; max-height:80vh; overflow: auto; position: relative;border: solid gray 1px;padding:0">
             <div>
                 <span class="oi oi-reload" aria-hidden="true" style="float:right; margin:.5vw; cursor:pointer" @onclick=Reload></span>
