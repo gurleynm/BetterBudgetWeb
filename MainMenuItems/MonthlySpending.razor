@@ -81,7 +81,7 @@
                             <option selected value="@string.Empty" disabled>@Balance1Header</option>
                             @foreach (var pay in Person1Balances)
                             {
-                                <option value="@pay.Name">@pay.Name</option>
+                                <option selected style="background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
                             }
                         }
                     }
@@ -106,7 +106,7 @@
                             <option selected value="@string.Empty" disabled>@Balance2Header</option>
                             @foreach (var pay in Person2Balances)
                             {
-                                <option value="@pay.Name">@pay.Name</option>
+                                <option selected style="background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
                             }
                         }
                     }
@@ -259,7 +259,7 @@ else
                             <option selected value="@string.Empty" disabled>@Balance1Header</option>
                             @foreach (var pay in Person1Balances)
                             {
-                                <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                                <option selected style="font-size:3vw;background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
                             }
                         }
                     }
@@ -284,7 +284,7 @@ else
                             <option selected value="@string.Empty" disabled>@Balance1Header</option>
                             @foreach (var pay in Person2Balances)
                             {
-                                <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
+                                <option selected style="font-size:3vw;background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
                             }
                         }
                     }

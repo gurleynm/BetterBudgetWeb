@@ -142,7 +142,7 @@
                             {
                                 @foreach (var pay in Person1BalancesEquities)
                                 {
-                                    <option value="@pay.Id">@pay.Name</option>
+                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
                         }
@@ -152,7 +152,7 @@
                             {
                                 @foreach (var pay in Person1Balances)
                                 {
-                                    <option value="@pay.Id">@pay.Name</option>
+                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
                         }
@@ -169,7 +169,7 @@
                         {
                             @foreach (var pay in Person1BalancesLoans)
                             {
-                                <option value="@pay.Id">@pay.Name</option>
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
                     </select>
@@ -193,7 +193,7 @@
                             {
                                 @foreach (var pay in Person2BalancesEquities)
                                 {
-                                    <option value="@pay.Id">@pay.Name</option>
+                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
                         }
@@ -203,7 +203,7 @@
                             {
                                 @foreach (var pay in Person2Balances)
                                 {
-                                    <option value="@pay.Id">@pay.Name</option>
+                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
                         }
@@ -220,7 +220,7 @@
                         {
                             @foreach (var pay in Person2BalancesLoans)
                             {
-                                <option value="@pay.Id">@pay.Name</option>
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
                     </select>
@@ -246,7 +246,7 @@
                             {
                                 @foreach (var pay in Person1BalancesNotLoans)
                                 {
-                                    <option value="@pay.Id">@pay.Name</option>
+                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
                         </select>
@@ -261,7 +261,7 @@
                             {
                                 @foreach (var pay in Person1BalancesNotLoans)
                                 {
-                                    <option value="@pay.Id">@pay.Name</option>
+                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
                         </select>
@@ -283,7 +283,7 @@
                             {
                                 @foreach (var pay in Person2BalancesNotLoans)
                                 {
-                                    <option value="@pay.Id">@pay.Name</option>
+                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
                         </select>
@@ -298,7 +298,7 @@
                             {
                                 @foreach (var pay in Person2BalancesNotLoans)
                                 {
-                                    <option value="@pay.Id">@pay.Name</option>
+                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
                         </select>
@@ -332,7 +332,7 @@
                                 {
                                     @foreach (var pay in Person1BalancesEquities)
                                     {
-                                        <option value="@pay.Id">@pay.Name</option>
+                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
                                 }
                             }
@@ -342,7 +342,7 @@
                                 {
                                     @foreach (var pay in Person1Balances)
                                     {
-                                        <option value="@pay.Id">@pay.Name</option>
+                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
                                 }
                             }
@@ -375,7 +375,7 @@
                                 {
                                     @foreach (var pay in Person2BalancesEquities)
                                     {
-                                        <option value="@pay.Id">@pay.Name</option>
+                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
                                 }
                             }
@@ -385,7 +385,7 @@
                                 {
                                     @foreach (var pay in Person2Balances)
                                     {
-                                        <option value="@pay.Id">@pay.Name</option>
+                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
                                 }
                             }
@@ -476,7 +476,7 @@ else
                         {
                             @foreach (var pay in Person1BalancesEquities)
                             {
-                                <option value="@pay.Id">@pay.Name</option>
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
                     }
@@ -486,7 +486,7 @@ else
                         {
                             @foreach (var pay in Person1BalancesIncomes)
                             {
-                                <option value="@pay.Id">@pay.Name</option>
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
 
@@ -504,7 +504,7 @@ else
                     {
                         @foreach (var pay in Person1BalancesNotLoans)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                         }
                     }
                     <option value="NONE">Did not transfer</option>
@@ -520,7 +520,7 @@ else
                     {
                         @foreach (var pay in Person1BalancesNotLoans)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                         }
                     }
                     <option value="NONE">Did not transfer</option>
@@ -536,7 +536,7 @@ else
                     {
                         @foreach (var pay in Person1Balances)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                         }
                     }
                     <option value="NONE">Did not transfer</option>
@@ -556,7 +556,7 @@ else
                         {
                             @foreach (var pay in Person2BalancesEquities)
                             {
-                                <option value="@pay.Id">@pay.Name</option>
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
                     }
@@ -566,7 +566,7 @@ else
                         {
                             @foreach (var pay in Person2BalancesIncomes)
                             {
-                                <option value="@pay.Id">@pay.Name</option>
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
 
@@ -584,7 +584,7 @@ else
                     {
                         @foreach (var pay in Person2BalancesNotLoans)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                         }
                     }
                     <option value="NONE">Did not transfer</option>
@@ -600,7 +600,7 @@ else
                     {
                         @foreach (var pay in Person2BalancesNotLoans)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                         }
                     }
                     <option value="NONE">Did not transfer</option>
@@ -616,7 +616,7 @@ else
                     {
                         @foreach (var pay in Person2Balances)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                         }
                     }
                     <option value="NONE">Did not transfer</option>
@@ -637,7 +637,7 @@ else
                         {
                             @foreach (var pay in Person1BalancesLoans)
                             {
-                                <option value="@pay.Id">@pay.Name</option>
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
                     </select>
@@ -652,7 +652,7 @@ else
                     {
                         @foreach (var pay in Person2BalancesLoans)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                         }
                     }
                 </select>
@@ -672,7 +672,7 @@ else
                         {
                             @foreach (var pay in Person1BalancesNotLoans)
                             {
-                                <option value="@pay.Id">@pay.Name</option>
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
                     </select>
@@ -687,7 +687,7 @@ else
                     {
                         @foreach (var pay in Person2BalancesNotLoans)
                         {
-                            <option value="@pay.Id">@pay.Name</option>
+                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                         }
                     }
                 </select>

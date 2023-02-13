@@ -40,7 +40,7 @@
             }
         </div>
         <div style="overflow:auto">
-            @if (AccountSecurities != null && AccountSecurities.Count > 0)
+            @if (AccountSecurities != null)
             {
                 <table style="width:100%;">
                     <tr>
@@ -166,7 +166,7 @@ else
                     }
                 }
             </div>
-            @if (AccountSecurities != null && AccountSecurities.Count > 0)
+            @if (AccountSecurities != null)
             {
                 <table style="width:100%;">
                     <tr>
@@ -358,7 +358,7 @@ else
             totalValue += acs.Value;
         }
 
-        double GainsLoss = (totalValue - totalIn) / totalIn * 100;
+        double GainsLoss = totalIn == 0 ? 0 : (totalValue - totalIn) / totalIn * 100;
 
         return Math.Round(GainsLoss, 2);
     }

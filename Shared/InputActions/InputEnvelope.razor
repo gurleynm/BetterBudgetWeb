@@ -47,7 +47,7 @@
                 {
                     @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
                     {
-                        <option value="@pay.Id">@pay.Name</option>
+                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                     }
                 }
                 <option value="NONE">Will Not Contribute</option>
@@ -64,7 +64,7 @@
                 {
                     @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
                     {
-                        <option value="@pay.Id">@pay.Name</option>
+                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                     }
                 }
                 <option value="NONE">Will Not Contribute</option>
@@ -107,7 +107,7 @@ else
                 {
                     @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
                     {
-                        <option value="@pay.Id">@pay.Name</option>
+                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                     }
                 }
                 <option value="NONE">Will Not Contribute</option>
@@ -122,7 +122,7 @@ else
                 {
                     @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
                     {
-                        <option value="@pay.Id">@pay.Name</option>
+                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                     }
                 }
                 <option value="NONE">Will Not Contribute</option>
