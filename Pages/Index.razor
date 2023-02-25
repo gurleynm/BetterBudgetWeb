@@ -108,6 +108,17 @@ else
         </div>
         @if (ShowChart)
         {
+            <br />
+            <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
+                <h2 style="text-align:center">
+                    <span>Month Projected Expenses:</span> <span class="income-bad">@Constants.Pretty(ProjectedExpense)</span>
+                </h2>
+
+                <h2 style="text-align:center">
+                    <span>Month Actual Expenses:</span> <span class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")'>@Constants.Pretty(ActualExpense)</span>
+                </h2>
+            </div>
+            <br />
             <Chart DPs=DataPoints BarClicked=FilterDate />
             <br />
             <br />
@@ -328,6 +339,12 @@ else
             </button>
             @if (ShowChart)
             {
+                <!-- Monthly Expenses -->
+                <h3>Month Projected Expenses:</h3>
+                <h4 class="income-bad" style="text-align:center">@Constants.Pretty(ProjectedExpense)</h4>
+                <h3>Month Actual Expenses:</h3>
+                <h4 class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")' style="text-align:center">@Constants.Pretty(ActualExpense)</h4>
+                <br />
                 <Chart DPs=DataPoints BarClicked=FilterDate Mobile=mobile />
             }
 
@@ -335,6 +352,7 @@ else
             <br />
             <br />
         }
+
         <!-- Monthly Spending -->
         <div style="width:100%;float:left;margin-bottom:2vh;">
             <MonthlySpending Mobile=mobile
@@ -525,6 +543,18 @@ else
     private bool ViewReports { get; set; }
     private bool StashCashBool { get; set; }
     private bool CashOutBool { get; set; }
+
+    private double ProjectedExpense => Constants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount) +
+                                        DynamicCostItems.Sum(d => d.Amount);
+    private double ActualExpense => FilteredTransactions.Where(ft => CostMoney(ft)).Sum(ft => ft.TotalAmount);
+
+    private bool CostMoney(Transaction ft)
+    {
+        if (ft.ExpenseType == "Income" || ft.ExpenseType == "Debt" || ft.ExpenseType == "Equity")
+            return false;
+
+        return true;
+    }
 
     private List<Data.Envelope> Envelopes { get; set; }
 
