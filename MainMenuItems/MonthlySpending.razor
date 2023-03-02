@@ -58,7 +58,15 @@
                     <option value="@string.Empty" selected disabled="disabled">Expense</option>
                     @foreach (var et in ExpenseTypes)
                     {
-                        <option value="@et">@et</option>
+                        @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
+                                || et.Contains("-- Others --"))
+                        {
+                            <option value="et" disabled>@et</option>
+                        }
+                        else
+                        {
+                            <option value="@et">@et</option>
+                        }
                     }
                 </select>
             </td>
@@ -176,7 +184,7 @@
                     }
                     else
                     {
-                        <td colspan="2"><strong>Total of Income</strong></td>                        
+                        <td colspan="2"><strong>Total of Income</strong></td>
                     }
                     <td class='@TranColor("Income", Person1IncomeSum)'>
                         @Pretty(Person1IncomeSum)
@@ -236,7 +244,15 @@ else
                     <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Expense</option>
                     @foreach (var et in ExpenseTypes)
                     {
-                        <option style="font-size:3vw;" value="@et">@et</option>
+                        @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
+                       || et.Contains("-- Others --"))
+                        {
+                            <option style="font-size:3vw;" disabled value="@et">@et</option>
+                        }
+                        else
+                        {
+                            <option style="font-size:3vw;" value="@et">@et</option>
+                        }
                     }
                 </select>
             </td>
@@ -577,22 +593,52 @@ else
 
     protected override Task OnInitializedAsync()
     {
-        ExpenseTypes.Add("Static Cost");
-        ExpenseTypes.Add("Income");
-
         Person1Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).Where(e => e.Person1Amount > 0).ToList();
         Person2Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).Where(e => e.Person2Amount > 0).ToList();
 
+        var TempDCI = new List<string>();
+        var TempEnv = new List<string>();
+        var TempOth = new List<string>();
+
         foreach (var dci in Constants.DynamicCostItems)
-            ExpenseTypes.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
+            TempDCI.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
+
+        TempDCI.Sort();
 
         if (Person1Envelopes.Count > 0 || Person2Envelopes.Count > 0)
-            ExpenseTypes.Add("Envelope");
+            TempOth.Add("Envelope");
 
         if (Balances.Count(bal => bal.BalanceType == "Equity") > 0)
-            ExpenseTypes.Add("Equity");
+            TempOth.Add("Equity");
 
-        ExpenseTypes.Sort();
+        TempOth.Add("Static Cost");
+        TempOth.Add("Income");
+
+        TempOth.Sort();
+
+        foreach (var p1e in Person1Envelopes)
+            TempEnv.Add(p1e.Name);
+
+        foreach (var p2e in Person2Envelopes)
+        if (!TempEnv.Contains(p2e.Name))    
+            TempEnv.Add(p2e.Name);
+
+        TempEnv.Sort();
+
+        ExpenseTypes.Add("-- Dynamic Costs --");
+
+        foreach(var d in TempDCI)
+            ExpenseTypes.Add(d);
+            
+        ExpenseTypes.Add("-- Envelopes --");
+        foreach(var d in TempEnv)
+            ExpenseTypes.Add(d);
+            
+        ExpenseTypes.Add("-- Others --");
+        foreach(var o in TempOth)
+            ExpenseTypes.Add(o);
+        
+
         int maxP1B = Person1Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
         int maxP1E = Person1Envelopes.Count > 0 ? Person1Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length : 0;
         int maxP1 = Math.Max(maxP1B, maxP1E);

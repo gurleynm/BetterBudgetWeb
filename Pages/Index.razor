@@ -550,7 +550,14 @@ else
 
     private bool CostMoney(Transaction ft)
     {
-        if (ft.ExpenseType == "Income" || ft.ExpenseType == "Debt" || ft.ExpenseType == "Equity")
+        List<string> IgnoreThese = new List<string> { "Debt", "Transfer", "Equity", "Income" };
+
+        foreach (var env in Envelopes)
+        {
+            IgnoreThese.Add(env.Name);
+        }
+
+        if (IgnoreThese.Contains(ft.ExpenseType))
             return false;
 
         return true;
@@ -691,7 +698,13 @@ else
             DateTime PreviousDate = tr.DateOfTransaction;
             double MonthAmount = 0;
 
-            string[] NotExpenseOrIncome = new string[] { "Debt", "Transfer", "Equity" };
+            List<string> NotExpenseOrIncome = new List<string> { "Debt", "Transfer", "Equity" };
+
+            foreach(var env in Envelopes)
+            {
+                NotExpenseOrIncome.Add(env.Name);
+            }
+
             string[] IncomeOrEquity = new string[] { "Income", "Equity" };
 
             if (IncomeOrEquity.Contains(tr.ExpenseType))

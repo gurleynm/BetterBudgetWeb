@@ -5,7 +5,7 @@ namespace BetterBudgetWeb.Runner
 {
     public class IndexRunner
     {
-        public static List<Transaction> Order(ref string DateHeaderTxt, ref string NameHeaderTxt, 
+        public static List<Transaction> Order(ref string DateHeaderTxt, ref string NameHeaderTxt,
                                     ref string Person1HeaderTxt, ref string Person2HeaderTxt, ref string TotalHeaderTxt,
                                     List<Transaction> FilteredTransactions, string orderBy)
         {
@@ -24,7 +24,7 @@ namespace BetterBudgetWeb.Runner
                     }
 
                     break;
-                
+
                 case "Name":
                     if (NameHeaderTxt == "Name")
                     {
@@ -156,26 +156,35 @@ namespace BetterBudgetWeb.Runner
             if (NewPerson2Amount > 0 && string.IsNullOrEmpty(NewPerson2PaidWith))
                 ErrorMsg += $"Must enter how {Constants.Person2}'s payment method.\n";
 
-            if(NewExpense == "Envelope")
+            string np1pw = NewPerson1PaidWith == null ? "" : NewPerson1PaidWith;
+            string np2pw = NewPerson2PaidWith == null ? "" : NewPerson2PaidWith;
+
+            string newExp = NewExpense;
+
+            Envelope env1 = Constants.Envelopes.FirstOrDefault(e => e.Name == np1pw);
+            Envelope env2 = Constants.Envelopes.FirstOrDefault(e => e.Name == np2pw);
+            Envelope NewExpEnv = Constants.Envelopes.FirstOrDefault(e => e.Name == newExp);
+
+            if (NewExpense == "Envelope")
             {
-                string np1pw = NewPerson1PaidWith;
-                string np2pw = NewPerson2PaidWith;
-
-                Envelope env1 = Constants.Envelopes.FirstOrDefault(e => e.Name == np1pw);
-                Envelope env2 = Constants.Envelopes.FirstOrDefault(e => e.Name == np2pw);
-
                 if (env1 != null && NewPerson1Amount > env1.Person1Amount)
                     ErrorMsg += $"{Constants.Person1} must enter an amount ≤ {Constants.Pretty(env1.Person1Amount)} for this envelope.\n";
-                
+
                 if (env2 != null && NewPerson2Amount > env2.Person2Amount)
                     ErrorMsg += $"{Constants.Person2} must enter an amount ≤ {Constants.Pretty(env1.Person2Amount)} for this envelope.\n";
+            }
+            else if (NewExpEnv != null)
+            {
+                if (NewPerson1Amount > NewExpEnv.Person1Amount)
+                    ErrorMsg += $"{Constants.Person1} must enter an amount ≤ {Constants.Pretty(NewExpEnv.Person1Amount)} for this envelope.\n";
+
+                if (NewPerson2Amount > NewExpEnv.Person2Amount)
+                    ErrorMsg += $"{Constants.Person2} must enter an amount ≤ {Constants.Pretty(NewExpEnv.Person2Amount)} for this envelope.\n";
             }
 
             if (string.IsNullOrEmpty(ErrorMsg))
             {
-                string nnpw = NewPerson1PaidWith == null ? "" : NewPerson1PaidWith;
-                string nlpw = NewPerson2PaidWith == null ? "" : NewPerson2PaidWith;
-                Transaction nt = new Transaction(NewName, NewExpense, NewPerson1Amount, NewPerson2Amount, nnpw, nlpw, "none", "none");
+                Transaction nt = new Transaction(NewName, NewExpense, NewPerson1Amount, NewPerson2Amount, np1pw, np2pw, "none", "none");
                 NewName = null;
                 NewExpense = null;
                 NewPerson1Amount = 0;
@@ -194,14 +203,15 @@ namespace BetterBudgetWeb.Runner
 
             double positive = Balances.Where(bal => bal.Person == person && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value);
             double negative = Balances.Where(bal => bal.Person == person && bal.BalanceType.Contains("Loan")).Sum(b => b.Value);
-            double joint_neg = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && bal.BalanceType.Contains("Loan")).Sum(b => b.Value)/2;
-            double joint_pos = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value)/2;
+            double joint_neg = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && bal.BalanceType.Contains("Loan")).Sum(b => b.Value) / 2;
+            double joint_pos = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value) / 2;
 
             double stocks = 0;
             try
             {
                 stocks = Constants.Securities.Where(stock => stock.Person == person || stock.Person.ToUpper() == "JOINT").Sum(s => s.Value);
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
 
             }
