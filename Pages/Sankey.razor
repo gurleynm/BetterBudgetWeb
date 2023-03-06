@@ -2,6 +2,7 @@
 @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
+@using System.Globalization;
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 
@@ -170,14 +171,26 @@
     protected override Task OnInitializedAsync()
     {
         SelectedMonth = "All";
-        SelectedYear = "All";
+        SelectedYear = DateTime.Now.Year.ToString();
         DrawChart();
         return base.OnInitializedAsync();
     }
 
     private List<string> GetMonths()
     {
-        return IndexRunner.GetMonths(Constants.Transactions, false);
+        List<string> AllFoundMonths;
+        if (SelectedYear == "All")
+            AllFoundMonths = IndexRunner.GetMonths(Constants.Transactions, false);
+
+        else
+            AllFoundMonths = IndexRunner.GetMonths(Constants.Transactions.Where(tr => tr.DateOfTransaction.Year.ToString() == SelectedYear).ToList(), false);
+
+        AllFoundMonths =  AllFoundMonths.Select(x => 
+                                 new { Name = x, Sort = DateTime.ParseExact(x, "MMMM", CultureInfo.InvariantCulture) })
+                                     .OrderBy(x => x.Sort.Month)
+                                     .Select(x => x.Name).ToList();
+
+        return AllFoundMonths;
     }
 
     private List<string> GetYears()
@@ -273,7 +286,34 @@
         Transaction trans;
         var keys = DesiredTransactionsDict.Keys.ToArray();
         Array.Sort(keys);
-        double Totals = 0;
+        double Charges = DesiredTransactionsDict.Values.Where(d => d.TotalAmount > 0).Sum(di => di.TotalAmount);
+        var Refunds = DesiredTransactionsDict.Values.Where(d => d.TotalAmount < 0).ToList();
+
+        double Totals = Charges;
+        double BudgetedAmount;
+
+        List<string> Skip = new List<string>();
+
+        Skip.Add("Static Cost");
+
+        foreach (var ev in Constants.Envelopes)
+            Skip.Add(ev.Name);
+
+        if (SelectedLevel != "All" && SelectedMonth != "All" && !Skip.Contains(SelectedLevel))
+        {
+            BudgetedAmount = Constants.GetBudgetedAmount(SelectedLevel, SelectedMonth, SelectedYear);
+            Totals = BudgetedAmount + Refunds.Sum(dc => dc.TotalAmount) * -1 > Totals ? BudgetedAmount + Refunds.Sum(dc => dc.TotalAmount) * -1 : Totals;
+
+            TheFlows.Add(new Transaction { 
+                Name = "Budgeted Amount", 
+                ExpenseType = SelectedLevel, 
+                Person1Amount = BudgetedAmount
+            }.ToFlow(Totals, "~B~"));
+                
+
+            foreach (var refund in Refunds)
+                TheFlows.Add(refund.ToFlow(Totals, "~~~"));
+        }
 
         foreach (var key in keys)
         {
@@ -282,7 +322,6 @@
 
             if (SelectedLevel != "All")
             {
-                Totals = DesiredTransactionsDict.Values.Sum(di => di.TotalAmount);
                 TheFlows.Add(DesiredTransactionsDict[key].ToFlow(Totals));
             }
 
@@ -332,6 +371,7 @@
 
         string[] DecreaseAmount = new string[] { "Eating Out", "Unexpected Adulting" };
 
+        // Cut down on # of Entries
         if (DecreaseAmount.Contains(SelectedLevel) && TheFlows.Count > 30)
         {
             int numOfUnder25 = 0;
@@ -357,6 +397,7 @@
                 }
                 .ToFlow(Totals));
         }
+
         return TheFlows;
     }
 

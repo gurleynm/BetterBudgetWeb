@@ -96,15 +96,26 @@ namespace BetterBudgetWeb.Data
         }
         public Flow ToFlow(double totalAmount = -1, string general = "")
         {
-            double tot = double.Parse(TotalAmount.ToString("C2").Trim('$').Replace(",", ""));
-            string totDollar = TotalAmount.ToString("C2");
+            double tot = double.Parse(Math.Abs(TotalAmount).ToString("C2").Trim('$').Replace(",", ""));
+            string totDollar = Math.Abs(TotalAmount).ToString("C2");
             string addString = totalAmount > 0 ? " (" + totalAmount.ToString("C2") + ")" : "";
 
             if (ExpenseType == "Income")
                 return new Flow(Name + " (" + totDollar + ")", "Income" + addString, tot);
 
             if (!string.IsNullOrEmpty(general))
-                return new Flow("Income" + addString, ExpenseType + " (" + totDollar + ")", tot);
+            {
+                if (general.Contains("~~~"))
+                {
+                    return new Flow(Name + " (" + totDollar + ")", ExpenseType + addString, tot);
+                }
+                else if (general.Contains("~B~"))
+                {
+                    return new Flow(Name + " (" + totDollar + ")", ExpenseType + addString, tot);
+                }
+                else
+                    return new Flow("Income" + addString, ExpenseType + " (" + totDollar + ")", tot);
+            }
 
             return new Flow(ExpenseType + addString, Name + " (" + totDollar + ")", tot);
         }

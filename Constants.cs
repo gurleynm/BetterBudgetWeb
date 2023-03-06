@@ -10,6 +10,35 @@ namespace BetterBudgetWeb
 {
     public class Constants
     {
+        public static Dictionary<int, string> TheMonthsFromInt = new Dictionary<int, string> {
+            { 1, "January" },
+            { 2, "February" },
+            { 3, "March" },
+            { 4, "April" },
+            { 5, "May" },
+            { 6, "June" },
+            { 7, "July" },
+            { 8, "August" },
+            { 9, "September" },
+            { 10, "October" },
+            { 11, "November" },
+            { 12, "December" }
+        };
+        
+        public static Dictionary<string, int> TheMonthsFromString = new Dictionary<string, int> {
+            { "January", 1 },
+            { "February", 2 },
+            { "March", 3 },
+            { "April", 4 },
+            { "May", 5 },
+            { "June", 6 },
+            { "July", 7 },
+            { "August", 8 },
+            { "September", 9 },
+            { "October", 10 },
+            { "November", 11 },
+            { "December", 12 }
+        };
         public static List<DynamicCostItem> DynamicCostItems { get; set; }
         public static List<SavingsGoal> SavingsGoals { get; set; }
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
@@ -261,6 +290,23 @@ namespace BetterBudgetWeb
 
             return values;
         }
+
+        public static double GetBudgetedAmount(string ExpType, string Month = "All", string Year = "1")
+        {
+            Year = Year == "All" ? "1" : Year;
+
+            var AllMonths = MonthlyRepo.GetMonthlies().ToList();
+
+            var ExpInQuestion = AllMonths.FirstOrDefault(mon =>
+                                mon.Name == ExpType &&
+                                (mon.MonthYear() == Month + " " + Year || 
+                                mon.MonthYear() == Month + "  1" ||
+                                mon.MonthYear() == "All " + Year || 
+                                mon.MonthYear() == "All 1"));
+
+            return ExpInQuestion == null ? 0 : ExpInQuestion.TotalAmount;
+        }
+
         public static void DetermineDarkLight()
         {
             if (DarkMode)

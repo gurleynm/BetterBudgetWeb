@@ -428,15 +428,21 @@ else
             snaps = await SnapshotRepo.GetSnapshotsAsync();
         }
 
-        int highest_month = 0;
+        // Highest month ia unused now. Uncomment if needed later
+        /*        int highest_month = 0;
         foreach (var sn in snaps)
         {
             if (Constants.Months.IndexOf(sn.Month) >= highest_month && sn.Year == DateTime.Now.Year)
                 highest_month = Constants.Months.IndexOf(sn.Month);
         }
+        */
 
-        if ((Constants.Months.IndexOf(DateTime.Now.ToString("MMMM")) > highest_month) || (highest_month == 0 && DateTime.Now.Month == 1))
-            await SetSnapshot(DateTime.Now.AddMonths(-1));
+        /* Line below used to be in if that said:
+         *       if ((Constants.Months.IndexOf(DateTime.Now.ToString("MMMM")) > highest_month) || (highest_month == 0 && DateTime.Now.Month == 1))
+         *
+         * Now: Always set Previous Month in case updates are made up to 1 month later
+         */
+        await SetSnapshot(DateTime.Now.AddMonths(-1));
 
         if (Years.Count == 1 && Years[0].MyClass != "active")
             Years[0].MyClass = "active";
