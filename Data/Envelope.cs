@@ -17,7 +17,9 @@
         public string Person1Account { get; set; }
 
         public string Person2Account { get; set; }
-
+        
+        public int UpdateGoal { get; set; }
+        
         public string PassKey { get; set; } = "no";
 
         public Envelope() { }

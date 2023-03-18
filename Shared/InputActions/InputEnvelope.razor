@@ -72,6 +72,13 @@
         </div>
         <br style="clear:both" />
         <br />
+        <div style="float:left; margin-right:10vw;">
+            <label>Update this with Charges:</label>
+            <br />
+            <input @bind="UpdateCheck" type="checkbox" />
+        </div>
+        <br style="clear:both" />
+        <br />
         @if (!string.IsNullOrEmpty(ErrorMsg))
         {
             <p style="color:@ErrorColor">@ErrorMsg</p>
@@ -128,6 +135,13 @@ else
                 <option value="NONE">Will Not Contribute</option>
             </select>
         </div>
+        <br style="clear:both" />
+        <br />
+        <div style="float:left; margin-right:10vw;">
+            <label>Update this with Charges:</label>
+            <br />
+            <input @bind="UpdateCheck" type="checkbox" />
+        </div>
         <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
             <h1 style="text-align:center;">Envelope Preview:</h1>
             <div>
@@ -157,6 +171,8 @@ else
     public string WillPayPerson2 { get; set; }
     [Parameter]
     public string Amount { get; set; }
+    [Parameter]
+    public bool UpdateCheck { get; set; }
     [Parameter]
     public bool Mobile { get; set; }
 
@@ -195,7 +211,8 @@ else
                     Person1Account = WillPayPerson1,
                     Person2Account = WillPayPerson2,
                     Person1Amount = 0,
-                    Person2Amount = 0
+                    Person2Amount = 0,
+                    UpdateGoal = UpdateCheck ? 1 : 0
                 });
 
             Constants.Envelopes = new List<Data.Envelope>(Envelopes);
