@@ -8,6 +8,14 @@
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;justify-content:right">
+        <span style='position:relative;font-size:large;top:1vw;text-align:center;color:white'>@(Constants.DarkMode ? "Dark Mode:" : "Light Mode:")&nbsp;</span>
+        <label class="switch">
+            <input type="checkbox" @bind=DarkMode>
+            <span class="slider round"></span>
+        </label>
+    </div>
+    <br />
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -48,6 +56,23 @@
 
 @code {
     private bool collapseNavMenu = true;
+    private bool darkMode;
+
+    [Parameter]
+    public bool DarkMode
+    {
+        get => darkMode;
+        set
+        {
+            if (darkMode == value) return;
+            darkMode = value;
+
+            DarkModeChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> DarkModeChanged { get; set; }
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 

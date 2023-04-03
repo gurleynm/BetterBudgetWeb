@@ -53,7 +53,7 @@
                 <option value="@string.Empty" selected disabled="disabled">(Choose Where You Get Paid)</option>
                 @if (Balances != null)
                 {
-                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 && !b.BalanceType.Contains("Loan")))
+                    @foreach (var pay in Person1Balances.Where(b => !b.BalanceType.Contains("Loan") && !b.BalanceType.Contains("Equity") && !b.BalanceType.Contains("Stock")))
                     {
                         <option value="@pay.Name">@pay.Name</option>
                     }
@@ -77,7 +77,7 @@
                 <option value="@string.Empty" selected disabled="disabled">(Choose Where You Get Paid)</option>
                 @if (Balances != null)
                 {
-                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 && !b.BalanceType.Contains("Loan")))
+                    @foreach (var pay in Person2Balances.Where(b => !b.BalanceType.Contains("Loan") && !b.BalanceType.Contains("Equity") && !b.BalanceType.Contains("Stock")))
                     {
                         <option value="@pay.Name">@pay.Name</option>
                     }
@@ -162,7 +162,7 @@
                                         @if (Balances != null)
                                         {
                                             <select @onchange=@((ChangeEventArgs e) => DynaChanged(e, dci.Name, 1))>
-                                                @foreach (var bal in Balances.Where(b => b.Person == Constants.Person1).OrderBy(ba => ba.Name))
+                                                @foreach (var bal in Person1Balances.OrderBy(ba => ba.Name))
                                                 {
                                                     @if (DynaMonthMap[dci.Name].Item1 == bal.Name)
                                                     {
@@ -175,7 +175,7 @@
                                                 }
                                             </select>
                                             <select @onchange=@((ChangeEventArgs e) => DynaChanged(e, dci.Name, 2))>
-                                                @foreach (var bal in Balances.Where(b => b.Person == Constants.Person2).OrderBy(ba => ba.Name))
+                                                @foreach (var bal in Person2Balances.OrderBy(ba => ba.Name))
                                                 {
                                                     @if (DynaMonthMap[dci.Name].Item2 == bal.Name)
                                                     {
@@ -267,7 +267,7 @@ else
                                 @if (Balances != null)
                                 {
                                     <select @onchange=@((ChangeEventArgs e) => DynaChanged(e, dci.Name, 1))>
-                                        @foreach (var bal in Balances.Where(b => b.Person == Constants.Person1).OrderBy(ba => ba.Name))
+                                        @foreach (var bal in Person1Balances.OrderBy(ba => ba.Name))
                                         {
                                             @if (DynaMonthMap[dci.Name].Item1 == bal.Name)
                                             {
@@ -280,7 +280,7 @@ else
                                         }
                                     </select>
                                     <select @onchange=@((ChangeEventArgs e) => DynaChanged(e, dci.Name, 2))>
-                                        @foreach (var bal in Balances.Where(b => b.Person == Constants.Person2).OrderBy(ba => ba.Name))
+                                        @foreach (var bal in Person2Balances.OrderBy(ba => ba.Name))
                                         {
                                             @if (DynaMonthMap[dci.Name].Item2 == bal.Name)
                                             {
@@ -393,6 +393,8 @@ else
     private List<Transaction> Transactions;
     private List<Transaction> FilteredTransactions;
     private List<Balance> Balances;
+    private List<Balance> Person1Balances => Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").ToList();
+    private List<Balance> Person2Balances => Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").ToList();
     private List<Security> Securities;
     private List<Monthly> Monthlies;
     private double Person1NetWorth => CalculateNetWorth(Constants.Person1);
@@ -426,8 +428,8 @@ else
         SimulatedConstants.SetMonthlies(Month, Year);
         ErrorMsg = string.Empty;
 
-        PaidIntoPerson1 = Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && !b.BalanceType.Contains("Loan")).ToList()[0].Name;
-        PaidIntoPerson2 = Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && !b.BalanceType.Contains("Loan")).ToList()[0].Name;
+        PaidIntoPerson1 = Person1Balances.Where(b => !b.BalanceType.Contains("Loan") && !b.BalanceType.Contains("Equity") && !b.BalanceType.Contains("Stock")).ToList()[0].Name;
+        PaidIntoPerson2 = Person2Balances.Where(b => !b.BalanceType.Contains("Loan") && !b.BalanceType.Contains("Equity") && !b.BalanceType.Contains("Stock")).ToList()[0].Name;
 
         StaticMonthMap = new Dictionary<string, (string, string)>();
         DynaMonthMap = new Dictionary<string, (string, string)>();
@@ -440,8 +442,8 @@ else
 
         foreach (var smc in SimulatedConstants.StaticMonthlyCosts)
         {
-            StaticMonthMap.Add(smc.Name, new(Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person1).Name,
-                                             Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
+            StaticMonthMap.Add(smc.Name, new(Person1Balances.OrderBy(ba => ba.Name).ToList()[0].Name,
+                                             Person2Balances.OrderBy(ba => ba.Name).ToList()[0].Name));
         }
 
         /*vvvvvvv  USE THESE TO HELP BUILD A DB TABLE vvvvvv*/
@@ -450,8 +452,8 @@ else
 
         foreach (var dci in SimulatedConstants.DynamicCostItems)
         {
-            DynaMonthMap.Add(dci.Name, new(Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person1).Name,
-                                             Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
+            DynaMonthMap.Add(dci.Name, new(Person1Balances.OrderBy(ba => ba.Name).ToList()[0].Name,
+                                             Person2Balances.OrderBy(ba => ba.Name).ToList()[0].Name));
         }
 
         GetPreviousState();
@@ -563,8 +565,8 @@ else
             ForYear = Year;
         }
 
-        var Person1Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
-        var Person2Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
+        var Person1Income = Person1Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
+        var Person2Income = Person2Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
 
         var DesiredMonthlies = SimulatedConstants.GetNeededMonthlies(ForMonth, ForYear);
 
@@ -626,15 +628,15 @@ else
 
         foreach (var smc in SimulatedConstants.StaticMonthlyCosts)
         {
-            StaticMonthMap.Add(smc.Name, new(Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person1).Name,
-                                             Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
+            StaticMonthMap.Add(smc.Name, new(Person1Balances.OrderBy(ba => ba.Name).ToList()[0].Name,
+                                             Person2Balances.OrderBy(ba => ba.Name).ToList()[0].Name));
         }
 
 
         foreach (var dci in SimulatedConstants.DynamicCostItems)
         {
-            DynaMonthMap.Add(dci.Name, new(Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person1).Name,
-                                             Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
+            DynaMonthMap.Add(dci.Name, new(Person1Balances.OrderBy(ba => ba.Name).ToList()[0].Name,
+                                             Person2Balances.OrderBy(ba => ba.Name).ToList()[0].Name));
         }
 
         Person1Income.Value -= PrevIncome1.ContainsKey((ForMonth, ForYear)) ? PrevIncome1[(ForMonth, ForYear)] : 0;
@@ -679,8 +681,8 @@ else
             }
         }
 
-        var Person1Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
-        var Person2Income = Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
+        var Person1Income = Person1Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson1);
+        var Person2Income = Person2Balances.FirstOrDefault(bal => bal.Name == PaidIntoPerson2);
 
         (int, int) prevMonth = Month == 1 ? new(12, Year - 1) : new(Month - 1, Year);
 
@@ -707,15 +709,15 @@ else
 
         foreach (var smc in SimulatedConstants.StaticMonthlyCosts)
         {
-            StaticMonthMap.Add(smc.Name, new(Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person1).Name,
-                                             Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
+            StaticMonthMap.Add(smc.Name, new(Person1Balances.OrderBy(ba => ba.Name).ToList()[0].Name,
+                                             Person2Balances.OrderBy(ba => ba.Name).ToList()[0].Name));
         }
 
 
         foreach (var dci in SimulatedConstants.DynamicCostItems)
         {
-            DynaMonthMap.Add(dci.Name, new(Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person1).Name,
-                                             Balances.OrderBy(ba => ba.Name).FirstOrDefault(b => b.Person == Constants.Person2).Name));
+            DynaMonthMap.Add(dci.Name, new(Person1Balances.OrderBy(ba => ba.Name).ToList()[0].Name,
+                                             Person2Balances.OrderBy(ba => ba.Name).ToList()[0].Name));
         }
 
         GetPreviousState();

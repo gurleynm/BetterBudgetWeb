@@ -343,14 +343,7 @@
         @if (mobile)
         {
             <div class="sidebar">
-                <NavMenu />
-            </div>
-            <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;justify-content:center">
-                <span style='position:relative;font-size:large;top:1vw;text-align:center;color:@Constants.ColorScheme["Text"];'>@(Constants.DarkMode ? "Dark Mode:" : "Light Mode:")&nbsp;</span>
-                <label class="switch">
-                    <input type="checkbox" @bind=DarkMode>
-                    <span class="slider round"></span>
-                </label>
+                <NavMenu @bind-DarkMode=@DarkMode />
             </div>
         }
 
