@@ -33,7 +33,7 @@
                                 @if (Constants.Balances != null)
                                 {
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange1(e, smc))>
-                                        @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person == "JOINT").OrderBy(ba => ba.Name))
+                                        @foreach (var bal in Person1Balances)
                                         {
                                             @if (StaticMonthMap[smc.Name].Item1 == bal.Name)
                                             {
@@ -46,7 +46,7 @@
                                         }
                                     </select>
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange2(e, smc))>
-                                        @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person == "JOINT").OrderBy(ba => ba.Name))
+                                        @foreach (var bal in Person2Balances)
                                         {
                                             @if (StaticMonthMap[smc.Name].Item2 == bal.Name)
                                             {
@@ -112,7 +112,7 @@ else
                                 @if (Constants.Balances != null)
                                 {
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange1(e, smc))>
-                                        @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person == "JOINT").OrderBy(ba => ba.Name))
+                                        @foreach (var bal in Person1Balances)
                                         {
                                             @if (StaticMonthMap.ContainsKey(smc.Name) && StaticMonthMap[smc.Name].Item1 == bal.Name)
                                             {
@@ -125,7 +125,7 @@ else
                                         }
                                     </select>
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange2(e, smc))>
-                                        @foreach (var bal in Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person == "JOINT").OrderBy(ba => ba.Name))
+                                        @foreach (var bal in Person2Balances)
                                         {
                                             @if (StaticMonthMap.ContainsKey(smc.Name) && StaticMonthMap[smc.Name].Item2 == bal.Name)
                                             {
@@ -187,6 +187,16 @@ else
     public EventCallback<Dictionary<string, (string, string)>> StaticMonthMapChanged { get; set; }
     [Parameter]
     public Action<(string, string), (string, string), string> BalanceChanged { get; set; }
+
+    private string[] Ignorables = { "Equity", "Stocks" };
+
+    private List<Balance> Person1Balances => Constants.Balances.Where(b => (b.Person == Constants.Person1 ||
+                                                b.Person.ToUpper() == "JOINT") && !Ignorables.Contains(b.BalanceType))
+                                                .OrderBy(ba => ba.Name).ToList();
+
+    private List<Balance> Person2Balances => Constants.Balances.Where(b => (b.Person == Constants.Person2 ||
+                                                b.Person.ToUpper() == "JOINT") && !Ignorables.Contains(b.BalanceType))
+                                                .OrderBy(ba => ba.Name).ToList();
 
     private string Person1Balance { get; set; }
     private string Person2Balance { get; set; }
