@@ -78,7 +78,7 @@ else
                     <BalanceBlock TheBalance="@balance"
                   OnClick="@(() => FilterBalance(balance.Name))"
                   OnDelete="@(() => ShowDeleteBalBtn(balance))"
-                  IncludeGoals=@Goals />
+                  IncludeGoals=@Goals Mobile=@mobile />
                 }
 
             }
@@ -310,7 +310,7 @@ else
             {
                 @foreach (var balance in Balances)
                 {
-                    <BalanceBlock TheBalance="@balance" FontSize="5" />
+                    <BalanceBlock TheBalance="@balance" FontSize="5" Mobile=@mobile />
                 }
             }
         </div>
