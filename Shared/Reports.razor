@@ -363,9 +363,6 @@ else
     public string Text { get; set; }
 
     [Parameter]
-    public bool Mobile { get; set; }
-
-    [Parameter]
     public EventCallback<bool> OnClose { get; set; }
 
     private List<MonthTab> MonthTabs { get; set; } = new List<MonthTab>();
@@ -391,6 +388,9 @@ else
 
     private string SelectedMonth { get; set; }
     private string SelectedYear { get; set; }
+
+    public bool Mobile => Constants.Mobile;
+
 
     private List<SnapForDynamic> SFDs = new List<SnapForDynamic>();
 

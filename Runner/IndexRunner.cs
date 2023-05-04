@@ -135,27 +135,11 @@ namespace BetterBudgetWeb.Runner
                         return "income-good";
             }
         }
-        public static Transaction Add(ref string ErrorMsg, ref string NewExpense, ref string NewName,
-                                        ref double NewPerson1Amount, ref double NewPerson2Amount,
-                                        ref string NewPerson1PaidWith, ref string NewPerson2PaidWith)
+        
+        public static Transaction Add(string NewExpense, string NewName,
+                                        double NewPerson1Amount, double NewPerson2Amount,
+                                        string NewPerson1PaidWith, string NewPerson2PaidWith)
         {
-            ErrorMsg = string.Empty;
-
-            if (string.IsNullOrEmpty(NewExpense))
-                ErrorMsg += "You must select an Expense type.\n";
-
-            if (string.IsNullOrEmpty(NewName))
-                ErrorMsg += "Your expense must have a Name.\n";
-
-            if (NewPerson1Amount == 0 && NewPerson2Amount == 0)
-                ErrorMsg += $"Either {Constants.Person1} or {Constants.Person2} must have a value not equal to 0.\n";
-
-            if (NewPerson1Amount > 0 && string.IsNullOrEmpty(NewPerson1PaidWith))
-                ErrorMsg += $"Must enter how {Constants.Person1}'s payment method.\n";
-
-            if (NewPerson2Amount > 0 && string.IsNullOrEmpty(NewPerson2PaidWith))
-                ErrorMsg += $"Must enter how {Constants.Person2}'s payment method.\n";
-
             string np1pw = NewPerson1PaidWith == null ? "" : NewPerson1PaidWith;
             string np2pw = NewPerson2PaidWith == null ? "" : NewPerson2PaidWith;
 
@@ -165,36 +149,14 @@ namespace BetterBudgetWeb.Runner
             Envelope env2 = Constants.Envelopes.FirstOrDefault(e => e.Name == np2pw);
             Envelope NewExpEnv = Constants.Envelopes.FirstOrDefault(e => e.Name == newExp);
 
-            if (NewExpense == "Envelope")
-            {
-                if (env1 != null && NewPerson1Amount > env1.Person1Amount)
-                    ErrorMsg += $"{Constants.Person1} must enter an amount ≤ {Constants.Pretty(env1.Person1Amount)} for this envelope.\n";
-
-                if (env2 != null && NewPerson2Amount > env2.Person2Amount)
-                    ErrorMsg += $"{Constants.Person2} must enter an amount ≤ {Constants.Pretty(env1.Person2Amount)} for this envelope.\n";
-            }
-            else if (NewExpEnv != null)
-            {
-                if (NewPerson1Amount > NewExpEnv.Person1Amount)
-                    ErrorMsg += $"{Constants.Person1} must enter an amount ≤ {Constants.Pretty(NewExpEnv.Person1Amount)} for this envelope.\n";
-
-                if (NewPerson2Amount > NewExpEnv.Person2Amount)
-                    ErrorMsg += $"{Constants.Person2} must enter an amount ≤ {Constants.Pretty(NewExpEnv.Person2Amount)} for this envelope.\n";
-            }
-
-            if (string.IsNullOrEmpty(ErrorMsg))
-            {
-                Transaction nt = new Transaction(NewName, NewExpense, NewPerson1Amount, NewPerson2Amount, np1pw, np2pw, "none", "none");
-                NewName = null;
-                NewExpense = null;
-                NewPerson1Amount = 0;
-                NewPerson2Amount = 0;
-                NewPerson1PaidWith = null;
-                NewPerson2PaidWith = null;
-                return nt;
-            }
-
-            return null;
+            Transaction nt = new Transaction(NewName, NewExpense, NewPerson1Amount, NewPerson2Amount, np1pw, np2pw, "none", "none");
+            NewName = null;
+            NewExpense = null;
+            NewPerson1Amount = 0;
+            NewPerson2Amount = 0;
+            NewPerson1PaidWith = null;
+            NewPerson2PaidWith = null;
+            return nt;
         }
         public static double CalculateNetWorth(string person, List<Balance> Balances)
         {

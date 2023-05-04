@@ -53,7 +53,7 @@ else
     </div>
 
 
-    @if (!mobile)
+    @if (!Constants.Mobile)
     {
         <h1 style="text-align:center;color:@GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
         <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
@@ -78,7 +78,7 @@ else
                     <BalanceBlock TheBalance="@balance"
                   OnClick="@(() => FilterBalance(balance.Name))"
                   OnDelete="@(() => ShowDeleteBalBtn(balance))"
-                  IncludeGoals=@Goals Mobile=@mobile />
+                  IncludeGoals=@Goals />
                 }
 
             }
@@ -128,7 +128,7 @@ else
         <div style="display:flex;justify-content:start;">
             <!-- Monthly Spending -->
             <div style="width:50%;float:left; margin-right:1vw; margin-bottom:2vh;">
-                <MonthlySpending Mobile=mobile
+                <MonthlySpending
                          OnAddConfirm=AddConfirm
                          OnDeleteConfirm=DeleteConfirm
                          OnEditConfirm=@(() => SetDataPoints(true))
@@ -310,7 +310,7 @@ else
             {
                 @foreach (var balance in Balances)
                 {
-                    <BalanceBlock TheBalance="@balance" FontSize="5" Mobile=@mobile />
+                    <BalanceBlock TheBalance="@balance" FontSize="5" />
                 }
             }
         </div>
@@ -327,7 +327,7 @@ else
         }
         @if (DataPoints != null && DataPoints.Count > 0)
         {
-            <button class="spendchart-btn" @onclick="@ToggleChartBtn">
+            <button class="spendchart-btn" style="width:100%" @onclick="@ToggleChartBtn">
                 @if (!ShowChart)
                 {
                     <h2 style="float:left;">Spending Chart&nbsp;<i class="arrow right"></i></h2>
@@ -345,7 +345,7 @@ else
                 <h3>Month Actual Expenses:</h3>
                 <h4 class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")' style="text-align:center">@Constants.Pretty(ActualExpense)</h4>
                 <br />
-                <Chart DPs=DataPoints BarClicked=FilterDate Mobile=mobile />
+                <Chart DPs=DataPoints BarClicked=FilterDate />
             }
 
             <br />
@@ -355,7 +355,7 @@ else
 
         <!-- Monthly Spending -->
         <div style="width:100%;float:left;margin-bottom:2vh;">
-            <MonthlySpending Mobile=mobile
+            <MonthlySpending
                      OnAddConfirm=AddConfirm
                      @bind-Envelopes=Envelopes
                      @bind-Transactions=Transactions
@@ -471,23 +471,19 @@ else
     @if (ViewReports)
     {
         <Reports Title="@(string.Format("{0} (By: {1})","Penis", "Deez Nuts"))"
-         Text="Story"
-         Mobile="mobile"
-         OnClose="@CloseModal">
+         Text="Story" OnClose="@CloseModal">
 
         </Reports>
     }
     @if (StashCashBool)
     {
-        <StashCash Mobile="mobile"
-           OnClose="@CloseModal">
+        <StashCash OnClose="@CloseModal">
 
         </StashCash>
     }
     @if (CashOutBool)
     {
-        <CashOut Mobile="mobile"
-         OnClose="@CloseModal">
+        <CashOut OnClose="@CloseModal">
 
         </CashOut>
     }
@@ -526,7 +522,6 @@ else
     private string MonthYear => (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
 
     private string ErrorMsg = string.Empty;
-    private bool mobile;
 
     private bool ShowChart;
 
@@ -569,7 +564,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         CatchAll catchAll = await CatchAllRunner.Grab();
         Balances = catchAll.Balances;

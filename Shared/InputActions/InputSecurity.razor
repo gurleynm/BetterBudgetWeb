@@ -178,8 +178,6 @@ else
 }
 @code {
     [Parameter]
-    public bool Mobile { get; set; }
-    [Parameter]
     public EventCallback OnClick { get; set; }
 
     private string balanceSelected { get; set; }
@@ -215,6 +213,8 @@ else
     public DateTime ExpirationDate { get; set; } = DateTime.Now;
     public string SecType { get; set; } = "Stock";
     public double NumericAmountToTrade = -1;
+    
+    public bool Mobile => Constants.Mobile;
 
     public string Person { get; set; } = Constants.Person1;
 

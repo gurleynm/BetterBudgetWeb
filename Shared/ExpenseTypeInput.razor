@@ -1,0 +1,134 @@
+﻿@using BetterBudgetWeb.Data;
+
+@if (ExpenseTypes == null)
+{
+    <select>
+        <option value="@string.Empty" selected disabled="disabled">Expense Types</option>
+    </select>
+}
+else
+{
+    @if (!Mobile)
+    {
+        <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="NewExpense" title="Pick an Expense Type ">
+            <option value="@string.Empty" selected disabled="disabled">Expense Type</option>
+            @foreach (var et in ExpenseTypes)
+            {
+                @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
+               || et.Contains("-- Others --"))
+                {
+                    <option value="et" disabled>@et</option>
+                }
+                else
+                {
+                    <option value="@et">@et</option>
+                }
+            }
+        </select>
+    }
+    else
+    {
+        <select class="custom-select" style="font-size:3vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewExpense" title="Pick an Expense Type ">
+            <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Expense</option>
+            @foreach (var et in ExpenseTypes)
+            {
+                @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
+               || et.Contains("-- Others --"))
+                {
+                    <option style="font-size:3vw;" disabled value="@et">@et</option>
+                }
+                else
+                {
+                    <option style="font-size:3vw;" value="@et">@et</option>
+                }
+            }
+        </select>
+    }
+}
+
+@code {
+    [Parameter]
+    public bool Mobile { get; set; }
+
+    private List<string> ExpenseTypes { get; set; } = new List<string>();
+
+    public List<Data.Envelope> Person1Envelopes;
+    public List<Data.Envelope> Person2Envelopes;
+
+
+    private string newExpense { get; set; }
+
+    [Parameter]
+    public string NewExpense
+    {
+        get => newExpense;
+        set
+        {
+            if (newExpense == value) return;
+            newExpense = value;
+            NewExpenseChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> NewExpenseChanged { get; set; }
+
+    private string FilterIndicatorTxt = " (ON)";
+
+    protected override Task OnInitializedAsync()
+    {
+        Person1Envelopes = Constants.Envelopes.Where(e => e.Person1Amount > 0).ToList();
+        Person2Envelopes = Constants.Envelopes.Where(e => e.Person2Amount > 0).ToList();
+
+        var Balances = Constants.Balances;
+
+        var TempDCI = new List<string>();
+        var TempEnv = new List<string>();
+        var TempOth = new List<string>();
+
+        foreach (var dci in Constants.DynamicCostItems)
+            TempDCI.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
+
+        TempDCI.Sort();
+
+        if (Person1Envelopes.Count > 0 || Person2Envelopes.Count > 0)
+            TempOth.Add("Envelope");
+
+        if (Balances.Count(bal => bal.BalanceType == "Equity") > 0)
+            TempOth.Add("Equity");
+
+        TempOth.Add("Static Cost");
+        TempOth.Add("Income");
+
+        TempOth.Sort();
+
+        foreach (var p1e in Person1Envelopes)
+            TempEnv.Add(p1e.Name);
+
+        foreach (var p2e in Person2Envelopes)
+            if (!TempEnv.Contains(p2e.Name))
+                TempEnv.Add(p2e.Name);
+
+        TempEnv.Sort();
+
+        ExpenseTypes.Add("-- Dynamic Costs --");
+
+        foreach (var d in TempDCI)
+            ExpenseTypes.Add(d);
+
+        ExpenseTypes.Add("-- Envelopes --");
+        foreach (var d in TempEnv)
+            ExpenseTypes.Add(d);
+
+        ExpenseTypes.Add("-- Others --");
+        foreach (var o in TempOth)
+            ExpenseTypes.Add(o);
+
+        return base.OnInitializedAsync();
+    }
+
+    private bool ValidPaymentBalance(Balance b, string person)
+    {
+        return (b.Person == person || b.Person.ToUpper() == "JOINT") && b.BalanceType != "Stocks";
+    }
+}

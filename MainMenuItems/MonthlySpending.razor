@@ -1,6 +1,7 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
+@using static BetterBudgetWeb.Shared.AddExpense;
 @inject IJSRuntime JSRuntime
 
 <style>
@@ -19,8 +20,17 @@
     button {
         color: black;
     }
+
+    table.transaction_table > tr > th {
+        padding: 1vw;
+    }
+
+    table.transaction_table > tr > td {
+        padding: 1vw;
+    }
 </style>
 
+<AddExpense OnAddConfirm="Add" />
 @if (!Mobile)
 {
     @if (!string.IsNullOrEmpty(ErrorMsg))
@@ -32,9 +42,9 @@
         }
 
     }
-    <table>
+    <table class="transaction_table" style="width:40vw">
         <tr>
-            <th colspan="6" style="background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
+            <th colspan="6" style="background-color:darkblue;color:white;padding:0"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
         </tr>
         <tr style="height:3vw">
             <th style="cursor:pointer;padding:.5vw 1vw" @onclick='() => Order("Date")'>@DateHeaderTxt</th>
@@ -48,84 +58,6 @@
                     <button style="margin:5px" @onclick='() => ResetFilters(true)'>Clear Filter</button>
                 }
             </th>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="text" placeholder="Name" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewName" />
-                <br />
-                <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="NewExpense" title="Pick an Expense Type ">
-                    <option value="@string.Empty" selected disabled="disabled">Expense</option>
-                    @foreach (var et in ExpenseTypes)
-                    {
-                        @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
-                                || et.Contains("-- Others --"))
-                        {
-                            <option value="et" disabled>@et</option>
-                        }
-                        else
-                        {
-                            <option value="@et">@et</option>
-                        }
-                    }
-                </select>
-            </td>
-            <td>
-                <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson1Amount" />
-                <br />
-                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
-                    @if (Person1Envelopes != null && Person1Envelopes.Count > 0 && NewExpense == "Envelope")
-                    {
-                        <option selected value="@string.Empty" disabled>@Envelope1Header</option>
-                        @foreach (var pay in Person1Envelopes)
-                        {
-                            <option value="@pay.Name">@pay.Name</option>
-                        }
-                    }
-                    else
-                    {
-                        @if (Person1Balances != null)
-                        {
-                            <option selected value="@string.Empty" disabled>@Balance1Header</option>
-                            @foreach (var pay in Person1Balances)
-                            {
-                                <option style="background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
-                            }
-                        }
-                    }
-                </select>
-            </td>
-            <td>
-                <input type="number" style="width:5vw;margin:1vh 0 1vh 0;" @bind="NewPerson2Amount" />
-                <br />
-                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="NewPerson2PaidWith" title="Pick a payment type ">
-                    @if (Person2Envelopes != null && Person2Envelopes.Count > 0 && NewExpense == "Envelope")
-                    {
-                        <option selected value="@string.Empty" disabled>@Envelope2Header</option>
-                        @foreach (var pay in Person2Envelopes)
-                        {
-                            <option value="@pay.Name">@pay.Name</option>
-                        }
-                    }
-                    else
-                    {
-                        @if (Person2Balances != null)
-                        {
-                            <option selected value="@string.Empty" disabled>@Balance2Header</option>
-                            @foreach (var pay in Person2Balances)
-                            {
-                                <option style="background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
-                            }
-                        }
-                    }
-                </select>
-            </td>
-            <td>
-                @(NewPerson1Amount + NewPerson2Amount)
-            </td>
-            <td style="padding:.5vw 1vw">
-                <button class="btn btn-primary" disabled=@Disabled @onclick="Add"><span class="oi oi-plus"></span></button>
-            </td>
         </tr>
         @if (FilteredTransactions != null)
         {
@@ -235,83 +167,6 @@ else
     <table>
         <tr>
             <th colspan="5" style="font-size:3vw;background-color:darkblue;color:white"><i>@(DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString())</i></th>
-        </tr>
-        <tr>
-            <td>
-                <input type="text" placeholder="Name" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="NewName" />
-                <br />
-                <select class="custom-select" style="font-size:3vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewExpense" title="Pick an Expense Type ">
-                    <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Expense</option>
-                    @foreach (var et in ExpenseTypes)
-                    {
-                        @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
-                       || et.Contains("-- Others --"))
-                        {
-                            <option style="font-size:3vw;" disabled value="@et">@et</option>
-                        }
-                        else
-                        {
-                            <option style="font-size:3vw;" value="@et">@et</option>
-                        }
-                    }
-                </select>
-            </td>
-            <td>
-                <input type="number" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="NewPerson1Amount" />
-                <br />
-                <select class="custom-select" style="font-size:3vw;width:8vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewPerson1PaidWith" title="Pick a payment type ">
-                    @if (Person1Envelopes != null && Person1Envelopes.Count > 0 && NewExpense == "Envelope")
-                    {
-                        <option selected value="@string.Empty" disabled>@Envelope1Header</option>
-                        @foreach (var pay in Person1Envelopes)
-                        {
-                            <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
-                        }
-                    }
-                    else
-                    {
-                        @if (Person1Balances != null)
-                        {
-                            <option selected value="@string.Empty" disabled>@Balance1Header</option>
-                            @foreach (var pay in Person1Balances)
-                            {
-                                <option style="font-size:3vw;background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
-                            }
-                        }
-                    }
-                </select>
-            </td>
-            <td>
-                <input type="number" style="font-size:3vw;width:10vw;margin:1vh 0 1vh 0;" @bind="NewPerson2Amount" />
-                <br />
-                <select class="custom-select" style="font-size:3vw;width:8vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewPerson2PaidWith" title="Pick a payment type ">
-                    @if (Person2Envelopes != null && Person2Envelopes.Count > 0 && NewExpense == "Envelope")
-                    {
-                        <option selected value="@string.Empty" disabled>@Envelope1Header</option>
-                        @foreach (var pay in Person2Envelopes)
-                        {
-                            <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
-                        }
-                    }
-                    else
-                    {
-                        @if (Person2Balances != null)
-                        {
-                            <option selected value="@string.Empty" disabled>@Balance1Header</option>
-                            @foreach (var pay in Person2Balances)
-                            {
-                                <option style="font-size:3vw;background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
-                            }
-                        }
-                    }
-                </select>
-            </td>
-            <td style="font-size:3vw;">
-                @(NewPerson1Amount + NewPerson2Amount)
-            </td>
-            <td>
-                <button class="btn btn-primary" disabled=@Disabled @onclick="Add"><span class="oi oi-plus"></span></button>
-            </td>
         </tr>
         <tr>
             <th style="font-size:3vw">Date</th>
@@ -435,7 +290,6 @@ else
 {
     <EditorModalDialog Title="@(string.Format("{0} (By: {1})","Penis", "Deez Nuts"))"
                    Text="Story"
-                   Mobile="Mobile"
                    Transact="@SelectedTransaction"
                    OnClose="@CloseModal">
 
@@ -445,7 +299,6 @@ else
 @if (ShowDelete)
 {
     <DeleteConfirm Transact="@SelectedTransaction"
-               Mobile=Mobile
                OnClose="@Delete">
 
     </DeleteConfirm>
@@ -458,8 +311,7 @@ else
     private List<Balance> balances;
     private List<Data.Envelope> envelopes;
 
-    [Parameter]
-    public bool Mobile { get; set; }
+    public bool Mobile => Constants.Mobile;
 
     [Parameter]
     public EventCallback OnAddConfirm { get; set; }
@@ -517,12 +369,15 @@ else
             if (balances == value) return;
             balances = value;
 
-            Person1Balances = Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
-            Person2Balances = Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
+            Person1Balances = Balances.Where(b => ValidPaymentBalance(b, Constants.Person1)).OrderBy(ba => ba.Name).ToList();
+            Person2Balances = Balances.Where(b => ValidPaymentBalance(b, Constants.Person2)).OrderBy(ba => ba.Name).ToList();
+
+            PayableBalances = Balances.Where(b => ValidPaymentBalance(b)).OrderBy(ba => ba.Name).ToList();
 
             BalancesChanged.InvokeAsync(value);
         }
     }
+
     [Parameter]
     public List<Data.Envelope> Envelopes
     {
@@ -548,7 +403,17 @@ else
     [Parameter]
     public EventCallback<List<Data.Envelope>> EnvelopesChanged { get; set; }
 
-    private List<string> ExpenseTypes { get; set; } = new List<string>();
+    private bool ValidPaymentBalance(Balance b, string person)
+    {
+        return (b.Person == person || b.Person.ToUpper() == "JOINT") && b.BalanceType != "Stocks";
+    }
+
+    private bool ValidPaymentBalance(Balance b)
+    {
+        return b.BalanceType != "Stocks";
+    }
+
+    public List<Balance> PayableBalances { get; set; }
 
     private double Person1IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => (t.ExpenseType == "Income" || t.ExpenseType == "Equity") && t.MonthYear() == MonthYear).Sum(na => na.Person1Amount);
     private double Person2IncomeSum => FilteredTransactions == null ? 0 : FilteredTransactions.Where(t => (t.ExpenseType == "Income" || t.ExpenseType == "Equity") && t.MonthYear() == MonthYear).Sum(la => la.Person2Amount);
@@ -596,71 +461,6 @@ else
         Person1Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).Where(e => e.Person1Amount > 0).ToList();
         Person2Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).Where(e => e.Person2Amount > 0).ToList();
 
-        var TempDCI = new List<string>();
-        var TempEnv = new List<string>();
-        var TempOth = new List<string>();
-
-        foreach (var dci in Constants.DynamicCostItems)
-            TempDCI.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
-
-        TempDCI.Sort();
-
-        if (Person1Envelopes.Count > 0 || Person2Envelopes.Count > 0)
-            TempOth.Add("Envelope");
-
-        if (Balances.Count(bal => bal.BalanceType == "Equity") > 0)
-            TempOth.Add("Equity");
-
-        TempOth.Add("Static Cost");
-        TempOth.Add("Income");
-
-        TempOth.Sort();
-
-        foreach (var p1e in Person1Envelopes)
-            TempEnv.Add(p1e.Name);
-
-        foreach (var p2e in Person2Envelopes)
-        if (!TempEnv.Contains(p2e.Name))    
-            TempEnv.Add(p2e.Name);
-
-        TempEnv.Sort();
-
-        ExpenseTypes.Add("-- Dynamic Costs --");
-
-        foreach(var d in TempDCI)
-            ExpenseTypes.Add(d);
-            
-        ExpenseTypes.Add("-- Envelopes --");
-        foreach(var d in TempEnv)
-            ExpenseTypes.Add(d);
-            
-        ExpenseTypes.Add("-- Others --");
-        foreach(var o in TempOth)
-            ExpenseTypes.Add(o);
-        
-
-        int maxP1B = Person1Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
-        int maxP1E = Person1Envelopes.Count > 0 ? Person1Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length : 0;
-        int maxP1 = Math.Max(maxP1B, maxP1E);
-
-        if (maxP1 > Envelope1Header.Length)
-        {
-            Envelope1Header = "Envelopes ".PadRight(maxP1, '-');
-
-            Balance1Header = "Payment ".PadRight(maxP1, '-');
-        }
-
-        int maxP2B = Person2Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
-        int maxP2E = Person2Envelopes.Count > 0 ? Person2Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length : 0;
-        int maxP2 = Math.Max(maxP2B, maxP2E);
-
-        if (maxP2 > Envelope2Header.Length)
-        {
-            Envelope2Header = "Envelopes ".PadRight(maxP2, '-');
-
-            Balance2Header = "Payment ".PadRight(maxP2, '-');
-        }
-
         return base.OnInitializedAsync();
     }
 
@@ -697,11 +497,14 @@ else
             StateHasChanged();
         }
     }
-    private async void Add()
+
+    private async void Add(NewTransaction addIt)
     {
-        Disabled = true;
-        var nt = IndexRunner.Add(ref ErrorMsg, ref NewExpense, ref NewName, ref NewPerson1Amount, ref NewPerson2Amount,
-                                    ref NewPerson1PaidWith, ref NewPerson2PaidWith);
+        if (addIt == null)
+            return;
+
+        var nt = IndexRunner.Add(addIt.ExpenseType, addIt.Name, addIt.TopAmount, addIt.BottomAmount,
+                                    addIt.TopPaidWith, addIt.BottomPaidWith);
 
         if (nt != null)
         {
@@ -715,6 +518,7 @@ else
 
             AddConfirm();
         }
+
         Disabled = false;
         StateHasChanged();
     }

@@ -172,9 +172,6 @@ else
 
 @code {
     [Parameter]
-    public bool Mobile { get; set; }
-
-    [Parameter]
     public EventCallback<bool> OnClose { get; set; }
 
     public double Person1Amount { get; set; }
@@ -185,6 +182,9 @@ else
     public string ErrorColor { get; set; }
 
     private List<Data.Envelope> Envelopes { get; set; }
+
+    public bool Mobile => Constants.Mobile;
+
 
     private string selectedEnvID { get; set; }
     private string SelectedEnvID

@@ -5,7 +5,7 @@
 <PageTitle>Delete</PageTitle>
 
 <h1>Delete</h1>
-@if (!mobile)
+@if (!Constants.Mobile)
 {
     <div class="tab">
         <button class="tablinks @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
@@ -25,24 +25,23 @@ else
 }
 @if (ShowDynamic)
 {
-    <DeleteDynamic Mobile=@mobile />
+    <DeleteDynamic />
 }
 else if (ShowStatic)
 {
-    <DeleteStatic Mobile=@mobile />
+    <DeleteStatic  />
 }
 else if (ShowEnvelope)
 {
-    <DeleteEnvelope Mobile=@mobile />
+    <DeleteEnvelope />
 }
 else if (ShowSavings && false)
 {
-    <DeleteSavings Mobile=@mobile />
+    <DeleteSavings />
 }
 
 
 @code {
-    private bool mobile { get; set; }
 
     private string TransactionName;
     private string ExpenseType;
@@ -89,7 +88,6 @@ else if (ShowSavings && false)
 
     protected override async Task OnInitializedAsync()
     {
-        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
 

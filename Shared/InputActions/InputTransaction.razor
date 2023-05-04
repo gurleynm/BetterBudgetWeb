@@ -825,10 +825,10 @@ else
     [Parameter]
     public string Person2Amount { get; set; }
     [Parameter]
-    public bool Mobile { get; set; }
-    [Parameter]
     public Action<string> Preset { get; set; }
     public List<Preset> Presets { get; set; }
+    
+    public bool Mobile => Constants.Mobile;
 
     public string SelectedPreset { get; set; }
 

@@ -49,8 +49,7 @@ else
 }
 
 @code {
-    [Parameter]
-    public bool Mobile { get; set; }
+    public bool Mobile => Constants.Mobile;
 
     public int month { get; set; }= DateTime.Now.Month;
     public int year { get; set; } = DateTime.Now.Year;

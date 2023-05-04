@@ -173,8 +173,9 @@ else
     public string Amount { get; set; }
     [Parameter]
     public bool UpdateCheck { get; set; } = true;
-    [Parameter]
-    public bool Mobile { get; set; }
+    
+    public bool Mobile => Constants.Mobile;
+
 
     private List<Balance> Balances => Constants.Balances;
     private List<Data.Envelope> Envelopes { get; set; }

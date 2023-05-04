@@ -171,9 +171,6 @@ else
 
 @code {
     [Parameter]
-    public bool Mobile { get; set; }
-
-    [Parameter]
     public EventCallback<bool> OnClose { get; set; }
 
     public double Person1Amount { get; set; }
@@ -199,6 +196,8 @@ else
     private Data.Envelope SelectedEnv { get; set; }
     private Balance Person1Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person1Account);
     private Balance Person2Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person2Account);
+    
+    public bool Mobile => Constants.Mobile;
 
 
     protected override Task OnInitializedAsync()

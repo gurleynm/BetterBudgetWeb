@@ -35,7 +35,7 @@
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange1(e, smc))>
                                         @foreach (var bal in Person1Balances)
                                         {
-                                            @if (StaticMonthMap[smc.Name].Item1 == bal.Name)
+                                            @if (StaticMonthMap.ContainsKey(smc.Name) && StaticMonthMap[smc.Name].Item1 == bal.Name)
                                             {
                                                 <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
                                             }
@@ -48,7 +48,7 @@
                                     <select @onchange=@((ChangeEventArgs e) => BalanceChange2(e, smc))>
                                         @foreach (var bal in Person2Balances)
                                         {
-                                            @if (StaticMonthMap[smc.Name].Item2 == bal.Name)
+                                            @if (StaticMonthMap.ContainsKey(smc.Name) && StaticMonthMap[smc.Name].Item2 == bal.Name)
                                             {
                                                 <option selected style="background-color:@bal.HexColor;color:@bal.TextColor">@bal.Name</option>
                                             }
@@ -166,8 +166,8 @@ else
     public int Year { get; set; }
     [Parameter]
     public List<Transaction> Trans { get; set; } = new List<Transaction>();
-    [Parameter]
-    public bool Mobile { get; set; }
+
+    public bool Mobile => Constants.Mobile;
 
     public Dictionary<string, (string, string)> staticMonthMap { get; set; }
 

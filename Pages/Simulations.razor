@@ -41,7 +41,7 @@
 </div>
 
 <div style="display:flex;justify-content:space-around">
-    <div style='display:@(mobile ? "inline-block" : "flex");justify-content:space-around'>
+    <div style='display:@(Constants.Mobile ? "inline-block" : "flex");justify-content:space-around'>
         <br />
         <br />
         <label style="float:left;margin-right:1vw;">@(Constants.Person1 + ":")</label>
@@ -110,7 +110,7 @@
 </div>
 <br />
 <br />
-@if (!mobile)
+@if (!Constants.Mobile)
 {
     <div style="display:flex;justify-content:center;flex-wrap:wrap;width:95vw;">
         @if (Balances != null)
@@ -316,13 +316,13 @@ else
     <br />
 
     <!-- Set Monthly Costs Goals-->
-    <SimulatedSetMonthlyTable Trans=FilteredTransactions Month=Month Year=Year @bind-StaticMonthMap=StaticMonthMap BalanceChanged=BalanceChanged Mobile=mobile />
+    <SimulatedSetMonthlyTable Trans=FilteredTransactions Month=Month Year=Year @bind-StaticMonthMap=StaticMonthMap BalanceChanged=BalanceChanged />
 
     <br style="clear:both" />
     <br />
 
     <!-- Savings Goals-->
-    <SimulatedSavingsGoalsTable Month=Month Year=Year Mobile=mobile />
+    <SimulatedSavingsGoalsTable Month=Month Year=Year />
 
     <br />
 
@@ -413,12 +413,10 @@ else
     private string MonthYear => (new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString());
 
     private string ErrorMsg = string.Empty;
-    private bool mobile;
 
 
     protected override async Task OnInitializedAsync()
     {
-        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         CatchAll catchAll = await CatchAllRunner.Grab();
         Balances = catchAll.Balances;

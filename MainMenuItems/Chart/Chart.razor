@@ -61,8 +61,7 @@
     [Parameter]
     public EventCallback<string> BarClicked { get; set; }
 
-    [Parameter]
-    public bool Mobile { get; set; }
+    public bool Mobile => Constants.Mobile;
 
     private double MaxValue => DPs.Select(p => p.Value).Max();
 }

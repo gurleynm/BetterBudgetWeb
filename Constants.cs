@@ -1,10 +1,12 @@
 ﻿using BetterBudgetWeb.Data;
 using BetterBudgetWeb.Repo;
 using BetterBudgetWeb.Runner;
+using Microsoft.AspNetCore.Components;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using static BetterBudgetWeb.Shared.AddExpense;
 
 namespace BetterBudgetWeb
 {
@@ -61,6 +63,20 @@ namespace BetterBudgetWeb
 
         public static bool Us = true;
         public static bool Test = false;
+        
+        private static bool mobile = true;
+        public static bool Mobile
+        {
+            get { return mobile; }
+            set
+            {
+                if (mobile == value) return;
+                mobile = value;
+
+                MobileChanged.InvokeAsync(value);
+            }
+        }
+        public static EventCallback<bool> MobileChanged { get; set; }
         public static string Key { get; set; } = "";
 
         public static string PassKey { get; set; } = "no";

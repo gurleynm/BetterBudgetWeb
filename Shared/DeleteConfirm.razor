@@ -87,8 +87,7 @@ else
 }
 
 @code {
-    [Parameter]
-    public bool Mobile { get; set; }
+    public bool Mobile => Constants.Mobile;
 
     [Parameter]
     public string Title { get; set; }

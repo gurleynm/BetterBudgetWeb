@@ -5,7 +5,7 @@
 <PageTitle>Input</PageTitle>
 
 <h1>Input</h1>
-@if (!mobile)
+@if (!Constants.Mobile)
 {
     <div class="tab">
         @if (NoBalances)
@@ -47,8 +47,7 @@ else
                   PaidWithPerson2="@PaidWithPerson2"
                   Person1Amount="@Person1Amount"
                   Person2Amount="@Person2Amount"
-                  Preset="Preset"
-                  Mobile="@mobile">
+                  Preset="Preset">
     </InputTransaction>
 }
 else if (ShowBal)
@@ -57,24 +56,21 @@ else if (ShowBal)
               APR="@APR"
               Amount="@InitAmount"
               BalanceType="@BalanceType"
-              Color="@Color"
-              Mobile="@mobile">
+              Color="@Color">
     </InputBalance>
 }
 else if (ShowEnv)
 {
-    <InputEnvelope Mobile=@mobile />
+    <InputEnvelope />
 }
 else if (ShowStatic)
 {
-    <InputMonthlyCost Mobile=@mobile />
+    <InputMonthlyCost />
 
 }
 
 <!-- <button class="btn btn-primary" @onclick="@ShowEnvurity">Input Security</button> -->
 @code {
-    private bool mobile { get; set; }
-
     private string TransactionName;
     private string ExpenseType;
     private string PaidOffPerson1;
@@ -120,7 +116,6 @@ else if (ShowStatic)
 
     protected override async Task OnInitializedAsync()
     {
-        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
 

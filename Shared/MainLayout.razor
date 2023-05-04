@@ -415,7 +415,8 @@
 </div>
 
 @code {
-    private bool mobile { get; set; } = true;
+    private bool mobile => Constants.Mobile;
+
     private string theView { get; set; }
     private string ErrorMsg { get; set; }
     private bool WeIn { get; set; }
@@ -440,8 +441,8 @@
     protected override async Task OnInitializedAsync()
     {
         ErrorMsg = "";
-        mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
-        theView = mobile ? "mobile-view" : "desktop-view";
+        Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
+        theView = Constants.Mobile ? "mobile-view" : "desktop-view";
 
         string BeenToggled = await ReadCookies("DarkModePreference");
 

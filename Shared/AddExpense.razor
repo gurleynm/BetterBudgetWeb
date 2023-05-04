@@ -1,0 +1,429 @@
+﻿@using BetterBudgetWeb.Runner;
+<style>
+    .outer_add {
+        margin: 1vw auto;
+        width: 100%;
+        height: fit-content;
+        border: 1px solid #ececec;
+        background-color: #2a2a2a;
+        color: white;
+        border-radius: 12px;
+        margin-bottom: @(!Mobile ? "1vh" : "3vw");
+    }
+
+    .add_expense {
+        margin-bottom: 1vh;
+    }
+
+    table.add_expense > tr {
+        background-color: transparent;
+    }
+
+        table.add_expense > tr > td {
+            border: none;
+        }
+</style>
+
+<div class="outer_add">
+    <h2 style="text-align:center">Add An Expense</h2>
+    <h4 style="text-align:center;color:@ErrorMsgColor">@ErrorMsg</h4>
+    <hr style="color:black" />
+    <EditForm Model="@NewTrans">
+        <table class="add_expense">
+            @if (!Mobile)
+            {
+                <tr>
+                    <td>
+                        <InputDate @bind-Value="NewTrans.DateOfTransaction" />
+                    </td>
+                    <td>
+                        <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" />
+                    </td>
+                    <td>
+                        <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <InputNumber style="width:4vw" @bind-Value=NewTrans.TopAmount />
+                    </td>
+                    <td>
+                        <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
+                    </td>
+                    <td style="width:9vw">
+                        @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith))
+                        {
+                            @if (string.IsNullOrEmpty(NewTrans.TopWhoPaid))
+                            {
+                                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="@NewTrans.TopWhoPaid">
+                                    <option value="@string.Empty" disabled selected>--Pick Person--</option>
+                                    <option>@Constants.Person1</option>
+                                    <option>@Constants.Person2</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <div>@NewTrans.TopWhoPaid</div>
+                            }
+                        }
+                        else
+                        {
+                            <div> Who Paid?</div>
+                        }
+                    </td>
+                </tr>
+                @if (ShowSecond)
+                {
+                    <tr>
+                        <td>
+                            <InputNumber style="width:4vw" @bind-Value=NewTrans.BottomAmount />
+                        </td>
+                        <td>
+                            <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.BottomPaidWith" />
+                        </td>
+                        <td style="width:9vw">
+                            @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith))
+                            {
+                                @if (string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
+                                {
+                                    <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="@NewTrans.BottomWhoPaid">
+                                        <option value="@string.Empty" disabled selected>--Pick Person--</option>
+                                        <option>@Constants.Person1</option>
+                                        <option>@Constants.Person2</option>
+                                    </select>
+                                }
+                                else
+                                {
+                                    <div>@NewTrans.BottomWhoPaid</div>
+                                }
+                            }
+                            else
+                            {
+                                <div>Who Paid?</div>
+                            }
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="3" style="padding:1vw">
+                        @if (ShowSecond)
+                        {
+                            <button class="btn btn-danger" @onclick=@(() => ShowSecond = !ShowSecond)>Hide Second Person</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" @onclick=@(() => ShowSecond = !ShowSecond)>Show Second Person</button>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <button class="btn btn-primary" disabled=@Disabled @onclick="Add">Add</button>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td style="font-size:3vw;padding:1vw">
+                        <InputDate @bind-Value="NewTrans.DateOfTransaction" />
+                    </td>
+                    <td style="font-size:3vw;padding:1vw">
+                        <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="font-size:3vw;padding:1vw">
+                        <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:3vw;padding:1vw">
+                        <InputNumber style="width:8vw" @bind-Value=NewTrans.TopAmount />
+
+                        <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
+                    </td>
+                    <td style="font-size:3vw;padding:1vw;width:9vw">
+                        @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith))
+                        {
+                            @if (string.IsNullOrEmpty(NewTrans.TopWhoPaid))
+                            {
+                                <select class="custom-select" style="font-size:3vw;" @bind="@NewTrans.TopWhoPaid">
+                                    <option value="@string.Empty" disabled selected>--Pick Person--</option>
+                                    <option>@Constants.Person1</option>
+                                    <option>@Constants.Person2</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <div>@NewTrans.TopWhoPaid</div>
+                            }
+                        }
+                        else
+                        {
+                            <div> Who Paid?</div>
+                        }
+                    </td>
+                </tr>
+                @if (ShowSecond)
+                {
+                    <tr>
+                        <td style="font-size:3vw;padding:1vw">
+                            <InputNumber style="width:8vw" @bind-Value=NewTrans.BottomAmount />
+
+                            <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.BottomPaidWith" />
+                        </td>
+                        <td style="font-size:3vw;padding:1vw;width:9vw">
+                            @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith))
+                            {
+                                @if (string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
+                                {
+                                    <select class="custom-select" style="font-size:3vw" @bind="@NewTrans.BottomWhoPaid">
+                                        <option value="@string.Empty" disabled selected>--Pick Person--</option>
+                                        <option>@Constants.Person1</option>
+                                        <option>@Constants.Person2</option>
+                                    </select>
+                                }
+                                else
+                                {
+                                    <div>@NewTrans.BottomWhoPaid</div>
+                                }
+                            }
+                            else
+                            {
+                                <div>Who Paid?</div>
+                            }
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="3" style="padding:1vw">
+                        @if (ShowSecond)
+                        {
+                            <button class="btn btn-danger" @onclick=@(() => ShowSecond = !ShowSecond)>Hide Second Person</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" @onclick=@(() => ShowSecond = !ShowSecond)>Show Second Person</button>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="font-size:3vw;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <button class="btn btn-primary" disabled=@Disabled @onclick="Add">Add</button>
+                    </td>
+                </tr>
+            }
+        </table>
+    </EditForm>
+</div>
+
+@code {
+    private bool Mobile => Constants.Mobile;
+
+    private NewTransaction newTrans { get; set; }
+    [Parameter]
+    public NewTransaction NewTrans
+    {
+        get { return newTrans; }
+        set
+        {
+            if (newTrans == value) return;
+            newTrans = value;
+
+            NewTransChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<NewTransaction> NewTransChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<NewTransaction> OnAddConfirm { get; set; }
+
+    private bool showSecond;
+    private bool ShowSecond
+    {
+        get { return showSecond; }
+        set
+        {
+            showSecond = value;
+            if (!value)
+            {
+                NewTrans.BottomAmount = 0;
+                NewTrans.BottomPaidWith = "";
+                NewTrans.BottomWhoPaid = "";
+            }
+        }
+    }
+    private string ErrorMsg;
+    private string ErrorMsgColor = "red";
+    private bool Disabled;
+
+    protected override Task OnInitializedAsync()
+    {
+        NewTrans = new NewTransaction();
+        return base.OnInitializedAsync();
+    }
+
+    private async void Add()
+    {
+        Disabled = true;
+        ErrorMsg = "";
+        ErrorMsgColor = "red";
+
+        if (string.IsNullOrEmpty(NewTrans.Name)) ErrorMsg += "You must enter a Name. ";
+        if (string.IsNullOrEmpty(NewTrans.ExpenseType)) ErrorMsg += "You must enter an Expense Type. ";
+        if (NewTrans.TopAmount == 0) ErrorMsg += "You must enter an Amount. ";
+        if (string.IsNullOrEmpty(NewTrans.TopPaidWith)) ErrorMsg += "You must enter how you paid. ";
+        if (string.IsNullOrEmpty(NewTrans.TopWhoPaid)) ErrorMsg += "You must enter who paid. ";
+
+        if (!string.IsNullOrEmpty(NewTrans.TopWhoPaid) && NewTrans.TopWhoPaid == NewTrans.BottomWhoPaid) ErrorMsg += "Multiple payments for 1 person not yet supported. ";
+
+        if (NewTrans.BottomAmount == 0 && !string.IsNullOrEmpty(NewTrans.BottomPaidWith)
+                && !string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
+            ErrorMsg += $"Must enter bottom option's payment amount. ";
+
+        if (NewTrans.BottomAmount != 0 && string.IsNullOrEmpty(NewTrans.BottomPaidWith))
+            ErrorMsg += $"Must enter bottom option's payment method. ";
+
+        if (NewTrans.BottomAmount != 0 && string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
+            ErrorMsg += $"Must enter who paid for the bottom option. ";
+
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            if (NewTrans.TopWhoPaid == Constants.Person2)
+            {
+                if (NewTrans.BottomWhoPaid == Constants.Person1)
+                {
+                    var tempAmount = NewTrans.TopAmount;
+                    NewTrans.TopAmount = NewTrans.BottomAmount;
+                    NewTrans.BottomAmount = tempAmount;
+
+                    var tempWith = "" + NewTrans.TopPaidWith;
+                    NewTrans.TopPaidWith = NewTrans.BottomPaidWith;
+                    NewTrans.BottomPaidWith = tempWith;
+                }
+                else
+                {
+                    NewTrans.BottomWhoPaid = Constants.Person2;
+                    NewTrans.BottomPaidWith = NewTrans.TopPaidWith;
+                    NewTrans.BottomAmount = NewTrans.TopAmount;
+
+                    NewTrans.TopWhoPaid = "";
+                    NewTrans.TopPaidWith = "";
+                    NewTrans.TopAmount = 0;
+                }
+            }
+            else if (NewTrans.BottomPaidWith == Constants.Person1)
+            {
+                NewTrans.TopWhoPaid = Constants.Person1;
+                NewTrans.TopPaidWith = NewTrans.BottomPaidWith;
+                NewTrans.TopAmount = NewTrans.BottomAmount;
+
+                NewTrans.BottomPaidWith = "";
+                NewTrans.BottomWhoPaid = "";
+                NewTrans.BottomAmount = 0;
+            }
+
+            await OnAddConfirm.InvokeAsync(NewTrans);
+            NewTrans = new NewTransaction();
+            ShowSecond = false;
+        }
+
+        Disabled = false;
+    }
+
+    public class NewTransaction
+    {
+        public DateTime DateOfTransaction { get; set; } = DateTime.Now;
+        public string Name { get; set; }
+        public string ExpenseType { get; set; }
+
+        public double TopAmount { get; set; }
+        public string TopWhoPaid { get; set; }
+
+        public double BottomAmount { get; set; }
+        public string BottomWhoPaid { get; set; }
+
+        private string topPaidWith;
+        public string TopPaidWith
+        {
+            get { return topPaidWith; }
+            set
+            {
+                topPaidWith = value;
+
+                var bal = Constants.Balances.FirstOrDefault(b => b.Name == value);
+                if (bal == null)
+                {
+                    var env = Constants.Envelopes.FirstOrDefault(e => e.Name == value);
+                    if (env == null)
+                        TopWhoPaid = "NONE";
+                    else if (env.Person1Amount > 0 && env.Person2Amount > 0)
+                        TopWhoPaid = "";
+                    else if (env.Person1Amount > 0)
+                        TopWhoPaid = Constants.Person1;
+                    else if (env.Person2Amount > 0)
+                        TopWhoPaid = Constants.Person2;
+                    else
+                        TopWhoPaid = "No one can pay.";
+                }
+                else
+                {
+                    if (bal.Person == Constants.Person1)
+                        TopWhoPaid = Constants.Person1;
+                    else if (bal.Person == Constants.Person2)
+                        TopWhoPaid = Constants.Person2;
+                    else
+                        TopWhoPaid = "";
+                }
+            }
+        }
+
+        private string bottomPaidWith;
+        public string BottomPaidWith
+        {
+            get { return bottomPaidWith; }
+            set
+            {
+                bottomPaidWith = value;
+
+                var bal = Constants.Balances.FirstOrDefault(b => b.Name == value);
+                if (bal == null)
+                {
+                    var env = Constants.Envelopes.FirstOrDefault(e => e.Name == value);
+                    if (env == null)
+                        BottomWhoPaid = "NONE";
+                    else if (env.Person1Amount > 0 && env.Person2Amount > 0)
+                        BottomWhoPaid = "";
+                    else if (env.Person1Amount > 0)
+                        BottomWhoPaid = Constants.Person1;
+                    else if (env.Person2Amount > 0)
+                        BottomWhoPaid = Constants.Person2;
+                    else
+                        BottomWhoPaid = "No one can pay.";
+                }
+                else
+                {
+                    if (bal.Person == Constants.Person1)
+                        BottomWhoPaid = Constants.Person1;
+                    else if (bal.Person == Constants.Person2)
+                        BottomWhoPaid = Constants.Person2;
+                    else
+                        BottomWhoPaid = "";
+                }
+            }
+        }
+
+        public double TotalAmount => Math.Round(TopAmount + BottomAmount, 2);
+        public NewTransaction() { }
+    }
+}

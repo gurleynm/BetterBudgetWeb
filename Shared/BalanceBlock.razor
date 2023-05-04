@@ -35,8 +35,7 @@
     public Balance TheBalance { get; set; }
     [Parameter]
     public bool IncludeGoals { get; set; }
-    [Parameter]
-    public bool Mobile { get; set; }
+    
     [Parameter]
     public double FontSize { get; set; } = 2;
     [Parameter]
@@ -44,6 +43,7 @@
     [Parameter]
     public EventCallback<bool> OnDelete { get; set; }
 
+    public bool Mobile => Constants.Mobile;
 
     private double OpacityValue = 0;
 

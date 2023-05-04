@@ -7,7 +7,7 @@
 
 <PageTitle>Portfolio</PageTitle>
 
-@if (!mobile)
+@if (!Constants.Mobile)
 {
     <div style="display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between">
         <div style="width: auto; height:fit-content; max-height:80vh; overflow: auto; position: relative;border: solid gray 1px;padding:0">
@@ -224,11 +224,11 @@ else
             </div>
             @if (ShowBuy)
             {
-                <InputSecurity BalanceSelected="@SelectedBalance.Id" OnClick="UpdateEverything" Mobile=mobile />
+                <InputSecurity BalanceSelected="@SelectedBalance.Id" OnClick="UpdateEverything" />
             }
             @if (ShowSell)
             {
-                <DeleteSecurity OnClick="UpdateEverything" Mobile=mobile />
+                <DeleteSecurity OnClick="UpdateEverything" />
             }
         </div>
         <br />
@@ -284,8 +284,6 @@ else
 }
 
 @code {
-    private bool mobile { get; set; }
-
     private bool ShowBuy { get; set; } = true;
     private bool ShowSell { get; set; }
 
@@ -309,7 +307,6 @@ else
         SelectedBalance = InvestmentAccounts[0];
         AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
         RefreshTime = DateTime.Now.ToString();
-        mobile = await JSRuntime.InvokeAsync<bool>("isDevice");
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
 
