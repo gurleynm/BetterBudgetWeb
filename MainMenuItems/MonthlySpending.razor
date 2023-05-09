@@ -503,13 +503,13 @@ else
         if (addIt == null)
             return;
 
-        var nt = IndexRunner.Add(addIt.ExpenseType, addIt.Name, addIt.TopAmount, addIt.BottomAmount,
-                                    addIt.TopPaidWith, addIt.BottomPaidWith);
+        var nt = IndexRunner.Add(addIt);
+        JSRuntime.InvokeAsync<string>("console.log", "DateAddIt: " + addIt.DateOfTransaction.ToString());
+        JSRuntime.InvokeAsync<string>("console.log", "DateNTIt: " + nt.DateOfTransaction.ToString());
 
         if (nt != null)
         {
             // TransactionRepo sets everything in Constants
-            nt.DateOfTransaction = DateTime.Now;
             Transactions = await TransactionRepo.AddOrUpdateAsync(nt);
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
 

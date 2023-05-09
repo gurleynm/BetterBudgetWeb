@@ -33,19 +33,16 @@
             @if (!Mobile)
             {
                 <tr>
-                    <td>
+                    <td colspan="1">
                         <InputDate @bind-Value="NewTrans.DateOfTransaction" />
                     </td>
-                    <td>
+                    <td colspan="2">
                         <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" />
-                    </td>
-                    <td>
-                        <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <InputNumber style="width:4vw" @bind-Value=NewTrans.TopAmount />
+                        <InputNumber style="width:9vw" @bind-Value=NewTrans.TopAmount />
                     </td>
                     <td>
                         <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
@@ -76,7 +73,7 @@
                 {
                     <tr>
                         <td>
-                            <InputNumber style="width:4vw" @bind-Value=NewTrans.BottomAmount />
+                            <InputNumber style="width:9vw" @bind-Value=NewTrans.BottomAmount />
                         </td>
                         <td>
                             <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.BottomPaidWith" />
@@ -105,6 +102,11 @@
                     </tr>
                 }
                 <tr>
+                    <td colspan="3">
+                        <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="3" style="padding:1vw">
                         @if (ShowSecond)
                         {
@@ -128,25 +130,18 @@
             else
             {
                 <tr>
-                    <td style="font-size:3vw;padding:1vw">
+                    <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-evenly">
                         <InputDate @bind-Value="NewTrans.DateOfTransaction" />
-                    </td>
-                    <td style="font-size:3vw;padding:1vw">
-                        <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="3" style="font-size:3vw;padding:1vw">
-                        <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
+
+                        <InputText style="width:30vw" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
                     </td>
                 </tr>
                 <tr>
-                    <td style="font-size:3vw;padding:1vw">
-                        <InputNumber style="width:8vw" @bind-Value=NewTrans.TopAmount />
+                    <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-around;align-items:center;">
+                        <InputNumber style="width:20vw" @bind-Value=NewTrans.TopAmount />
 
                         <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
-                    </td>
-                    <td style="font-size:3vw;padding:1vw;width:9vw">
+
                         @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith))
                         {
                             @if (string.IsNullOrEmpty(NewTrans.TopWhoPaid))
@@ -171,12 +166,11 @@
                 @if (ShowSecond)
                 {
                     <tr>
-                        <td style="font-size:3vw;padding:1vw">
-                            <InputNumber style="width:8vw" @bind-Value=NewTrans.BottomAmount />
+                        <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-around;align-items:center;">
+                            <InputNumber style="width:20vw" @bind-Value=NewTrans.BottomAmount />
 
                             <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.BottomPaidWith" />
-                        </td>
-                        <td style="font-size:3vw;padding:1vw;width:9vw">
+
                             @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith))
                             {
                                 @if (string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
@@ -199,6 +193,11 @@
                         </td>
                     </tr>
                 }
+                <tr>
+                    <td colspan="3" style="font-size:3vw;padding:1vw;">
+                        <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
+                    </td>
+                </tr>
                 <tr>
                     <td colspan="3" style="padding:1vw">
                         @if (ShowSecond)
@@ -331,6 +330,12 @@
                 NewTrans.BottomPaidWith = "";
                 NewTrans.BottomWhoPaid = "";
                 NewTrans.BottomAmount = 0;
+            }
+
+            if (Math.Abs(DateTime.Now.Subtract(NewTrans.DateOfTransaction).TotalMinutes) < 3)
+            {
+                var hourOffset = DateTimeOffset.Now.Offset.TotalHours;
+                NewTrans.DateOfTransaction = NewTrans.DateOfTransaction.AddHours(hourOffset);
             }
 
             await OnAddConfirm.InvokeAsync(NewTrans);

@@ -1,5 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using BetterBudgetWeb.Repo;
+using static BetterBudgetWeb.Shared.AddExpense;
 
 namespace BetterBudgetWeb.Runner
 {
@@ -136,26 +137,22 @@ namespace BetterBudgetWeb.Runner
             }
         }
         
-        public static Transaction Add(string NewExpense, string NewName,
-                                        double NewPerson1Amount, double NewPerson2Amount,
-                                        string NewPerson1PaidWith, string NewPerson2PaidWith)
+        public static Transaction Add(NewTransaction newTrans)
         {
-            string np1pw = NewPerson1PaidWith == null ? "" : NewPerson1PaidWith;
-            string np2pw = NewPerson2PaidWith == null ? "" : NewPerson2PaidWith;
 
-            string newExp = NewExpense;
+            string np1pw = newTrans.TopPaidWith == null ? "" : newTrans.TopPaidWith;
+            string np2pw = newTrans.BottomPaidWith == null ? "" : newTrans.BottomPaidWith;
+
+            string newExp = newTrans.ExpenseType;
 
             Envelope env1 = Constants.Envelopes.FirstOrDefault(e => e.Name == np1pw);
             Envelope env2 = Constants.Envelopes.FirstOrDefault(e => e.Name == np2pw);
             Envelope NewExpEnv = Constants.Envelopes.FirstOrDefault(e => e.Name == newExp);
 
-            Transaction nt = new Transaction(NewName, NewExpense, NewPerson1Amount, NewPerson2Amount, np1pw, np2pw, "none", "none");
-            NewName = null;
-            NewExpense = null;
-            NewPerson1Amount = 0;
-            NewPerson2Amount = 0;
-            NewPerson1PaidWith = null;
-            NewPerson2PaidWith = null;
+            Transaction nt = new Transaction(newTrans.Name, newTrans.ExpenseType, 
+                                                newTrans.TopAmount, newTrans.BottomAmount,
+                                                np1pw, np2pw, "none", "none");
+            nt.DateOfTransaction = newTrans.DateOfTransaction;
             return nt;
         }
         public static double CalculateNetWorth(string person, List<Balance> Balances)
