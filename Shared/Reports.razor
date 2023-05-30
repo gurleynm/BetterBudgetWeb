@@ -521,7 +521,7 @@ else
         {
             Trans = new List<Transaction>(Constants.Transactions.Where(t => t.MonthYear() == SelectedMonth + " " + SelectedYear));
 
-            Snapshot SelSnap = snaps.FirstOrDefault(sn => sn.Month == SelectedMonth);
+            Snapshot SelSnap = snaps.FirstOrDefault(sn => sn.Month == SelectedMonth && sn.Year.ToString() == SelectedYear);
 
             Person1TransCount = SelSnap.Person1Transactions;
             Person2TransCount = SelSnap.Person2Transactions;

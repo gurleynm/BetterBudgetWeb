@@ -69,6 +69,8 @@
     </select>
 </div>
 *@
+<div style="display:flex;justify-content:space-between">
+
 <div style="float:left;">
     @if (Levels != null && Levels.Count > 0)
     {
@@ -99,22 +101,20 @@
     </div>
 }
 
-@*
-<table style="margin: auto 10vw; width:40vw; float:right">
-    <tr>
-        <th></th>
-        <th>Total In</th>
-        <th>Total Out</th>
-        <th>Difference</th>
-    </tr>
-    <tr>
-        <td>Thing</td>
-        <td>Thing</td>
-        <td>Thing</td>
-        <td>Thing</td>
-    </tr>
-</table>
-*@
+    <table style="margin: auto 10vw; width:40vw; float:right">
+        <tr>
+            <th>Total In</th>
+            <th>Total Out</th>
+            <th>Difference</th>
+        </tr>
+        <tr>
+            <td style="color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</td>
+            <td style="color:red">@Constants.Pretty(TotalOut)</td>
+            <td style="color:@DecideColor(TotalIn - TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</td>
+        </tr>
+    </table>
+</div>
+
 
 @code {
     private string selectedYear;
@@ -167,6 +167,8 @@
     private List<string> FoundYears => GetYears();
     private List<string> Levels = new List<string>();
     private List<CashFlow> CashFlows = new List<CashFlow>();
+    private double TotalIn { get; set; }
+    private double TotalOut { get; set; }
 
     protected override Task OnInitializedAsync()
     {
@@ -244,7 +246,7 @@
             DesiredTransactions = DesiredTransactions.Where(dt => dt.ExpenseType == SelectedLevel).ToList();
 
         string TKey;
-        string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer", "Envelope" };
+        string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer" };
 
         bool firstPerson = SelectedPerson == "Both" || SelectedPerson == Constants.Person1;
         bool secondPerson = SelectedPerson == "Both" || SelectedPerson == Constants.Person2;
@@ -309,7 +311,7 @@
                 ExpenseType = SelectedLevel, 
                 Person1Amount = BudgetedAmount
             }.ToFlow(Totals, "~B~"));
-                
+
 
             foreach (var refund in Refunds)
                 TheFlows.Add(refund.ToFlow(Totals, "~~~"));
@@ -330,7 +332,7 @@
             if (trans.ExpenseType == "Income")
                 continue;
             else if (trans.ExpenseType == "Envelope")
-                TKey = trans.Name;
+                TKey = WhichEnvelope(trans);
             else if (IgnoreThese.Contains(trans.ExpenseType) || trans.ExpenseType == "Income")
                 continue;
             else
@@ -348,7 +350,7 @@
                         {
                             Person1Amount = trans.Person1Amount,
                             Person2Amount = trans.Person2Amount,
-                            ExpenseType = trans.Name,
+                            ExpenseType = WhichEnvelope(trans),
                             Name = trans.ExpenseType
                         };
                 else
@@ -367,6 +369,24 @@
 
             foreach (var key in GeneralTransactions.Keys)
                 TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL"));
+
+            TotalIn = incomeTotals;
+            TotalOut = generalTotals;
+        }
+        else
+        {
+            if(TheFlows.Count > 0)
+            {
+                var splitter = TheFlows[0].From.Split('$');
+                var second = splitter.Length > 1 ? splitter[1].Trim(')') : "0";
+
+                TotalIn = double.TryParse(second, out double catcher) ? catcher : 0;
+                TotalOut = TheFlows.Sum(tf => tf.Amount);
+            }
+            else
+            {
+                TotalIn = TotalOut = 0;
+            }
         }
 
         string[] DecreaseAmount = new string[] { "Eating Out", "Unexpected Adulting" };
@@ -398,7 +418,21 @@
                 .ToFlow(Totals));
         }
 
+        StateHasChanged();
         return TheFlows;
+    }
+
+    private string WhichEnvelope(Transaction t)
+    {
+        if (string.IsNullOrEmpty(t.PaidWithPerson1))
+            return t.PaidWithPerson2;
+
+        return t.PaidWithPerson1;
+    }
+
+    private string DecideColor(double amount)
+    {
+        return amount < 0 ? "red" : Constants.ColorScheme["IncomeGood"];
     }
 
     public void DecideDesired()

@@ -134,8 +134,8 @@ namespace BetterBudgetWeb.Data
             string na = Constants.Pretty(IncomeMultiplier * Person1Amount).Replace(",", ""); ;
             string la = Constants.Pretty(IncomeMultiplier * Person2Amount).Replace(",", ""); ;
 
-            return ExpenseType + "," +
-                   Name + "," +
+            return Name + "," +
+                   ExpenseType + "," +
                    na + "," +
                    la + "," +
                    TotalAmount + "," +
