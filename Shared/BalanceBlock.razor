@@ -16,7 +16,7 @@
             <br />
             Balance
         </h1>
-        @if (double.TryParse(APR, out double apr) && apr > 0)
+        @if (double.TryParse(APR, out double apr) && apr > 0 && TheBalance.BalanceType != "Stocks")
         {
             <h4 style="text-align:center; font-size:@(FontSize/2 + "vw");margin:0px;color:@TextColor">@(string.Format("(APR: {0}%)", Math.Round(apr, 2)))</h4>
         }

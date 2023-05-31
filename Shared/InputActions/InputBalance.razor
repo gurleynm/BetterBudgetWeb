@@ -21,7 +21,7 @@
         <h1 style="text-align:center;">Balance Preview:</h1>
         <BalanceBlock TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
                                     Value = double.TryParse(Amount, out double v) ? v : 0})"
-                  FontSize="4" />
+                      FontSize="4" />
     </div>
     <br />
     <div style="position:relative;">
@@ -52,11 +52,22 @@
         </div>
         <br style="clear:both" />
         <br />
-        <div>
-            <label>APR:</label>
-            <br />
-            <input type="text" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
-        </div>
+        @if (BalanceType != "Stocks")
+        {
+            <div>
+                <label>APR:</label>
+                <br />
+                <input type="text" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
+            </div>
+        }
+        else
+        {
+            <div>
+                <label>Paid Through Work:</label>
+                <br />
+                <input @bind="PaidThroughWork" type="checkbox" />
+            </div>
+        }
         <br />
         <div style="float:left; margin-right:10vw;">
             <label>Initial Amount:</label>
@@ -122,11 +133,22 @@ else
         </div>
         <br style="clear:both" />
         <br />
-        <div style="float:left; margin-right:10vw;">
-            <label>APR:</label>
-            <br />
-            <input type="text" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
-        </div>
+        @if (BalanceType != "Stocks")
+        {
+            <div style="float:left; margin-right:10vw;">
+                <label>APR:</label>
+                <br />
+                <input type="text" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
+            </div>
+        }
+        else
+        {
+            <div style="float:left; margin-right:10vw;">
+                <label>Paid Through Work:</label>
+                <br />
+                <input @bind="PaidThroughWork" type="checkbox" />
+            </div>
+        }
         <div style="float:left; margin-right:10vw;">
             <label>Initial Amount:</label>
             <br />
@@ -152,7 +174,7 @@ else
             <h1 style="text-align:center;">Balance Preview:</h1>
             <BalanceBlock TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
                                     Value = double.TryParse(Amount, out double v) ? v : 0})"
-                      FontSize="2" />
+                          FontSize="2" />
         </div>
         <br style="clear:both" />
         <br />
@@ -179,7 +201,9 @@ else
     public string BalanceType { get; set; }
     [Parameter]
     public string Color { get; set; } = "#32A852";
-    
+    [Parameter]
+    public bool PaidThroughWork { get; set; }
+
     public bool Mobile => Constants.Mobile;
 
 
@@ -209,6 +233,10 @@ else
         if (string.IsNullOrEmpty(ErrorMsg))
         {
             BalanceRepoCaller brc = new BalanceRepoCaller();
+
+            if (BalanceType == "Stocks")
+                apr = PaidThroughWork ? 1 : 0;
+
             await brc.AddOrUpdateAsync(new Balance(BalName, am, BalanceType, apr, Color, TextColor, Person));
 
             ErrorColor = "green";

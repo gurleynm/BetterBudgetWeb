@@ -16,8 +16,17 @@
     <div style="align-self:flex-end;padding:0; margin: 0;">
         <div style="display:flex;flex-direction:column;justify-content:space-between;padding:0 .5vw 0 0; margin: 0">
             <label style="cursor:pointer;font-size:medium;align-self:flex-end;margin:0">@Constants.Pretty(TheBalance.GetValueWithStock())</label>
-            <label class="income-good" style="cursor:pointer;font-size:smaller;align-self:flex-end;margin:0"><i>@("Tradeable Cash: " + Constants.Pretty(TheBalance.Value))</i></label>
-            <br/>
+            @if (TheBalance.APR == 0)
+            {
+                <label class="income-good" style="cursor:pointer;font-size:smaller;align-self:flex-end;margin:0">
+                    <i>
+                        @(
+                            "Tradeable Cash: " + Constants.Pretty(TheBalance.Value)
+                            )
+                    </i>
+                </label>
+            }
+            <br />
         </div>
     </div>
 </div>

@@ -203,7 +203,7 @@ else
             if (BalanceFrom == null)
                 return;
 
-            NumericAmountToTrade = BalanceFrom.Value;
+            NumericAmountToTrade = BalanceFrom.APR == 0 ? BalanceFrom.Value : double.MaxValue;
         }
     }
     public string Name { get; set; }
@@ -213,7 +213,7 @@ else
     public DateTime ExpirationDate { get; set; } = DateTime.Now;
     public string SecType { get; set; } = "Stock";
     public double NumericAmountToTrade = -1;
-    
+
     public bool Mobile => Constants.Mobile;
 
     public string Person { get; set; } = Constants.Person1;
@@ -228,7 +228,12 @@ else
     protected override Task OnInitializedAsync()
     {
         Balances = Constants.Balances.Where(b => b.BalanceType == "Stocks").ToList();
-        NumericAmountToTrade = Balances.Count > 0 ? Balances[0].Value : 0;
+        
+        if (Balances.Count > 0)
+            NumericAmountToTrade = Balances[0].APR == 0 ? Balances[0].Value : double.MaxValue;
+        else
+            NumericAmountToTrade = 0;
+
         return base.OnInitializedAsync();
     }
 
