@@ -46,13 +46,13 @@
                     <input type="number" style="width:23vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
                     <br />
                     <br />
-                    <select @bind="SecName">
+                    <select @bind="SecID">
                         <option value="@string.Empty" selected disabled="disabled">(Choose Security)</option>
                         @if (Securities != null)
                         {
                             @foreach (var sec in Securities)
                             {
-                                <option value="@sec.Name">@sec.Name</option>
+                                <option value="@sec.Id">@sec.Name</option>
                             }
                         }
                     </select>
@@ -69,13 +69,13 @@
                     <label>Security Name:</label>
                 </div>
                 <div style="float:left; margin: 0 2vw;">
-                    <select @bind="SecName">
+                    <select @bind="SecID">
                         <option value="@string.Empty" selected disabled="disabled">(Choose Security)</option>
                         @if (Securities != null)
                         {
                             @foreach (var sec in Securities)
                             {
-                                <option value="@sec.Name">@sec.Name</option>
+                                <option value="@sec.Id">@sec.Name</option>
                             }
                         }
                     </select>
@@ -104,13 +104,13 @@ else
         <br />
         <label>Security Name:</label>
         <br style="clear:both" />
-        <select @bind="SecName">
+        <select @bind="SecID">
             <option value="@string.Empty" selected disabled="disabled">(Choose Security)</option>
             @if (Securities != null)
             {
                 @foreach (var sec in Securities)
                 {
-                    <option value="@sec.Name">@sec.Name</option>
+                    <option value="@sec.Id">@sec.Name</option>
                 }
             }
         </select>
@@ -154,16 +154,32 @@ else
 
 @code {
     [Parameter]
-    public string SecName { get; set; }
-    
+    public string SecID { get; set; }
+
+    private Balance selectedBalance { get; set; }
+
+    [Parameter]
+    public Balance SelectedBalance 
+    { 
+        get { return selectedBalance; }
+        set
+        {
+            selectedBalance = value;
+            Securities = AllSecurities == null ? null : AllSecurities.Where(sec => sec.BalanceFrom == selectedBalance.Id).ToList();
+        }
+    }
+
     [Parameter]
     public EventCallback OnClick { get; set; }
 
-    
+    [Parameter]
+    public EventCallback<Balance> SelectedBalanceChanged { get; set; }
+
     public bool Mobile => Constants.Mobile;
 
     private bool DeleteIsSet = false;
 
+    private List<Data.Security> AllSecurities { get; set; }
     private List<Data.Security> Securities { get; set; }
 
     private string ErrorMsg { get; set; } = string.Empty;
@@ -175,7 +191,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Securities = await SecurityRepo.GetSecuritiesAsync();
+        AllSecurities = await SecurityRepo.GetSecuritiesAsync();
+        Securities = AllSecurities.Where(sec => sec.BalanceFrom == selectedBalance.Id).ToList();
     }
 
     public async void Sell()
@@ -187,14 +204,14 @@ else
         bool NumSharesDouble = double.TryParse(NumShares, out double tp);
         bool SoldPriceDouble = double.TryParse(SalePrice, out double tp1);
 
-        ErrorMsg += string.IsNullOrEmpty(SecName) ? "Security name must be set. " : "";
+        ErrorMsg += string.IsNullOrEmpty(SecID) ? "Security name must be set. " : "";
         ErrorMsg += !NumSharesDouble || tp < 0 ? "Enter a valid number of shares. " : "";
         ErrorMsg += !SoldPriceDouble || tp1 < 0 ? "Enter a valid sale price. " : "";
 
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
-            var chosenOne = Securities.FirstOrDefault(e => e.Name == SecName);
+            var chosenOne = Securities.FirstOrDefault(e => e.Id == SecID);
 
             if (chosenOne == null)
                 ErrorMsg = "Amazing, you don't own this security!";
@@ -209,9 +226,9 @@ else
                 Securities = await SecurityRepo.RemoveAsync(chosenOne);
 
                 ErrorColor = "green";
-                ErrorMsg = $"Security {SecName} was sold!";
+                ErrorMsg = $"Security {chosenOne.Name} was sold!";
 
-                SecName = string.Empty;
+                SecID = string.Empty;
             }
         }
 
@@ -226,19 +243,19 @@ else
         ErrorMsg = string.Empty;
         ErrorColor = "red";
 
-        ErrorMsg += string.IsNullOrEmpty(SecName) ? "Security name must be set. " : "";
+        ErrorMsg += string.IsNullOrEmpty(SecID) ? "Security name must be set. " : "";
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
-            var chosenOne = Securities.FirstOrDefault(e => e.Name == SecName);
+            var chosenOne = Securities.FirstOrDefault(e => e.Id == SecID);
             chosenOne.Value = -1;
             Securities = await SecurityRepo.RemoveAsync(chosenOne);
 
 
             ErrorColor = "green";
-            ErrorMsg = $"Security '{SecName}' was deleted!";
+            ErrorMsg = $"Security '{chosenOne.Name}' was deleted!";
 
-            SecName = string.Empty;
+            SecID = string.Empty;
 
         }
 

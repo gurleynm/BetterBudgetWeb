@@ -61,7 +61,7 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = true;
+        public static bool Us = true; // true false
         public static bool Test = false;
         
         private static bool mobile = true;

@@ -21,7 +21,7 @@
             }
             @if (ShowSell)
             {
-                <DeleteSecurity OnClick="UpdateEverything" />
+                <DeleteSecurity OnClick="UpdateEverything" SelectedBalance="@SelectedBalance" />
             }
             <label style="font-size:large;padding:.5vw">All Investment Accounts</label>
             @if (InvestmentAccounts != null && InvestmentAccounts.Count > 0)
@@ -228,7 +228,7 @@ else
             }
             @if (ShowSell)
             {
-                <DeleteSecurity OnClick="UpdateEverything" />
+                <DeleteSecurity OnClick="UpdateEverything" SelectedBalance="@SelectedBalance" />
             }
         </div>
         <br />
