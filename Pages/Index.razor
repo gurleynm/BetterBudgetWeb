@@ -76,9 +76,9 @@ else
                 @foreach (var balance in Balances)
                 {
                     <BalanceBlock TheBalance="@balance"
-                  OnClick="@(() => FilterBalance(balance.Name))"
-                  OnDelete="@(() => ShowDeleteBalBtn(balance))"
-                  IncludeGoals=@Goals />
+                                  OnClick="@(() => FilterBalance(balance.Name))"
+                                  OnDelete="@(() => ShowDeleteBalBtn(balance))"
+                                  IncludeGoals=@Goals />
                 }
 
             }
@@ -113,7 +113,16 @@ else
                 <h2 style="text-align:center">
                     <span>Month Projected Expenses:</span> <span class="income-bad">@Constants.Pretty(ProjectedExpense)</span>
                 </h2>
-
+                @if (EnvelopeExpenses > 0)
+                {
+                    <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;align-items:baseline;justify-content:center">
+                        <span style='position:relative;top:.3vw;font-size:x-large;text-align:center;'>Envelopes (Include/Exclude):&nbsp;</span>
+                        <label class="switch">
+                            <input type="checkbox" @bind=HideEnvExp>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                }
                 <h2 style="text-align:center">
                     <span>Month Actual Expenses:</span> <span class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")'>@Constants.Pretty(ActualExpense)</span>
                 </h2>
@@ -128,14 +137,13 @@ else
         <div style="display:flex;justify-content:start;">
             <!-- Monthly Spending -->
             <div style="width:50%;float:left; margin-right:1vw; margin-bottom:2vh;">
-                <MonthlySpending
-                         OnAddConfirm=AddConfirm
-                         OnDeleteConfirm=DeleteConfirm
-                         OnEditConfirm=@(() => SetDataPoints(true))
-                         @bind-Envelopes=Envelopes
-                         @bind-Transactions=Transactions
-                         @bind-FilteredTransactions=FilteredTransactions
-                         @bind-Balances=Balances />
+                <MonthlySpending OnAddConfirm=AddConfirm
+                                 OnDeleteConfirm=DeleteConfirm
+                                 OnEditConfirm=@(() => SetDataPoints(true))
+                @bind-Envelopes=Envelopes
+                @bind-Transactions=Transactions
+                @bind-FilteredTransactions=FilteredTransactions
+                @bind-Balances=Balances />
             </div>
 
             <br />
@@ -273,9 +281,9 @@ else
                         @foreach (var env in Envelopes)
                         {
                             <Envelope Name="@env.Name" Scale=11 Font_Size=1.375 Goal=@env.Goal Saved=@env.TotalAmount
-                      FlipClick="true"
-                      Person1Amount="@env.Person1Amount"
-                      Person2Amount="@env.Person2Amount" />
+                                      FlipClick="true"
+                                      Person1Amount="@env.Person1Amount"
+                                      Person2Amount="@env.Person2Amount" />
                         }
                     </div>
                     <br />
@@ -286,7 +294,7 @@ else
         @if (ShowDeleteBal)
         {
             <DeleteConfirm Balan="@SelectedBalance"
-               OnClose="@DeleteBalance">
+                           OnClose="@DeleteBalance">
 
             </DeleteConfirm>
         }
@@ -340,6 +348,17 @@ else
             @if (ShowChart)
             {
                 <!-- Monthly Expenses -->
+                @if (EnvelopeExpenses > 0)
+                {
+                    <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;
+                                align-items:center;justify-content:center">
+                        <span style='position:relative;top:.3vw;font-size:large;text-align:center;'>Envelopes (Include/Exclude):&nbsp;</span>
+                        <label class="switch">
+                            <input type="checkbox" @bind=HideEnvExp>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                }
                 <h3>Month Projected Expenses:</h3>
                 <h4 class="income-bad" style="text-align:center">@Constants.Pretty(ProjectedExpense)</h4>
                 <h3>Month Actual Expenses:</h3>
@@ -355,12 +374,11 @@ else
 
         <!-- Monthly Spending -->
         <div style="width:100%;float:left;margin-bottom:2vh;">
-            <MonthlySpending
-                     OnAddConfirm=AddConfirm
-                     @bind-Envelopes=Envelopes
-                     @bind-Transactions=Transactions
-                     @bind-FilteredTransactions=FilteredTransactions
-                     @bind-Balances=Balances />
+            <MonthlySpending OnAddConfirm=AddConfirm
+            @bind-Envelopes=Envelopes
+            @bind-Transactions=Transactions
+            @bind-FilteredTransactions=FilteredTransactions
+            @bind-Balances=Balances />
         </div>
 
         <br />
@@ -397,8 +415,8 @@ else
                 @foreach (var env in Envelopes)
                 {
                     <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@env.Goal Saved=@env.TotalAmount
-                  FlipClick="true"
-                  Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
+                              FlipClick="true"
+                              Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
                 }
             </div>
             <br />
@@ -471,7 +489,7 @@ else
     @if (ViewReports)
     {
         <Reports Title="@(string.Format("{0} (By: {1})","Penis", "Deez Nuts"))"
-         Text="Story" OnClose="@CloseModal">
+                 Text="Story" OnClose="@CloseModal">
 
         </Reports>
     }
@@ -539,13 +557,29 @@ else
     private bool StashCashBool { get; set; }
     private bool CashOutBool { get; set; }
 
+    private bool hideEnvExp = true;
+    private bool HideEnvExp
+    {
+        get { return hideEnvExp; }
+        set
+        {
+            hideEnvExp = value;
+            SetDataPoints();
+
+        }
+    }
+
     private double ProjectedExpense => Constants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount) +
                                         DynamicCostItems.Sum(d => d.Amount);
     private double ActualExpense => FilteredTransactions.Where(ft => CostMoney(ft)).Sum(ft => ft.TotalAmount);
+    private double EnvelopeExpenses => FilteredTransactions.Where(ft => ft.ExpenseType == "Envelope").Sum(ft => ft.TotalAmount);
 
     private bool CostMoney(Transaction ft)
     {
         List<string> IgnoreThese = new List<string> { "Debt", "Transfer", "Equity", "Income" };
+
+        if (HideEnvExp)
+            IgnoreThese.Add("Envelope");
 
         foreach (var env in Envelopes)
         {
@@ -694,7 +728,10 @@ else
 
             List<string> NotExpenseOrIncome = new List<string> { "Debt", "Transfer", "Equity" };
 
-            foreach(var env in Envelopes)
+            if (HideEnvExp)
+                NotExpenseOrIncome.Add("Envelope");
+
+            foreach (var env in Envelopes)
             {
                 NotExpenseOrIncome.Add(env.Name);
             }
