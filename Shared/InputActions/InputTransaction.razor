@@ -827,7 +827,7 @@ else
     [Parameter]
     public Action<string> Preset { get; set; }
     public List<Preset> Presets { get; set; }
-    
+
     public bool Mobile => Constants.Mobile;
 
     public string SelectedPreset { get; set; }
@@ -931,28 +931,33 @@ else
         if (string.IsNullOrEmpty(ErrorMsg))
         {
             BalanceRepoCaller brc = new BalanceRepoCaller();
+            string TransName;
+            
             if (ExpenseType == "Transfer")
             {
-                TransactionName = "Transfer to ";
+                TransName = "Transfer to ";
 
                 if (!string.IsNullOrEmpty(PaidOffPerson1))
                 {
                     if (!string.IsNullOrEmpty(PaidOffPerson2))
                     {
-                        TransactionName += brc.GetName(PaidOffPerson1) + "," + brc.GetName(PaidOffPerson2);
+                        TransName += brc.GetName(PaidOffPerson1) + "," + brc.GetName(PaidOffPerson2);
                     }
                     else
-                        TransactionName += brc.GetName(PaidOffPerson1);
+                        TransName += brc.GetName(PaidOffPerson1);
                 }
                 else if (!string.IsNullOrEmpty(PaidOffPerson2))
-                    TransactionName += brc.GetName(PaidOffPerson2);
+                    TransName += brc.GetName(PaidOffPerson2);
             }
-            var nt = new Transaction(TransactionName, ExpenseType, nam, lam, brc.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2));
+            else
+                TransName = TransactionName;
+
+            var nt = new Transaction(TransName, ExpenseType, nam, lam, brc.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2));
             nt.DateOfTransaction = DateTime.Now;
             var tr = await TransactionRepo.AddOrUpdateAsync(nt);
 
             ErrorColor = "green";
-            ErrorMsg = TransactionName + " transaction was added!";
+            ErrorMsg = TransName + " transaction was added!";
 
             TransactionName = string.Empty;
             Person1Amount = string.Empty;

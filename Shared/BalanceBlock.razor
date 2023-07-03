@@ -1,6 +1,7 @@
 ﻿@using System.Globalization
 @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
+@inject NavigationManager NavManager
 
 <style>
     .btn-danger {
@@ -35,7 +36,7 @@
     public Balance TheBalance { get; set; }
     [Parameter]
     public bool IncludeGoals { get; set; }
-    
+
     [Parameter]
     public double FontSize { get; set; } = 2;
     [Parameter]
@@ -88,9 +89,12 @@
         return returnStr;
     }
 
-    private Task Clicked()
+    private async void Clicked()
     {
-        return OnClick.InvokeAsync(TheBalance.Name);
+        if (TheBalance.BalanceType == "Stocks")
+            NavManager.NavigateTo("/portfolio");
+        else
+            await OnClick.InvokeAsync(TheBalance.Name);
     }
     private Task Delete()
     {
