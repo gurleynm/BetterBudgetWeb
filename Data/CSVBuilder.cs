@@ -12,17 +12,39 @@ namespace BetterBudgetWeb.Data
             Transaction previous;
             string fileString;
 
-            if (SelectedDownload != "All")
+
+            if (SelectedDownload == "All All")
+            {
+                // Everything
+                DesiredTransactions = Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+                previous = DesiredTransactions[0];
+                fileString = Transaction.ToString(previous.MonthYear(), true);
+            }
+            else if (SelectedDownload.Contains(" All"))
+            {
+                // All Years
+                var SelectedMonth = SelectedDownload.Split(' ')[0];
+
+                DesiredTransactions = Transactions.Where(t => 
+                                            t.MonthYear().Split(' ')[0] == SelectedMonth).OrderByDescending(t => t.DateOfTransaction).ToList();
+                previous = DesiredTransactions[0];
+                fileString = Transaction.ToString(previous.MonthYear(), true);
+            }
+            else if (SelectedDownload.Contains("All "))
+            {
+                // All Months
+                var SelectedYear = SelectedDownload.Split(' ')[1];
+
+                DesiredTransactions = Transactions.Where(t =>
+                                            t.MonthYear().Split(' ')[1] == SelectedYear).OrderByDescending(t => t.DateOfTransaction).ToList();
+                previous = DesiredTransactions[0];
+                fileString = Transaction.ToString(previous.MonthYear(), true);
+            }
+            else
             {
                 DesiredTransactions = Transactions.Where(tr => tr.MonthYear() == SelectedDownload).OrderByDescending(t => t.DateOfTransaction).ToList();
                 previous = DesiredTransactions[0];
                 fileString = Transaction.ToString(SelectedDownload);
-            }
-            else
-            {
-                DesiredTransactions = Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
-                previous = DesiredTransactions[0];
-                fileString = Transaction.ToString(previous.MonthYear(), true);
             }
 
             fileString += previous.ToString();

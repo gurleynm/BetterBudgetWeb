@@ -11,14 +11,16 @@ namespace BetterBudgetWeb.Repo
 
         private static string baseURI = Constants.BaseUri + "Transaction";
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
-        public static async Task<List<Transaction>> GetTransactionsAsync()
+        public static async Task<List<Transaction>> GetTransactionsAsync(string start = "3")
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var response = await client.GetAsync(baseURI);
+            string test = baseURI + "/" + start;
+            var response = await client.GetAsync(baseURI + "?duration=" + start);
             var content = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
             {
+                var m = response.ReasonPhrase;
                 throw new ApplicationException(content);
             }
             List<Transaction> trans = System.Text.Json.JsonSerializer.Deserialize<List<Transaction>>(content, _options);

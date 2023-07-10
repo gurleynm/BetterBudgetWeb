@@ -213,7 +213,7 @@ else
                 @if (Goals)
                 {
                     <div style="float:right; margin-bottom:1vh;margin-right:1vw;">
-                        <select class="custom-select" @bind="SelectedDownload" title="Pick a Download Timeframe ">
+                        <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe ">
                             <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
                             <option value="All">All</option>
                             @foreach (var dt in FoundMonths)
@@ -221,7 +221,22 @@ else
                                 <option value="@dt">@dt</option>
                             }
                         </select>
-                        <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
+                        <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe ">
+                            <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                            <option value="All">All</option>
+                            @foreach (var dt in FoundYears)
+                            {
+                                <option value="@dt">@dt</option>
+                            }
+                        </select>
+                        @if (ValidChoice)
+                        {
+                            <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
+                        }
+                        else
+                        {
+                            <label style="color:red">No values for this combination.</label>
+                        }
                     </div>
                 }
             </div>
@@ -233,7 +248,7 @@ else
                     <br style="clear:both" />
                     <br />
                     <div style="float:right; margin-bottom:1vh;margin-right:1vw;">
-                        <select class="custom-select" @bind="SelectedDownload" title="Pick a Download Timeframe ">
+                        <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe ">
                             <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
                             <option value="All">All</option>
                             @foreach (var dt in FoundMonths)
@@ -241,7 +256,22 @@ else
                                 <option value="@dt">@dt</option>
                             }
                         </select>
-                        <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
+                        <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe ">
+                            <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                            <option value="All">All</option>
+                            @foreach (var dt in FoundYears)
+                            {
+                                <option value="@dt">@dt</option>
+                            }
+                        </select>
+                        @if (ValidChoice)
+                        {
+                            <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
+                        }
+                        else
+                        {
+                            <label style="color:red">No values for this combination.</label>
+                        }
                     </div>
                 </div>
             }
@@ -533,7 +563,31 @@ else
     private double Person2NetWorth => CalculateNetWorth(Constants.Person2);
 
     private Balance SelectedBalance;
-    private string SelectedDownload { get; set; } = (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
+    private bool ValidChoice = true;
+    private string selectedMonth = DateTime.Now.ToString("MMMM");
+    private string selectedYear = DateTime.Now.Year.ToString();
+    private string SelectedMonth
+    {
+        get { return selectedMonth; }
+        set
+        {
+            selectedMonth = value;
+            ValidChoice = Constants.DR.IsItValidMonthYear(selectedMonth + " " + selectedYear);
+            StateHasChanged();
+        }
+
+    }
+    private string SelectedYear
+    {
+        get { return selectedYear; }
+        set 
+        {
+            selectedYear = value; 
+            ValidChoice = Constants.DR.IsItValidMonthYear(selectedMonth + " " + selectedYear);
+            StateHasChanged();
+        }
+    }
+    private string SelectedDownload => SelectedMonth + " " + SelectedYear;
 
     private bool ShowDeleteBal = false;
 
@@ -546,6 +600,7 @@ else
     private bool ShowTutorial;
 
     private List<string> FoundMonths => GetMonths();
+    private List<string> FoundYears => GetYears();
     private List<DataPoint> DataPoints = new List<DataPoint>();
 
     private bool Goals;
@@ -663,7 +718,12 @@ else
 
     private List<string> GetMonths()
     {
-        return IndexRunner.GetMonths(Transactions);
+        return IndexRunner.GetMonths(false);
+    }
+
+    private List<string> GetYears()
+    {
+        return IndexRunner.GetYears();
     }
 
     private void FilterDate(string filter) { Filter(filter, true); }
@@ -895,7 +955,7 @@ else
         if (string.IsNullOrEmpty(SelectedDownload))
             return;
 
-        string fileString = CSVBuilder.Build(Transactions, SelectedDownload);
+        string fileString = CSVBuilder.Build(await Constants.AllTransactions, SelectedDownload);
 
         byte[] file = System.Text.Encoding.UTF8.GetBytes(fileString);
         string FileSaveName = SelectedDownload == "All" ? "All_Transactions.csv" : SelectedDownload.Replace(" ", "_") + "_Transactions.csv";

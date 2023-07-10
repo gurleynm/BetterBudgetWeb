@@ -46,11 +46,13 @@ namespace BetterBudgetWeb
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
         public static List<ProjectedDatum> ProjectedData { get; set; }
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public static Task<List<Transaction>> AllTransactions { get; set; }
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         private static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
         public static List<Security> Securities { get; set; } = new List<Security>();
+        public static DateRange DR { get; set; } = new DateRange();
 
         public static bool DarkMode = Nighttime();
         public static Dictionary<string, string> ColorScheme = new Dictionary<string, string>();
@@ -106,6 +108,7 @@ namespace BetterBudgetWeb
 
             PassKey = Key;
             CatchAll catchAll = await CatchAllRunner.Grab();
+            AllTransactions = TransactionRepo.GetTransactionsAsync("ALL");
 
             AssignCatches(catchAll);
 
@@ -119,6 +122,7 @@ namespace BetterBudgetWeb
             Envelopes = caught.Envelopes;
             Presets = caught.Presets;
             Securities = caught.Securities;
+            DR = caught.DR;
 
             TransactionRepo.Transactions = caught.Transactions;
             BalanceRepo.Balances = caught.Balances;

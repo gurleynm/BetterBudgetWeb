@@ -400,7 +400,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var MonthYears = IndexRunner.GetMonths(Constants.Transactions);
+        Constants.Transactions = await Constants.AllTransactions;
+
+        var MonthYears = IndexRunner.GetMonths();
         if (MonthYears.Count > 0)
         {
             string[] splitter = MonthYears[MonthYears.Count - 1].Split();

@@ -170,19 +170,19 @@
     private double TotalIn { get; set; }
     private double TotalOut { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         SelectedMonth = "All";
         SelectedYear = DateTime.Now.Year.ToString();
+        Constants.Transactions = await Constants.AllTransactions;
         DrawChart();
-        return base.OnInitializedAsync();
     }
 
     private List<string> GetMonths()
     {
         List<string> AllFoundMonths;
         if (SelectedYear == "All")
-            AllFoundMonths = IndexRunner.GetMonths(Constants.Transactions, false);
+            AllFoundMonths = IndexRunner.GetMonths(false);
 
         else
             AllFoundMonths = IndexRunner.GetMonths(Constants.Transactions.Where(tr => tr.DateOfTransaction.Year.ToString() == SelectedYear).ToList(), false);

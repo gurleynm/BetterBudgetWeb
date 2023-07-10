@@ -136,7 +136,7 @@ namespace BetterBudgetWeb.Runner
                         return "income-good";
             }
         }
-        
+
         public static Transaction Add(NewTransaction newTrans)
         {
 
@@ -149,7 +149,7 @@ namespace BetterBudgetWeb.Runner
             Envelope env2 = Constants.Envelopes.FirstOrDefault(e => e.Name == np2pw);
             Envelope NewExpEnv = Constants.Envelopes.FirstOrDefault(e => e.Name == newExp);
 
-            Transaction nt = new Transaction(newTrans.Name, newTrans.ExpenseType, 
+            Transaction nt = new Transaction(newTrans.Name, newTrans.ExpenseType,
                                                 newTrans.TopAmount, newTrans.BottomAmount,
                                                 np1pw, np2pw, "none", "none");
             nt.DateOfTransaction = newTrans.DateOfTransaction;
@@ -178,24 +178,72 @@ namespace BetterBudgetWeb.Runner
             return positive + joint_pos - joint_neg - negative + stocks;
         }
 
-        public static List<string> GetMonths(List<Transaction> Transactions, bool includeYear = true)
+        public static List<string> GetMonths(List<Transaction> trans, bool includeYear = true)
         {
-            List<string> uniqueMonthYears = new List<string>();
-
-            if (Transactions == null)
-                return uniqueMonthYears;
-
-            string monthYear;
-            foreach (var trans in Transactions.OrderByDescending(t => t.DateOfTransaction))
+            List<string> months = new List<string>();
+            
+            foreach(Transaction transaction in trans)
             {
-                monthYear = includeYear ? trans.DateOfTransaction.ToString("MMMM") + " " + trans.DateOfTransaction.Year.ToString() :
-                                            trans.DateOfTransaction.ToString("MMMM");
-
-                if (!uniqueMonthYears.Contains(monthYear))
-                    uniqueMonthYears.Add(monthYear);
+                months.Add(transaction.DateOfTransaction.ToString("MMMM"));
             }
 
-            return uniqueMonthYears;
+            List<string> ret_months = new List<string>(months);
+
+            if (!includeYear)
+            {
+                ret_months.Clear();
+                foreach (string month in months)
+                {
+                    var split = month.Split(' ');
+                    if (!ret_months.Contains(split[0]))
+                    {
+                        ret_months.Add(split[0]);
+                    }
+                }
+            }
+
+            return ret_months;
+        }
+        
+        public static List<string> GetMonths(bool includeYear = true)
+        {
+            List<string> months = Constants.DR.UniqueMonthYears;
+            List<string> ret_months = new List<string>(months);
+
+            if (!includeYear)
+            {
+                ret_months.Clear();
+                foreach (string month in months)
+                {
+                    var split = month.Split(' ');
+                    if (!ret_months.Contains(split[0]))
+                    {
+                        ret_months.Add(split[0]);
+                    }
+                }
+            }
+
+            ret_months.Sort(Constants.SortMonths);
+
+            return ret_months;
+        }
+
+        public static List<string> GetYears()
+        {
+            List<string> years = Constants.DR.UniqueMonthYears;
+            List<string> ret_years = new List<string>(years);
+
+            ret_years.Clear();
+            foreach (string month in years)
+            {
+                var split = month.Split(' ');
+                if (!ret_years.Contains(split[1]))
+                {
+                    ret_years.Add(split[1]);
+                }
+            }
+
+            return ret_years;
         }
         public static List<Transaction>[] Filter(ref DynamicCostItem filter, List<Transaction> Transactions,
                                                     List<Transaction> FilteredTransactions, ref bool filtered)
