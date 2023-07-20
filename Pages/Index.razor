@@ -580,9 +580,9 @@ else
     private string SelectedYear
     {
         get { return selectedYear; }
-        set 
+        set
         {
-            selectedYear = value; 
+            selectedYear = value;
             ValidChoice = Constants.DR.IsItValidMonthYear(selectedMonth + " " + selectedYear);
             StateHasChanged();
         }
@@ -731,21 +731,20 @@ else
     private void Filter(string filter, bool date = false, bool balance = false)
     {
         if (filtered)
-            ResetFilters(true);
-        else
-        {
-            if (date)
-                FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
-            else if (balance)
-                FilteredTransactions = FilteredTransactions.Where(ft => ft.PaidWithPerson1 == filter ||
-                                                                        ft.PaidWithPerson2 == filter ||
-                                                                        ft.PaidOffPerson1 == filter ||
-                                                                        ft.PaidOffPerson2 == filter).ToList();
-            else
-                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+            ResetFilters();
 
-            filtered = true;
-        }
+        if (date)
+            FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
+        else if (balance)
+            FilteredTransactions = FilteredTransactions.Where(ft => ft.PaidWithPerson1 == filter ||
+                                                                    ft.PaidWithPerson2 == filter ||
+                                                                    ft.PaidOffPerson1 == filter ||
+                                                                    ft.PaidOffPerson2 == filter).ToList();
+        else
+            FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+
+        filtered = true;
+
         StateHasChanged();
     }
 
@@ -773,7 +772,6 @@ else
                     DynamicCostItems[index].Name = DynamicCostItems[index].Name.Replace(FilterIndicatorTxt, "");
                 }
             }
-            StateHasChanged();
         }
     }
     private void SetDataPoints(bool UpdateState = false)
