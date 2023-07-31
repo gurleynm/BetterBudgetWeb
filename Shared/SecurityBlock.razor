@@ -7,6 +7,7 @@
             <br />
             <label style="font-size:medium;align-self:flex-start;margin:0;"><strong>@TheSecurity.Name</strong></label>
             <label style="font-size:smaller;align-self:flex-start;margin:0">@Shares</label>
+            <label style="font-size:smaller;align-self:flex-start;margin:0">@Account</label>
         </div>
     </div>
     <div style="align-self:flex-end;padding:0; margin: 0;">
@@ -25,6 +26,7 @@
     public Security TheSecurity { get; set; }
 
     public string Shares => GetShareString();
+    public string Account => GetAccountString();
     public double PersonalPercentChange => TheSecurity.CalculateReturn();
 
     private string GetShareString()
@@ -34,7 +36,7 @@
 
         if (!options.Contains(TheSecurity.SecType.ToUpper()))
         {
-            return TheSecurity.NumShares == 1 ? "1 Share" : Math.Round(TheSecurity.NumShares,2) + " Shares";
+            return (TheSecurity.NumShares == 1 ? "1 Share" : Math.Round(TheSecurity.NumShares,2) + " Shares");
         }
         else
         {
@@ -48,4 +50,10 @@
         }
     }
 
+    private string GetAccountString()
+    {
+        string fromBal = "(";
+        fromBal += Constants.Balances.FirstOrDefault(b => b.Id == TheSecurity.BalanceFrom)?.Name + ")";
+        return fromBal;
+    }
 }
