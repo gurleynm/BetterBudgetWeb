@@ -29,7 +29,7 @@
             <br />
             <br />
             <label>Cost Per Share:</label>
-            @if (@SecType != "Call" && @SecType != "Put")
+            @if (@SecType != "Call" && @SecType != "Put" && @ChosenBalance.Person?.ToUpper() == "JOINT")
             {
                 <br />
                 <br />
@@ -44,7 +44,7 @@
                 <option value="Stock" selected>Stock</option>
                 <option value="ETF">ETF</option>
                 @*<option value="Call">Call Option</option>
-                <option value="Put">Put Option</option>*@
+        <option value="Put">Put Option</option>*@
                 <option value="Crypto">Crypto</option>
             </select>
             <br />
@@ -53,7 +53,7 @@
             <br />
             <br />
             <input type="number" style="width:23vw" placeholder="Cost Per Share" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
-            @if (@SecType != "Call" && @SecType != "Put")
+            @if (@SecType != "Call" && @SecType != "Put" && @ChosenBalance.Person?.ToUpper() == "JOINT")
             {
                 <br />
                 <br />
@@ -65,7 +65,7 @@
         </div>
         <br style="clear:both" />
         <br />
-        @if (@SecType == "Call" || @SecType == "Put")
+        @if ((@SecType == "Call" || @SecType == "Put") && @ChosenBalance.Person?.ToUpper() == "JOINT")
         {
             <div style="float:left; margin: 0 2vw;">
                 <label>Strike Price:</label>
@@ -83,16 +83,19 @@
                 <input type="date" @bind="@ExpirationDate" />
                 <br />
                 <br />
-                <select class="custom-select" @bind="Person" title="Person's Balance ">
-                    <option value="@Constants.Person1" selected>@Constants.Person1</option>
-                    <option value="@Constants.Person2">@Constants.Person2</option>
-                </select>
+                @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
+                {
+                    <select class="custom-select" @bind="Person" title="Person's Balance ">
+                        <option value="@Constants.Person1" selected>@Constants.Person1</option>
+                        <option value="@Constants.Person2">@Constants.Person2</option>
+                    </select>
+                }
             </div>
             <br style="clear:both" />
         }
         <div style="width:100%; padding:0; margin:0;display:flex;justify-content:center">
             <button class="btn btn-secondary" style="margin:auto 0" disabled=@Disabled @onclick=Submit>
-                @("Buy in " + Balances.FirstOrDefault(b => b.Id == BalanceSelected).Name
+                @("Buy in " + ChosenBalance.Name
                     )
             </button>
         </div>
@@ -121,7 +124,7 @@ else
                 <option value="Stock" selected>Stock</option>
                 <option value="ETF">ETF</option>
                 @*<option value="Call">Call Option</option>
-        <option value="Put">Put Option</option>*@
+                <option value="Put">Put Option</option>*@
                 <option value="Crypto">Crypto</option>
             </select>
         </div>
@@ -153,14 +156,17 @@ else
         </div>
         <br style="clear:both" />
         <br />
-        <div style="float:left; margin: 0 1vw;">
-            <label>Person:</label>
-            <br />
-            <select class="custom-select" @bind="Person" title="Person's Balance ">
-                <option value="@Constants.Person1" selected>@Constants.Person1</option>
-                <option value="@Constants.Person2">@Constants.Person2</option>
-            </select>
-        </div>
+        @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
+        {
+            <div style="float:left; margin: 0 1vw;">
+                <label>Person:</label>
+                <br />
+                <select class="custom-select" @bind="Person" title="Person's Balance ">
+                    <option value="@Constants.Person1" selected>@Constants.Person1</option>
+                    <option value="@Constants.Person2">@Constants.Person2</option>
+                </select>
+            </div>
+        }
     }
     <br style="clear:both" />
     <br />
@@ -169,7 +175,7 @@ else
         <p style="margin:0 1vw;overflow-wrap:normal;color:@ErrorColor">@ErrorMsg</p>
     }
     <button class="btn btn-secondary" style="margin: 0 1vw;" disabled=@Disabled @onclick=Submit>
-        @("Buy in " + Balances.FirstOrDefault(b => b.Id == BalanceSelected).Name
+        @("Buy in " + ChosenBalance.Name
             )
     </button>
 
@@ -203,9 +209,11 @@ else
             if (BalanceFrom == null)
                 return;
 
+            Person = ChosenBalance.Person?.ToUpper() == "JOINT" ? Constants.Person1 : ChosenBalance.Person;
             NumericAmountToTrade = BalanceFrom.APR == 0 ? BalanceFrom.Value : double.MaxValue;
         }
     }
+    private Balance ChosenBalance => Balances.FirstOrDefault(b => b.Id == BalanceSelected) ?? new Balance();
     public string Name { get; set; }
     public string NumShares { get; set; }
     public string AvgCost { get; set; }
@@ -216,7 +224,7 @@ else
 
     public bool Mobile => Constants.Mobile;
 
-    public string Person { get; set; } = Constants.Person1;
+    public string Person { get; set; }
 
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";
@@ -228,12 +236,13 @@ else
     protected override Task OnInitializedAsync()
     {
         Balances = Constants.Balances.Where(b => b.BalanceType == "Stocks").ToList();
-        
+
         if (Balances.Count > 0)
             NumericAmountToTrade = Balances[0].APR == 0 ? Balances[0].Value : double.MaxValue;
         else
             NumericAmountToTrade = 0;
 
+        Person = ChosenBalance.Person?.ToUpper() == "JOINT" ? Constants.Person1 : ChosenBalance.Person;
         return base.OnInitializedAsync();
     }
 

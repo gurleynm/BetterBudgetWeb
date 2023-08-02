@@ -12,6 +12,10 @@ namespace BetterBudgetWeb
 {
     public class Constants
     {
+        // Set null example:
+        //      testVar2 = testVar1 ?? testVar2
+        //          ^^^^^^^^^^^^^^^^
+        //  If testVar1 == null, then testVar2 = testVar2
         public static Dictionary<int, string> TheMonthsFromInt = new Dictionary<int, string> {
             { 1, "January" },
             { 2, "February" },
@@ -64,7 +68,7 @@ namespace BetterBudgetWeb
         public static string Person2 { get; set; } = "Kaitie";
 
         public static bool Us = true; // true false
-        public static bool Test = true;
+        public static bool Test = false;
         
         private static bool mobile = true;
         public static bool Mobile

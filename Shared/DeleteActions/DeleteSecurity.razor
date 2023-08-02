@@ -191,7 +191,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        AllSecurities = await SecurityRepo.GetSecuritiesAsync();
+        AllSecurities = SecurityRepo.GetSecurities();
         Securities = AllSecurities.Where(sec => sec.BalanceFrom == selectedBalance.Id).ToList();
     }
 
@@ -224,6 +224,7 @@ else
                 chosenOne.Value = tp1 * tp;
 
                 Securities = await SecurityRepo.RemoveAsync(chosenOne);
+                
 
                 ErrorColor = "green";
                 ErrorMsg = $"Security {chosenOne.Name} was sold!";

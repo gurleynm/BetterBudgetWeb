@@ -342,6 +342,7 @@ else
         Securities = SecurityRepo.GetSecurities();
         RefreshTime = DateTime.Now.ToString();
         Constants.Securities = Securities;
+        SelectedBalance = Constants.Balances.First(b => b.Id == SelectedBalance.Id);
     }
 
     private double CalculateReturn()
