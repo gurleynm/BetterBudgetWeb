@@ -34,7 +34,7 @@
 
 @code {
     [Parameter]
-    public Balance TheBalance { get; set; }
+    public Balance TheBalance { get; set; } = new Balance();
     [Parameter]
     public EventCallback<Balance> OnClick { get; set; }
     [Parameter]

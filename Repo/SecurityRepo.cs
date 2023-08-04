@@ -30,6 +30,8 @@ namespace BetterBudgetWeb.Repo
         public static List<Security> GetSecurities()
         {
             Task.Run(async () => await GetSecuritiesAsync());
+            if(Securities == null)
+                Securities = new List<Security>();
             return Securities;
         }
         public static async Task<List<Security>> AddOrUpdateAsync(Security small)

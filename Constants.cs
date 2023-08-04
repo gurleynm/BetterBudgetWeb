@@ -67,7 +67,7 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = true; // true false
+        public static bool Us = false; // true false
         public static bool Test = false;
         
         private static bool mobile = true;
@@ -125,7 +125,7 @@ namespace BetterBudgetWeb
             Monthlies = caught.Monthlies;
             Envelopes = caught.Envelopes;
             Presets = caught.Presets;
-            Securities = caught.Securities;
+            Securities = caught.Securities??new List<Security>();
             DR = caught.DR;
 
             TransactionRepo.Transactions = caught.Transactions;
