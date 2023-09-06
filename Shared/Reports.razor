@@ -405,6 +405,7 @@ else
         var MonthYears = IndexRunner.GetMonths();
         if (MonthYears.Count > 0)
         {
+            MonthYears.Reverse();
             string[] splitter = MonthYears[MonthYears.Count - 1].Split();
             string CurYear = splitter[1];
             string ThisMonth = DateTime.Now.ToString("MMMM");

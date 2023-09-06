@@ -103,21 +103,30 @@ namespace BetterBudgetWeb.Data
             if (ExpenseType == "Income")
                 return new Flow(Name + " (" + totDollar + ")", "Income" + addString, tot);
 
+            string FlowHeader = "";
+
+            if (ExpenseType == "Envelope")
+                FlowHeader = string.IsNullOrEmpty(PaidWithPerson1) ? PaidWithPerson2 : PaidWithPerson1;
+            else
+                FlowHeader = ExpenseType;
+
             if (!string.IsNullOrEmpty(general))
             {
                 if (general.Contains("~~~"))
                 {
-                    return new Flow(Name + " (" + totDollar + ")", ExpenseType + addString, tot);
+                    return new Flow(Name + " (" + totDollar + ")", FlowHeader + addString, tot);
                 }
                 else if (general.Contains("~B~"))
                 {
-                    return new Flow(Name + " (" + totDollar + ")", ExpenseType + addString, tot);
+                    return new Flow(Name + " (" + totDollar + ")", FlowHeader + addString, tot);
                 }
                 else
-                    return new Flow("Income" + addString, ExpenseType + " (" + totDollar + ")", tot);
+                    return new Flow("Income" + addString, FlowHeader + " (" + totDollar + ")", tot);
             }
 
-            return new Flow(ExpenseType + addString, Name + " (" + totDollar + ")", tot);
+
+
+            return new Flow(FlowHeader + addString, Name + " (" + totDollar + ")", tot);
         }
         public override string ToString()
         {

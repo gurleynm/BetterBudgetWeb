@@ -67,7 +67,7 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = false; // true false
+        public static bool Us = true; // true false
         public static bool Test = false;
         
         private static bool mobile = true;
@@ -400,6 +400,27 @@ namespace BetterBudgetWeb
                 }
                 else
                 {
+                    var split1 = month1.Split(' ');
+                    var split2 = month2.Split(' ');
+
+                    month1 = split1[0];
+                    month2 = split2[0];
+
+                    int year1 = -1;
+                    int year2 = -1;
+
+                    if (split1.Length > 1)
+                        year1 = int.TryParse(split1[1], out int tossyear1) ? tossyear1 : -1;
+
+                    if (split2.Length > 1)
+                        year2 = int.TryParse(split2[1], out int tossyear2) ? tossyear2 : -1;
+
+                    if (year1 < year2)
+                        return 11;
+
+                    if (year1 > year2)
+                        return 1;
+
                     if (!Months.Contains(month1))
                     {
                         if (!Months.Contains(month2))

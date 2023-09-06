@@ -243,7 +243,7 @@
         }
 
         if (SelectedLevel != "All")
-            DesiredTransactions = DesiredTransactions.Where(dt => dt.ExpenseType == SelectedLevel).ToList();
+            DesiredTransactions = DesiredTransactions.Where(dt => ValidTransaction(dt)).ToList();
 
         string TKey;
         string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer" };
@@ -428,6 +428,19 @@
             return t.PaidWithPerson2;
 
         return t.PaidWithPerson1;
+    }
+
+    private bool ValidTransaction(Transaction dt)
+    {
+        bool ExpenseIsLevel = dt.ExpenseType == SelectedLevel;
+        bool ExpenseIsEnvelope = dt.ExpenseType == "Envelope";
+
+        bool PaidWithPerson1IsLevel = dt.PaidWithPerson1 == SelectedLevel;
+        bool PaidWithPerson2IsLevel = dt.PaidWithPerson2 == SelectedLevel;
+
+        bool PaidWithPerson = PaidWithPerson1IsLevel || PaidWithPerson2IsLevel;
+
+        return ExpenseIsLevel || (ExpenseIsEnvelope && PaidWithPerson);
     }
 
     private string DecideColor(double amount)
