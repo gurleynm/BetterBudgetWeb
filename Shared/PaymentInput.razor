@@ -147,11 +147,11 @@ else
 
     private bool ValidPaymentBalance(Balance b, string person)
     {
-        return (b.Person == person || b.Person.ToUpper() == "JOINT") && b.BalanceType != "Stocks";
+        return (b.Person == person || b.Person.ToUpper() == "JOINT");
     }
     
     private bool ValidPaymentBalance(Balance b)
     {
-        return b.BalanceType != "Stocks";
+        return true;
     }
 }

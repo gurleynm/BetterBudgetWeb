@@ -489,7 +489,14 @@ else
                                 <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                             }
                         }
-
+                        
+                        @if (Person1BalancesSecurities != null)
+                        {
+                            @foreach (var pay in Person1BalancesSecurities)
+                            {
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
+                            }
+                        }
                     }
                     <option value="NONE">Did not pay</option>
                 </select>
@@ -570,6 +577,13 @@ else
                             }
                         }
 
+                        @if (Person2BalancesSecurities != null)
+                        {
+                            @foreach (var pay in Person2BalancesSecurities)
+                            {
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
+                            }
+                        }
                     }
                     <option value="NONE">Did not pay</option>
                 </select>
@@ -840,11 +854,13 @@ else
     private List<Balance> Person1BalancesLoans => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Loan").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person1BalancesNotLoans => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType != "Loan").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person1BalancesIncomes => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Income").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person1BalancesSecurities => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Stocks").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person1BalancesEquities => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Equity").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person2Balances => Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person2BalancesLoans => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Loan").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person2BalancesNotLoans => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType != "Loan").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person2BalancesIncomes => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Income").OrderBy(p1b => p1b.Name).ToList();
+    private List<Balance> Person2BalancesSecurities => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Stocks").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person2BalancesEquities => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Equity").OrderBy(p1b => p1b.Name).ToList();
 
     private string ErrorMsg { get; set; } = string.Empty;
