@@ -160,7 +160,7 @@ else
         <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
             <h1 style="text-align:center;">Balance Preview:</h1>
             <BalanceBlock TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
-                                    Value = double.TryParse(Amount, out double v) ? v : 0})"
+                                    Value = double.TryParse(Amount, out double v) ? v : 0, BalanceType = BalanceType})"
                           FontSize="2" />
         </div>
         <br style="clear:both" />

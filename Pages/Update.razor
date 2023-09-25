@@ -46,7 +46,8 @@
                    Amount="@CurAmount"
                    BalanceType="@BalanceType"
                    Color="@Color"
-                   TextColor="@TColor">
+                   TextColor="@TColor"
+                   PaidThroughWork="@(BalanceType == "Stocks" && int.TryParse(APR,out int apr) && apr == 1)">
     </UpdateBalance>
 }
 
