@@ -1,0 +1,107 @@
+﻿@page "/update"
+@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.Repo;
+@using BetterBudgetWeb.Shared.UpdateActions
+@inject IJSRuntime JSRuntime
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+</style>
+
+<PageTitle>Update</PageTitle>
+
+<h1>Update</h1>
+
+@if (!Constants.Mobile)
+{
+    <div class="tab" />
+}
+
+<div class="tabcontent">
+    <label>Select a Balance:</label>
+    <br />
+    <select @bind=SelectedBalance title="Select Balance ">
+        <option value="" selected>(Choose a Balance)</option>
+        @foreach (var bal in Balances)
+        {
+            <option value=@bal.Id>@bal.Name</option>
+        }
+    </select>
+</div>
+
+@if (!string.IsNullOrEmpty(SelectedBalance))
+{
+    <UpdateBalance Id="@SelectedBalance"
+                   BalName="@BalName"
+                   APR="@APR"
+                   Amount="@CurAmount"
+                   BalanceType="@BalanceType"
+                   Color="@Color"
+                   TextColor="@TColor">
+    </UpdateBalance>
+}
+
+@code {
+    private string BalName;
+    private string BalanceType;
+    private string APR;
+    private string CurAmount;
+    private string Color = "#32A852";
+    private string TColor = "#32A852";
+
+    private string BalClass = "active";
+    private List<Balance> Balances = new List<Balance>();
+    private string selectedBalance;
+    private string SelectedBalance
+    {
+        get { return selectedBalance; }
+        set
+        {
+            selectedBalance = value;
+            SetBalVals();
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+        Balances = await BalanceRepo.GetBalancesAsync();
+        SelectedBalance = "";
+    }
+
+    private void SetBalVals()
+    {
+        if (string.IsNullOrEmpty(SelectedBalance))
+            return;
+
+        Balance ThisBalance = Balances.FirstOrDefault(b => b.Id == SelectedBalance);
+
+        if (ThisBalance != null)
+        {
+            BalName = ThisBalance.Name;
+            APR = "" + ThisBalance.APR;
+            CurAmount = "" + ThisBalance.Value;
+            BalanceType = ThisBalance.BalanceType;
+            Color = ThisBalance.HexColor;
+            TColor = ThisBalance.TextColor;
+        }
+    }
+
+    private void Refresh(bool accepted)
+    {
+        if (accepted)
+        {
+            StateHasChanged();
+        }
+    }
+}

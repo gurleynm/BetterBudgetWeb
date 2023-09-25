@@ -92,7 +92,10 @@
     private async void Clicked()
     {
         if (TheBalance.BalanceType == "Stocks")
+        {
+            Constants.AccountIndexStr = TheBalance.Name;
             NavManager.NavigateTo("/portfolio");
+        }
         else
             await OnClick.InvokeAsync(TheBalance.Name);
     }

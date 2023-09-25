@@ -334,7 +334,19 @@ else
         if (NoInvestments)
             return;
 
-        SelectedBalance = InvestmentAccounts[0];
+        int BalanceIndex = 0;
+        if (!string.IsNullOrEmpty(Constants.AccountIndexStr))
+        {
+            for(int ia = 0; ia < InvestmentAccounts.Count; ia++)
+            {
+                if (InvestmentAccounts[ia].Name.ToUpper() == Constants.AccountIndexStr.ToUpper())
+                    BalanceIndex = ia;
+            }
+        }
+
+        Constants.AccountIndexStr = "";
+
+        SelectedBalance = InvestmentAccounts[BalanceIndex];
         AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
         RefreshTime = DateTime.Now.ToString();
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
