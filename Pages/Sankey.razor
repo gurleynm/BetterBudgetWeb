@@ -293,6 +293,7 @@
 
         double Totals = Charges;
         double BudgetedAmount;
+        double RefundSum = Refunds.Sum(dc => dc.TotalAmount) * -1;
 
         List<string> Skip = new List<string>();
 
@@ -304,7 +305,12 @@
         if (SelectedLevel != "All" && SelectedMonth != "All" && !Skip.Contains(SelectedLevel))
         {
             BudgetedAmount = Constants.GetBudgetedAmount(SelectedLevel, SelectedMonth, SelectedYear);
-            Totals = BudgetedAmount + Refunds.Sum(dc => dc.TotalAmount) * -1 > Totals ? BudgetedAmount + Refunds.Sum(dc => dc.TotalAmount) * -1 : Totals;
+
+            // Line below may be obsolete
+            Totals = BudgetedAmount + RefundSum > Totals ? BudgetedAmount + Refunds.Sum(dc => dc.TotalAmount) * -1 : Totals;
+
+            if (Charges < BudgetedAmount)
+                Totals = Charges;
 
             TheFlows.Add(new Transaction { 
                 Name = "Budgeted Amount", 
@@ -370,7 +376,7 @@
             foreach (var key in GeneralTransactions.Keys)
                 TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL"));
 
-            TotalIn = incomeTotals;
+            TotalIn = incomeTotals + RefundSum;
             TotalOut = generalTotals;
         }
         else
@@ -380,8 +386,8 @@
                 var splitter = TheFlows[0].From.Split('$');
                 var second = splitter.Length > 1 ? splitter[1].Trim(')') : "0";
 
-                TotalIn = double.TryParse(second, out double catcher) ? catcher : 0;
-                TotalOut = TheFlows.Sum(tf => tf.Amount);
+                TotalIn = (double.TryParse(second, out double catcher) ? catcher : 0) + RefundSum;
+                TotalOut = TheFlows.Sum(tf => tf.From.Contains("Budgeted Amount") ? 0 : tf.Amount);
             }
             else
             {
