@@ -69,114 +69,114 @@
                                     <br style="clear:both" />
                                 </div>
                             }
-                                <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;">
-                                    <table>
-                                        <tr>
-                                            <th>
-                                                Statistic
-                                            </th>
-                                            <th>
-                                                @Constants.Person1
-                                            </th>
-                                            <th>
-                                                @Constants.Person2
-                                            </th>
-                                            <th>
-                                                Total
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <td>Transactions:</td>
-                                            <td>@Person1TransCount</td>
-                                            <td>@Person2TransCount</td>
-                                            <td>
-                                                @TotalTransCount
-                                                @if (Person1TransCount + Person2TransCount > TotalTransCount)
-                                                {
-                                                    <br />
-                                                    <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
-                                                }
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Projected Expense Total:
-                                            </td>
-                                            <td>@Pretty(Person1Projected)</td>
-                                            <td>@Pretty(Person2Projected)</td>
-                                            <td>@Pretty(TotalProjected)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Actual Expense Total:
-                                            </td>
-                                            <td class="income-bad">@Pretty(Person1Actual)</td>
-                                            <td class="income-bad">@Pretty(Person2Actual)</td>
-                                            <td class="income-bad">@Pretty(TotalActual)</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Income + Added Equity Total:
-                                            </td>
-                                            <td class="income-good">@Pretty(Person1Income)</td>
-                                            <td class="income-good">@Pretty(Person2Income)</td>
-                                            <td class="income-good">@Pretty(TotalIncome)</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4">=</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                Net for Month:
-                                            </td>
-                                            <td class="@TranColor(Person1Income - Person1Actual)">@Pretty(Person1Income - Person1Actual)</td>
-                                            <td class="@TranColor(Person2Income - Person2Actual)">@Pretty(Person2Income - Person2Actual)</td>
-                                            <td class="@TranColor(TotalIncome - TotalActual)">@Pretty(TotalIncome - TotalActual)</td>
-                                        </tr>
-                                    </table>
-                                    <br style="clear:both;" />
-                                    <table style="margin-left:1vw;">
-                                        <tr>
-                                            <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
-                                        </tr>
-                                        <tr>
-                                            <th>Expense</th>
-                                            <th>Total Budget Amount</th>
-                                            <th>Spent</th>
-                                            <th>Difference</th>
-                                        </tr>
-                                        @foreach (var sfd in SFDs)
+                            <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;">
+                                <table>
+                                    <tr>
+                                        <th>
+                                            Statistic
+                                        </th>
+                                        <th>
+                                            @Constants.Person1
+                                        </th>
+                                        <th>
+                                            @Constants.Person2
+                                        </th>
+                                        <th>
+                                            Total
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td>Transactions:</td>
+                                        <td>@Person1TransCount</td>
+                                        <td>@Person2TransCount</td>
+                                        <td>
+                                            @TotalTransCount
+                                            @if (Person1TransCount + Person2TransCount > TotalTransCount)
+                                            {
+                                                <br />
+                                                <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Projected Expense Total:
+                                        </td>
+                                        <td>@Pretty(Person1Projected)</td>
+                                        <td>@Pretty(Person2Projected)</td>
+                                        <td>@Pretty(TotalProjected)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Actual Expense Total:
+                                        </td>
+                                        <td class="income-bad">@Pretty(Person1Actual)</td>
+                                        <td class="income-bad">@Pretty(Person2Actual)</td>
+                                        <td class="income-bad">@Pretty(TotalActual)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Income + Added Equity Total:
+                                        </td>
+                                        <td class="income-good">@Pretty(Person1Income)</td>
+                                        <td class="income-good">@Pretty(Person2Income)</td>
+                                        <td class="income-good">@Pretty(TotalIncome)</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4">=</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Net for Month:
+                                        </td>
+                                        <td class="@TranColor(Person1Income - Person1Actual)">@Pretty(Person1Income - Person1Actual)</td>
+                                        <td class="@TranColor(Person2Income - Person2Actual)">@Pretty(Person2Income - Person2Actual)</td>
+                                        <td class="@TranColor(TotalIncome - TotalActual)">@Pretty(TotalIncome - TotalActual)</td>
+                                    </tr>
+                                </table>
+                                <br style="clear:both;" />
+                                <table style="margin-left:1vw;">
+                                    <tr>
+                                        <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+                                    </tr>
+                                    <tr>
+                                        <th>Expense</th>
+                                        <th>Total Budget Amount</th>
+                                        <th>Spent</th>
+                                        <th>Difference</th>
+                                    </tr>
+                                    @foreach (var sfd in SFDs)
+                                    {
+                                        @if (sfd.Name.Contains("EXAMPLE DATA"))
                                         {
-                                            @if (sfd.Name.Contains("EXAMPLE DATA"))
-                                            {
-                                                <tr>
-                                                    <td style="padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
-                                                    <td>@Pretty(sfd.Projected)</td>
-                                                    <td>@Pretty(sfd.Actual)</td>
-                                                    <td>@Pretty(sfd.Projected - sfd.Actual)</td>
-                                                </tr>
-                                            }
-                                            else
-                                            {
-                                                <tr>
-                                                    <td style="padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
-                                                    <td>@Pretty(sfd.Projected)</td>
-                                                    <td>@Pretty(sfd.Actual)</td>
-                                                    <td class="@TranColor(sfd.Projected - sfd.Actual)">@Pretty(sfd.Projected - sfd.Actual)</td>
-                                                </tr>
-                                            }
+                                            <tr>
+                                                <td style="padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
+                                                <td>@Pretty(sfd.Projected)</td>
+                                                <td>@Pretty(sfd.Actual)</td>
+                                                <td>@Pretty(sfd.Projected - sfd.Actual)</td>
+                                            </tr>
                                         }
-                                        <tr>
-                                            <td colspan="4">=</td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Total</strong></td>
-                                            <td>@Pretty(SFDs.Sum(d => d.Projected))</td>
-                                            <td>@Pretty(SFDs.Sum(d => d.Actual))</td>
-                                            <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
-                                        </tr>
-                                    </table>
-                                </div>
+                                        else
+                                        {
+                                            <tr>
+                                                <td style="padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
+                                                <td>@Pretty(sfd.Projected)</td>
+                                                <td>@Pretty(sfd.Actual)</td>
+                                                <td class="@TranColor(sfd.Projected - sfd.Actual)">@Pretty(sfd.Projected - sfd.Actual)</td>
+                                            </tr>
+                                        }
+                                    }
+                                    <tr>
+                                        <td colspan="4">=</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Total</strong></td>
+                                        <td>@Pretty(SFDs.Sum(d => d.Projected))</td>
+                                        <td>@Pretty(SFDs.Sum(d => d.Actual))</td>
+                                        <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
+                                    </tr>
+                                </table>
+                            </div>
                         }
                         else
                         {
@@ -231,119 +231,119 @@ else
                                 <br style="clear:both" />
                             </div>
                         }
-                            <div style="display:flex;flex-direction:column;justify-content:space-between;">
-                                <div>
-                                    <table>
-                                        <tr>
-                                            <th style="font-size:3vw;padding:5px">
-                                                Statistic
-                                            </th>
-                                            <th style="font-size:3vw;padding:5px">
-                                                @Constants.Person1
-                                            </th>
-                                            <th style="font-size:3vw;padding:5px">
-                                                @Constants.Person2
-                                            </th>
-                                            <th style="font-size:3vw;padding:5px">
-                                                Total
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:3vw;padding:5px">Transactions:</td>
-                                            <td style="font-size:3vw;padding:5px">@Person1TransCount</td>
-                                            <td style="font-size:3vw;padding:5px">@Person2TransCount</td>
-                                            <td style="font-size:3vw;padding:5px">
-                                                @TotalTransCount
-                                                @if (Person1TransCount + Person2TransCount > TotalTransCount)
-                                                {
-                                                    <br />
-                                                    <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
-                                                }
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:3vw;padding:5px">
-                                                Projected Expense Total:
-                                            </td>
-                                            <td style="font-size:3vw;padding:5px">@Pretty(Person1Projected)</td>
-                                            <td style="font-size:3vw;padding:5px">@Pretty(Person2Projected)</td>
-                                            <td style="font-size:3vw;padding:5px">@Pretty(TotalProjected)</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:3vw;padding:5px">
-                                                Actual Expense Total:
-                                            </td>
-                                            <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(Person1Actual)</td>
-                                            <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(Person2Actual)</td>
-                                            <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(TotalActual)</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:3vw;padding:5px">
-                                                Income + Added Equity Total:
-                                            </td>
-                                            <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person1Income)</td>
-                                            <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person2Income)</td>
-                                            <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(TotalIncome)</td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="4" style="font-size:3vw;padding:5px">=</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:3vw;padding:5px">
-                                                Net for Month:
-                                            </td>
-                                            <td class="@TranColor(Person1Income - Person1Actual)" style="font-size:3vw;padding:5px">@Pretty(Person1Income - Person1Actual)</td>
-                                            <td class="@TranColor(Person2Income - Person2Actual)" style="font-size:3vw;padding:5px">@Pretty(Person2Income - Person2Actual)</td>
-                                            <td class="@TranColor(TotalIncome - TotalActual)" style="font-size:3vw;padding:5px">@Pretty(TotalIncome - TotalActual)</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                                <br style="clear:both;" />
-                                <div>
-                                    <table style="margin-left:1vw;">
-                                        <tr>
-                                            <th colspan="4" style="font-size:3vw;background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
-                                        </tr>
-                                        <tr>
-                                            <th style="font-size:3vw;padding:5px">Expense</th>
-                                            <th style="font-size:3vw;padding:5px">Total Budget Amount</th>
-                                            <th style="font-size:3vw;padding:5px">Spent</th>
-                                            <th style="font-size:3vw;padding:5px">Difference</th>
-                                        </tr>
-                                        @foreach (var sfd in SFDs)
-                                        {
-                                            @if (sfd.Name.Contains("EXAMPLE DATA"))
+                        <div style="display:flex;flex-direction:column;justify-content:space-between;">
+                            <div>
+                                <table>
+                                    <tr>
+                                        <th style="font-size:3vw;padding:5px">
+                                            Statistic
+                                        </th>
+                                        <th style="font-size:3vw;padding:5px">
+                                            @Constants.Person1
+                                        </th>
+                                        <th style="font-size:3vw;padding:5px">
+                                            @Constants.Person2
+                                        </th>
+                                        <th style="font-size:3vw;padding:5px">
+                                            Total
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-size:3vw;padding:5px">Transactions:</td>
+                                        <td style="font-size:3vw;padding:5px">@Person1TransCount</td>
+                                        <td style="font-size:3vw;padding:5px">@Person2TransCount</td>
+                                        <td style="font-size:3vw;padding:5px">
+                                            @TotalTransCount
+                                            @if (Person1TransCount + Person2TransCount > TotalTransCount)
                                             {
-                                                <tr>
-                                                    <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
-                                                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
-                                                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
-                                                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
-                                                </tr>
+                                                <br />
+                                                <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
                                             }
-                                            else
-                                            {
-                                                <tr>
-                                                    <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
-                                                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
-                                                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
-                                                    <td class="@TranColor(sfd.Projected - sfd.Actual)" style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
-                                                </tr>
-                                            }
-                                        }
-                                        <tr>
-                                            <td colspan="4" style="font-size:3vw;padding:5px">=</td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size:3vw;padding:5px"><strong>Total</strong></td>
-                                            <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected))</td>
-                                            <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Actual))</td>
-                                            <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))" style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
-                                        </tr>
-                                    </table>
-                                </div>
-
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-size:3vw;padding:5px">
+                                            Projected Expense Total:
+                                        </td>
+                                        <td style="font-size:3vw;padding:5px">@Pretty(Person1Projected)</td>
+                                        <td style="font-size:3vw;padding:5px">@Pretty(Person2Projected)</td>
+                                        <td style="font-size:3vw;padding:5px">@Pretty(TotalProjected)</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-size:3vw;padding:5px">
+                                            Actual Expense Total:
+                                        </td>
+                                        <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(Person1Actual)</td>
+                                        <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(Person2Actual)</td>
+                                        <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(TotalActual)</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-size:3vw;padding:5px">
+                                            Income + Added Equity Total:
+                                        </td>
+                                        <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person1Income)</td>
+                                        <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person2Income)</td>
+                                        <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(TotalIncome)</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" style="font-size:3vw;padding:5px">=</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-size:3vw;padding:5px">
+                                            Net for Month:
+                                        </td>
+                                        <td class="@TranColor(Person1Income - Person1Actual)" style="font-size:3vw;padding:5px">@Pretty(Person1Income - Person1Actual)</td>
+                                        <td class="@TranColor(Person2Income - Person2Actual)" style="font-size:3vw;padding:5px">@Pretty(Person2Income - Person2Actual)</td>
+                                        <td class="@TranColor(TotalIncome - TotalActual)" style="font-size:3vw;padding:5px">@Pretty(TotalIncome - TotalActual)</td>
+                                    </tr>
+                                </table>
                             </div>
+                            <br style="clear:both;" />
+                            <div>
+                                <table style="margin-left:1vw;">
+                                    <tr>
+                                        <th colspan="4" style="font-size:3vw;background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+                                    </tr>
+                                    <tr>
+                                        <th style="font-size:3vw;padding:5px">Expense</th>
+                                        <th style="font-size:3vw;padding:5px">Total Budget Amount</th>
+                                        <th style="font-size:3vw;padding:5px">Spent</th>
+                                        <th style="font-size:3vw;padding:5px">Difference</th>
+                                    </tr>
+                                    @foreach (var sfd in SFDs)
+                                    {
+                                        @if (sfd.Name.Contains("EXAMPLE DATA"))
+                                        {
+                                            <tr>
+                                                <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
+                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
+                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
+                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
+                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
+                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
+                                                <td class="@TranColor(sfd.Projected - sfd.Actual)" style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
+                                            </tr>
+                                        }
+                                    }
+                                    <tr>
+                                        <td colspan="4" style="font-size:3vw;padding:5px">=</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-size:3vw;padding:5px"><strong>Total</strong></td>
+                                        <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected))</td>
+                                        <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Actual))</td>
+                                        <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))" style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                        </div>
                     }
                     else
                     {
@@ -421,6 +421,7 @@ else
                 {
                     MonthTabs.Add(new MonthTab { MyMonth = "All", MyYear = CurYear, MyClass = "" });
                     CurYear = splitter[1];
+
                     Years.Add(new YearTab { MyYear = CurYear, MyClass = CurYear == DateTime.Now.Year.ToString() ? "active" : "" });
                 }
 

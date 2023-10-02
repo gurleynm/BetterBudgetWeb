@@ -417,7 +417,7 @@ namespace BetterBudgetWeb
                         year2 = int.TryParse(split2[1], out int tossyear2) ? tossyear2 : -1;
 
                     if (year1 < year2)
-                        return 11;
+                        return -1;
 
                     if (year1 > year2)
                         return 1;

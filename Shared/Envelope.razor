@@ -84,7 +84,7 @@
             else
             {
                 <div class="bottom-mid-centered" style="z-index:1;background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;">
-                    <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
+                    <strong>Goal: <span style="color:@GoodOrBad();">@Constants.Pretty(Goal)</span></strong>
                 </div>
             }
         }
@@ -110,21 +110,21 @@ else
         <div class="top-centered" style="background-color:white;font-size:@(Font_Size)vw;">
             @Name
         </div>
-        <div class="bottom-mid-centered" style="z-index:1;background-color:transparent;font-size:@(Font_Size/2)vw;display:inline">
-            <div style="float:left">
+        <div class="bottom-mid-centered" style="z-index:1;background-color:transparent;font-size:@(Font_Size/2)vw;display:inline;">
+            <div style="float:left;width:10vw">
                 <strong>
                     @(Constants.Person1 + ":")
                     <br />
-                    <span style="color:limegreen;">@Constants.Pretty(Person1Amount)</span>
+                    <span style="color:@GoodOrBad()">@Person1Disp</span>
                 </strong>
             </div>
             <br />
             <br />
-            <div style="float:right">
+            <div style="float:right;width:10vw">
                 <strong>
                     @(Constants.Person2 + ":")
                     <br />
-                    <span style="color:@GoodOrBad()">@Constants.Pretty(Person2Amount)</span>
+                    <span style="color:@GoodOrBad()">@Person2Disp</span>
                 </strong>
             </div>
         </div>
@@ -162,6 +162,10 @@ else
     [Parameter]
     public double Person2Amount { get; set; }
     [Parameter]
+    public string Person1Account { get; set; }
+    [Parameter]
+    public string Person2Account { get; set; }
+    [Parameter]
     public double Font_Size { get; set; } = 2;
     [Parameter]
     public bool Open { get; set; }
@@ -171,6 +175,9 @@ else
     public bool Stashing { get; set; }
     [Parameter]
     public bool Cashing { get; set; }
+
+    private string Person1Disp => string.IsNullOrEmpty(Person1Account) ? Constants.Pretty(Person1Amount) : Constants.Pretty(Person1Amount) + " (" + Person1Account + ")";
+    private string Person2Disp => string.IsNullOrEmpty(Person2Account) ? Constants.Pretty(Person2Amount) : Constants.Pretty(Person2Amount) + " (" + Person2Account + ")";
 
     private bool ShowBack = false;
 
@@ -186,7 +193,7 @@ else
     }
     private string GoodOrBad()
     {
-        return Saved < Goal ? Saved < Goal * .9 ? "red" : "yellowgreen" : "limegreen";
+        return Saved < Goal * .99 ? Saved < Goal * .9 ? "red" : "yellowgreen" : "limegreen";
     }
     private string DetermineState()
     {
