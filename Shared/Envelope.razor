@@ -111,7 +111,7 @@ else
             @Name
         </div>
         <div class="bottom-mid-centered" style="z-index:1;background-color:transparent;font-size:@(Font_Size/2)vw;display:inline;">
-            <div style="float:left;width:10vw">
+            <div style="float:left;width:@SmallTxtScale">
                 <strong>
                     @(Constants.Person1 + ":")
                     <br />
@@ -120,7 +120,7 @@ else
             </div>
             <br />
             <br />
-            <div style="float:right;width:10vw">
+            <div style="float:right;width:@SmallTxtScale">
                 <strong>
                     @(Constants.Person2 + ":")
                     <br />
@@ -137,6 +137,7 @@ else
     [Parameter]
     public double Scale { get; set; } = 20;
     public string scale => Scale + "vw";
+    public string SmallTxtScale => Scale > 20 ? (Scale - 10) + "vw" : "10vw";
     [Parameter]
     public Action OnClick
     {

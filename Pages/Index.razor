@@ -448,6 +448,8 @@ else
                 {
                     <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@env.Goal Saved=@env.TotalAmount
                               FlipClick="true"
+                              Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
+                              Person2Account="@(new BalanceRepoCaller().GetName(env.Person2Account))"
                               Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
                 }
             </div>

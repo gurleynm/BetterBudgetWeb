@@ -82,13 +82,14 @@
 
         public Envelope(Envelope other)
         {
-            this.Id = other.Id;
-            this.Name = other.Name;
-            this.Goal = other.Goal;
-            this.Person1Amount = other.Person1Amount;
-            this.Person2Amount = other.Person2Amount;
-            this.Person1Account = other.Person1Account;
-            this.Person2Account = other.Person2Account;
+            Id = other.Id;
+            Name = other.Name;
+            Goal = other.Goal;
+            UpdateGoal = other.UpdateGoal;
+            Person1Amount = other.Person1Amount;
+            Person2Amount = other.Person2Amount;
+            Person1Account = other.Person1Account;
+            Person2Account = other.Person2Account;
         }
     }
 }
