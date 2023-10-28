@@ -30,7 +30,7 @@ namespace BetterBudgetWeb
             { 11, "November" },
             { 12, "December" }
         };
-        
+
         public static Dictionary<string, int> TheMonthsFromString = new Dictionary<string, int> {
             { "January", 1 },
             { "February", 2 },
@@ -67,9 +67,11 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Kaitie";
 
-        public static bool Us = true; // true false
-        public static bool Test = false;
-        
+        public static string Who = "Nathan"; // Nathan David Corey
+        public static string WebWho { get; set; } // Nathan David Corey
+
+        public static bool Test = false; // true false
+
         public static string AccountIndexStr = "";
         private static bool mobile = true;
         public static bool Mobile
@@ -95,20 +97,30 @@ namespace BetterBudgetWeb
         public static async Task Init()
         {
             DetermineDarkLight();
-            if (Us)
+            switch (Who)
             {
-                //BaseUri = "https://betterbudgetapi.azurewebsites.net/";
-                BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
-                Person1 = "Nathan";
-                Person2 = "Lindsey";
-                Key = "Lindseylicious";
-            }
-            else
-            {
-                BaseUri = Test ? "https://localhost:7234/" : "https://davidbetterbudgetapi.azurewebsites.net/";
-                Person1 = "David";
-                Person2 = "Katie";
-                Key = "Doofenblast!";
+                case "Nathan":
+                    //BaseUri = "https://betterbudgetapi.azurewebsites.net/";
+                    BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
+                    Person1 = "Nathan";
+                    Person2 = "Lindsey";
+                    Key = "Lindseylicious";
+                    WebWho = "Better Budget";
+                    break;
+                case "David":
+                    BaseUri = Test ? "https://localhost:7234/" : "https://davidbetterbudgetapi.azurewebsites.net/";
+                    Person1 = "David";
+                    Person2 = "Katie";
+                    Key = "Doofenblast!";
+                    WebWho = "David Better Budget";
+                    break;
+                case "Corey":
+                    BaseUri = Test ? "https://localhost:7234/" : "https://coreybetterbudgetapi.azurewebsites.net/";
+                    Person1 = "Corey";
+                    Person2 = "Other";
+                    Key = "TroyAndAbed";
+                    WebWho = "Corey Better Budget";
+                    break;
             }
 
             PassKey = Key;
@@ -126,7 +138,7 @@ namespace BetterBudgetWeb
             Monthlies = caught.Monthlies;
             Envelopes = caught.Envelopes;
             Presets = caught.Presets;
-            Securities = caught.Securities??new List<Security>();
+            Securities = caught.Securities ?? new List<Security>();
             DR = caught.DR;
 
             TransactionRepo.Transactions = caught.Transactions;
@@ -324,9 +336,9 @@ namespace BetterBudgetWeb
 
             var ExpInQuestion = AllMonths.FirstOrDefault(mon =>
                                 mon.Name == ExpType &&
-                                (mon.MonthYear() == Month + " " + Year || 
+                                (mon.MonthYear() == Month + " " + Year ||
                                 mon.MonthYear() == Month + "  1" ||
-                                mon.MonthYear() == "All " + Year || 
+                                mon.MonthYear() == "All " + Year ||
                                 mon.MonthYear() == "All 1"));
 
             return ExpInQuestion == null ? 0 : ExpInQuestion.TotalAmount;

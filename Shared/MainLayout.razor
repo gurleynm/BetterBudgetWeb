@@ -353,7 +353,7 @@
                 <div class="table">
                     <div style="position: absolute; top:1vw; left:1vw; height:4vh; vertical-align:middle">
                         <a href="" style="font-size:large;font-family:Papyrus; text-align:center; float:left;color:white;">
-                            <strong>@(Constants.Us ? "Better Budget" : "David Better Budget")</strong>
+                            <strong>@(Constants.WebWho)</strong>
                         </a>
                     </div>
 
@@ -389,7 +389,7 @@
                                 <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Chart
                             </a>
                         </li>
-                        @if (Constants.Us)
+                        @if (Constants.Who == "Nathan")
                         {
                             <li>
                                 <a class="navbar-brand" href="simulations" style="font-family:Papyrus; text-align:center;">

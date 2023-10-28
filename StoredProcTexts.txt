@@ -1,0 +1,328 @@
+﻿CREATE PROCEDURE [dbo].[AddOrUpdateCoreyAssociation]
+    	@Id [varchar](50) = NULL,
+    	@Name [varchar](150),
+    	@NewName [varchar](150),
+    	@ExpenseType [varchar](50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE CoreyAssociations SET Name = @Name, NewName = @NewName, ExpenseType = @ExpenseType
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        INSERT INTO CoreyAssociations(Id, Name, NewName, ExpenseType)
+        VALUES(@Id, @Name, @NewName, @ExpenseType)
+END
+go
+CREATE PROCEDURE [dbo].[AddOrUpdateCoreyBalance]
+    	@Id [varchar](50) = NULL,
+    	@Name [varchar](50),
+    	@Person [varchar](50),
+	@Value [float](53),
+	@BalanceType [varchar](50),
+	@APR [float](53),
+	@HexColor [varchar](50),
+	@TextColor [varchar](50),
+	@DateUpdated [datetime]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE CoreyBalances SET Name = @Name, Person = @Person, Value = @Value, BalanceType = @BalanceType, APR = @APR, HexColor = @HexColor, TextColor = @TextColor, DateUpdated = @DateUpdated
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        INSERT INTO CoreyBalances(Id, Name, Person, Value, BalanceType, APR, HexColor, TextColor, DateUpdated)
+        VALUES(@Id, @Name, @Person, @Value, @BalanceType, @APR, @HexColor, @TextColor, @DateUpdated)
+END
+go
+CREATE PROC [dbo].[AddOrUpdateCoreyEnvelope]
+        @Id varchar(50) = NULL,
+        @Name VARCHAR(MAX),
+        @Goal FLOAT,
+        @Person1Amount FLOAT,
+        @Person2Amount FLOAT,
+        @Person1Account VARCHAR(MAX),
+        @Person2Account VARCHAR(MAX),
+        @UpdateGoal INT
+
+AS
+BEGIN
+    SET @Id = ISNULL(@Id, LOWER(NEWID()))
+    SET NOCOUNT ON;
+
+    UPDATE CoreyEnvelopes SET Name = @Name, Goal = @Goal, Person1Amount = @Person1Amount, 
+	Person2Amount = @Person2Amount, Person1Account = @Person1Account, Person2Account = @Person2Account, UpdateGoal = @UpdateGoal
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        insert into CoreyEnvelopes(Id, Name, Goal, Person1Amount, Person2Amount, Person1Account, Person2Account,UpdateGoal)
+        VALUES(@Id, @Name, @Goal, @Person1Amount, @Person2Amount, @Person1Account, @Person2Account,@UpdateGoal)
+END
+go
+CREATE PROC [dbo].[AddOrUpdateCoreyMonthly] 
+        @Id [varchar](50) = NULL,
+    	@Name [varchar](50),
+	@CoreyAmount [float](53),
+	@OtherAmount [float](53),
+	@Dynamic [varchar](50),
+	@Month [varchar](10),
+	@Year INT
+AS
+BEGIN
+	SET @Id = ISNULL(@Id, LOWER(NEWID()))
+    SET NOCOUNT ON;
+
+    UPDATE CoreyMonthlyCostsAndGoals SET Name = @Name, CoreyAmount = @CoreyAmount, OtherAmount = @OtherAmount, Dynamic = @Dynamic, 
+                                    Month = @Month, Year = @Year
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        INSERT INTO CoreyMonthlyCostsAndGoals(Id, Name, CoreyAmount, OtherAmount, Dynamic, Month, Year)
+        VALUES(@Id, @Name, @CoreyAmount, @OtherAmount, @Dynamic, @Month, @Year)
+END
+go
+CREATE PROCEDURE [dbo].[AddOrUpdateCoreyPreset]
+    	@Id [varchar](50) = NULL,
+    	@Name [varchar](50),
+    	@ExpenseType [varchar](50),
+	@PaidWithCorey [varchar](50),
+	@PaidWithOther [varchar](50),
+	@CoreyAmount [float](53),
+	@OtherAmount [float](53),
+	@PaidOffCorey [varchar](50),
+	@PaidOffOther [varchar](50),
+	@TotalAmount [float](53),
+    @HexColor  [varchar](50),
+    @TextColor [varchar](50)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE CoreyPresets SET Name = @Name, ExpenseType = @ExpenseType, PaidwithCorey = @PaidWithCorey, PaidWithOther = @PaidWithOther, CoreyAmount = @CoreyAmount, OtherAmount = @OtherAmount, PaidOffCorey = @PaidOffCorey, PaidOffOther = @PaidOffOther, HexColor=@HexColor, TextColor = @TextColor, TotalAmount = @TotalAmount
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        INSERT INTO CoreyPresets(Id, Name, ExpenseType, PaidWithCorey, PaidWithOther, CoreyAmount, OtherAmount, PaidOffCorey, PaidOffOther, HexColor, TextColor, TotalAmount)
+        VALUES(@Id, @Name, @ExpenseType, @PaidWithCorey, @PaidWithOther, @CoreyAmount, @OtherAmount, @PaidOffCorey, @PaidOffOther, @HexColor, @TextColor, @TotalAmount)
+END
+go
+CREATE PROC AddOrUpdateCoreySecurity
+        @Id varchar(50) = NULL,
+        @Name VARCHAR(10),
+        @NumShares FLOAT,
+        @AvgCost FLOAT,
+        @Value FLOAT,
+        @StrikePrice FLOAT,
+        @SecType VARCHAR(10),
+        @Person VARCHAR(MAX),
+        @DateOfSecurity DATETIME,
+		@BalanceFrom VARCHAR(100)
+
+AS
+BEGIN
+    SET @Id = ISNULL(@Id, LOWER(NEWID()))
+    SET NOCOUNT ON;
+
+    UPDATE CoreySecurities SET Name = @Name, NumShares = @NumShares, AvgCost = @AvgCost, Value = @Value, StrikePrice = @StrikePrice, SecType = @SecType, Person = @Person, DateOfSecurity = @DateOfSecurity, BalanceFrom = @BalanceFrom 
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        insert into CoreySecurities(Id, Name, NumShares, AvgCost, Value, StrikePrice, SecType, Person, DateOfSecurity, BalanceFrom)
+        VALUES(@Id, @Name, @NumShares, @AvgCost, @Value, @StrikePrice, @SecType, @Person, @DateOfSecurity, @BalanceFrom)
+END
+go
+CREATE PROC [dbo].[AddOrUpdateCoreySimulatedPrev] 
+        @Id varchar(50) = NULL,
+        @MonthType VARCHAR(10),
+    	@Month VARCHAR(15), 
+        @Year INT, 
+		@JSONPrev VARCHAR(MAX)
+AS
+BEGIN
+	SET @Id = ISNULL(@Id, LOWER(NEWID()))
+    SET NOCOUNT ON;
+
+    UPDATE CoreySimulationPrevs SET @MonthType = @MonthType, Month = @Month, Year = @Year, JSONPrev = @JSONPrev
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        insert into CoreySimulationPrevs(Id, MonthType, Month, Year, JSONPrev)
+        VALUES(@Id, @MonthType, @Month, @Year, @JSONPrev)
+END
+go
+
+CREATE PROC [dbo].[AddOrUpdateCoreySnapshot] 
+        @Id varchar(50) = NULL,
+    	@Month VARCHAR(15), 
+        @Year INT, 
+        @CoreyIncome FLOAT, 
+        @OtherIncome FLOAT, 
+        @CoreyTransactions INT, 
+        @OtherTransactions INT, 
+        @TotalTransactions INT, 
+        @CoreyAmountProjected FLOAT, 
+        @OtherAmountProjected FLOAT, 
+        @CoreyAmountActual FLOAT, 
+        @OtherAmountActual FLOAT,        
+		@DynamicJSON VARCHAR(MAX)
+AS
+BEGIN
+	SET @Id = ISNULL(@Id, LOWER(NEWID()))
+    SET NOCOUNT ON;
+
+    UPDATE CoreySnapshots SET Month = @Month, Year = @Year, CoreyIncome = @CoreyIncome,
+                         OtherIncome = @OtherIncome, CoreyTransactions = @CoreyTransactions, 
+                         OtherTransactions = @OtherTransactions, TotalTransactions = @TotalTransactions, 
+						 CoreyAmountProjected = @CoreyAmountProjected, OtherAmountProjected = @OtherAmountProjected, 
+                         CoreyAmountActual = @CoreyAmountActual, OtherAmountActual = @OtherAmountActual, DynamicJSON = @DynamicJSON
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        insert into CoreySnapshots(Id, Month, Year, CoreyIncome, OtherIncome, CoreyTransactions, OtherTransactions, 
+                                TotalTransactions, CoreyAmountProjected, OtherAmountProjected, CoreyAmountActual, 
+                                OtherAmountActual, DynamicJSON)
+        VALUES(@Id, @Month, @Year, @CoreyIncome, @OtherIncome, @CoreyTransactions, @OtherTransactions, 
+                                @TotalTransactions, @CoreyAmountProjected, @OtherAmountProjected, @CoreyAmountActual, 
+                                @OtherAmountActual,@DynamicJSON )
+END
+go
+CREATE PROCEDURE [dbo].[AddOrUpdateCoreyTransaction]
+    	@Id [varchar](50) = NULL,
+    	@Name [varchar](50),
+    	@ExpenseType [varchar](50),
+	@PaidWithCorey [varchar](50),
+	@PaidWithOther [varchar](50),
+	@CoreyAmount [float](53),
+	@OtherAmount [float](53),
+	@PaidOffCorey [varchar](50),
+	@PaidOffOther [varchar](50),
+	@TotalAmount [float](53),
+	@DateOfTransaction [varchar](50),
+	@Balance1 [float](53),
+	@Balance2 [float](53)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    UPDATE CoreyTransactions SET Name = @Name, ExpenseType = @ExpenseType, PaidwithCorey = @PaidWithCorey, 
+	PaidWithOther = @PaidWithOther, CoreyAmount = @CoreyAmount, OtherAmount = @OtherAmount, 
+	PaidOffCorey = @PaidOffCorey, PaidOffOther = @PaidOffOther, TotalAmount = @TotalAmount, 
+	DateOfTransaction = @DateOfTransaction,Balance1SetTo=@Balance1,
+								Balance2SetTo=@Balance2
+    WHERE Id = @Id
+
+    IF @@ROWCOUNT = 0
+        INSERT INTO CoreyTransactions(Id, Name, ExpenseType, PaidWithCorey, PaidWithOther, CoreyAmount, 
+		OtherAmount, PaidOffCorey, PaidOffOther, TotalAmount, DateOfTransaction,Balance1SetTo,Balance2SetTo)
+        VALUES(@Id, @Name, @ExpenseType, @PaidWithCorey, @PaidWithOther, @CoreyAmount, @OtherAmount, 
+		@PaidOffCorey, @PaidOffOther, @TotalAmount, @DateOfTransaction,@Balance1,@Balance2)
+END
+go
+CREATE PROC [dbo].[CleanupCoreyMonthly]
+	@MonthToRemoveINCLUSIVE INT,
+	@YearINCLUSIVE INT
+
+AS
+BEGIN
+    DELETE FROM CoreyMonthlyCostsAndGoals WHERE Dynamic NOT LIKE 'PROJECTED DATA' AND
+1=(
+	CASE
+		when @MonthToRemoveINCLUSIVE = 1  and Year <= @YearINCLUSIVE and Month in ('January') then 1
+		when @MonthToRemoveINCLUSIVE = 2  and Year <= @YearINCLUSIVE and Month in ('January', 'February') then 1
+		when @MonthToRemoveINCLUSIVE = 3  and Year <= @YearINCLUSIVE and Month in ('January', 'February', 'March') then 1
+		when @MonthToRemoveINCLUSIVE = 4  and Year <= @YearINCLUSIVE and Month in ('January', 'February', 'March', 'April') then 1
+		when @MonthToRemoveINCLUSIVE = 5  and Year <= @YearINCLUSIVE and Month in ('January', 'February', 'March', 'April', 'May') then 1
+		when @MonthToRemoveINCLUSIVE = 6  and Year <= @YearINCLUSIVE and Month in ('January', 'February', 'March', 'April', 'May', 'June') then 1
+		when @MonthToRemoveINCLUSIVE = 7  and Year <= @YearINCLUSIVE and Month in ('January', 'February', 'March', 'April', 'May', 'June', 'July') then 1
+		when @MonthToRemoveINCLUSIVE = 8  and Year <= @YearINCLUSIVE and Month in ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August') then 1
+		when @MonthToRemoveINCLUSIVE = 9  and Year <= @YearINCLUSIVE and Month in ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September') then 1
+		when @MonthToRemoveINCLUSIVE = 10 and Year <= @YearINCLUSIVE and Month in  ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October') then 1
+		when @MonthToRemoveINCLUSIVE = 11 and Year <= @YearINCLUSIVE and Month in  ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November') then 1
+		when @MonthToRemoveINCLUSIVE = 12 and Year <= @YearINCLUSIVE and Month in  ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December') then 1	
+		else 0
+	end
+	)
+END
+go
+CREATE PROCEDURE [dbo].[CleanupCoreyPromises]
+AS
+BEGIN
+    DELETE FROM CoreyBalances where UPPER(Name) LIKE '%(PROMISED)%' AND Value=0
+END
+go
+CREATE PROC [dbo].[DeleteOldCoreySimulations]
+as
+DECLARE @Counter INT 
+DECLARE @Month_Name VARCHAR(10) 
+DECLARE @Year INT 
+DECLARE @Max_Month INT 
+SET @Counter= 1
+SET @Max_Month = datepart(month,getdate())
+WHILE ( @Counter < @Max_Month)
+BEGIN   
+    SELECT @Month_Name = Month,@Year = Year from CoreySimulationPrevs where Year < datepart(year,getdate()) OR (Year = datepart(year,getdate()) AND Month = datename(month,DATEADD(month, @Counter,'12/12/2021')))
+    if @Month_Name != '' 
+    BEGIN
+        delete from CoreySimulationPrevs where MOnth = @Month_Name AND Year = @Year
+    END
+    SET @Month_Name = ''
+    SET @Counter  = @Counter  + 1
+END
+go
+CREATE PROCEDURE [dbo].RemoveCoreyAssociation
+    	@Id [varchar](50) = NULL
+AS
+BEGIN
+    DELETE FROM CoreyAssociations WHERE Id = @Id
+END
+go
+CREATE PROCEDURE [dbo].[RemoveCoreyBalance]
+    	@Id [varchar](50) = NULL
+AS
+BEGIN
+    DELETE FROM CoreyBalances WHERE Id = @Id
+END
+go
+CREATE PROC [dbo].[RemoveCoreyEnvelope]
+@Id varchar(50) = NULL
+AS
+BEGIN
+    DELETE FROM CoreyEnvelopes WHERE Id = @Id
+END
+go
+CREATE PROC [dbo].[RemoveCoreyMonthly]
+@Id [varchar](50) = NULL
+AS
+BEGIN
+    DELETE FROM CoreyMonthlyCostsAndGoals WHERE Id = @Id
+END
+go
+CREATE PROCEDURE [dbo].[RemoveCoreyPreset]
+    	@Id [varchar](50) = NULL
+AS
+BEGIN
+    DELETE FROM CoreyPresets WHERE Id = @Id
+END
+go
+CREATE PROC [dbo].[RemoveCoreySnapshot]
+@Id [varchar](50) = NULL
+AS
+BEGIN
+    DELETE FROM CoreySnapshots WHERE Id = @Id
+END
+go
+CREATE PROC RemoveCoreySecurity
+@Id varchar(50) = NULL
+AS
+BEGIN
+    DELETE FROM CoreySecurities WHERE Id = @Id
+END
+go
+CREATE PROCEDURE [dbo].[RemoveCoreyTransaction]
+    	@Id [varchar](50) = NULL
+AS
+BEGIN
+    DELETE FROM CoreyTransactions WHERE Id = @Id
+END

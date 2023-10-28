@@ -111,7 +111,7 @@ else
 
         var names = allMonthYears.Select(t => t.Name).ToList();
         foreach (string s in names)
-            if (smc.Name.Contains(s))
+            if (smc.Name == s)
                 return true;
         
         return false;

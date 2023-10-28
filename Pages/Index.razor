@@ -311,7 +311,7 @@ else
                         @foreach (var env in Envelopes)
                         {
                             <Envelope Name="@env.Name" Scale=11 Font_Size=1.375 Goal=@env.Goal Saved=@env.TotalAmount
-                                      FlipClick="true" 
+                                      FlipClick="true"
                                       Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
                                       Person2Account="@(new BalanceRepoCaller().GetName(env.Person2Account))"
                                       Person1Amount="@env.Person1Amount"
@@ -631,14 +631,51 @@ else
     private double ProjectedExpense => Constants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount) +
                                         DynamicCostItems.Sum(d => d.Amount);
     private double ActualExpense => FilteredTransactions.Where(ft => CostMoney(ft)).Sum(ft => ft.TotalAmount);
-    private double EnvelopeExpenses => FilteredTransactions.Where(ft => ft.ExpenseType == "Envelope").Sum(ft => ft.TotalAmount);
+    private double EnvelopeExpenses => FilteredTransactions.Where(ft => ft.ExpenseType == "Envelope").Sum(ft => ft.TotalAmount)
+                                        + FilteredTransactions.Where(ft => IsAnEnvelope(ft)).Sum(ft => ft.TotalAmount);
+
+    private List<Balance> BalancesP1 => Balances.Where(b => b.Person == Constants.Person1 | b.Person.ToUpper() == "JOINT").ToList();
+    private List<Balance> BalancesP2 => Balances.Where(b => b.Person == Constants.Person2 | b.Person.ToUpper() == "JOINT").ToList();
+    private List<string> ETs => FillEts();
+
+    private List<string> FillEts()
+    {
+        List<string> retStr = new List<string>();
+        retStr.Add("Income");
+        retStr.Add("Static Cost");
+        retStr.Add("Envelope");
+        retStr.Add("Equity");
+        retStr.Add("Debt");
+        retStr.Add("Transfer");
+
+        foreach (var dci in Constants.DynamicCostItems)
+            if (!retStr.Contains(dci.Name))
+                retStr.Add(dci.Name);
+
+        // Purposefully neglect Envelopes
+        return retStr;
+    }
+
+    private bool IsAnEnvelope(Transaction t)
+    {
+        if (t.ExpenseType == "Envelope") return true;
+
+        if (!ETs.Contains(t.ExpenseType))
+            return true;
+
+        return false;
+    }
 
     private bool CostMoney(Transaction ft)
     {
         List<string> IgnoreThese = new List<string> { "Debt", "Transfer", "Equity", "Income" };
 
         if (HideEnvExp)
+        {
             IgnoreThese.Add("Envelope");
+            if (IsAnEnvelope(ft))
+                return false;
+        }
 
         foreach (var env in Envelopes)
         {
@@ -803,7 +840,7 @@ else
             if (IncomeOrEquity.Contains(tr.ExpenseType))
                 MonthAmount = tr.TotalAmount;
             else if (!NotExpenseOrIncome.Contains(tr.ExpenseType))
-                MonthAmount = tr.TotalAmount * -1;
+                MonthAmount = HideEnvExp & IsAnEnvelope(tr) ? 0 : tr.TotalAmount * -1;
 
             bool lastSwitch = false; // true if there is only 1 transaction for this date, and it's the last one
 
@@ -823,7 +860,7 @@ else
                     if (IncomeOrEquity.Contains(FilteredTransactions[index].ExpenseType))
                         MonthAmount = FilteredTransactions[index].TotalAmount;
                     else if (!NotExpenseOrIncome.Contains(FilteredTransactions[index].ExpenseType))
-                        MonthAmount = FilteredTransactions[index].TotalAmount * -1;
+                        MonthAmount = HideEnvExp & IsAnEnvelope(FilteredTransactions[index]) ? 0 : FilteredTransactions[index].TotalAmount * -1;
                     else
                         MonthAmount = 0;
                 }
@@ -832,7 +869,7 @@ else
                     if (IncomeOrEquity.Contains(FilteredTransactions[index].ExpenseType))
                         MonthAmount += FilteredTransactions[index].TotalAmount;
                     else if (!NotExpenseOrIncome.Contains(FilteredTransactions[index].ExpenseType))
-                        MonthAmount -= FilteredTransactions[index].TotalAmount;
+                        MonthAmount -= HideEnvExp & IsAnEnvelope(FilteredTransactions[index]) ? 0 : FilteredTransactions[index].TotalAmount;
 
                     lastSwitch = false;
 

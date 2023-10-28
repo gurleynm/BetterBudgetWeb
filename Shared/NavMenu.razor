@@ -1,6 +1,6 @@
 ﻿<div class="navbar navbar-dark" style="padding:0">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">@(Constants.Us ? "Better Budget" : "David Better Budget")</a>
+        <a class="navbar-brand" href="">@(Constants.WebWho)</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -43,7 +43,7 @@
             </NavLink>
         </div>
 
-        @if (Constants.Us)
+        @if (Constants.Who == "Nathan")
         {
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="simulations">

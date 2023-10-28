@@ -1,0 +1,108 @@
+﻿CREATE TABLE [dbo].[CoreyTransactions] (
+    [Id]                VARCHAR (50) NOT NULL,
+    [Name]              VARCHAR (50) NULL,
+    [ExpenseType]       VARCHAR (50) NULL,
+    [PaidWithCorey]     VARCHAR (50) NULL,
+    [PaidWithOther]     VARCHAR (50) NULL,
+    [CoreyAmount]       FLOAT (53)   NULL,
+    [OtherAmount]       FLOAT (53)   NULL,
+    [PaidOffCorey]      VARCHAR (50) NULL,
+    [PaidOffOther]      VARCHAR (50) NULL,
+    [TotalAmount]       FLOAT (53)   NULL,
+    [DateOfTransaction] DATETIME     NULL,
+    [Balance1SetTo]     FLOAT (53)   NULL,
+    [Balance2SetTo]     FLOAT (53)   NULL
+);
+go
+CREATE TABLE [dbo].[CoreySnapshots] (
+    [Id]                   VARCHAR (50)  NOT NULL,
+    [Month]                VARCHAR (10)  NULL,
+    [Year]                 INT           NULL,
+    [CoreyIncome]          FLOAT (53)    NULL,
+    [OtherIncome]          FLOAT (53)    NULL,
+    [CoreyTransactions]    INT           NULL,
+    [OtherTransactions]    INT           NULL,
+    [TotalTransactions]    INT           NULL,
+    [CoreyAmountProjected] FLOAT (53)    NULL,
+    [OtherAmountProjected] FLOAT (53)    NULL,
+    [CoreyAmountActual]    FLOAT (53)    NULL,
+    [OtherAmountActual]    FLOAT (53)    NULL,
+    [DynamicJSON]          VARCHAR (MAX) NULL
+);
+go
+CREATE TABLE [dbo].[CoreySimulationPrevs] (
+    [Id]        VARCHAR (50)  NOT NULL,
+    [MonthType] VARCHAR (10)  NULL,
+    [Month]     VARCHAR (10)  NULL,
+    [Year]      INT           NULL,
+    [JSONPrev]  VARCHAR (MAX) NULL
+);
+go
+CREATE TABLE [dbo].[CoreySecurities] (
+    [Id]             VARCHAR (50)  NOT NULL,
+    [Name]           VARCHAR (10)  NULL,
+    [NumShares]      FLOAT (53)    NULL,
+    [AvgCost]        FLOAT (53)    NULL,
+    [Value]          FLOAT (53)    NULL,
+    [StrikePrice]    FLOAT (53)    NULL,
+    [SecType]        VARCHAR (10)  NULL,
+    [Person]         VARCHAR (MAX) NULL,
+    [DateOfSecurity] DATETIME      NULL,
+    [BalanceFrom]    VARCHAR (100) NULL,
+    PRIMARY KEY CLUSTERED ([Id] ASC)
+);
+go
+CREATE TABLE [dbo].[CoreyPresets] (
+    [Id]            VARCHAR (50) NOT NULL,
+    [Name]          VARCHAR (50) NULL,
+    [ExpenseType]   VARCHAR (50) NULL,
+    [PaidWithCorey] VARCHAR (50) NULL,
+    [PaidWithOther] VARCHAR (50) NULL,
+    [CoreyAmount]   FLOAT (53)   NULL,
+    [OtherAmount]   FLOAT (53)   NULL,
+    [PaidOffCorey]  VARCHAR (50) NULL,
+    [PaidOffOther]  VARCHAR (50) NULL,
+    [TotalAmount]   FLOAT (53)   NULL,
+    [HexColor]      VARCHAR (50) NULL,
+    [TextColor]     VARCHAR (50) NULL
+);
+go
+CREATE TABLE [dbo].[CoreyMonthlyCostsAndGoals] (
+    [Id]          VARCHAR (50) NOT NULL,
+    [Name]        VARCHAR (50) NULL,
+    [CoreyAmount] FLOAT (53)   NULL,
+    [OtherAmount] FLOAT (53)   NULL,
+    [Dynamic]     VARCHAR (50) NULL,
+    [Month]       VARCHAR (10) NULL,
+    [Year]        INT          NULL
+);
+go
+CREATE TABLE [dbo].[CoreyEnvelopes] (
+    [Id]             VARCHAR (50)  NOT NULL,
+    [Name]           VARCHAR (MAX) NULL,
+    [Goal]           FLOAT (53)    NULL,
+    [Person1Amount]  FLOAT (53)    NULL,
+    [Person2Amount]  FLOAT (53)    NULL,
+    [Person1Account] VARCHAR (MAX) NULL,
+    [Person2Account] VARCHAR (MAX) NULL,
+    [UpdateGoal]     INT           NULL
+);
+go
+CREATE TABLE [dbo].[CoreyBalances] (
+    [Id]          VARCHAR (50) NOT NULL,
+    [Name]        VARCHAR (50) NULL,
+    [Person]      VARCHAR (50) NULL,
+    [Value]       FLOAT (53)   NULL,
+    [BalanceType] VARCHAR (50) NULL,
+    [APR]         FLOAT (53)   NULL,
+    [HexColor]    VARCHAR (50) NULL,
+    [TextColor]   VARCHAR (50) NULL,
+    [DateUpdated] DATETIME     NULL
+);
+go
+CREATE TABLE [dbo].[CoreyAssociations] (
+    [Id]          VARCHAR (50)  NOT NULL,
+    [Name]        VARCHAR (150) NULL,
+    [NewName]     VARCHAR (150) NULL,
+    [ExpenseType] VARCHAR (50)  NULL
+);

@@ -116,6 +116,11 @@ else if (ShowStatic)
 
     protected override async Task OnInitializedAsync()
     {
+        if (NoBalances)
+        {
+            ShowTrans = false;
+            ShowBal = true;
+        }
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
 

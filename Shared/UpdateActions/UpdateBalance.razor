@@ -19,7 +19,7 @@
         </div>
         <br />
         <div style="float:left; margin-right:9vw;">
-            <label>Expense Type:</label>
+            <label>Balance Type:</label>
             <br />
             <select class="custom-select" @bind=BalanceType title="Type of Balance is required ">
                 <option value="Select" selected disabled="disabled">(Choose Balance Type)</option>
@@ -57,7 +57,7 @@
         }
         <br />
         <div style="float:left; margin-right:10vw;">
-            <label>Initial Amount:</label>
+            <label>Amount:</label>
             <br />
             <input type="text" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
         </div>
@@ -100,7 +100,7 @@ else
             <input type="text" placeholder="Balance Name" @bind=BalName @oninput="@(async (ui) => { BalName = (string) ui.Value;})" />
         </div>
         <div style="float:left; margin-right:9vw;">
-            <label>Expense Type:</label>
+            <label>Balance Type:</label>
             <br />
             <select class="custom-select" @bind=BalanceType title="Type of Balance is required ">
                 <option value="Select" selected disabled="disabled">(Choose Balance Type)</option>
@@ -137,7 +137,7 @@ else
             </div>
         }
         <div style="float:left; margin-right:10vw;">
-            <label>Initial Amount:</label>
+            <label>Amount:</label>
             <br />
             <input type="text" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
         </div>
@@ -194,10 +194,11 @@ else
     public string TextColor { get; set; } = "#32A852";
     [Parameter]
     public bool PaidThroughWork { get; set; }
+    [Parameter]
+    public string Person { get; set; } = Constants.Person1;
 
     public bool Mobile => Constants.Mobile;
 
-    public string Person { get; set; } = Constants.Person1;
 
     private string ErrorMsg { get; set; } = string.Empty;
     private string ErrorColor { get; set; } = "red";

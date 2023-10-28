@@ -47,6 +47,7 @@
                    BalanceType="@BalanceType"
                    Color="@Color"
                    TextColor="@TColor"
+                   Person="@Person"
                    PaidThroughWork="@(BalanceType == "Stocks" && int.TryParse(APR,out int apr) && apr == 1)">
     </UpdateBalance>
 }
@@ -56,6 +57,7 @@
     private string BalanceType;
     private string APR;
     private string CurAmount;
+    private string Person;
     private string Color = "#32A852";
     private string TColor = "#32A852";
 
@@ -95,6 +97,7 @@
             BalanceType = ThisBalance.BalanceType;
             Color = ThisBalance.HexColor;
             TColor = ThisBalance.TextColor;
+            Person = ThisBalance.Person;
         }
     }
 
