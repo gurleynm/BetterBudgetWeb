@@ -65,7 +65,7 @@ namespace BetterBudgetWeb
 
         public static string BaseUri = "https://davidbetterbudgetapi.azurewebsites.net/";
         public static string Person1 { get; set; } = "David";
-        public static string Person2 { get; set; } = "Kaitie";
+        public static string Person2 { get; set; } = "Katie";
 
         public static string Who = "Nathan"; // Nathan David Corey
         public static string WebWho { get; set; } // Nathan David Corey

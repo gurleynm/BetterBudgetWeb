@@ -36,7 +36,6 @@
             <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
             <option value="DYNAMIC">Dynamic Monthly Cost</option>
             <option value="STATIC">Set Monthly Cost</option>
-            <option value="SAVINGS">Savings Goals</option>
         </select>
     </div>
     <br />
@@ -50,20 +49,17 @@
             }
         </select>
         <select @bind="SelectYear">
-                <option value="1">All</option>
-                <option value="@DateTime.Now.Year.ToString()">@DateTime.Now.Year</option>
-                <option value="@DateTime.Now.AddYears(1).Year.ToString()">@DateTime.Now.AddYears(1).Year</option>
-            </select>
+            <option value="1">All</option>
+            <option value="@DateTime.Now.Year.ToString()">@DateTime.Now.Year</option>
+            <option value="@DateTime.Now.AddYears(1).Year.ToString()">@DateTime.Now.AddYears(1).Year</option>
+        </select>
     </div>
-    @if (ShowName)
-    {
+    <br />
+    <div>
+        <label>Monthly Name:</label>
         <br />
-        <div>
-            <label>Monthly Name:</label>
-            <br />
-            <input type="text" placeholder="Name of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
-        </div>
-    }
+        <input type="text" placeholder="Name of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
+    </div>
     <br />
     <div>
         <label>@(Constants.Person1 + " Amount:")</label>
@@ -96,7 +92,6 @@ else
                 <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
                 <option value="DYNAMIC">Dynamic Monthly Cost</option>
                 <option value="STATIC">Set Monthly Cost</option>
-                <option value="SAVINGS">Savings Goals</option>
             </select>
         </div>
         <div style="float:left;margin-right:10vw;">
@@ -115,14 +110,11 @@ else
                 <option value="@DateTime.Now.AddYears(1).Year.ToString()">@DateTime.Now.AddYears(1).Year</option>
             </select>
         </div>
-        @if (ShowName)
-        {
-            <div style="float:left; margin-right:10vw;">
-                <label>Monthly Name:</label>
-                <br />
-                <input type="text" placeholder="Name of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
-            </div>
-        }
+        <div style="float:left; margin-right:10vw;">
+            <label>Monthly Name:</label>
+            <br />
+            <input type="text" placeholder="Name of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
+        </div>
         <br style="clear:both;" />
         <br />
         <div style="float:left;margin-right:10vw;">
@@ -156,10 +148,8 @@ else
     public string Person1Amount { get; set; }
     [Parameter]
     public string Person2Amount { get; set; }
-    
-    public bool Mobile => Constants.Mobile;
 
-    bool ShowName => Dyna != "SAVINGS";
+    public bool Mobile => Constants.Mobile;
 
     List<string> Months { get; set; } = new List<string>();
     string SelectMonth { get; set; } = "All";
@@ -212,7 +202,7 @@ else
         {
             string mon;
             string year;
-            var mons = await MonthlyRepo.AddOrUpdateAsync(Dyna == "SAVINGS" ? "SAVINGS" : StaticName, nam, lam, Dyna, SelectMonth + " " + SelectYear);
+            var mons = await MonthlyRepo.AddOrUpdateAsync(StaticName, nam, lam, Dyna, SelectMonth + " " + SelectYear);
 
             ErrorColor = "green";
             ErrorMsg = StaticName + " Monthly was added!";

@@ -105,15 +105,16 @@ else
             return false;
 
         var allMonthYears = Trans.Where(tr => tr.MonthYear() == Constants.MonthYear()).ToList();
-        
+
         if (allMonthYears == null || allMonthYears.Count == 0)
             return false;
 
         var names = allMonthYears.Select(t => t.Name).ToList();
-        foreach (string s in names)
-            if (smc.Name == s)
+        var expenseTypes = allMonthYears.Select(t => t.ExpenseType).ToList();
+        for (int index = 0; index < names.Count; index++)
+            if (smc.Name == names[index] && expenseTypes[index] == "Static Cost")
                 return true;
-        
+
         return false;
     }
 }

@@ -203,7 +203,10 @@ else
                 }
 
                 <!-- Savings Goals-->
-                <SavingsGoalsTable />
+                <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic 
+                                        ActualStaticAmount=@ActualStatic
+                                        ActualIncomeAmount=@ActualIncome
+                                        EnvelopeAmount=@EnvelopeExpenses />
 
                 <!-- Ideal Emergency Fund-->
                 <IdealEmergencyFund />
@@ -505,7 +508,10 @@ else
         <br />
 
         <!-- Savings Goals-->
-        <SavingsGoalsTable Mobile=true />
+        <MonthlyGoalTracking Mobile=true ActualDynamicAmount=@ActualDynamic
+                             ActualStaticAmount=@ActualStatic
+                             ActualIncomeAmount=@ActualIncome
+                             EnvelopeAmount=@EnvelopeExpenses />
 
         <br />
 
@@ -628,6 +634,11 @@ else
         }
     }
 
+    private List<Transaction> MonthlyTransactions = new List<Transaction>();
+    private double ActualStatic => MonthlyTransactions.Where(ft => ft.ExpenseType == "Static Cost").Sum(ft => ft.TotalAmount);
+    private double ActualIncome => MonthlyTransactions.Where(ft => ft.ExpenseType == "Income").Sum(ft => ft.TotalAmount);
+    private double ActualDynamic => DynamicCostItems.Sum(dci =>dci.Amount) - DynamicCostItems.Sum(dci => dci.Left);
+
     private double ProjectedExpense => Constants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount) +
                                         DynamicCostItems.Sum(d => d.Amount);
     private double ActualExpense => FilteredTransactions.Where(ft => CostMoney(ft)).Sum(ft => ft.TotalAmount);
@@ -700,6 +711,7 @@ else
         Transactions = catchAll.Transactions;
         FilteredTransactions = new List<Transaction>(Transactions);
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+        MonthlyTransactions = new List<Transaction>(FilteredTransactions);
         ErrorMsg = string.Empty;
         Balances.Sort(Constants.CompareBalance);
 
