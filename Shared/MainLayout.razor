@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.Repo;
+@inherits LayoutComponentBase
 @inject IJSRuntime jsRuntime
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
@@ -299,19 +301,18 @@
         {
             <div style="display:inline-block;width:100vw;height:100vh;">
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);text-align:center">
-                    <h2 style="text-align:center">@($"Welcome {Constants.Person1} & {Constants.Person2}")</h2>
-                    <br />
-                    <span>Enter password</span>
+                    <h2 style="text-align:center">@("Welcome!!")</h2>
                     @if (!string.IsNullOrEmpty(ErrorMsg))
                     {
                         <span class="income-bad">@ErrorMsg</span>
                     }
                 </div>
                 <div style="display:flex;justify-content:center;width:100%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <input id="pwd" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
+                    <input id="user" placeholder="Username" style="text-align:center;color:black;" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
+                    <input id="pwd" placeholder="Password" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
                 </div>
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <button class="btn btn-primary" @onclick="@(() => CheckWeIn())">Submit</button>
+                    <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
                 </div>
             </div>
         }
@@ -319,9 +320,7 @@
         {
             <div style="display:inline-block;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width:100vw">
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <h2 style="text-align:center">@($"Welcome {Constants.Person1} & {Constants.Person2}")</h2>
-                    <br />
-                    <p>Enter password</p>
+                    <h2 style="text-align:center">@($"Welcome!!")</h2>
                 </div>
                 @if (!string.IsNullOrEmpty(ErrorMsg))
                 {
@@ -330,10 +329,11 @@
                     </p>
                 }
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <input id="pwd" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
+                    <input id="user" placeholder="Username" style="text-align:center;color:black;" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
+                    <input id="pwd" placeholder="Password" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
                 </div>
                 <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <button class="btn btn-primary" @onclick="@(() => CheckWeIn())">Submit</button>
+                    <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
                 </div>
             </div>
         }
@@ -421,8 +421,10 @@
     private string theView { get; set; }
     private string ErrorMsg { get; set; }
     private bool WeIn { get; set; }
+    private string username { get; set; }
     private string password { get; set; }
     private int pwdAttempts { get; set; }
+    private bool Disabled { get; set; }
     private bool darkMode { get; set; } = Constants.DarkMode;
     private bool DarkMode
     {
@@ -498,21 +500,27 @@
 
     public async Task<bool> CheckWeIn(bool countAttempt = true)
     {
-        var tmpPass = await sessionStorage.GetItemAsync<string>("NoNo");
+        // var tmpPass = await sessionStorage.GetItemAsync<string>("NoNo");
+        // var tmpUser = await sessionStorage.GetItemAsync<string>("user");
 
-        if (tmpPass == null)
-        {
-            tmpPass = Constants.SHA256(password);
-        }
+        // if (tmpPass == null)
+        //     tmpPass = Constants.SHA256(password);
+        if (string.IsNullOrEmpty(username) | string.IsNullOrEmpty(password))
+            return false;
 
-        var boom = Constants.SHA256(Constants.Key);
+        Disabled = true;
 
-        WeIn = tmpPass == boom;
+        User theUser = await UserRepo.VerifyUserAsync(username, password);
+        WeIn = theUser != null;
 
         if (WeIn)
         {
             ErrorMsg = "";
-            await sessionStorage.SetItemAsync("NoNo", tmpPass);
+            // await sessionStorage.SetItemAsync("NoNo", tmpPass);
+
+            Constants.Who = theUser.Name;
+
+            await Constants.Init(true);
         }
         else if (countAttempt)
         {
@@ -520,6 +528,7 @@
             ErrorMsg = "Incorrect Password. Attempts: " + pwdAttempts;
         }
 
+        Disabled = false;
         StateHasChanged();
 
         return WeIn;

@@ -10,7 +10,7 @@ namespace BetterBudgetWeb.Repo
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "SimulatedPrev";
+        private static string baseURI = Constants.BaseUri + "SimulatedPrev?id=" + Constants.Who + "&pass=" + Constants.PassKey;
         public static List<SimulatedPrev> SimulatedPrevs { get; set; } = new List<SimulatedPrev>();
         public static async Task<List<SimulatedPrev>> GetSimulatedPrevsAsync()
         {

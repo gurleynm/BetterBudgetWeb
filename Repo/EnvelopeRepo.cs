@@ -9,7 +9,7 @@ namespace BetterBudgetWeb.Repo
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "Envelope";
+        private static string baseURI = Constants.BaseUri + "Envelope?id=" + Constants.Who + "&pass=" + Constants.PassKey;
         public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
         public static async Task<List<Envelope>> GetEnvelopesAsync()
         {

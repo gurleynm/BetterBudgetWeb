@@ -18,7 +18,24 @@ namespace BetterBudgetWeb.Data
         public string PassKey { get; set; } = "no";
         public double TotalAmount => Person1Amount + Person2Amount;
 
+        private void SetSMC(StaticMonthlyCost smc)
+        {
+            ExpenseType = "Static Cost";
+            Name = smc.Name;
+            Person1Amount = smc.Person1Amount;
+            Person2Amount = smc.Person2Amount;
+        }
         public Preset() { }
+        public Preset(StaticMonthlyCost smc) 
+        {
+            SetSMC(smc);
+        }
+        public Preset(StaticMonthlyCost smc,string hex, string text) 
+        {
+            HexColor = hex;
+            TextColor = text;
+            SetSMC(smc);
+        }
         public Preset(string name, string expenseType, double person1, double person2 = 0)
         {
             Name = name;

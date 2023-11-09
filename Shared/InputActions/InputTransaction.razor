@@ -32,7 +32,7 @@
 @if (Mobile)
 {
     <div style="width:fit-content">
-        @if (Constants.Presets != null && Constants.Presets.Count > 0)
+        @if (Presets != null && Presets.Count > 0)
         {
             <br style="clear:both" />
             <div style="border: 2px solid green; width:90vw;height:fit-content;right:1vw;top:15vh;">
@@ -40,41 +40,41 @@
                 <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                     <h4>Food:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Grocery" || p.ExpenseType == "Eating Out"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType == "Grocery" || p.ExpenseType == "Eating Out"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                     <br />
                     <h4>Debts:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Debt"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType == "Debt"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                     <br />
                     <h4>Gas:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Gas"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType == "Gas"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                     <br />
                     <h4>Set Costs:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Static Cost"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType == "Static Cost"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                     <br />
                     <h4>Others:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType != "Eating Out" && p.ExpenseType != "Grovery" && p.ExpenseType != "Debt" && p.ExpenseType != "Gas" && p.ExpenseType != "Static Cost"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType != "Eating Out" && p.ExpenseType != "Grovery" && p.ExpenseType != "Debt" && p.ExpenseType != "Gas" && p.ExpenseType != "Static Cost"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                 </div>
@@ -721,59 +721,59 @@ else
         </div>
         <br style="clear:both;" />
 
-        @if (Constants.Presets != null && Constants.Presets.Count > 0)
+        @if (Presets != null && Presets.Count > 0)
         {
             <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
                 <h1 style="text-align:center">Presets:</h1>
                 <div style="justify-content:flex-start;align-content:flex-start;flex-wrap:wrap;height:70%;overflow-y:auto;">
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         <h4>Food:</h4>
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Grocery" || p.ExpenseType == "Eating Out"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType == "Grocery" || p.ExpenseType == "Eating Out"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                     <br />
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         <h4>Debts:</h4>
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Debt"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType == "Debt"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                     <br />
                     <h4>Gas:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Gas"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType == "Gas"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                     <br />
                     <h4>Set Costs:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType == "Static Cost"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType == "Static Cost"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                     <br />
                     <h4>Others:</h4>
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var pre in Constants.Presets.Where(p => p.ExpenseType != "Eating Out" && p.ExpenseType != "Grocery" && p.ExpenseType != "Debt" && p.ExpenseType != "Gas" && p.ExpenseType != "Static Cost"))
+                        @foreach (var pre in Presets.Where(p => p.ExpenseType != "Eating Out" && p.ExpenseType != "Grocery" && p.ExpenseType != "Debt" && p.ExpenseType != "Gas" && p.ExpenseType != "Static Cost"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre.Name))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
                         }
                     </div>
                 </div>
 
-                @if (Presets != null)
+                @if (PresetsForDel != null)
                 {
                     <div style="position:absolute;bottom:1vw;left:1vh;">
                         <span>Delete Preset:</span>
                         <select @bind="@SelectedPreset">
                             <option selected disabled value='@("NONE")'>(Select Preset)</option>
-                            @foreach (var pre in Presets)
+                            @foreach (var pre in PresetsForDel)
                             {
                                 <option value="@pre.Id">@pre.Name</option>
                             }
@@ -839,8 +839,9 @@ else
     [Parameter]
     public string Person2Amount { get; set; }
     [Parameter]
-    public Action<string> Preset { get; set; }
+    public Action<Preset> Preset { get; set; }
     public List<Preset> Presets { get; set; }
+    public List<Preset> PresetsForDel { get; set; }
 
     public bool Mobile => Constants.Mobile;
 
@@ -873,7 +874,16 @@ else
     protected override Task OnInitializedAsync()
     {
         Presets = new List<Preset>(Constants.Presets);
+        PresetsForDel = new List<Preset>(Constants.Presets);
+
+        foreach(var smc in Constants.StaticMonthlyCosts)
+        {
+            if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "Static Cost") == 0)
+                Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
+        }
+
         Presets.Sort();
+        PresetsForDel.Sort();
 
         List<string> dcis = new List<string>();
         List<string> others = new List<string>();
@@ -922,8 +932,10 @@ else
     {
         Preset exists = Presets.FirstOrDefault(p => p.Id == SelectedPreset);
 
-        if (exists != null)
+        if (exists != null){
             Presets = await PresetRepo.RemoveAsync(exists);
+            PresetsForDel = new List<Preset>(Presets);
+        }
 
         SelectedPreset = "NONE";
         StateHasChanged();
@@ -934,13 +946,29 @@ else
         Disabled = true;
         ErrorMsg = string.Empty;
         ErrorColor = "red";
-        bool tpNAmount = double.TryParse(Person1Amount, out double nam);
-        bool tpLAmount = double.TryParse(Person2Amount, out double lam);
+        bool tp1Amount = double.TryParse(Person1Amount, out double nam);
+        bool tp2Amount = double.TryParse(Person2Amount, out double lam);
+
+        tp1Amount = tp1Amount && nam != 0;
+        tp2Amount = tp2Amount && lam != 0;
 
         ErrorMsg += string.IsNullOrEmpty(TransactionName) && ExpenseType != "Transfer" ? "Transaction Name must be set. " : "";
         ErrorMsg += string.IsNullOrEmpty(ExpenseType) ? "Please select an expense type. " : "";
-        ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tpNAmount ? $"{Constants.Person1} Amount must be a number. " : "";
-        ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tpLAmount ? $"{Constants.Person2} Amount must be a number. " : "";
+
+        bool Amount1NumChk = !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tp1Amount;
+        bool Amount2NumChk = !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tp2Amount;
+        bool BothEmpty = string.IsNullOrEmpty(PaidWithPerson1) && string.IsNullOrEmpty(PaidWithPerson2);
+
+        bool AmountUnfillPaidWith1 = tp1Amount && string.IsNullOrEmpty(PaidWithPerson1);
+        bool AmountUnfillPaidWith2 = tp2Amount && string.IsNullOrEmpty(PaidWithPerson2);
+
+        ErrorMsg += Amount1NumChk ? $"{Constants.Person1} Amount must be a number. " : "";
+        ErrorMsg += Amount2NumChk ? $"{Constants.Person2} Amount must be a number. " : "";
+        ErrorMsg += BothEmpty ? $"At least one person must pay. " : "";
+
+        ErrorMsg += AmountUnfillPaidWith1 ? $"{Constants.Person1} paid with value must be set if their amount is non-zero. " : "";
+        ErrorMsg += AmountUnfillPaidWith2 ? $"{Constants.Person2} paid with value must be set if their amount is non-zero. " : "";
+
         //ErrorMsg += !string.IsNullOrEmpty(ExpenseType) && ExpenseType == "Debt" ? "APR must be a number. " : "";
         //ErrorMsg += string.IsNullOrEmpty(Color) ? "Color must be set." : "";
 
@@ -1003,8 +1031,10 @@ else
         if (string.IsNullOrEmpty(ErrorMsg))
         {
             Presets = await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2), Hex, TextColor));
+            PresetsForDel = new List<Preset>(Presets);
 
             Presets.Sort();
+            PresetsForDel.Sort();
 
             ErrorColor = "green";
             ErrorMsg = TransactionName + " preset was added!";

@@ -9,13 +9,13 @@ namespace BetterBudgetWeb.Repo
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "Transaction";
+        private static string baseURI = Constants.BaseUri + "Transaction?id=" + Constants.Who + "&pass=" + Constants.PassKey;
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public static async Task<List<Transaction>> GetTransactionsAsync(string start = "3")
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string test = baseURI + "/" + start;
-            var response = await client.GetAsync(baseURI + "?duration=" + start);
+            
+            var response = await client.GetAsync(baseURI + "&duration=" + start);
             var content = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)

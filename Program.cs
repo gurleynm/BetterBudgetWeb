@@ -13,6 +13,5 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddBlazoredSessionStorage();
 
 await Constants.Init();
-await SimulatedConstants.Init();
 
 await builder.Build().RunAsync();

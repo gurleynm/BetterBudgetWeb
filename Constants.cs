@@ -1,6 +1,7 @@
 ﻿using BetterBudgetWeb.Data;
 using BetterBudgetWeb.Repo;
 using BetterBudgetWeb.Runner;
+using BetterBudgetWeb.Simulation;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
 using System.Security.Cryptography;
@@ -94,42 +95,48 @@ namespace BetterBudgetWeb
                                                                 "June", "July", "August", "September",
                                                                 "October", "November", "December"};
 
-        public static async Task Init()
+        public static async Task RedrivePeople()
         {
-            DetermineDarkLight();
+            Person1 = Who;
             switch (Who)
             {
                 case "Nathan":
-                    //BaseUri = "https://betterbudgetapi.azurewebsites.net/";
-                    BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
-                    Person1 = "Nathan";
-                    Person2 = "Lindsey";
+                case "Lindsey":
+                    Person2 = Who == "Lindsey" ? "Nathan" : "Lindsey";
                     Key = "Lindseylicious";
                     WebWho = "Better Budget";
                     break;
                 case "David":
-                    BaseUri = Test ? "https://localhost:7234/" : "https://davidbetterbudgetapi.azurewebsites.net/";
-                    Person1 = "David";
-                    Person2 = "Katie";
+                case "Katie":
+                    Person2 = Who == "David" ? "Katie" : "David";
                     Key = "Doofenblast!";
                     WebWho = "David Better Budget";
                     break;
                 case "Corey":
-                    BaseUri = Test ? "https://localhost:7234/" : "https://coreybetterbudgetapi.azurewebsites.net/";
-                    Person1 = "Corey";
-                    Person2 = "Other";
+                case "Other":
+                    Person2 = Who == "Corey" ? "Other" : "Corey";
                     Key = "TroyAndAbed";
                     WebWho = "Corey Better Budget";
                     break;
             }
 
             PassKey = Key;
-            CatchAll catchAll = await CatchAllRunner.Grab();
-            AllTransactions = TransactionRepo.GetTransactionsAsync("ALL");
+            await SimulatedConstants.Init();
+        }
+        public static async Task Init(bool PeopleDecide = false)
+        {
+            DetermineDarkLight();
+            BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
+            if (PeopleDecide)
+            {
+                await RedrivePeople();
+                CatchAll catchAll = await CatchAllRunner.Grab();
+                AllTransactions = TransactionRepo.GetTransactionsAsync("ALL");
 
-            AssignCatches(catchAll);
+                AssignCatches(catchAll);
 
-            SetMonthlies(Monthlies);
+                SetMonthlies(Monthlies);
+            }
         }
         public static void AssignCatches(CatchAll caught)
         {

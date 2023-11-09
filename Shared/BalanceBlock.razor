@@ -69,6 +69,9 @@
     {
         double amount = TheBalance.Value;
 
+        if (-1 <= amount && amount < 0)
+            amount = 0;
+
         if (IncludeGoals)
         {
             amount = TheBalance.GetValueWithGoals();
@@ -85,6 +88,9 @@
         }
 
         string returnStr = amount.ToString();
+
+        if (returnStr == "-0")
+            returnStr = "0";
 
         return returnStr;
     }

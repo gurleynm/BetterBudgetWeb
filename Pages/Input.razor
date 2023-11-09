@@ -1,4 +1,5 @@
 ﻿@page "/input"
+@using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Shared.InputActions
 @inject IJSRuntime JSRuntime
 
@@ -162,7 +163,7 @@ else if (ShowStatic)
         }
     }
 
-    private void Preset(string pre)
+    private void Preset(Preset pre)
     {
         // 0 - Trans Name
         // 1 - ExpenseType
@@ -173,15 +174,25 @@ else if (ShowStatic)
         // 6 - Paid Off Person1
         // 7 - Paid Off Person2
 
-        string[] vals = Constants.HandlePresets(pre);
-        TransactionName = vals[0];
-        ExpenseType = vals[1];
-        PaidWithPerson1 = vals[2];
-        PaidWithPerson2 = vals[3];
-        Person1Amount = vals[4];
-        Person2Amount = vals[5];
-        PaidOffPerson1 = vals[6];
-        PaidOffPerson2 = vals[7];
+        string[] vals = Constants.HandlePresets(pre.Name);
+
+        if (vals.All(v => string.IsNullOrEmpty(v)))
+        {
+            TransactionName = pre.Name;
+            ExpenseType = "Static Cost";
+            Person1Amount = pre.Person1Amount.ToString();
+            Person2Amount = pre.Person2Amount.ToString();
+        }
+        else {
+            TransactionName = vals[0];
+            ExpenseType = vals[1];
+            PaidWithPerson1 = vals[2];
+            PaidWithPerson2 = vals[3];
+            Person1Amount = vals[4];
+            Person2Amount = vals[5];
+            PaidOffPerson1 = vals[6];
+            PaidOffPerson2 = vals[7];
+        }
         StateHasChanged();
     }
 }

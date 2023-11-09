@@ -168,7 +168,8 @@ namespace BetterBudgetWeb.Runner
             double stocks = 0;
             try
             {
-                stocks = Constants.Securities.Where(stock => stock.Person == person || stock.Person.ToUpper() == "JOINT").Sum(s => s.Value);
+                stocks = Constants.Securities.Where(stock => stock.Person.ToUpper() == "JOINT").Sum(s => s.Value)/2;
+                stocks += Constants.Securities.Where(stock => stock.Person == person).Sum(s => s.Value);
             }
             catch (Exception e)
             {
