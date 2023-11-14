@@ -418,6 +418,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+
+        await SimulatedConstants.Init();
+
         CatchAll catchAll = await CatchAllRunner.Grab();
         Balances = catchAll.Balances;
         Transactions = catchAll.Transactions;

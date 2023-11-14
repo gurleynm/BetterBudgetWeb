@@ -706,9 +706,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
-        CatchAll catchAll = await CatchAllRunner.Grab();
-        Balances = catchAll.Balances;
-        Transactions = catchAll.Transactions;
+
+        Balances = Constants.catchAll.Balances;
+        Transactions = Constants.catchAll.Transactions;
         FilteredTransactions = new List<Transaction>(Transactions);
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
         MonthlyTransactions = new List<Transaction>(FilteredTransactions);
@@ -1006,7 +1006,7 @@ else
         if (string.IsNullOrEmpty(SelectedDownload))
             return;
 
-        string fileString = CSVBuilder.Build(await Constants.AllTransactions, SelectedDownload);
+        string fileString = CSVBuilder.Build(await TransactionRepo.GetTransactionsAsync("ALL"), SelectedDownload);
 
         byte[] file = System.Text.Encoding.UTF8.GetBytes(fileString);
         string FileSaveName = SelectedDownload == "All" ? "All_Transactions.csv" : SelectedDownload.Replace(" ", "_") + "_Transactions.csv";

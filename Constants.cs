@@ -51,12 +51,12 @@ namespace BetterBudgetWeb
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
         public static List<ProjectedDatum> ProjectedData { get; set; }
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
-        public static Task<List<Transaction>> AllTransactions { get; set; }
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         private static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
         public static List<Security> Securities { get; set; } = new List<Security>();
+        public static CatchAll catchAll { get; set; } = new CatchAll();
         public static DateRange DR { get; set; } = new DateRange();
 
         public static bool DarkMode = Nighttime();
@@ -69,6 +69,8 @@ namespace BetterBudgetWeb
         public static string Person2 { get; set; } = "Katie";
 
         public static string Who = "Nathan"; // Nathan David Corey
+        
+        public static string Token = "Nice Try"; 
         public static string WebWho { get; set; } // Nathan David Corey
 
         public static bool Test = false; // true false
@@ -121,7 +123,6 @@ namespace BetterBudgetWeb
             }
 
             PassKey = Key;
-            await SimulatedConstants.Init();
         }
         public static async Task Init(bool PeopleDecide = false)
         {
@@ -130,31 +131,33 @@ namespace BetterBudgetWeb
             if (PeopleDecide)
             {
                 await RedrivePeople();
-                CatchAll catchAll = await CatchAllRunner.Grab();
-                AllTransactions = TransactionRepo.GetTransactionsAsync("ALL");
+                catchAll = await CatchAllRunner.Grab();
 
-                AssignCatches(catchAll);
+                AssignCatches();
 
                 SetMonthlies(Monthlies);
             }
         }
-        public static void AssignCatches(CatchAll caught)
+        public static void AssignCatches(CatchAll ca = null)
         {
-            Transactions = caught.Transactions;
-            Balances = caught.Balances;
-            Monthlies = caught.Monthlies;
-            Envelopes = caught.Envelopes;
-            Presets = caught.Presets;
-            Securities = caught.Securities ?? new List<Security>();
-            DR = caught.DR;
+            if (ca != null)
+                catchAll = new CatchAll(ca);
 
-            TransactionRepo.Transactions = caught.Transactions;
-            BalanceRepo.Balances = caught.Balances;
-            MonthlyRepo.Monthlies = caught.Monthlies;
-            EnvelopeRepo.Envelopes = caught.Envelopes;
-            PresetRepo.Presets = caught.Presets;
-            SnapshotRepo.Snapshots = caught.Snapshots;
-            SecurityRepo.Securities = caught.Securities;
+            Transactions = catchAll.Transactions;
+            Balances = catchAll.Balances;
+            Monthlies = catchAll.Monthlies;
+            Envelopes = catchAll.Envelopes;
+            Presets = catchAll.Presets;
+            Securities = catchAll.Securities ?? new List<Security>();
+            DR = catchAll.DR;
+
+            TransactionRepo.Transactions = catchAll.Transactions;
+            BalanceRepo.Balances = catchAll.Balances;
+            MonthlyRepo.Monthlies = catchAll.Monthlies;
+            EnvelopeRepo.Envelopes = catchAll.Envelopes;
+            PresetRepo.Presets = catchAll.Presets;
+            SnapshotRepo.Snapshots = catchAll.Snapshots;
+            SecurityRepo.Securities = catchAll.Securities;
 
             Redrive();
         }

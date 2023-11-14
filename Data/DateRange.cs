@@ -2,6 +2,11 @@
 {
     public class DateRange
     {
+        public DateRange() { }
+        public DateRange(DateRange other)
+        {
+            UniqueMonthYears = new List<string>(UniqueMonthYears);
+        }
         public List<string> UniqueMonthYears { get; set; }
         public bool IsItValidMonthYear(string monthYear)
         {

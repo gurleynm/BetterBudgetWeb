@@ -9,7 +9,7 @@ namespace BetterBudgetWeb.Repo
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "Transaction?id=" + Constants.Who + "&pass=" + Constants.PassKey;
+        private static string baseURI = Constants.BaseUri + "Transaction?token=" + Constants.Token;
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public static async Task<List<Transaction>> GetTransactionsAsync(string start = "3")
         {

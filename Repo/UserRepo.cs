@@ -22,6 +22,7 @@ namespace BetterBudgetWeb.Repo
                 return null;
 
             User TheUser = System.Text.Json.JsonSerializer.Deserialize<User>(content, _options);
+            Constants.Token = TheUser.Token;
 
             return TheUser;
         }

@@ -400,7 +400,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Constants.Transactions = await Constants.AllTransactions;
+        Constants.Transactions = await TransactionRepo.GetTransactionsAsync("ALL");
 
         var MonthYears = IndexRunner.GetMonths();
         if (MonthYears.Count > 0)

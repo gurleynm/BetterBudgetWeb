@@ -174,7 +174,7 @@
     {
         SelectedMonth = "All";
         SelectedYear = DateTime.Now.Year.ToString();
-        Constants.Transactions = await Constants.AllTransactions;
+        Constants.Transactions = await TransactionRepo.GetTransactionsAsync("ALL");
         DrawChart();
     }
 
