@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using BetterBudgetWeb.Shared;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net.Http.Json;
@@ -21,10 +22,14 @@ namespace BetterBudgetWeb.Repo
             {
                 throw new ApplicationException(content);
             }
-            var bals = System.Text.Json.JsonSerializer.Deserialize<List<Balance>>(content, _options);
-            Balances = bals;
-            Constants.Balances = bals;
-            return bals;
+
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            Balances = TW.catcher.Balances;
+            Constants.Balances = new List<Balance>(Balances);
+            return Balances;
         }
         public static List<Balance> GetBalances()
         {
@@ -101,8 +106,6 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(bal);
 
             var response = await _client.SendAsync(requestMessage);
@@ -112,17 +115,20 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var Bals = JsonConvert.DeserializeObject<Balance[]>(content).ToList();
-            Constants.Balances = Bals;
-            return Bals;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            Balances = TW.catcher.Balances;
+            Constants.Balances = new List<Balance>(Balances);
+            Constants.catchAll.Balances = Balances;
+            return Balances;
         }
         public static async Task<List<Balance>> RemoveAsync(Balance bal)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
-            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(bal);
 
             var response = await _client.SendAsync(requestMessage);
@@ -132,30 +138,28 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var Bals = JsonConvert.DeserializeObject<Balance[]>(content).ToList();
-            Balances = Bals;
-            Constants.Balances = Bals;
-            return Bals;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            Balances = TW.catcher.Balances;
+            Constants.Balances = new List<Balance>(Balances);
+            Constants.catchAll.Balances = Balances;
+            return Balances;
         }
         public static List<Balance> AddOrUpdate(Balance bal)
         {
-            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
-
             Task.Run(async () => await AddOrUpdateAsync(bal));
             return Balances;
         }
         public static List<Balance> Remove(Balance bal)
         {
-            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
-
             Task.Run(async () => await RemoveAsync(bal));
             return Balances;
         }
         public static List<Balance> Remove(string id)
         {
             var bal = Balances.FirstOrDefault(b => b.Id == id);
-
-            bal.PassKey = Constants.SHA256(bal.Name + Constants.PassKey);
 
             Task.Run(async () => await RemoveAsync(bal));
             return Balances;

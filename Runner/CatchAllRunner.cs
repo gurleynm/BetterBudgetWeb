@@ -18,9 +18,12 @@ namespace BetterBudgetWeb.Runner
             {
                 throw new ApplicationException(content);
             }
-            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
-            return ca;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            return TW.catcher;
         }
     }
 }

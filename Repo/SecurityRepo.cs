@@ -22,10 +22,14 @@ namespace BetterBudgetWeb.Repo
             {
                 throw new ApplicationException(content);
             }
-            List<Security> smalls = System.Text.Json.JsonSerializer.Deserialize<List<Security>>(content, _options);
 
-            Securities = smalls;
-            return smalls;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+
+            Securities = new List<Security>(TW.catcher.Securities);
+            return Securities;
         }
         public static List<Security> GetSecurities()
         {
@@ -39,8 +43,6 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(small);
 
             var response = await _client.SendAsync(requestMessage);
@@ -50,10 +52,13 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var secs = ca.Securities;
+            if (string.IsNullOrEmpty(content))
+                return null;
 
-            Constants.AssignCatches(ca);
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            var secs = TW.catcher.Securities;
+
+            Constants.AssignCatches(TW.catcher);
             Securities = secs;
 
             return secs;
@@ -63,8 +68,6 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, delURI);
 
-            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(small);
 
             var response = await _client.SendAsync(requestMessage);
@@ -74,10 +77,13 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var secs = ca.Securities;
+            if (string.IsNullOrEmpty(content))
+                return null;
 
-            Constants.AssignCatches(ca);
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            var secs = TW.catcher.Securities;
+
+            Constants.AssignCatches(TW.catcher);
             Securities = secs;
 
             return secs;
@@ -88,7 +94,6 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, delURI);
 
             var small = Securities.FirstOrDefault(t => t.Id == id);
-            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(small);
 
@@ -99,10 +104,14 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var secs = ca.Securities;
+            if (string.IsNullOrEmpty(content))
+                return null;
 
-            Constants.AssignCatches(ca);
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            var secs = TW.catcher.Securities;
+
+            Constants.AssignCatches(TW.catcher);
             Securities = secs;
 
             return secs;

@@ -68,9 +68,10 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Katie";
 
+        public static TokenWrapper TW = new TokenWrapper();
         public static string Who = "Nathan"; // Nathan David Corey
-        
-        public static string Token = "Nice Try"; 
+
+        public static string Token = "Nice Try";
         public static string WebWho { get; set; } // Nathan David Corey
 
         public static bool Test = false; // true false
@@ -89,8 +90,6 @@ namespace BetterBudgetWeb
             }
         }
         public static EventCallback<bool> MobileChanged { get; set; }
-        public static string Key { get; set; } = "";
-
         public static string PassKey { get; set; } = "no";
 
         public static readonly List<string> Months = new List<string>{"January", "February", "March", "April", "May",
@@ -100,29 +99,11 @@ namespace BetterBudgetWeb
         public static async Task RedrivePeople()
         {
             Person1 = Who;
-            switch (Who)
-            {
-                case "Nathan":
-                case "Lindsey":
-                    Person2 = Who == "Lindsey" ? "Nathan" : "Lindsey";
-                    Key = "Lindseylicious";
-                    WebWho = "Better Budget";
-                    break;
-                case "David":
-                case "Katie":
-                    Person2 = Who == "David" ? "Katie" : "David";
-                    Key = "Doofenblast!";
-                    WebWho = "David Better Budget";
-                    break;
-                case "Corey":
-                case "Other":
-                    Person2 = Who == "Corey" ? "Other" : "Corey";
-                    Key = "TroyAndAbed";
-                    WebWho = "Corey Better Budget";
-                    break;
-            }
+            WebWho = "Better Budget";
+            Person2 = TW.Token.Person2;
 
-            PassKey = Key;
+            // Needed for Ideal Emergency Amount
+            await SimulatedConstants.Init();
         }
         public static async Task Init(bool PeopleDecide = false)
         {

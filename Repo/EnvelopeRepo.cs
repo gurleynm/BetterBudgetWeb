@@ -21,10 +21,13 @@ namespace BetterBudgetWeb.Repo
             {
                 throw new ApplicationException(content);
             }
-            List<Envelope> smalls = System.Text.Json.JsonSerializer.Deserialize<List<Envelope>>(content, _options);
 
-            Envelopes = smalls;
-            return smalls;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            Envelopes = TW.catcher.Envelopes;
+            return TW.catcher.Envelopes;
         }
         public static List<Envelope> GetEnvelopes()
         {
@@ -36,8 +39,6 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(small);
 
             var response = await _client.SendAsync(requestMessage);
@@ -47,16 +48,18 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var smalls = JsonConvert.DeserializeObject<Envelope[]>(content).ToList();
-            return smalls;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            Envelopes = TW.catcher.Envelopes;
+            return TW.catcher.Envelopes;
         }
         public static async Task<List<Envelope>> RemoveAsync(Envelope small)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
-            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(small);
 
             var response = await _client.SendAsync(requestMessage);
@@ -66,8 +69,12 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var smalls = JsonConvert.DeserializeObject<Envelope[]>(content).ToList();
-            return smalls;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            Envelopes = TW.catcher.Envelopes;
+            return TW.catcher.Envelopes;
         }
         public static async Task<List<Envelope>> RemoveAsync(string id)
         {
@@ -75,7 +82,6 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var small = Envelopes.FirstOrDefault(t => t.Id == id);
-            small.PassKey = Constants.SHA256(small.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(small);
 
@@ -86,8 +92,12 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var smalls = JsonConvert.DeserializeObject<Envelope[]>(content).ToList();
-            return smalls;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            Envelopes = TW.catcher.Envelopes;
+            return TW.catcher.Envelopes;
         }
     }
 }

@@ -39,8 +39,6 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            simp.PassKey = Constants.SHA256(simp.Month + simp.Year + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(simp);
 
             var response = await _client.SendAsync(requestMessage);
@@ -59,8 +57,6 @@ namespace BetterBudgetWeb.Repo
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-
-            simp.PassKey = Constants.SHA256(simp.Month + simp.Year + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(simp);
 
@@ -81,7 +77,6 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var sim = SimulatedPrevs.FirstOrDefault(t => t.Id == id);
-            sim.PassKey = Constants.SHA256(sim.Month + sim.Year + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(sim);
 

@@ -23,12 +23,17 @@ namespace BetterBudgetWeb.Repo
                 var m = response.ReasonPhrase;
                 throw new ApplicationException(content);
             }
-            List<Transaction> trans = System.Text.Json.JsonSerializer.Deserialize<List<Transaction>>(content, _options);
-            
-            Transactions = trans;
-            Constants.Transactions = trans;
 
-            return trans;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            //List<Transaction> trans = System.Text.Json.JsonSerializer.Deserialize<List<Transaction>>(content, _options);
+
+            Transactions = new List<Transaction>(TW.catcher.Transactions);
+            Constants.Transactions = new List<Transaction>(TW.catcher.Transactions);
+
+            return Transactions;
         }
         public static List<Transaction> GetTransactions()
         {
@@ -42,8 +47,6 @@ namespace BetterBudgetWeb.Repo
 
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
-            
-            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -54,10 +57,14 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var tran = ca.Transactions;
+            if (string.IsNullOrEmpty(content))
+                return null;
 
-            Constants.AssignCatches(ca);
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            
+            var tran = TW.catcher.Transactions;
+
+            Constants.AssignCatches(TW.catcher);
 
             return tran;
         }
@@ -66,8 +73,6 @@ namespace BetterBudgetWeb.Repo
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-            
-            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -78,10 +83,10 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var tran = ca.Transactions;
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            var tran = TW.catcher.Transactions;
 
-            Constants.AssignCatches(ca);
+            Constants.AssignCatches(TW.catcher);
             return tran;
         }
         // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
@@ -91,7 +96,6 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var trans = Transactions.FirstOrDefault(t => t.Id == id);
-            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -102,10 +106,10 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            CatchAll ca = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var tran = ca.Transactions;
-            
-            Constants.AssignCatches(ca);
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            var tran = TW.catcher.Transactions;
+
+            Constants.AssignCatches(TW.catcher);
             return tran;
         }
     }

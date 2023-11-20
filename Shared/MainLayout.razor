@@ -510,15 +510,13 @@
 
         Disabled = true;
 
-        User theUser = await UserRepo.VerifyUserAsync(username, password);
-        WeIn = theUser != null;
+        bool verified = await UserRepo.VerifyUserAsync(username, password);
+        WeIn = verified;
 
         if (WeIn)
         {
             ErrorMsg = "";
             // await sessionStorage.SetItemAsync("NoNo", tmpPass);
-
-            Constants.Who = theUser.Name;
 
             await Constants.Init(true);
         }

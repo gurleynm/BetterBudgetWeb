@@ -9,22 +9,25 @@ namespace BetterBudgetWeb.Repo
         private static HttpClient client = new HttpClient();
 
         private static string baseURI = Constants.BaseUri + "User";
-        public static async Task<User> VerifyUserAsync(string user, string pass)
+        public static async Task<bool> VerifyUserAsync(string user, string pass)
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             
             var response = await client.GetAsync(baseURI + "?user=" + user + "&pass=" + pass);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
-                return null;
+                return false;
 
             if(string.IsNullOrEmpty(content))
-                return null;
+                return false;
 
-            User TheUser = System.Text.Json.JsonSerializer.Deserialize<User>(content, _options);
-            Constants.Token = TheUser.Token;
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
 
-            return TheUser;
+            Constants.TW = TW;
+            Constants.Who = TW.Token.Name;
+            Constants.Token = TW.Token.Token;
+
+            return true;
         }
     }
 }

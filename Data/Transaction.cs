@@ -13,7 +13,6 @@ namespace BetterBudgetWeb.Data
         public double Person2Amount { get; set; }
         public string PaidOffPerson1 { get; set; }
         public string PaidOffPerson2 { get; set; }
-        public string PassKey { get; set; } = "no";
         public double TotalAmount => Person1Amount + Person2Amount;
         public DateTime DateOfTransaction { get; set; } = DateTime.Now;
 

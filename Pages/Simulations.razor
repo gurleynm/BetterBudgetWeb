@@ -419,8 +419,6 @@ else
     {
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
 
-        await SimulatedConstants.Init();
-
         CatchAll catchAll = await CatchAllRunner.Grab();
         Balances = catchAll.Balances;
         Transactions = catchAll.Transactions;

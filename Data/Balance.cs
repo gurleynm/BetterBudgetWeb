@@ -30,7 +30,6 @@
         public double APR { get; set; } = 0;
         public string HexColor { get; set; } = "#32A852";
         public string TextColor { get; set; } = "black";
-        public string PassKey { get; set; } = "no";
 
         public DateTime DateUpdated { get; set; } = DateTime.Now;
         public Balance() { }

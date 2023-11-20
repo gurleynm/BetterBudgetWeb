@@ -22,12 +22,16 @@ namespace BetterBudgetWeb.Repo
             {
                 throw new ApplicationException(content);
             }
-            List<Preset> press = System.Text.Json.JsonSerializer.Deserialize<List<Preset>>(content, _options);
 
-            Presets = press;
-            Constants.Presets = press;
+            if (string.IsNullOrEmpty(content))
+                return null;
 
-            return press;
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+
+            Presets = TW.catcher.Presets;
+            Constants.Presets = new List<Preset>(Presets);
+
+            return Presets;
         }
         public static List<Preset> GetPresets()
         {
@@ -41,8 +45,6 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            press.PassKey = Constants.SHA256(press.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(press);
 
             var response = await _client.SendAsync(requestMessage);
@@ -52,18 +54,19 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var pres = JsonConvert.DeserializeObject<Preset[]>(content).ToList();
-            Constants.Presets = pres;
+            if (string.IsNullOrEmpty(content))
+                return null;
 
-            return pres;
+            var TW = JsonConvert.DeserializeObject<TokenWrapper>(content);
+            Constants.Presets = new List<Preset>(TW.catcher.Presets);
+
+            return TW.catcher.Presets;
         }
         public static async Task<List<Preset>> RemoveAsync(Preset press)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
-            press.PassKey = Constants.SHA256(press.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(press);
 
             var response = await _client.SendAsync(requestMessage);
@@ -73,9 +76,12 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var pres = JsonConvert.DeserializeObject<Preset[]>(content).ToList();
-            Constants.Presets = pres;
-            return pres;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            var TW = JsonConvert.DeserializeObject<TokenWrapper>(content);
+            Constants.Presets = new List<Preset>(TW.catcher.Presets);
+            return TW.catcher.Presets;
         }
         public static async Task<List<Preset>> RemoveAsync(string id)
         {
@@ -83,7 +89,6 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var press = Presets.FirstOrDefault(t => t.Id == id);
-            press.PassKey = Constants.SHA256(press.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(press);
 
@@ -94,9 +99,12 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var pres = JsonConvert.DeserializeObject<Preset[]>(content).ToList();
-            Constants.Presets = pres;
-            return pres;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            var TW = JsonConvert.DeserializeObject<TokenWrapper>(content);
+            Constants.Presets = new List<Preset>(TW.catcher.Presets);
+            return TW.catcher.Presets;
         }
     }
 }

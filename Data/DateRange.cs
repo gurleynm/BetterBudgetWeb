@@ -5,19 +5,20 @@
         public DateRange() { }
         public DateRange(DateRange other)
         {
-            UniqueMonthYears = new List<string>(UniqueMonthYears);
+            if (UniqueMonthYears != null)
+                UniqueMonthYears = new List<string>(UniqueMonthYears);
         }
-        public List<string> UniqueMonthYears { get; set; }
+        public List<string> UniqueMonthYears { get; set; } = new List<string>();
         public bool IsItValidMonthYear(string monthYear)
         {
             if (monthYear.ToUpper().Contains("ALL")) return true;
 
-            foreach(var year in UniqueMonthYears)
+            foreach (var year in UniqueMonthYears)
             {
                 if (monthYear.ToUpper() == year.ToUpper())
                     return true;
             }
             return false;
-        } 
+        }
     }
 }

@@ -15,7 +15,6 @@ namespace BetterBudgetWeb.Data
         public string PaidOffPerson2 { get; set; }
         public string HexColor { get; set; }
         public string TextColor { get; set; }
-        public string PassKey { get; set; } = "no";
         public double TotalAmount => Person1Amount + Person2Amount;
 
         private void SetSMC(StaticMonthlyCost smc)

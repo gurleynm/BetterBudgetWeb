@@ -20,8 +20,6 @@
         
         public int UpdateGoal { get; set; }
         
-        public string PassKey { get; set; } = "no";
-
         public Envelope() { }
 
         public Envelope(string Id)

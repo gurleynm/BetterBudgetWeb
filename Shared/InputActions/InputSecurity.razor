@@ -115,7 +115,8 @@ else
         <div style="float:left; margin: 0 1vw;">
             <label>Security Name:</label>
             <br />
-            <input type="text" placeholder="Security Name" style="text-transform:uppercase" @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
+            <input type="text" placeholder="Name" style="text-transform:uppercase;width:6vw" 
+            @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
         </div>
         <div style="float:left; margin-right:1vw;">
             <label>Security Type:</label>

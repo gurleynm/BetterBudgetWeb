@@ -9,7 +9,6 @@
         public string Dynamic { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
-        public string PassKey { get; set; } = "no";
         public double TotalAmount => Person1Amount + Person2Amount;
         public string MonthYear()
         {

@@ -13,7 +13,6 @@
         public string Person { get; set; }
         public string BalanceFrom { get; set; }
         public DateTime DateOfSecurity { get; set; } = DateTime.Now;
-        public string PassKey { get; set; } = "no";
         public Security() { }
         public Security(string name, string type)
         {
@@ -43,7 +42,6 @@
             SecType = other.SecType;
             Person = other.Person;
             DateOfSecurity = other.DateOfSecurity;
-            PassKey = other.PassKey;
         }
 
         public double CalculateReturn()

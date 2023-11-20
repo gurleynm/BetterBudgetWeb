@@ -22,11 +22,15 @@ namespace BetterBudgetWeb.Repo
             {
                 throw new ApplicationException(content);
             }
-            List<Monthly> mons = System.Text.Json.JsonSerializer.Deserialize<List<Monthly>>(content, _options);
 
-            Monthlies = mons;
-            Constants.SetMonthlies(mons);
-            return mons;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+
+            Monthlies = TW.catcher.Monthlies;
+            Constants.SetMonthlies(TW.catcher.Monthlies);
+            return TW.catcher.Monthlies;
         }
         public static List<Monthly> GetMonthlies()
         {
@@ -39,8 +43,6 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            month.PassKey = Constants.SHA256(month.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(month);
 
             var response = await _client.SendAsync(requestMessage);
@@ -50,16 +52,19 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Monthly[]>(content).ToList();
-            Constants.SetMonthlies(tran);
-            return tran;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+
+            Monthlies = TW.catcher.Monthlies;
+            Constants.SetMonthlies(TW.catcher.Monthlies);
+            return TW.catcher.Monthlies;
         }
         public static async Task<List<Monthly>> RemoveAsync(Monthly trans)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-
-            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -70,9 +75,14 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Monthly[]>(content).ToList();
-            Constants.SetMonthlies(tran);
-            return tran;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+
+            Monthlies = TW.catcher.Monthlies;
+            Constants.SetMonthlies(TW.catcher.Monthlies);
+            return TW.catcher.Monthlies;
         }
         public static async Task<List<Monthly>> AddOrUpdateAsync(string name, double nathanAmount, double lindseyAmount, string dyna, string monYear)
         {
@@ -81,8 +91,6 @@ namespace BetterBudgetWeb.Repo
 
             Monthly month = new Monthly(name, nathanAmount, lindseyAmount, dyna, monYear);
 
-            month.PassKey = Constants.SHA256(month.Name + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(month);
 
             var response = await _client.SendAsync(requestMessage);
@@ -92,9 +100,14 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Monthly[]>(content).ToList();
-            Constants.SetMonthlies(tran);
-            return tran;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+
+            Monthlies = TW.catcher.Monthlies;
+            Constants.SetMonthlies(TW.catcher.Monthlies);
+            return TW.catcher.Monthlies;
         }
         public static async Task<List<Monthly>> RemoveAsync(string id)
         {
@@ -102,7 +115,6 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var trans = Monthlies.FirstOrDefault(t => t.Id == id);
-            trans.PassKey = Constants.SHA256(trans.Name + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -113,9 +125,14 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Monthly[]>(content).ToList();
-            Constants.SetMonthlies(tran);
-            return tran;
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+
+            Monthlies = TW.catcher.Monthlies;
+            Constants.SetMonthlies(TW.catcher.Monthlies);
+            return TW.catcher.Monthlies;
         }
     }
 }

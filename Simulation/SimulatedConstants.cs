@@ -19,7 +19,6 @@ namespace BetterBudgetWeb.Simulation
 
         public static int Month { get; set; } = DateTime.Now.Month;
         public static int Year { get; set; } = DateTime.Now.Year;
-        public static string Key { get; set; } = "";
 
         public static string PassKey { get; set; } = "no";
         public static async Task Init()

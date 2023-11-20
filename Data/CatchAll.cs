@@ -15,13 +15,13 @@ namespace BetterBudgetWeb.Data
         public CatchAll() { }
         public CatchAll(CatchAll other)
         {
-            Transactions = new List<Transaction>(other.Transactions);
-            Balances = new List<Balance>(other.Balances);
-            Monthlies = new List<Monthly>(other.Monthlies);
-            Envelopes = new List<Envelope>(other.Envelopes);
-            Presets = new List<Preset>(other.Presets);
-            Snapshots = new List<Snapshot>(other.Snapshots);
-            Securities = new List<Security>(other.Securities);
+            Transactions = other.Transactions == null ? new List<Transaction>() : new List<Transaction>(other.Transactions);
+            Balances = other.Balances == null ? new List<Balance>() : new List<Balance>(other.Balances);
+            Monthlies = other.Monthlies == null ? new List<Monthly>() : new List<Monthly>(other.Monthlies);
+            Envelopes = other.Envelopes == null ? new List<Envelope>() : new List<Envelope>(other.Envelopes);
+            Presets = other.Presets == null ? new List<Preset>() : new List<Preset>(other.Presets);
+            Snapshots = other.Snapshots == null ? new List<Snapshot>() : new List<Snapshot>(other.Snapshots);
+            Securities = other.Securities == null ? new List<Security>() : new List<Security>(other.Securities);
             DR = new DateRange(other.DR);
         }
     }

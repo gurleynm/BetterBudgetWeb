@@ -22,10 +22,14 @@ namespace BetterBudgetWeb.Repo
             {
                 throw new ApplicationException(content);
             }
-            List<Snapshot> snaps = System.Text.Json.JsonSerializer.Deserialize<List<Snapshot>>(content, _options);
 
-            Snapshots = snaps;
-            return snaps;
+            if (string.IsNullOrEmpty(content))
+                return null;
+            
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+
+            Snapshots = TW.catcher.Snapshots;
+            return Snapshots;
         }
         public static List<Snapshot> GetSnapshots()
         {
@@ -37,8 +41,6 @@ namespace BetterBudgetWeb.Repo
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            snap.PassKey = Constants.SHA256(snap.Month + snap.Year + Constants.PassKey);
-
             requestMessage.Content = JsonContent.Create(snap);
 
             var response = await _client.SendAsync(requestMessage);
@@ -48,15 +50,17 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Snapshot[]>(content).ToList();
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            var tran = TW.catcher.Snapshots;
             return tran;
         }
         public static async Task<List<Snapshot>> RemoveAsync(Snapshot trans)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-
-            trans.PassKey = Constants.SHA256(trans.Month + trans.Year + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(trans);
 
@@ -67,7 +71,11 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Snapshot[]>(content).ToList();
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            var tran = TW.catcher.Snapshots;
             return tran;
         }
         public static async Task<List<Snapshot>> RemoveAsync(string id)
@@ -76,7 +84,6 @@ namespace BetterBudgetWeb.Repo
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var snaps = Snapshots.FirstOrDefault(t => t.Id == id);
-            snaps.PassKey = Constants.SHA256(snaps.Month + snaps.Year + Constants.PassKey);
 
             requestMessage.Content = JsonContent.Create(snaps);
 
@@ -87,7 +94,11 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            var tran = JsonConvert.DeserializeObject<Snapshot[]>(content).ToList();
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            var tran = TW.catcher.Snapshots;
             return tran;
         }
     }
