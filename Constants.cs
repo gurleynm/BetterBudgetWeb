@@ -69,7 +69,7 @@ namespace BetterBudgetWeb
         public static string Person2 { get; set; } = "Katie";
 
         public static TokenWrapper TW = new TokenWrapper();
-        public static string Who = "Nathan"; // Nathan David Corey
+        public static string Who = ""; // Nathan David Corey
 
         public static string Token = "Nice Try";
         public static string WebWho { get; set; } // Nathan David Corey

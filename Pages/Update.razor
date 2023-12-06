@@ -23,46 +23,81 @@
 
 @if (!Constants.Mobile)
 {
-    <div class="tab" />
+    <div class="tab">
+        <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
+        <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
+    </div>
 }
 
-<div class="tabcontent">
-    <label>Select a Balance:</label>
-    <br />
-    <select @bind=SelectedBalance title="Select Balance ">
-        <option value="" selected>(Choose a Balance)</option>
-        @foreach (var bal in Balances)
-        {
-            <option value=@bal.Id>@bal.Name</option>
-        }
-    </select>
-</div>
-
-@if (!string.IsNullOrEmpty(SelectedBalance))
+@if (ShowBal)
 {
-    <UpdateBalance Id="@SelectedBalance"
-                   BalName="@BalName"
-                   APR="@APR"
-                   Amount="@CurAmount"
-                   BalanceType="@BalanceType"
-                   Color="@Color"
-                   TextColor="@TColor"
-                   Person="@Person"
-                   PaidThroughWork="@(BalanceType == "Stocks" && int.TryParse(APR,out int apr) && apr == 1)">
-    </UpdateBalance>
+    <div class="tabcontent">
+        <label>Select a Balance:</label>
+        <br />
+        <select @bind=SelectedBalance title="Select Balance ">
+            <option value="" selected>(Choose a Balance)</option>
+            @foreach (var bal in Balances)
+            {
+                <option value=@bal.Id>@bal.Name</option>
+            }
+        </select>
+    </div>
+
+    @if (!string.IsNullOrEmpty(SelectedBalance))
+    {
+        <UpdateBalance Id="@SelectedBalance"
+                       BalName="@NameBal"
+                       APR="@APRBal"
+                       Amount="@CurAmountBal"
+                       BalanceType="@BalanceType"
+                       Color="@ColorBal"
+                       TextColor="@TColorBal"
+                       Person="@PersonBal"
+                       PaidThroughWork="@(BalanceType == "Stocks" && int.TryParse(APRBal,out int apr) && apr == 1)">
+        </UpdateBalance>
+    }
+}
+else if (ShowEnv)
+{
+    <div class="tabcontent">
+        <label>Select an Envelope:</label>
+        <br />
+        <select @bind=SelectedEnv title="Selectn Envelope ">
+            <option value="" selected>(Choose an Envelope)</option>
+            @foreach (var envs in Envelopes)
+            {
+                <option value=@envs.Id>@envs.Name</option>
+            }
+        </select>
+    </div>
+    @if (!string.IsNullOrEmpty(SelectedEnv))
+    {
+    <UpdateEnvelope Id="@selectedEnv"
+                        EnvName="@NameEnv"
+                    WillPayPerson1="@WillPayPerson1Env" 
+                    WillPayPerson2="@WillPayPerson2Env"
+                    Person1Amount="@Person1AmountEnv"
+                    Person2Amount="@Person2AmountEnv"
+                    GoalAmount="@GoalAmountEnv"
+                    UpdateCheck = "@UpdateCheckEnv"
+                    />
+}
 }
 
 @code {
-    private string BalName;
+    /* Start BALANCE */
+    private string NameBal;
     private string BalanceType;
-    private string APR;
-    private string CurAmount;
-    private string Person;
-    private string Color = "#32A852";
-    private string TColor = "#32A852";
+    private string APRBal;
+    private string CurAmountBal;
+    private string PersonBal;
+    private string ColorBal = "#32A852";
+    private string TColorBal = "#32A852";
 
-    private string BalClass = "active";
     private List<Balance> Balances = new List<Balance>();
+    private bool ShowBal { get; set; } = true;
+    private string BalClass => ShowBal ? "active" : "";
+
     private string selectedBalance;
     private string SelectedBalance
     {
@@ -75,11 +110,10 @@
         }
     }
 
-    protected override async Task OnInitializedAsync()
+    private void ShowBalance()
     {
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
-        Balances = await BalanceRepo.GetBalancesAsync();
-        SelectedBalance = "";
+        ShowBal = !ShowBal;
+        ShowEnv = false;
     }
 
     private void SetBalVals()
@@ -91,15 +125,79 @@
 
         if (ThisBalance != null)
         {
-            BalName = ThisBalance.Name;
-            APR = "" + ThisBalance.APR;
-            CurAmount = "" + ThisBalance.Value;
+            NameBal = ThisBalance.Name;
+            APRBal = "" + ThisBalance.APR;
+            CurAmountBal = "" + ThisBalance.Value;
             BalanceType = ThisBalance.BalanceType;
-            Color = ThisBalance.HexColor;
-            TColor = ThisBalance.TextColor;
-            Person = ThisBalance.Person;
+            ColorBal = ThisBalance.HexColor;
+            TColorBal = ThisBalance.TextColor;
+            PersonBal = ThisBalance.Person;
         }
     }
+    /* End BALANCE */
+
+    /* Start ENVELOPE */
+    private string NameEnv;
+    private string WillPayPerson1Env;
+    private string WillPayPerson2Env;
+    private double Person1AmountEnv;
+    private double Person2AmountEnv;
+    private double GoalAmountEnv;
+    private bool UpdateCheckEnv;
+
+    private List<Data.Envelope> Envelopes = new List<Data.Envelope>();
+    private bool ShowEnv { get; set; }
+    private string EnvClass => ShowEnv ? "active" : "";
+
+
+    private string selectedEnv;
+    private string SelectedEnv
+    {
+        get { return selectedEnv; }
+        set
+        {
+            selectedEnv = value;
+            SetEnvVals();
+            StateHasChanged();
+        }
+    }
+
+    private void ShowEnvelope()
+    {
+        ShowEnv = !ShowEnv;
+        ShowBal = false;
+    }
+
+    private void SetEnvVals()
+    {
+        if (string.IsNullOrEmpty(SelectedEnv))
+            return;
+
+        var ThisEnv = Envelopes.FirstOrDefault(b => b.Id == SelectedEnv);
+
+        if (ThisEnv != null)
+        {
+            NameEnv = ThisEnv.Name;
+            WillPayPerson1Env = ThisEnv.Person1Account;
+            WillPayPerson2Env = ThisEnv.Person2Account;
+            Person1AmountEnv = Math.Round(ThisEnv.Person1Amount,2);
+            Person2AmountEnv = Math.Round(ThisEnv.Person2Amount, 2);
+            GoalAmountEnv = Math.Round(ThisEnv.Goal,2);
+            UpdateCheckEnv = ThisEnv.UpdateGoal == 0 ? false : true;
+        }
+    }
+    /* End ENVELOPE */
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+        Balances = await BalanceRepo.GetBalancesAsync();
+        Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
+        SelectedBalance = "";
+        SelectedEnv = "";
+    }
+
+
 
     private void Refresh(bool accepted)
     {

@@ -46,12 +46,12 @@
                         {
                             @if (Years != null && Years.Count > 1)
                             {
-                                <div class="tab" style="width:100%">
+                                <div class="tab" style="width:75vw">
                                     @foreach (var y in Years)
                                     {
                                         <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
                                     }
-                                    <div class="tab" style="width:100%">
+                                    <div class="tab" style="width:100vw">
                                         @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
                                         {
                                             <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
@@ -61,7 +61,7 @@
                             }
                             else
                             {
-                                <div class="tab" style="width:100%;">
+                                <div class="tab" style="width:110vw;">
                                     @foreach (var mt in MonthTabs)
                                     {
                                         <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
@@ -69,7 +69,7 @@
                                     <br style="clear:both" />
                                 </div>
                             }
-                            <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;">
+                            <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;width:fit-content">
                                 <table>
                                     <tr>
                                         <th>

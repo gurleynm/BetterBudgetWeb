@@ -1,5 +1,7 @@
 ﻿using BetterBudgetWeb.Data;
+using Blazored.SessionStorage.StorageOptions;
 using Newtonsoft.Json;
+using System;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -10,7 +12,7 @@ namespace BetterBudgetWeb.Repo
         private static HttpClient client = new HttpClient();
 
         private static string baseURI = Constants.BaseUri + "Security?token=" + Constants.Token + "&ticker={0}&SecType={1}";
-        public static string delURI => baseURI.Substring(0, baseURI.IndexOf("?"));
+        public static string delURI => baseURI.Substring(0, baseURI.IndexOf("?")) + "?token=" + Constants.Token;
         public static List<Security> Securities { get; set; } = new List<Security>();
         public static async Task<List<Security>> GetSecuritiesAsync()
         {
@@ -41,7 +43,7 @@ namespace BetterBudgetWeb.Repo
         public static async Task<List<Security>> AddOrUpdateAsync(Security small)
         {
             HttpClient _client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, delURI);
 
             requestMessage.Content = JsonContent.Create(small);
 

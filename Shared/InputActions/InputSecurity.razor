@@ -205,12 +205,16 @@ else
                 return;
             }
 
+            if (Balances.Count == 0)
+                Balances = Constants.Balances.Where(b => b.BalanceType == "Stocks").ToList();
+
+
             var BalanceFrom = Balances.FirstOrDefault(bal => bal.Id == value);
 
             if (BalanceFrom == null)
                 return;
 
-            Person = ChosenBalance.Person?.ToUpper() == "JOINT" ? Constants.Person1 : ChosenBalance.Person;
+            Person = BalanceFrom.Person.ToUpper() == "JOINT" ? Constants.Person1 : BalanceFrom.Person;
             NumericAmountToTrade = BalanceFrom.APR == 0 ? BalanceFrom.Value : double.MaxValue;
         }
     }
@@ -236,14 +240,17 @@ else
 
     protected override Task OnInitializedAsync()
     {
-        Balances = Constants.Balances.Where(b => b.BalanceType == "Stocks").ToList();
+        if (string.IsNullOrEmpty(balanceSelected))
+        {
+            Balances = Constants.Balances.Where(b => b.BalanceType == "Stocks").ToList();
 
-        if (Balances.Count > 0)
-            NumericAmountToTrade = Balances[0].APR == 0 ? Balances[0].Value : double.MaxValue;
-        else
-            NumericAmountToTrade = 0;
+            if (Balances.Count > 0)
+                NumericAmountToTrade = Balances[0].APR == 0 ? Balances[0].Value : double.MaxValue;
+            else
+                NumericAmountToTrade = 0;
 
-        Person = ChosenBalance.Person?.ToUpper() == "JOINT" ? Constants.Person1 : ChosenBalance.Person;
+            Person = ChosenBalance.Person?.ToUpper() == "JOINT" ? Constants.Person1 : ChosenBalance.Person;
+        }
         return base.OnInitializedAsync();
     }
 
