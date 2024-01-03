@@ -130,8 +130,13 @@ namespace BetterBudgetWeb
             Envelopes = catchAll.Envelopes;
             Presets = catchAll.Presets;
             Securities = catchAll.Securities ?? new List<Security>();
-            DR = catchAll.DR;
-
+            if (DR != null) 
+            {
+                if (catchAll?.DR?.UniqueMonthYears?.Count > 0)
+                    DR = catchAll.DR;
+            }
+            else
+                DR = catchAll.DR;
             TransactionRepo.Transactions = catchAll.Transactions;
             BalanceRepo.Balances = catchAll.Balances;
             MonthlyRepo.Monthlies = catchAll.Monthlies;

@@ -37,10 +37,20 @@
                     <h5 class="modal-title" style="font-size:large;font-family:Papyrus;color:black;">
                         <strong>Your Reports</strong>
                     </h5>
+                    @if (SelectedMonth == "All")
+                    {
+                        <div style="position:relative;margin:0;left:50%;top:0%;-ms-transform:translate(-50%,0%);transform:translate(-50%,0%); display:flex;justify-content:flex-end">
+                            <button type="button" class="btn btn-primary" @onclick="@(() => {
+                                Rebalancing = !Rebalancing;
+                            })">
+                                Rebalance to Spent
+                            </button>
+                        </div>
+                    }
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
                 </div>
-                <div class="modal-body" style="width:fit-content;color:black;">
+                <div class="modal-body" style="width:fit-content;color:black;overflow:auto">
                     <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
                         @if (SFDs != null && SFDs.Count > 0)
                         {
@@ -73,7 +83,6 @@
                                 <table>
                                     <tr>
                                         <th>
-                                            Statistic
                                         </th>
                                         <th>
                                             @Constants.Person1
@@ -135,47 +144,10 @@
                                     </tr>
                                 </table>
                                 <br style="clear:both;" />
-                                <table style="margin-left:1vw;">
-                                    <tr>
-                                        <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
-                                    </tr>
-                                    <tr>
-                                        <th>Expense</th>
-                                        <th>Total Budget Amount</th>
-                                        <th>Spent</th>
-                                        <th>Difference</th>
-                                    </tr>
-                                    @foreach (var sfd in SFDs)
-                                    {
-                                        @if (sfd.Name.Contains("EXAMPLE DATA"))
-                                        {
-                                            <tr>
-                                                <td style="padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
-                                                <td>@Pretty(sfd.Projected)</td>
-                                                <td>@Pretty(sfd.Actual)</td>
-                                                <td>@Pretty(sfd.Projected - sfd.Actual)</td>
-                                            </tr>
-                                        }
-                                        else
-                                        {
-                                            <tr>
-                                                <td style="padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
-                                                <td>@Pretty(sfd.Projected)</td>
-                                                <td>@Pretty(sfd.Actual)</td>
-                                                <td class="@TranColor(sfd.Projected - sfd.Actual)">@Pretty(sfd.Projected - sfd.Actual)</td>
-                                            </tr>
-                                        }
-                                    }
-                                    <tr>
-                                        <td colspan="4">=</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Total</strong></td>
-                                        <td>@Pretty(SFDs.Sum(d => d.Projected))</td>
-                                        <td>@Pretty(SFDs.Sum(d => d.Actual))</td>
-                                        <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
-                                    </tr>
-                                </table>
+                                <ReportDynamic SFDs=@SFDs Rebalancing=@(Rebalancing && 
+                                                                        SelectedMonth == "All")
+                                    NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => 
+                                                                    ye.MyClass == "active").MyYear).Count() - 1) />
                             </div>
                         }
                         else
@@ -300,47 +272,7 @@ else
                             </div>
                             <br style="clear:both;" />
                             <div>
-                                <table style="margin-left:1vw;">
-                                    <tr>
-                                        <th colspan="4" style="font-size:3vw;background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
-                                    </tr>
-                                    <tr>
-                                        <th style="font-size:3vw;padding:5px">Expense</th>
-                                        <th style="font-size:3vw;padding:5px">Total Budget Amount</th>
-                                        <th style="font-size:3vw;padding:5px">Spent</th>
-                                        <th style="font-size:3vw;padding:5px">Difference</th>
-                                    </tr>
-                                    @foreach (var sfd in SFDs)
-                                    {
-                                        @if (sfd.Name.Contains("EXAMPLE DATA"))
-                                        {
-                                            <tr>
-                                                <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
-                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
-                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
-                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
-                                            </tr>
-                                        }
-                                        else
-                                        {
-                                            <tr>
-                                                <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
-                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
-                                                <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
-                                                <td class="@TranColor(sfd.Projected - sfd.Actual)" style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
-                                            </tr>
-                                        }
-                                    }
-                                    <tr>
-                                        <td colspan="4" style="font-size:3vw;padding:5px">=</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:3vw;padding:5px"><strong>Total</strong></td>
-                                        <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected))</td>
-                                        <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Actual))</td>
-                                        <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))" style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
-                                    </tr>
-                                </table>
+                                <ReportDynamic SFDs=@SFDs />
                             </div>
 
                         </div>
@@ -391,6 +323,7 @@ else
 
     public bool Mobile => Constants.Mobile;
 
+    public bool Rebalancing = false;
 
     private List<SnapForDynamic> SFDs = new List<SnapForDynamic>();
 
@@ -436,8 +369,8 @@ else
         /*        int highest_month = 0;
         foreach (var sn in snaps)
         {
-            if (Constants.Months.IndexOf(sn.Month) >= highest_month && sn.Year == DateTime.Now.Year)
-                highest_month = Constants.Months.IndexOf(sn.Month);
+        if (Constants.Months.IndexOf(sn.Month) >= highest_month && sn.Year == DateTime.Now.Year)
+            highest_month = Constants.Months.IndexOf(sn.Month);
         }
         */
 
@@ -445,7 +378,7 @@ else
          *       if ((Constants.Months.IndexOf(DateTime.Now.ToString("MMMM")) > highest_month) || (highest_month == 0 && DateTime.Now.Month == 1))
          *
          * Now: Always set Previous Month in case updates are made up to 1 month later
-         */
+        */
         await SetSnapshot(DateTime.Now.AddMonths(-1));
 
         if (Years.Count == 1 && Years[0].MyClass != "active")
@@ -461,6 +394,7 @@ else
         Trans.Clear();
         DCIs.Clear();
         SMCs.Clear();
+        Rebalancing = false;
 
         Dynamo dyna;
         SFDs = new List<SnapForDynamic>();
@@ -470,8 +404,31 @@ else
         int monthInt;
         int yearInt;
 
-        SelectedMonth = MonthTabs.FirstOrDefault(m => m.MyClass == "active").MyMonth;
-        SelectedYear = Years.FirstOrDefault(y => y.MyClass == "active").MyYear;
+        MonthTab activeMonth = MonthTabs.FirstOrDefault(m => m.MyClass == "active");
+        YearTab activeYear = Years.FirstOrDefault(y => y.MyClass == "active");
+
+        if (activeMonth == null)
+        {
+            int MTC = MonthTabs.Count;
+            if (MTC > 0)
+            {
+                MonthTabs[MTC - 1].MyClass = "active";
+                activeYear = Years.FirstOrDefault(y => y.MyYear == MonthTabs[MTC - 1].MyYear);
+            }
+        }
+        
+        if (activeYear == null)
+        {
+            int YC = Years.Count;
+            if (YC > 0)
+            {
+                Years[YC - 1].MyClass = "active";
+                activeYear = Years.FirstOrDefault(y => y.MyYear == Years[YC - 1].MyYear);
+            }
+        }
+
+        SelectedMonth = activeMonth.MyMonth;
+        SelectedYear = activeYear.MyYear;
 
         if (SelectedMonth == "All")
         {
@@ -709,13 +666,6 @@ else
     private string Pretty(double am)
     {
         return Constants.Pretty(am);
-    }
-
-    internal class SnapForDynamic
-    {
-        public string Name;
-        public double Projected;
-        public double Actual;
     }
 
     internal class Dynamo

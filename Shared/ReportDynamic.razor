@@ -1,0 +1,287 @@
+﻿@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.Repo;
+@if (!Constants.Mobile)
+{
+    if (Rebalancing)
+    {
+        <table style="margin-left:1vw;">
+            <tr>
+                <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+            </tr>
+            <tr>
+                <th>Expense</th>
+                <th>Update To ($/Month)</th>
+                <th>When (Month Year):</th>
+                <th></th>
+            </tr>
+            @foreach (var nsfd in NewSFDs)
+            {
+                @if (nsfd.SFD.Name.Contains("EXAMPLE DATA"))
+                {
+                    <tr>
+                        <td style="padding:.5vw 1vw;cursor:pointer;"><i>@nsfd.SFD.Name</i></td>
+                        <td>@Pretty(nsfd.SFD.Projected)</td>
+                        <td>@Pretty(nsfd.SFD.Actual)</td>
+                        <td>@Pretty(nsfd.SFD.Actual)</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td style="padding:.5vw 1vw;cursor:pointer;">@nsfd.SFD.Name</td>
+                        <td><input type="number" style="width:5vw" @bind=@nsfd.Amount /></td>
+                        <td>
+                            <select @bind="nsfd.Month">
+                                @foreach (var item in Months)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </select>
+                            <select @bind="nsfd.Year">
+                                <option value="1">All</option>
+                                <option value="@DateTime.Now.Year.ToString()">@DateTime.Now.Year</option>
+                                <option value="@DateTime.Now.AddYears(1).Year.ToString()">@DateTime.Now.AddYears(1).Year</option>
+                            </select>
+                        </td>
+                        <td>
+                            @if (nsfd.Saved)
+                            {
+                                <div style="display:flex;justify-content:space-evenly;align-items:baseline">
+                                    <button class="btn btn-danger" style="margin:0 1vh;" @onclick=@(() => OnHide(nsfd))>Hide</button>
+                                    <span>Saved!!</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div style="display:flex;justify-content:space-evenly">
+                                    <button class="btn btn-danger" style="margin:0 1vh;" @onclick=@(() => OnHide(nsfd))>Hide</button>
+                                    <button class="btn btn-success" @onclick=@(() => OnCick(nsfd))>Save</button>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+
+            }
+            <tr>
+                <td colspan="4">=</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td>@Pretty(NewSFDs.Sum(d => d.Amount))</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        <table style="margin-left:1vw;">
+            <tr>
+                <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+            </tr>
+            <tr>
+                <th>Expense</th>
+                <th>Total Budget Amount</th>
+                <th>Spent</th>
+                <th>Difference</th>
+            </tr>
+            @foreach (var sfd in SFDs)
+            {
+                @if (sfd.Name.Contains("EXAMPLE DATA"))
+                {
+                    <tr>
+                        <td style="padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
+                        <td>@Pretty(sfd.Projected)</td>
+                        <td>@Pretty(sfd.Actual)</td>
+                        <td>@Pretty(sfd.Projected - sfd.Actual)</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td style="padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
+                        <td>@Pretty(sfd.Projected)</td>
+                        <td>@Pretty(sfd.Actual)</td>
+                        <td class="@TranColor(sfd.Projected - sfd.Actual)">@Pretty(sfd.Projected - sfd.Actual)</td>
+                    </tr>
+                }
+
+            }
+            <tr>
+                <td colspan="4">=</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td>@Pretty(SFDs.Sum(d => d.Projected))</td>
+                <td>@Pretty(SFDs.Sum(d => d.Actual))</td>
+                <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
+            </tr>
+        </table>
+    }
+}
+else
+{
+    <table style="margin-left:1vw;">
+        <tr>
+            <th colspan="4" style="font-size:3vw;background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+        </tr>
+        <tr>
+            <th style="font-size:3vw;padding:5px">Expense</th>
+            <th style="font-size:3vw;padding:5px">Total Budget Amount</th>
+            <th style="font-size:3vw;padding:5px">Spent</th>
+            <th style="font-size:3vw;padding:5px">Difference</th>
+        </tr>
+        @foreach (var sfd in SFDs)
+        {
+            @if (sfd.Name.Contains("EXAMPLE DATA"))
+            {
+                <tr>
+                    <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
+                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
+                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
+                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
+                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
+                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
+                    <td class="@TranColor(sfd.Projected - sfd.Actual)" style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
+                </tr>
+            }
+        }
+        <tr>
+            <td colspan="4" style="font-size:3vw;padding:5px">=</td>
+        </tr>
+        <tr>
+            <td style="font-size:3vw;padding:5px"><strong>Total</strong></td>
+            <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected))</td>
+            <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Actual))</td>
+            <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))" style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
+        </tr>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public List<SnapForDynamic> SFDs { get; set; } = new List<SnapForDynamic>();
+
+    [Parameter]
+    public int NumOfMonths { get; set; }
+
+    [Parameter]
+    public bool Rebalancing
+    {
+        get { return rebalancing; }
+        set
+        {
+            rebalancing = value;
+            RecheckSFD();
+        }
+    }
+
+    private bool rebalancing { get; set; }
+
+    private List<string> Months = new List<string>();
+    private string SelectMonth = "";
+    private string SelectYear = "";
+
+    public List<EditableSFD> NewSFDs { get; set; } = new List<EditableSFD>();
+
+    protected override Task OnInitializedAsync()
+    {
+        int thisYear = DateTime.Now.Year;
+
+        List<string> theMons = new List<string>{"January", "February",
+    "March", "April", "May", "June", "July", "August", "September",
+    "October", "November", "December"};
+
+        Months.Add("All");
+        int startMonth = DateTime.Now.Month - 1;
+        for (int index = startMonth; index < startMonth + 12; index++)
+        {
+            if (theMons[index % 12] == "January" && DateTime.Now.Month != 1)
+                thisYear++;
+
+            Months.Add(theMons[index % 12]);
+        }
+
+        Months.Sort(Constants.SortMonths);
+
+        RecheckSFD();
+
+        return base.OnInitializedAsync();
+    }
+
+    private void RecheckSFD()
+    {
+        NewSFDs.Clear();
+        StateHasChanged();
+        foreach (var sfd in SFDs)
+        {
+            NewSFDs.Add(new EditableSFD(sfd, NumOfMonths));
+        }
+        StateHasChanged();
+    }
+
+    public async void OnHide(EditableSFD esfd)
+    {
+        NewSFDs.Remove(esfd);
+        StateHasChanged();
+    }
+
+    public async void OnCick(EditableSFD esfd)
+    {
+        if (esfd.Month == null)
+            esfd.Month = "All";
+
+        if (esfd.Year == null)
+            esfd.Year = "1";
+
+        double person1 = esfd.Amount % 2 == 0 ? esfd.Amount / 2 : Math.Ceiling(esfd.Amount / 2);
+        double person2 = esfd.Amount % 2 == 0 ? esfd.Amount / 2 : Math.Floor(esfd.Amount / 2);
+        var mons = await MonthlyRepo.AddOrUpdateAsync(esfd.SFD.Name, person1, person2, "DYNAMIC", esfd.Month + " " + esfd.Year);
+        esfd.Saved = true;
+        StateHasChanged();
+    }
+
+    private string Pretty(double am)
+    {
+        return Constants.Pretty(am);
+    }
+    private string TranColor(double num)
+    {
+        if (num > 0)
+            return "income-good";
+        else
+            return "income-bad";
+    }
+
+    public class EditableSFD
+    {
+        public EditableSFD() { }
+        public EditableSFD(SnapForDynamic s, int num)
+        {
+            SFD = s;
+            Amount = num > 0 ? Math.Ceiling(s.Actual / num) : 0;
+            Saved = false;
+        }
+        public EditableSFD(EditableSFD other)
+        {
+            SFD = other.SFD;
+            Amount = other.Amount;
+            Month = other.Month;
+            Year = other.Year;
+            Saved = other.Saved;
+        }
+
+        public SnapForDynamic SFD { get; set; }
+        public string Month { get; set; } = "All";
+        public double Amount { get; set; }
+        public string Year { get; set; } = "1";
+        public bool Saved { get; set; }
+    }
+}

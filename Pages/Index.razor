@@ -203,10 +203,10 @@ else
                 }
 
                 <!-- Savings Goals-->
-                <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic 
-                                        ActualStaticAmount=@ActualStatic
-                                        ActualIncomeAmount=@ActualIncome
-                                        EnvelopeAmount=@EnvelopeExpenses />
+                <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
+                                     ActualStaticAmount=@ActualStatic
+                                     ActualIncomeAmount=@ActualIncome
+                                     EnvelopeAmount=@EnvelopeExpenses />
 
                 <!-- Ideal Emergency Fund-->
                 <IdealEmergencyFund />
@@ -637,7 +637,7 @@ else
     private List<Transaction> MonthlyTransactions = new List<Transaction>();
     private double ActualStatic => MonthlyTransactions.Where(ft => ft.ExpenseType == "Static Cost").Sum(ft => ft.TotalAmount);
     private double ActualIncome => MonthlyTransactions.Where(ft => ft.ExpenseType == "Income").Sum(ft => ft.TotalAmount);
-    private double ActualDynamic => DynamicCostItems.Sum(dci =>dci.Amount) - DynamicCostItems.Sum(dci => dci.Left);
+    private double ActualDynamic => DynamicCostItems.Sum(dci => dci.Amount) - DynamicCostItems.Sum(dci => dci.Left);
 
     private double ProjectedExpense => Constants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount) +
                                         DynamicCostItems.Sum(d => d.Amount);
@@ -686,11 +686,11 @@ else
             IgnoreThese.Add("Envelope");
             if (IsAnEnvelope(ft))
                 return false;
-        }
 
-        foreach (var env in Envelopes)
-        {
-            IgnoreThese.Add(env.Name);
+            foreach (var env in Envelopes)
+            {
+                IgnoreThese.Add(env.Name);
+            }
         }
 
         if (IgnoreThese.Contains(ft.ExpenseType))
@@ -840,11 +840,13 @@ else
             List<string> NotExpenseOrIncome = new List<string> { "Debt", "Transfer", "Equity" };
 
             if (HideEnvExp)
+            {
                 NotExpenseOrIncome.Add("Envelope");
 
-            foreach (var env in Envelopes)
-            {
-                NotExpenseOrIncome.Add(env.Name);
+                foreach (var env in Envelopes)
+                {
+                    NotExpenseOrIncome.Add(env.Name);
+                }
             }
 
             string[] IncomeOrEquity = new string[] { "Income", "Equity" };
@@ -982,7 +984,10 @@ else
         if (ViewReports)
             await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
         else
+        {
+            DynamicCostItems = new List<DynamicCostItem>(Constants.DynamicCostItems);
             await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+        }
 
     }
     private async void ToggleStash()

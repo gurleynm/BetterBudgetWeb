@@ -228,9 +228,9 @@ else
                 ErrorMsg += $"{Constants.Person2} must contribute. ";
         }
 
-        if (SelectedEnv.Person1Amount - Person1Amount < 0)
+        if (Math.Round(SelectedEnv.Person1Amount,2) - Person1Amount < 0)
             ErrorMsg += $"Envelope value for {Constants.Person1} cannot be less than zero. {Constants.Person1} has {Constants.Pretty(SelectedEnv.Person1Amount)} saved. ";
-        if (SelectedEnv.Person2Amount - Person2Amount < 0)
+        if (Math.Round(SelectedEnv.Person2Amount - Person2Amount,2) < 0)
             ErrorMsg += $"Envelope value for {Constants.Person2} cannot be less than zero. {Constants.Person2} has {Constants.Pretty(SelectedEnv.Person2Amount)} saved. ";
 
 

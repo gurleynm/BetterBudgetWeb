@@ -19,7 +19,7 @@
     <div style="border: 2px solid green; width:90vw;height:fit-content;">
         <h1 style="text-align:center;">Envelope Preview:</h1>
         <div style="display:flex;justify-content:center">
-            <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@GoalAmount" Saved="@(Person1Amount+Person2Amount)" />
+            <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@(double.TryParse(GoalAmount, out double ga) ? ga : 0)" Saved="@(Person1Amount+Person2Amount)" />
         </div>
     </div>
     <br />
@@ -34,7 +34,7 @@
         <div style="float:left; margin-right:10vw;">
             <label>Goal Amount:</label>
             <br />
-            <input type="number" placeholder="Goal Amount" @bind=GoalAmount @oninput="@(async (ui) => { GoalAmount = (double) ui.Value;})" />
+            <input type="number" placeholder="Goal Amount" @bind=GoalAmount @oninput="@(async (ui) => { GoalAmount = (string) ui.Value;})" />
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
@@ -101,7 +101,7 @@ else
         <div style="float:left; margin-right:10vw;">
             <label>Goal Amount:</label>
             <br />
-            <input type="number" placeholder="Goal Amount" @bind=GoalAmount @oninput="@(async (ui) => { GoalAmount = (double) ui.Value;})" />
+            <input type="number" placeholder="Goal Amount" @bind=GoalAmount @oninput="@(async (ui) => { GoalAmount = (string) ui.Value;})" />
         </div>
         <br style="clear:both" />
         <br />
@@ -145,7 +145,7 @@ else
         <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
             <h1 style="text-align:center;">Envelope Preview:</h1>
             <div>
-                <Envelope Name="@EnvName" Scale=15 Font_Size=2 Goal="@GoalAmount" Saved="@(Person1Amount+Person2Amount)" />
+                <Envelope Name="@EnvName" Scale=15 Font_Size=2 Goal="@(double.TryParse(GoalAmount, out double ga) ? ga : 0)" Saved="@(Person1Amount+Person2Amount)" />
             </div>
         </div>
         <br style="clear:both" />
@@ -176,7 +176,7 @@ else
     [Parameter]
     public double Person2Amount { get; set; }
     [Parameter]
-    public double GoalAmount { get; set; }
+    public string GoalAmount { get; set; }
     [Parameter]
     public bool UpdateCheck { get; set; } = true;
 
@@ -203,7 +203,7 @@ else
         ErrorColor = "red";
 
         ErrorMsg += string.IsNullOrEmpty(EnvName) ? "Envelope Name must be set. " : "";
-        ErrorMsg += GoalAmount <= 0 ? "Amount must be > 0. " : "";
+        ErrorMsg += double.TryParse(GoalAmount, out double ga) ? ga <= 0 ? "Amount must be >0. " : "" : "Amount must be a number. ";
         ErrorMsg += string.IsNullOrEmpty(WillPayPerson1) ? $"Must set {Constants.Person1} account to pay with. " : "";
         ErrorMsg += string.IsNullOrEmpty(WillPayPerson2) ? $"Must set {Constants.Person2} account to pay with. " : "";
         ErrorMsg += Envelopes.FirstOrDefault(e => e.Name == EnvName && e.Id != Id) != null ? "Already have a goal with this name. " : ""; 
@@ -214,7 +214,7 @@ else
                 {
                     Id = Id,
                     Name = EnvName,
-                    Goal = GoalAmount,
+                    Goal = ga,
                     Person1Account = WillPayPerson1,
                     Person2Account = WillPayPerson2,
                     Person1Amount = Person1Amount,
@@ -228,7 +228,7 @@ else
             ErrorMsg = EnvName + " envelope was updated!";
 
             EnvName = string.Empty;
-            GoalAmount = 0;
+            GoalAmount = "0.00";
             WillPayPerson1 = string.Empty;
             WillPayPerson2 = string.Empty;
         }

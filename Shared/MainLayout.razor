@@ -444,7 +444,14 @@
     protected override async Task OnInitializedAsync()
     {
         ErrorMsg = "";
-        Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
+        try
+        {
+            Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
+        }
+        catch(Exception e)
+        {
+            Constants.Mobile = false;
+        }
         theView = Constants.Mobile ? "mobile-view" : "desktop-view";
 
         string BeenToggled = await ReadCookies("DarkModePreference");
@@ -516,7 +523,7 @@
         if (WeIn)
         {
             ErrorMsg = "";
-            // await sessionStorage.SetItemAsync("NoNo", tmpPass);
+            //await sessionStorage.SetItemAsync("token", Constants.Token);
 
             await Constants.Init(true);
         }
