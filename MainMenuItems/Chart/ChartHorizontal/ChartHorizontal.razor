@@ -1,0 +1,158 @@
+﻿@using BetterBudgetWeb.Data;
+<style>
+    .chart-hor {
+        padding: 1rem;
+        border-radius: 12px;
+        background-color: transparent;
+        text-align: center;
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        flex-direction: row;
+        width: 100%;
+        height: fit-content;
+        border: 1px black solid;
+    }
+
+    .chart-back-hor {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 12px;
+        background-color: transparent;
+        text-align: center;
+        display: inline-block;
+        height: fit-content;
+    }
+
+    .chart-bar-hor {
+        height: 1rem;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        cursor: pointer;
+        margin: 2vh 5px;
+    }
+
+    .chart-bar-hor__inner {
+        height: 1rem;
+        width: 100%;
+        border: 1px solid #313131;
+        border-radius: 12px;
+        background-color: #c3b4f3;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .chart-bar-hor__fill {
+        background-color: @Constants.ColorScheme["IncomeGood"];
+        height: 1rem;
+        transition: all 0.3s ease-out;
+    }
+
+    .chart-bar-hor__fill-bad {
+        background-color: red;
+        height: 1rem;
+        transition: all 0.3s ease-out;
+    }
+
+    .chart-bar-hor__label {
+        float: left;
+        height: fit-content;
+        font-weight: bold;
+        font-size: @(Constants.Mobile ? "3vw;" : "1vw");
+        color: @Constants.ColorScheme["Text"];
+        margin: 1vh;
+        vertical-align: central;
+    }
+</style>
+
+<div class="chart-back-hor">
+    <div style="display:inline-block">
+        <span class="chart-bar-hor__label" style="width:100%;text-align:start;margin-bottom:2vh">
+            <strong>
+                Dynamic Monthly Costs
+            </strong>
+        </span>
+
+        <span style="color:@Constants.ColorScheme["Text"];font-size: @(Constants.Mobile ? "3vw;" : "1vw");">
+            <strong>
+                <span>Left/Budgeted: </span>
+                <span style="color:@BudgetColor">@(Constants.Pretty(Left) + "/" + Constants.Pretty(Amount).Trim('$'))</span>
+            </strong>
+        </span>
+    </div>
+    @if (!Mobile)
+    {
+        <table class="chart-hor">
+            @foreach (var dp in DPs)
+            {
+                @if (DPs != null && DPs.Count > 0 && dp.Name == DPs[DPs.Count - 1].Name)
+                {
+                    <ChartBarHorizontal Value=@(dp.Left)
+                                        Label=@dp.Name
+                                        Negative=@(dp.Left < 0)
+                                        MaxValue=@dp.Amount
+                                        BottomBorder=false
+                                        DateBarClicked=BarClicked />
+                }
+                else
+                {
+                    <ChartBarHorizontal Value=@(dp.Left)
+                                        Label=@dp.Name
+                                        Negative=@(dp.Left < 0)
+                                        MaxValue=@dp.Amount
+                                        BottomBorder=true
+                                        DateBarClicked=BarClicked />
+                }
+
+            }
+        </table>
+    }
+    else
+    {
+        <div class="chart-hor" style="display:flex;justify-content:flex-start;flex-direction:row;overflow-x: auto;">
+            @foreach (var dp in DPs)
+            {
+                @if (DPs != null && DPs.Count > 0 && dp.Name == DPs[DPs.Count - 1].Name)
+                {
+                    <ChartBarHorizontal Value=@(dp.Left)
+                                        Label=@dp.Name
+                                        Negative=@(dp.Left < 0)
+                                        MaxValue=@dp.Amount
+                                        BottomBorder=false
+                                        DateBarClicked=BarClicked />
+                }
+                else
+                {
+                    <ChartBarHorizontal Value=@(dp.Left)
+                                        Label=@dp.Name
+                                        Negative=@(dp.Left < 0)
+                                        MaxValue=@dp.Amount
+                                        BottomBorder=true
+                                        DateBarClicked=BarClicked />
+                }
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<DynamicCostItem> DPs { get; set; } = new List<DynamicCostItem>();
+
+    [Parameter]
+    public EventCallback<string> BarClicked { get; set; }
+
+    [Parameter]
+    public bool Horizontal { get; set; }
+
+    private double Left => DPs.Sum(d => d.Left);
+    private double Amount => DPs.Sum(d => d.Amount);
+    private string BudgetColor => Amount > Left ? Constants.ColorScheme["IncomeGood"] : "red";
+
+    public bool Mobile => Constants.Mobile;
+}

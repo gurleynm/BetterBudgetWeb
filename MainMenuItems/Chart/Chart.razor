@@ -27,10 +27,10 @@
             @foreach (var dp in DPs)
             {
                 <ChartBar Value=@dp.Value
-                  Label=@dp.Label
-                  Negative=@dp.Negative
-                  MaxValue=@MaxValue
-                  DateBarClicked=BarClicked />
+                    Label=@dp.Label
+                    Negative=@dp.Negative
+                    MaxValue=@MaxValue
+                    DateBarClicked=BarClicked />
             }
         </div>
     }
@@ -40,10 +40,10 @@
             @foreach (var dp in DPs)
             {
                 <ChartBar Value=@dp.Value
-                  Label=@dp.Label
-                  Negative=@dp.Negative
-                  MaxValue=@MaxValue
-                  DateBarClicked=BarClicked />
+                          Label=@dp.Label
+                          Negative=@dp.Negative
+                          MaxValue=@MaxValue
+                          DateBarClicked=BarClicked />
             }
         </div>
     }
@@ -60,8 +60,11 @@
 
     [Parameter]
     public EventCallback<string> BarClicked { get; set; }
+        
+    [Parameter]
+    public double TheMax { get; set; }
 
     public bool Mobile => Constants.Mobile;
 
-    private double MaxValue => DPs.Select(p => p.Value).Max();
+    private double MaxValue => TheMax > DPs.Select(p => p.Value).Max() ? TheMax : DPs.Select(p => p.Value).Max();
 }

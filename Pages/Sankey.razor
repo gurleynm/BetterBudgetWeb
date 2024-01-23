@@ -29,21 +29,6 @@
         margin-bottom:5vh;margin-right:5vw;"></div>
 
 <div style="float:left;margin-right:2vw">
-    <label>Month</label>
-    <br />
-    <select class="custom-select" @bind="SelectedMonth" title="Pick a Timeframe ">
-        <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option
-        @if (FoundMonths.Count > 1)
-        {
-            <option value="All">All</option>
-        }
-        @foreach (var dt in FoundMonths)
-        {
-            <option value="@dt">@dt</option>
-        }
-    </select>
-</div>
-<div style="float:left;margin-right:2vw">
     <label>Year</label>
     <br />
     <select class="custom-select" @bind="SelectedYear" title="Pick a Timeframe ">
@@ -53,6 +38,19 @@
             <option value="All">All</option>
         }
         @foreach (var dt in FoundYears)
+        {
+            <option value="@dt">@dt</option>
+        }
+    </select>
+    
+</div>
+<div style="float:left;margin-right:2vw">
+    <label>Month</label>
+    <br />
+    <select class="custom-select" @bind="SelectedMonth" title="Pick a Timeframe ">
+        <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option
+        <option value="All">All</option>
+        @foreach (var dt in FoundMonths)
         {
             <option value="@dt">@dt</option>
         }
@@ -78,10 +76,7 @@
     <br />
         <select class="custom-select" @bind="SelectedLevel" title="Pick a Level ">
             <option value="@string.Empty" selected disabled="disabled">(Choose a level)</option>
-            @if (Levels.Count > 1)
-            {
-                <option value="All">All</option>
-            }
+            <option value="All">All</option>
             @foreach (var dt in Levels)
             {
                 <option value="@dt">@dt</option>
@@ -204,6 +199,7 @@
                 years.Add(trans.DateOfTransaction.Year.ToString());
         }
 
+        years.Sort((a, b) => b.CompareTo(a));
         return years;
     }
 

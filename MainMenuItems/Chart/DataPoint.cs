@@ -4,6 +4,7 @@
     {
         public string Label { get; set; }
         public double Value { get; set; }
+        public double MaxValue { get; set; }
         public bool Negative { get; set; }
         public DataPoint() { }
         public DataPoint(string label, string value)
