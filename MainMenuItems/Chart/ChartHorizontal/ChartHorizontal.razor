@@ -152,7 +152,7 @@
 
     private double Left => DPs.Sum(d => d.Left);
     private double Amount => DPs.Sum(d => d.Amount);
-    private string BudgetColor => Amount > Left ? Constants.ColorScheme["IncomeGood"] : "red";
+    private string BudgetColor => Amount >= Left ? Constants.ColorScheme["IncomeGood"] : "red";
 
     public bool Mobile => Constants.Mobile;
 }

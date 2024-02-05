@@ -29,5 +29,25 @@ namespace BetterBudgetWeb.Repo
 
             return true;
         }
+        public static async Task<bool> VerifyUserAsync(string token)
+        {
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            
+            var response = await client.GetAsync(baseURI + "?user=" + token + "&pass=CHECK_AS_TOKEN");
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            if(string.IsNullOrEmpty(content))
+                return false;
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+
+            Constants.TW = TW;
+            Constants.Who = TW.Token.Name;
+            Constants.Token = TW.Token.Token;
+
+            return true;
+        }
     }
 }

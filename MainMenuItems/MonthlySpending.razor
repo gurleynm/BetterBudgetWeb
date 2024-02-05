@@ -3,10 +3,10 @@
 @using BetterBudgetWeb.Runner;
 @inject IJSRuntime JSRuntime
 
-<table class="" style="width:@(Constants.Mobile ? "90%" :"100%");margin-bottom:1vh">
+<table class="" style="width:@(Constants.Mobile && TheBalance != null ? "90%" :"100%");margin-bottom:1vh">
     <tr style="height:3vw">
-        <th style="padding:0 1vw;font-size: @(Constants.Mobile ? "3vw;" : "1vw");" colspan="3">
-            <span>Transactions</span>
+        <th style="padding:0 1vw;font-size: @(Constants.Mobile ? "3vw;" : "1vw");" colspan="100%">
+            <span>@Title</span>
         </th>
     </tr>
     @if (FilteredTransactions != null)
@@ -21,13 +21,16 @@
                     @("(" + transaction.ExpenseType + ")")
                     <br />
                     <br />
-                    <div style="display:flex;justify-content:center;font-size: @(Constants.Mobile ? "3vw;" : "1vw");">
-                        @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
-                        {
-                            <button class="btn btn-secondary" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
-                        }
-                        <button class="btn btn-danger" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
-                    </div>
+                    @if (!All)
+                    {
+                        <div style="display:flex;justify-content:center;font-size: @(Constants.Mobile ? "3vw;" : "1vw");">
+                            @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
+                            {
+                                <button class="btn btn-secondary" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                            }
+                            <button class="btn btn-danger" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
+                        </div>
+                    }
                 </td>
                 @if (transaction.Person1Amount == transaction.TotalAmount)
                 {
@@ -48,7 +51,7 @@
                 else if (transaction.Person2Amount == transaction.TotalAmount)
                 {
                     <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
-                        <span class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person1Amount)</span>
+                        <span class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</span>
                     </td>
                     @if (ShowPerson)
                     {
@@ -80,6 +83,18 @@
                         <span>@("- Total")</span>
                     </td>
                 }
+                @if (All)
+                {
+                    <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                        <div style="display:flex;justify-content:center;font-size: @(Constants.Mobile ? "3vw;" : "1vw");">
+                            @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
+                            {
+                                <button class="btn btn-secondary" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                            }
+                            <button class="btn btn-danger" disabled=@Disabled style="margin:.5vh;height:5vh;" @onclick="(() => ShowDeleteBtn(transaction))"><span class="oi oi-x"></span></button>
+                        </div>
+                    </td>
+                }
             </tr>
         }
     }
@@ -103,6 +118,9 @@
 }
 @code {
     [Parameter]
+    public string Title { get; set; } = "Transactions";
+
+    [Parameter]
     public EventCallback<bool> OnDeleteConfirm { get; set; }
 
     [Parameter]
@@ -114,7 +132,10 @@
     [Parameter]
     public string ExpenseType { get; set; }
 
-    public bool ShowPerson => (TheBalance != null && TheBalance.Person == "Joint") || !string.IsNullOrEmpty(ExpenseType);
+    [Parameter]
+    public bool All { get; set; }
+
+    public bool ShowPerson => (TheBalance != null && TheBalance.Person == "Joint") || !string.IsNullOrEmpty(ExpenseType) || All;
 
     private List<Transaction> FilteredTransactions => GetTransactions();
 
@@ -182,12 +203,11 @@
     {
         List<Transaction> transactions = Constants.catchAll.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).ToList();
 
-        if (TheBalance == null)
+        if (!string.IsNullOrEmpty(ExpenseType))
         {
-
             transactions = transactions.Where(t => t.ExpenseType == ExpenseType).ToList();
         }
-        else
+        else if (TheBalance != null)
         {
             transactions = transactions.Where(t => ThisBalance(t)).ToList();
         }

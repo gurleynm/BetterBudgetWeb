@@ -118,6 +118,7 @@ else
             <Chart DPs=DataPoints BarClicked=FilterDate />
             <br />
             <br />
+            <MonthlySpending All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
         }
         <br />
 
@@ -321,21 +322,15 @@ else
                 <h4 class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")' style="text-align:center">@Constants.Pretty(ActualExpense)</h4>
                 <br />
                 <Chart DPs=DataPoints BarClicked=FilterDate />
+                <br/>
+                <br/>
+                <MonthlySpending All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
             }
 
             <br />
             <br />
             <br />
         }
-
-        <!-- Monthly Spending -->
-        @*  <div style="width:100%;float:left;margin-bottom:2vh;">
-            <MonthlySpending OnAddConfirm=AddConfirm
-            @bind-Envelopes=Envelopes
-            @bind-Transactions=Transactions
-            @bind-FilteredTransactions=FilteredTransactions
-            @bind-Balances=Balances />
-        </div> *@
 
         <AddExpense OnAddConfirm="Add" />
 
