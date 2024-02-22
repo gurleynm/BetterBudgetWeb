@@ -11,7 +11,7 @@
                 <th style="font-size:3vw;">
                     <label>Income Goal:</label>
                     <br />
-                    <input type="number" placeholder="Income" style="width:15vw;padding:0;margin:0;"
+                    <input type="number" placeholder="Income" style="width:15vw;padding:0;margin:0;margin-bottom:1vh"
                     @bind=ProjectedIncomeAmountStr />
                 </th>
                 <th style="font-size:3vw;">Monthly Goal</th>
@@ -54,7 +54,7 @@
 }
 else
 {
-    <div style="width:100%; margin-right:2vw; margin-top:2vh;">
+    <div style="width:100%;">
         <table>
             <tr>
                 <th colspan="3" style="background-color:rebeccapurple;color:white"><i>Monthly Goal Tracking</i></th>
@@ -62,7 +62,8 @@ else
             <tr>
                 <th>
                     <label>Income Goal:</label>
-                    <input type="number" placeholder="Income" style="width:5vw;padding:0;margin:0;"
+                    <br/>
+                    <input type="number" placeholder="Income" style="width:5vw;padding:0;margin:0;margin-bottom:1vh"
                     @bind=ProjectedIncomeAmountStr />
                 </th>
                 <th>Monthly Goal</th>

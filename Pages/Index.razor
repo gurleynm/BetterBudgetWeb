@@ -2,9 +2,11 @@
 @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.MainMenuItems
 @using BetterBudgetWeb.MainMenuItems.Chart
+@using BetterBudgetWeb.MainMenuItems.Chart.ChartHorizontal
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Shared.Tutorial
+@using static BetterBudgetWeb.Shared.AddExpense;
 @inject IJSRuntime JSRuntime
 
 <style>
@@ -69,22 +71,6 @@ else
                 <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
             </h2>
         </div>
-        <br />
-        <div style="display:flex;justify-content:center;flex-wrap:wrap;width:80vw;margin:0 auto;">
-            @if (Balances != null)
-            {
-                @foreach (var balance in Balances)
-                {
-                    <BalanceBlock TheBalance="@balance"
-                                  OnClick="@(() => FilterBalance(balance.Name))"
-                                  OnDelete="@(() => ShowDeleteBalBtn(balance))"
-                                  IncludeGoals=@Goals />
-                }
-
-            }
-        </div>
-        <br style="clear:both;" />
-        <br style="clear:both;" />
         <div style="display:flex;flex-direction:row;
                 justify-content:@(DataPoints != null && DataPoints.Count > 0 ? "space-between" : "flex-end");width:100%">
             @if (DataPoints != null && DataPoints.Count > 0)
@@ -128,98 +114,106 @@ else
                 </h2>
             </div>
             <br />
+
             <Chart DPs=DataPoints BarClicked=FilterDate />
             <br />
             <br />
+            <MonthlySpending All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
         }
         <br />
 
-        <div style="display:flex;justify-content:start;">
-            <!-- Monthly Spending -->
-            <div style="width:50%;float:left; margin-right:1vw; margin-bottom:2vh;">
-                <MonthlySpending OnAddConfirm=AddConfirm
-                                 OnDeleteConfirm=DeleteConfirm
-                                 OnEditConfirm=@(() => SetDataPoints(true))
-                @bind-Envelopes=Envelopes
-                @bind-Transactions=Transactions
-                @bind-FilteredTransactions=FilteredTransactions
-                @bind-Balances=Balances />
+        <div style="display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between">
+            <div style="min-width:20vw; width: auto; height:fit-content; margin-right:2vw; overflow: auto; position: relative;border: solid gray 1px;padding:0">
+                @if (Balances != null)
+                {
+                    @foreach (var bal in Balances)
+                    {
+                        <BalanceSlot TheBalance="bal" OnClick="@(() => SetBalance(bal))"
+                                     SetClass="selected-account" IncludeGoals=Goals OnDeleteConfirm=@CloseModal OnEditConfirm=@CloseModal />
+                    }
+                }
             </div>
+            <div style="display:flex;justify-content:start;">
 
-            <br />
-            <div style="display:inline-block;margin-right:1vw;">
+                <div style="width:100%;float:left; margin-right:1vw; margin-bottom:2vh;display:inline-block;">
+                    <div style="display:flex;justify-content:center;margin-bottom:2vh;">
+                        <div>
+                            <!-- Savings Goals-->
+                            <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
+                                                 ActualStaticAmount=@ActualStatic
+                                                 ActualIncomeAmount=@ActualIncome
+                                                 EnvelopeAmount=@EnvelopeExpenses />
+                            <br style="clear:both;" />
+                            <!-- Set Monthly Costs Goals-->
+                            <SetMonthlyTable Trans=FilteredTransactions />
 
-                <!-- Dynamic Costs -->
-                <div style="width:100%; margin-right:1vw;">
-                    <table>
-                        <tr>
-                            <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
-                        </tr>
-                        <tr>
-                            <th>Expense</th>
-                            <th>Total Budget Amount</th>
-                            <th>Left This Month</th>
-                            <th style="padding:0 5px">Spend/Day</th>
-                        </tr>
-                        @foreach (var dci in DynamicCostItems)
-                        {
-                            @if (dci.Name.Contains("EXAMPLE DATA"))
-                            {
+                        </div>
+                        <br />
+                        <!-- Dynamic Costs -->
+                        <div style="margin-left:1vw">
+                            <table>
                                 <tr>
-                                    <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'><i>@dci.Name</i></td>
-                                    <td>@Pretty(dci.Amount)</td>
-                                    <td>@Pretty(dci.Left)</td>
-                                    <td>@Pretty(dci.Left/DaysLeft)</td>
+                                    <td colspan="4">
+                                        <ChartHorizontal DPs=@DynamicCostItems />
+                                    </td>
                                 </tr>
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td style="padding:.5vw 1vw;cursor:pointer;" @onclick='() => Filter(dci)'>@dci.Name</td>
-                                    <td style="padding:.5vw 1vw;">@Pretty(dci.Amount)</td>
-                                    <td style="padding:.5vw 1vw;">@Pretty(dci.Left)</td>
-                                    <td>@Pretty(dci.Left/DaysLeft)</td>
-                                </tr>
-                            }
-                        }
-                        <tr>
-                            <td colspan="4">=</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total</strong></td>
-                            <td>@Pretty(DynamicCostItems.Sum(d => d.Amount))</td>
-                            <td>@Pretty(DynamicCostItems.Sum(d => d.Left))</td>
-                            <td>@Pretty(DynamicCostItems.Sum(d => d.Left)/DaysLeft)</td>
-                        </tr>
-                    </table>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
-                @if (Goals)
-                {
-                    <!-- Set Monthly Costs Goals-->
-                    <br />
-                    <SetMonthlyTable Trans=FilteredTransactions />
-                    <br style="clear:both" />
-                }
-
-                <!-- Savings Goals-->
-                <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
-                                     ActualStaticAmount=@ActualStatic
-                                     ActualIncomeAmount=@ActualIncome
-                                     EnvelopeAmount=@EnvelopeExpenses />
-
-                <!-- Ideal Emergency Fund-->
-                <IdealEmergencyFund />
-
-
                 <br />
-            </div>
-            @if (!Goals)
-            {
-                <!-- Set Monthly Costs Goals-->
-                <div style="display:inline-block">
-                    <SetMonthlyTable Trans=FilteredTransactions />
-                    <br style="clear:both" />
+                <div style="display:inline-block;width:50%;">
+                    <div style="display:flex;padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
+                        <div style="width:100%">
+                            @if (Goals)
+                            {
+                                <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
+                                <br style="clear:both" />
+                                <br style="clear:both" />
+                                <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
+                                <br />
+                                <br />
+
+                                <div style="display:flex;flex-direction:column;justify-content:center">
+                                    <div style="font-size:1.5vw;text-align:center">
+                                        Total Goals:
+                                        <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
+                                    </div>
+                                    <div style="text-align:center;font-size:1.5vw;">
+                                        Total Saved:
+                                        <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
+                                    </div>
+                                    <hr />
+                                    <div style="font-size:1.25vw;display:flex;flex-direction:row;justify-content:space-evenly">
+                                        <div style="font-size:1.25vw;display:flex;flex-direction:column;justify-content:space-between">
+                                            <div style="text-align:center;">@Constants.Person1 Saved:</div>
+                                            <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
+                                        </div>
+                                        <div style="font-size:1.25vw;display:flex;flex-direction:column;justify-content:space-between">
+                                            <div style="text-align:center;">@Constants.Person2 Saved:</div>
+                                            <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div style="font-size:3vw;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
+                                    @foreach (var env in Envelopes)
+                                    {
+                                        <Envelope Name="@env.Name" Scale=11 Font_Size=1.375 Goal=@env.Goal Saved=@env.TotalAmount
+                                                  FlipClick="true"
+                                                  Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
+                                                  Person2Account="@(new BalanceRepoCaller().GetName(env.Person2Account))"
+                                                  Person1Amount="@env.Person1Amount"
+                                                  Person2Amount="@env.Person2Amount" />
+                                    }
+                                </div>
+                            }
+                            <AddExpense OnAddConfirm="Add" />
+                            <!-- Ideal Emergency Fund-->
+                            <IdealEmergencyFund />
+                        </div>
+                    </div>
                     <br />
                     <div style="float:right; margin-bottom:1vh;margin-right:1vw;">
                         <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
@@ -248,82 +242,8 @@ else
                         }
                     </div>
                 </div>
-            }
-            else
-            {
-                <div style="display:inline-block">
-                    <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
-                    <br style="clear:both" />
-                    <br style="clear:both" />
-                    <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
-                    <br />
-                    <br />
 
-                    <div style="display:flex;flex-direction:column;justify-content:center">
-                        <div style="font-size:1.5vw;text-align:center">
-                            Total Goals:
-                            <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
-                        </div>
-                        <div style="text-align:center;font-size:1.5vw;">
-                            Total Saved:
-                            <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
-                        </div>
-                        <hr />
-                        <div style="font-size:1.25vw;display:flex;flex-direction:row;justify-content:space-evenly">
-                            <div style="font-size:1.25vw;display:flex;flex-direction:column;justify-content:space-between">
-                                <div style="text-align:center;">@Constants.Person1 Saved:</div>
-                                <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
-                            </div>
-                            <div style="font-size:1.25vw;display:flex;flex-direction:column;justify-content:space-between">
-                                <div style="text-align:center;">@Constants.Person2 Saved:</div>
-                                <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                    <div style="font-size:3vw;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
-                        @foreach (var env in Envelopes)
-                        {
-                            <Envelope Name="@env.Name" Scale=11 Font_Size=1.375 Goal=@env.Goal Saved=@env.TotalAmount
-                                      FlipClick="true"
-                                      Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
-                                      Person2Account="@(new BalanceRepoCaller().GetName(env.Person2Account))"
-                                      Person1Amount="@env.Person1Amount"
-                                      Person2Amount="@env.Person2Amount" />
-                        }
-                    </div>
-                    <br />
-                    @if (Goals)
-                    {
-                        <div style="float:right; margin-bottom:1vh;margin-right:1vw;">
-                            <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
-                                <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                                <option value="All">All</option>
-                                @foreach (var dt in FoundMonths)
-                                {
-                                    <option value="@dt">@dt</option>
-                                }
-                            </select>
-                            <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
-                                <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                                <option value="All">All</option>
-                                @foreach (var dt in FoundYears)
-                                {
-                                    <option value="@dt">@dt</option>
-                                }
-                            </select>
-                            @if (ValidChoice)
-                            {
-                                <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
-                            }
-                            else
-                            {
-                                <label style="color:red">No values for this combination.</label>
-                            }
-                        </div>
-                    }
-                </div>
-            }
+            </div>
         </div>
 
         @if (ShowDeleteBal)
@@ -351,9 +271,11 @@ else
         <div style="display:flex;justify-content:center;flex-wrap:wrap;width:95vw;">
             @if (Balances != null)
             {
-                @foreach (var balance in Balances)
+                @foreach (var bal in Balances)
                 {
-                    <BalanceBlock TheBalance="@balance" FontSize="5" />
+                    <BalanceSlot TheBalance="bal" OnClick="@(() => SetBalance(bal))"
+                                 SetClass="selected-account" IncludeGoals=Goals OnDeleteConfirm=@CloseModal OnEditConfirm=@CloseModal />
+                    <br style="clear:both" />
                 }
             }
         </div>
@@ -400,6 +322,9 @@ else
                 <h4 class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")' style="text-align:center">@Constants.Pretty(ActualExpense)</h4>
                 <br />
                 <Chart DPs=DataPoints BarClicked=FilterDate />
+                <br/>
+                <br/>
+                <MonthlySpending All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
             }
 
             <br />
@@ -407,100 +332,66 @@ else
             <br />
         }
 
-        <!-- Monthly Spending -->
-        <div style="width:100%;float:left;margin-bottom:2vh;">
-            <MonthlySpending OnAddConfirm=AddConfirm
-            @bind-Envelopes=Envelopes
-            @bind-Transactions=Transactions
-            @bind-FilteredTransactions=FilteredTransactions
-            @bind-Balances=Balances />
-        </div>
+        <AddExpense OnAddConfirm="Add" />
 
+        @if (Envelopes != null && Envelopes.Count > 0)
+        {
+            <Envelope Name="@GoalTxt" Scale=40 Font_Size=5 OnClick=@ToggleGoals />
+        }
         <br />
-        <div style="display:inline-block;width:100%">
-            <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
-            <br style="clear:both" />
-            <br style="clear:both" />
-            <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
-            <br />
-            <br />
-            <div style="display:flex;flex-direction:column;justify-content:center">
-                <div style="font-size:5vw;text-align:center">
-                    Total Goals:
-                    <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
-                </div>
-                <div style="text-align:center;font-size:5vw;">
-                    Total Saved:
-                    <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
-                </div>
-                <hr />
-                <div style="font-size:4vw;display:flex;flex-direction:row;justify-content:space-evenly">
-                    <div style="font-size:4vw;display:flex;flex-direction:column;justify-content:space-between">
-                        <div style="text-align:center;">@Constants.Person1 Saved:</div>
-                        <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
+        @if (Goals)
+        {
+            <div style="display:inline-block;width:100%">
+                <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
+                <br style="clear:both" />
+                <br style="clear:both" />
+                <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
+                <br />
+                <br />
+                <div style="display:flex;flex-direction:column;justify-content:center">
+                    <div style="font-size:5vw;text-align:center">
+                        Total Goals:
+                        <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
                     </div>
-                    <div style="font-size:4vw;display:flex;flex-direction:column;justify-content:space-between">
-                        <div style="text-align:center;">@Constants.Person2 Saved:</div>
-                        <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
+                    <div style="text-align:center;font-size:5vw;">
+                        Total Saved:
+                        <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
+                    </div>
+                    <hr />
+                    <div style="font-size:4vw;display:flex;flex-direction:row;justify-content:space-evenly">
+                        <div style="font-size:4vw;display:flex;flex-direction:column;justify-content:space-between">
+                            <div style="text-align:center;">@Constants.Person1 Saved:</div>
+                            <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
+                        </div>
+                        <div style="font-size:4vw;display:flex;flex-direction:column;justify-content:space-between">
+                            <div style="text-align:center;">@Constants.Person2 Saved:</div>
+                            <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
+                        </div>
                     </div>
                 </div>
+                <br />
+                <div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
+                    @foreach (var env in Envelopes)
+                    {
+                        <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@env.Goal Saved=@env.TotalAmount
+                                  FlipClick="true"
+                                  Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
+                                  Person2Account="@(new BalanceRepoCaller().GetName(env.Person2Account))"
+                                  Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
+                    }
+                </div>
+                <br />
+                <br style="clear:both" />
+                <br style="clear:both" />
             </div>
-            <br />
-            <div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
-                @foreach (var env in Envelopes)
-                {
-                    <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@env.Goal Saved=@env.TotalAmount
-                              FlipClick="true"
-                              Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
-                              Person2Account="@(new BalanceRepoCaller().GetName(env.Person2Account))"
-                              Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
-                }
-            </div>
-            <br />
-            <br style="clear:both" />
-            <br style="clear:both" />
-        </div>
+        }
         <!-- Dynamic Costs -->
-        <div style="width:100%;">
+        <div style="margin-left:1vw">
             <table>
                 <tr>
-                    <th colspan="4" style="background-color:magenta;font-size:3vw;color:white"><i>Dynamic Monthly Costs</i></th>
-                </tr>
-                <tr>
-                    <th style="font-size:3vw;">Expense</th>
-                    <th style="font-size:3vw;">Total Budget Amount</th>
-                    <th style="font-size:3vw;">Left This Month</th>
-                    <th style="font-size:3vw;padding:0 5px">Spend/Day</th>
-                </tr>
-                @foreach (var dci in DynamicCostItems)
-                {
-                    @if (dci.Name.Contains("EXAMPLE DATA"))
-                    {
-                        <tr>
-                            <td style="font-size:3vw;padding:.5vw 1vw;"><i>@dci.Name</i></td>
-                            <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
-                            <td style="font-size:3vw;">@Pretty(dci.Left)</td>
-                            <td style="font-size:3vw;">@Pretty(dci.Left/DaysLeft)</td>
-                        </tr>
-                    }
-                    else
-                    {
-                        <tr>
-                            <td style="font-size:3vw;padding:.5vw 1vw;">@dci.Name</td>
-                            <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
-                            <td style="font-size:3vw;">@Pretty(dci.Left)</td>
-                            <td style="font-size:3vw;">@Pretty(dci.Left/DaysLeft)</td>
-                        </tr>
-                    }
-                }
-                <tr>
-                    <td style="font-size:3vw;" colspan="4">=</td>
-                </tr>
-                <tr>
-                    <td style="font-size:3vw;"><strong>Total</strong></td>
-                    <td style="font-size:3vw;">@Pretty(DynamicCostItems.Sum(d => d.Amount))</td>
-                    <td style="font-size:3vw;">@Pretty(DynamicCostItems.Sum(d => d.Left))</td>
-                    <td style="font-size:3vw;">@Pretty(DynamicCostItems.Sum(d => d.Left)/DaysLeft)</td>
+                    <td colspan="4">
+                        <ChartHorizontal DPs=@DynamicCostItems />
+                    </td>
                 </tr>
             </table>
         </div>
@@ -545,15 +436,6 @@ else
 
         </CashOut>
     }
-    @*
-    @if (ShowTutorial)
-    {
-        <TutorialModal Mobile="mobile"
-           OnClose="@CloseTutModal">
-
-        </TutorialModal>
-    }
-    *@
 }
 
 @code {
@@ -648,6 +530,15 @@ else
     private List<Balance> BalancesP1 => Balances.Where(b => b.Person == Constants.Person1 | b.Person.ToUpper() == "JOINT").ToList();
     private List<Balance> BalancesP2 => Balances.Where(b => b.Person == Constants.Person2 | b.Person.ToUpper() == "JOINT").ToList();
     private List<string> ETs => FillEts();
+
+    private bool Disabled;
+
+    private void SetBalance(Balance bal)
+    {
+        SelectedBalance = bal;
+        FilterBalance(bal.Name);
+        StateHasChanged();
+    }
 
     private List<string> FillEts()
     {
@@ -937,6 +828,15 @@ else
         ViewReports = false;
         StashCashBool = false;
         CashOutBool = false;
+
+        if (accepted)
+        {
+            Transactions = Constants.Transactions;
+            FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+            Balances = Constants.Balances;
+            Balances.Sort(Constants.CompareBalance);
+        }
+
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
     private async void CloseTutModal(bool DontShowAgain)
@@ -1016,5 +916,29 @@ else
         byte[] file = System.Text.Encoding.UTF8.GetBytes(fileString);
         string FileSaveName = SelectedDownload == "All" ? "All_Transactions.csv" : SelectedDownload.Replace(" ", "_") + "_Transactions.csv";
         await JSRuntime.InvokeVoidAsync("BlazorDownloadFile", FileSaveName, "text/csv", file);
+    }
+    private async void Add(NewTransaction addIt)
+    {
+        if (addIt == null)
+            return;
+
+        var nt = IndexRunner.Add(addIt);
+        JSRuntime.InvokeAsync<string>("console.log", "DateAddIt: " + addIt.DateOfTransaction.ToString());
+        JSRuntime.InvokeAsync<string>("console.log", "DateNTIt: " + nt.DateOfTransaction.ToString());
+
+        if (nt != null)
+        {
+            // TransactionRepo sets everything in Constants
+            Transactions = await TransactionRepo.AddOrUpdateAsync(nt);
+            FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+
+            Balances = Constants.Balances;
+            Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList(); ;
+
+            AddConfirm();
+        }
+
+        Disabled = false;
+        StateHasChanged();
     }
 }

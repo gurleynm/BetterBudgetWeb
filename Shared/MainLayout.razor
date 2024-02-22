@@ -300,45 +300,81 @@
         @if (mobile)
         {
             <div style="display:inline-block;width:100vw;height:100vh;">
-                <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);text-align:center">
-                    <h2 style="text-align:center">@("Welcome!!")</h2>
-                    @if (!string.IsNullOrEmpty(ErrorMsg))
-                    {
-                        <span class="income-bad">@ErrorMsg</span>
-                    }
-                </div>
-                <div style="display:flex;justify-content:center;width:100%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <input id="user" placeholder="Username" style="text-align:center;color:black;" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
-                    <input id="pwd" placeholder="Password" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
-                </div>
-                <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
-                </div>
+                @if (Disabled)
+                {
+                    <div style="background-color: #111827; height: 100vh; display: inline-block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw;">
+                        <BetterBudgetWeb.Pages.LoadingScreen Title="@LogTitle" />
+                    </div>
+                }
+                else
+                {
+                    <div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center">
+                        <div style="background-color:gray;border-radius:1vw;width:auto;padding:1vw;padding-bottom:2vw">
+                            <div>
+                                <h2 style="text-align:center;color:white">@($"Welcome!!")</h2>
+                            </div>
+                            @if (!string.IsNullOrEmpty(ErrorMsg))
+                            {
+                                <p class="income-bad" style="text-align:center">
+                                    @ErrorMsg
+                                </p>
+                            }
+                            <div style="display:inline-block">
+                                <label style="color:white">Username</label>
+                                <br/>
+                                <input id="user" placeholder="Username" style="border-radius:5px;text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
+                                <br />
+                                <label style="color:white">Password</label>
+                                <br />
+                                <input id="pwd" placeholder="Password" style="border-radius:5px;text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
+                            </div>
+                            <div style="display:flex;justify-content:center;margin-top:2vh">
+                                <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         }
         else
         {
-            <div style="display:inline-block;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width:100vw">
-                <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <h2 style="text-align:center">@($"Welcome!!")</h2>
+            @if (Disabled)
+            {
+                <div style="display:inline-block;width:100vw;height:100vh;">
+                    <BetterBudgetWeb.Pages.LoadingScreen Title="@LogTitle" />
                 </div>
-                @if (!string.IsNullOrEmpty(ErrorMsg))
-                {
-                    <p class="income-bad" style="text-align:center">
-                        @ErrorMsg
-                    </p>
-                }
-                <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <input id="user" placeholder="Username" style="text-align:center;color:black;" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
-                    <input id="pwd" placeholder="Password" style="text-align:center;color:black;" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
+            }
+            else
+            {
+                <div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center">
+                    <div style="background-color:gray;border-radius:1vw;width:auto;padding:1vw;padding-bottom:2vw">
+                        <div>
+                            <h2 style="text-align:center;color:white">@($"Welcome!!")</h2>
+                        </div>
+                        @if (!string.IsNullOrEmpty(ErrorMsg))
+                        {
+                            <p class="income-bad" style="text-align:center">
+                                @ErrorMsg
+                            </p>
+                        }
+                        <div style="display:inline-block">
+                            <label style="color:white">Username</label>
+                            <br />
+                            <input id="user" placeholder="Username" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
+                            <br />
+                            <label style="color:white">Password</label>
+                            <br />
+                            <input id="pwd" placeholder="Password" style="text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
+                        </div>
+                        <div style="display:flex;justify-content:center;margin-top:2vh">
+                            <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
+                        </div>
+                    </div>
                 </div>
-                <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                    <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
-                </div>
-            </div>
+            }
         }
     }
-    else
+    else if (WeIn)
     {
         @if (mobile)
         {
@@ -413,10 +449,20 @@
             </article>
         </main>
     }
+    else
+    {
+        <div style="display:inline-block;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width:100vw">
+            <div style="display:flex;justify-content:center;width:50%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
+                <h2 style="text-align:center">Login successful ✔</h2>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
     private bool mobile => Constants.Mobile;
+
+    private string LogTitle = "Logging in...";
 
     private string theView { get; set; }
     private string ErrorMsg { get; set; }
@@ -424,7 +470,19 @@
     private string username { get; set; }
     private string password { get; set; }
     private int pwdAttempts { get; set; }
-    private bool Disabled { get; set; }
+    private bool disabled { get; set; } = true;
+    private bool Disabled
+    {
+        get
+        { return disabled; }
+        set
+        {
+            if (disabled != value)
+                StateHasChanged();
+
+            disabled = value;
+        }
+    }
     private bool darkMode { get; set; } = Constants.DarkMode;
     private bool DarkMode
     {
@@ -448,7 +506,7 @@
         {
             Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Constants.Mobile = false;
         }
@@ -507,23 +565,38 @@
 
     public async Task<bool> CheckWeIn(bool countAttempt = true)
     {
-        // var tmpPass = await sessionStorage.GetItemAsync<string>("NoNo");
-        // var tmpUser = await sessionStorage.GetItemAsync<string>("user");
-
-        // if (tmpPass == null)
-        //     tmpPass = Constants.SHA256(password);
-        if (string.IsNullOrEmpty(username) | string.IsNullOrEmpty(password))
-            return false;
-
+        var token = await sessionStorage.GetItemAsync<string>("token");
+        bool verified;
         Disabled = true;
+        StateHasChanged();
 
-        bool verified = await UserRepo.VerifyUserAsync(username, password);
-        WeIn = verified;
+        if (string.IsNullOrEmpty(token))
+        {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                Disabled = false;
+                return false;
+            }
+
+            Disabled = true;
+
+            verified = await UserRepo.VerifyUserAsync(username, password);
+            WeIn = verified;
+        }
+        else
+        {
+            verified = await UserRepo.VerifyUserAsync(token);
+            WeIn = verified;
+
+            if (verified)
+                Constants.Token = token;
+        }
 
         if (WeIn)
         {
             ErrorMsg = "";
-            //await sessionStorage.SetItemAsync("token", Constants.Token);
+            var ct = Constants.Token;
+            await sessionStorage.SetItemAsync("token", Constants.Token);
 
             await Constants.Init(true);
         }

@@ -48,6 +48,8 @@ else
                   PaidWithPerson2="@PaidWithPerson2"
                   Person1Amount="@Person1Amount"
                   Person2Amount="@Person2Amount"
+                  Hex="@HexColor"
+                  TextColor="@TextColor"
                   Preset="Preset">
     </InputTransaction>
 }
@@ -80,6 +82,8 @@ else if (ShowStatic)
     private string PaidWithPerson2;
     private string Person1Amount;
     private string Person2Amount;
+    private string HexColor;
+    private string TextColor;
 
     private string BalName;
     private string BalanceType;
@@ -173,6 +177,8 @@ else if (ShowStatic)
         // 5 - Person2Amount
         // 6 - Paid Off Person1
         // 7 - Paid Off Person2
+        // 8 - Text Color
+        // 9 - Background Color
 
         string[] vals = Constants.HandlePresets(pre.Name);
 
@@ -192,6 +198,8 @@ else if (ShowStatic)
             Person2Amount = vals[5];
             PaidOffPerson1 = vals[6];
             PaidOffPerson2 = vals[7];
+            TextColor = vals[8];
+            HexColor = vals[9];
         }
         StateHasChanged();
     }

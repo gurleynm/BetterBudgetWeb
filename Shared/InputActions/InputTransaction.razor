@@ -840,15 +840,17 @@ else
     public string Person2Amount { get; set; }
     [Parameter]
     public Action<Preset> Preset { get; set; }
+    [Parameter]
+    public string Hex { get; set; } = "#28A745";
+    [Parameter]
+    public string TextColor { get; set; } = "#FFFFFF";
+
     public List<Preset> Presets { get; set; }
     public List<Preset> PresetsForDel { get; set; }
 
     public bool Mobile => Constants.Mobile;
 
     public string SelectedPreset { get; set; }
-
-    private string Hex { get; set; } = "#28A745";
-    private string TextColor { get; set; } = "#FFFFFF";
 
     private List<Balance> Balances => Constants.Balances;
     private List<Balance> Person1Balances => Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(p1b => p1b.Name).ToList();

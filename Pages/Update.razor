@@ -21,13 +21,10 @@
 
 <h1>Update</h1>
 
-@if (!Constants.Mobile)
-{
-    <div class="tab">
-        <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
-        <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
-    </div>
-}
+<div class="tab">
+    <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
+    <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
+</div>
 
 @if (ShowBal)
 {
@@ -72,16 +69,15 @@ else if (ShowEnv)
     </div>
     @if (!string.IsNullOrEmpty(SelectedEnv))
     {
-    <UpdateEnvelope Id="@selectedEnv"
+        <UpdateEnvelope Id="@selectedEnv"
                         EnvName="@NameEnv"
-                    WillPayPerson1="@WillPayPerson1Env" 
-                    WillPayPerson2="@WillPayPerson2Env"
-                    Person1Amount="@Person1AmountEnv"
-                    Person2Amount="@Person2AmountEnv"
-                    GoalAmount="@GoalAmountEnv"
-                    UpdateCheck = "@UpdateCheckEnv"
-                    />
-}
+                        WillPayPerson1="@WillPayPerson1Env"
+                        WillPayPerson2="@WillPayPerson2Env"
+                        Person1Amount="@Person1AmountEnv"
+                        Person2Amount="@Person2AmountEnv"
+                        GoalAmount="@GoalAmountEnv"
+                        UpdateCheck="@UpdateCheckEnv" />
+    }
 }
 
 @code {
@@ -180,9 +176,9 @@ else if (ShowEnv)
             NameEnv = ThisEnv.Name;
             WillPayPerson1Env = ThisEnv.Person1Account;
             WillPayPerson2Env = ThisEnv.Person2Account;
-            Person1AmountEnv = Math.Round(ThisEnv.Person1Amount,2);
+            Person1AmountEnv = Math.Round(ThisEnv.Person1Amount, 2);
             Person2AmountEnv = Math.Round(ThisEnv.Person2Amount, 2);
-            GoalAmountEnv = Math.Round(ThisEnv.Goal,2).ToString();
+            GoalAmountEnv = Math.Round(ThisEnv.Goal, 2).ToString();
             UpdateCheckEnv = ThisEnv.UpdateGoal == 0 ? false : true;
         }
     }

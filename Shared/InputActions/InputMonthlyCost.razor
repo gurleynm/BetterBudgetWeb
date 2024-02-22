@@ -61,17 +61,28 @@
         <input type="text" placeholder="Name of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
     </div>
     <br />
-    <div>
-        <label>@(Constants.Person1 + " Amount:")</label>
+    @if (Dyna == "DYNAMIC")
+    {
+        <div>
+            <label>@("Total Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@TotalAmount" @oninput="@(async (ui) => { TotalAmount = (string) ui.Value;})" />
+        </div>
+    }
+    else
+    {
+        <div>
+            <label>@(Constants.Person1 + " Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+        </div>
         <br />
-        <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
-    </div>
-    <br />
-    <div>
-        <label>@(Constants.Person2 + " Amount:")</label>
-        <br />
-        <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
-    </div>
+        <div>
+            <label>@(Constants.Person2 + " Amount:")</label>
+            <br />
+            <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+        </div>
+    }
     <br style="clear:both;" />
 
     <br style="clear:both" />
@@ -117,16 +128,27 @@ else
         </div>
         <br style="clear:both;" />
         <br />
-        <div style="float:left;margin-right:10vw;">
-            <label>@(Constants.Person1 + " Amount:")</label>
-            <br />
-            <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
-        </div>
-        <div>
-            <label>@(Constants.Person2 + " Amount:")</label>
-            <br />
-            <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
-        </div>
+        @if (Dyna == "DYNAMIC")
+        {
+            <div>
+                <label>@("Total Amount:")</label>
+                <br />
+                <input type="text" placeholder="Amount" @bind-value="@TotalAmount" @oninput="@(async (ui) => { TotalAmount = (string) ui.Value;})" />
+            </div>
+        }
+        else
+        {
+            <div style="float:left;margin-right:10vw;">
+                <label>@(Constants.Person1 + " Amount:")</label>
+                <br />
+                <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+            </div>
+            <div>
+                <label>@(Constants.Person2 + " Amount:")</label>
+                <br />
+                <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+            </div>
+        }
         <br style="clear:both;" />
 
         <br style="clear:both" />
@@ -148,6 +170,8 @@ else
     public string Person1Amount { get; set; }
     [Parameter]
     public string Person2Amount { get; set; }
+    [Parameter]
+    public string TotalAmount { get; set; }
 
     public bool Mobile => Constants.Mobile;
 
@@ -190,6 +214,19 @@ else
         ErrorColor = "red";
         bool tpNAmount = double.TryParse(Person1Amount, out double nam);
         bool tpLAmount = double.TryParse(Person2Amount, out double lam);
+        bool tpTAmount = double.TryParse(TotalAmount, out double tam);
+
+        if(Dyna == "DYNAMIC")
+        {
+            tpNAmount = tpTAmount;
+            tpLAmount = tpTAmount;
+
+            if (tpTAmount)
+            {
+                nam = Math.Ceiling(tam / 2);
+                lam = Math.Floor(tam / 2);
+            }
+        }
 
         ErrorMsg += Dyna != "SAVINGS" && string.IsNullOrEmpty(StaticName) ? "Static Name must be set. " : "";
         ErrorMsg += !tpNAmount ? $"{Constants.Person1} Amount must be a number. " : "";

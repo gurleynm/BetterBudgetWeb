@@ -1,0 +1,103 @@
+﻿<tr style="background-color:transparent;color:@Constants.ColorScheme["Text"];width:100%;">
+    <td class="chart-bar-hor__label" style="border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
+        <span>@Label</span>
+    </td>
+    <td colspan="2" class="chart-bar-hor__inner" style="cursor:pointer" @onclick=OnClick>
+        @if (Negative)
+        {
+            <div class="chart-bar-hor__fill-bad"
+                 style="width:@BarFillWidth"></div>
+        }
+        else
+        {
+            <div class="chart-bar-hor__fill"
+                 style="width:@BarFillWidth"></div>
+        }
+    </td>
+    <td class="chart-bar-hor__label" style="border:none;width:100%">
+        @if (Negative)
+        {
+            <span @onclick=OnClick style="color:red;cursor:pointer">@(Constants.Pretty(Value) + "/" + Constants.Pretty(MaxValue).Trim('$'))</span>
+        }
+        else
+        {
+            <span @onclick=OnClick style="cursor:pointer;color:@Constants.ColorScheme["IncomeGood"]">@(Constants.Pretty(Value) + "/" + Constants.Pretty(MaxValue).Trim('$'))</span>
+        }
+
+        @if (Show)
+        {
+            <div style="display:flex;justify-content:center;flex-wrap:wrap;flex-direction:row;width:100%">
+                <MonthlySpending ExpenseType=@Label />
+                @if (BottomBorder)
+                {
+                    <hr style="width:100%" />
+                }
+            </div>
+        }
+        @if (BottomBorder && !Show)
+        {
+            <hr style="margin-top:5vh" />
+        }
+    </td>
+</tr>
+
+@code {
+    [Parameter]
+    public string Label { get; set; }
+    [Parameter]
+    public bool BottomBorder { get; set; }
+    [Parameter]
+    public bool Negative { get; set; }
+    [Parameter]
+    public EventCallback<string> DateBarClicked { get; set; }
+
+    private bool Show;
+
+    public double val = 0;
+    public double maxVal = 0;
+
+    [Parameter]
+    public double Value
+    {
+        get { return val; }
+        set
+        {
+            val = value;
+
+            if (MaxValue > 0)
+            {
+                BarFillWidth = Math.Round((val / MaxValue) * 100) + "%";
+                StateHasChanged();
+            }
+        }
+    }
+
+    [Parameter]
+    public double MaxValue
+    {
+        get { return maxVal; }
+        set
+        {
+            maxVal = value;
+
+            if (maxVal > 0)
+            {
+                BarFillWidth = Math.Round((val / maxVal) * 100) + "%";
+                StateHasChanged();
+            }
+        }
+    }
+
+    public string BarFillWidth { get; set; } = "0%";
+
+    protected override Task OnInitializedAsync()
+    {
+        var c = Negative;
+        return base.OnInitializedAsync();
+    }
+
+    private void OnClick()
+    {
+        Show = !Show;
+    }
+}

@@ -306,8 +306,10 @@ namespace BetterBudgetWeb
             // 5 - Person2Amount
             // 6 - Paid Off Person1
             // 7 - Paid Off Person2
+            // 8 - Text Color
+            // 9 - Background Color
 
-            string[] values = new string[8];
+            string[] values = new string[10];
 
             if (pres != null)
             {
@@ -319,6 +321,8 @@ namespace BetterBudgetWeb
                 values[5] = pres.Person2Amount.ToString();
                 values[6] = pres.PaidOffPerson1 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson1);
                 values[7] = pres.PaidOffPerson2 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson2);
+                values[8] = pres.TextColor.ToString();
+                values[9] = pres.HexColor.ToString();
             }
 
             return values;

@@ -1,7 +1,7 @@
 ﻿@using BetterBudgetWeb.Runner;
 <style>
     .outer_add {
-        margin: 1vw auto;
+        margin: auto;
         width: 100%;
         height: fit-content;
         border: 1px solid #ececec;
@@ -34,7 +34,7 @@
             {
                 <tr>
                     <td colspan="1">
-                        <InputDate @bind-Value="NewTrans.DateOfTransaction" />
+                        <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw" />
                     </td>
                     <td colspan="2">
                         <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" />
@@ -42,7 +42,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <InputNumber style="width:9vw" @bind-Value=NewTrans.TopAmount />
+                        <InputNumber style="width:6vw" @bind-Value=NewTrans.TopAmount />
                     </td>
                     <td>
                         <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
@@ -131,7 +131,7 @@
             {
                 <tr>
                     <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-evenly">
-                        <InputDate @bind-Value="NewTrans.DateOfTransaction" />
+                        <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw" />
 
                         <InputText style="width:30vw" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
                     </td>
