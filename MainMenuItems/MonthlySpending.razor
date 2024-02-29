@@ -144,10 +144,12 @@
     [Parameter]
     public bool All { get; set; }
 
+    [Parameter]
+    public EventCallback RefreshParent { get; set; }
+
     public bool ShowPerson => (TheBalance != null && TheBalance.Person == "Joint") || !string.IsNullOrEmpty(ExpenseType) || All;
 
     private List<Transaction> FilteredTransactions => GetTransactions();
-
 
     private bool Show { get; set; }
     private bool Disabled { get; set; }
@@ -186,6 +188,7 @@
         if (accepted)
         {
             await OnEditConfirm.InvokeAsync(accepted);
+            await RefreshParent.InvokeAsync();
             StateHasChanged();
         }
     }
@@ -203,6 +206,7 @@
         {
             // TransactionRepo sets everything in Constants
             await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
+            await RefreshParent.InvokeAsync();
             await OnDeleteConfirm.InvokeAsync(accepted);
         }
         ShowDelete = false;
@@ -223,5 +227,10 @@
 
         transactions = transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
         return transactions;
+    }
+
+    public void RefreshMe()
+    {
+        StateHasChanged();
     }
 }

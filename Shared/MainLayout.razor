@@ -291,6 +291,88 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #203957;
         }
+
+    .selected-account {
+        background-color: @Constants.ColorScheme["Tab-Active"];
+    }
+
+    .slot-background {
+        background-color: @Constants.ColorScheme["Background"];
+    }
+    
+    .text-color{
+        color: @Constants.ColorScheme["Text"];
+    }
+
+    /* Horizontal chart */
+    .chart-hor {
+        padding: 1rem;
+        border-radius: 12px;
+        background-color: transparent;
+        text-align: center;
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        flex-direction: row;
+        width: 100%;
+        height: fit-content;
+        border: 1px black solid;
+    }
+
+    .chart-back-hor {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 12px;
+        background-color: transparent;
+        text-align: center;
+        display: inline-block;
+        height: fit-content;
+    }
+
+    .chart-bar-hor {
+        height: 1rem;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+        cursor: pointer;
+        margin: 2vh 5px;
+    }
+
+    .chart-bar-hor__inner {
+        height: 1rem;
+        width: 100%;
+        border: 1px solid #313131;
+        border-radius: 12px;
+        background-color: #c3b4f3;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .chart-bar-hor__fill {
+        background-color: @Constants.ColorScheme["IncomeGood"];
+        height: 1rem;
+        transition: all 0.3s ease-out;
+    }
+
+    .chart-bar-hor__fill-bad {
+        background-color: red;
+        height: 1rem;
+        transition: all 0.3s ease-out;
+    }
+
+    .chart-bar-hor__label {
+        float: left;
+        height: fit-content;
+        font-weight: bold;
+        font-size: @(Constants.Mobile ? "3vw;" : "1vw");
+        color: @Constants.ColorScheme["Text"];
+        margin: 1vh;
+        vertical-align: central;
+    }
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>

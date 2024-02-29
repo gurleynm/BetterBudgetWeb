@@ -59,7 +59,7 @@ namespace BetterBudgetWeb
         public static CatchAll catchAll { get; set; } = new CatchAll();
         public static DateRange DR { get; set; } = new DateRange();
 
-        public static bool DarkMode = Nighttime();
+        public static bool DarkMode = true;
         public static Dictionary<string, string> ColorScheme = new Dictionary<string, string>();
 
         public static string[] NotExpenses = new string[] { "Income", "Debt", "Equity", "Transfer" };

@@ -1,6 +1,6 @@
-﻿<tr style="background-color:transparent;color:@Constants.ColorScheme["Text"];width:100%;">
+﻿<tr class="text-color" style="background-color:transparent;width:100%;">
     <td class="chart-bar-hor__label" style="border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
-        <span>@Label</span>
+        <span class="text-color">@Label</span>
     </td>
     <td colspan="2" class="chart-bar-hor__inner" style="cursor:pointer" @onclick=OnClick>
         @if (Negative)
@@ -27,7 +27,7 @@
         @if (Show)
         {
             <div style="display:flex;justify-content:center;flex-wrap:wrap;flex-direction:row;width:100%">
-                <MonthlySpending ExpenseType=@Label />
+                <MonthlySpending @ref="Child" ExpenseType=@Label RefreshParent="@RefreshMe" />
                 @if (BottomBorder)
                 {
                     <hr style="width:100%" />
@@ -51,6 +51,7 @@
     [Parameter]
     public EventCallback<string> DateBarClicked { get; set; }
 
+    private MonthlySpending Child;
     private bool Show;
 
     public double val = 0;
@@ -69,6 +70,9 @@
                 BarFillWidth = Math.Round((val / MaxValue) * 100) + "%";
                 StateHasChanged();
             }
+
+            if(Show)
+                Child?.RefreshMe();
         }
     }
 
@@ -99,5 +103,13 @@
     private void OnClick()
     {
         Show = !Show;
+    }
+
+    private void RefreshMe()
+    {
+        var curdci = Constants.DynamicCostItems.FirstOrDefault(dci => dci.Name == Label);
+        if (curdci != null)
+            Value = curdci.Left;
+        StateHasChanged();
     }
 }
