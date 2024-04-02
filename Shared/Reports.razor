@@ -379,12 +379,11 @@ else
          *
          * Now: Always set Previous Month in case updates are made up to 1 month later
         */
-        await SetSnapshot(DateTime.Now.AddMonths(-1));
 
         if (Years.Count == 1 && Years[0].MyClass != "active")
             Years[0].MyClass = "active";
 
-        await SetSnapshot(DateTime.Now);
+        snaps = await ReportRunner.SetSnapshot(DateTime.Now);
 
         await LoadTable();
     }
@@ -416,7 +415,7 @@ else
                 activeYear = Years.FirstOrDefault(y => y.MyYear == MonthTabs[MTC - 1].MyYear);
             }
         }
-        
+
         if (activeYear == null)
         {
             int YC = Years.Count;
@@ -531,75 +530,7 @@ else
 
         StateHasChanged();
     }
-
-    private async Task SetSnapshot(DateTime snapDate)
-    {
-        string thisMonth = snapDate.ToString("MMMM");
-        string thisYear = snapDate.Year.ToString();
-
-        Trans = new List<Transaction>(Constants.Transactions.Where(t => t.MonthYear() == thisMonth + " " + thisYear));
-
-        int monthInt = snapDate.Month;
-        int yearInt = snapDate.Year;
-        ReportRunner.SetMonthlies(monthInt, yearInt);
-        int TodayTransTotal = Trans.Count();
-        int TodayTransPerson1Total = Trans.Where(t => t.Person1Amount != 0).Count();
-        int TodayTransPerson2Total = Trans.Where(t => t.Person2Amount != 0).Count();
-
-        foreach (var d in ReportRunner.DynamicCostItems)
-        {
-            double[] dciSums = ReportRunner.SumForDynamic(Trans, d.Name);
-            d.SpentReport = dciSums[0] + dciSums[1];
-        }
-
-        var TodayDCIs = new List<DynamicCostItem>(ReportRunner.DynamicCostItems);
-        var TodaySMCs = new List<StaticMonthlyCost>(ReportRunner.StaticMonthlyCosts);
-
-        double TodayPerson1Projected = TodayDCIs.Sum(d => d.Person1Amount) + TodaySMCs.Sum(d => d.Person1Amount);
-        double TodayPerson2Projected = TodayDCIs.Sum(d => d.Person2Amount) + TodaySMCs.Sum(d => d.Person2Amount);
-
-        double TodayPerson1Actual = Trans.Where(t => !Constants.NotExpenses.Contains(t.ExpenseType)).Sum(d => d.Person1Amount);
-        double TodayPerson2Actual = Trans.Where(t => !Constants.NotExpenses.Contains(t.ExpenseType)).Sum(d => d.Person2Amount);
-
-        double TodayPerson1Income = Trans.Where(t => t.ExpenseType == "Income" || t.ExpenseType == "Equity").Sum(d => d.Person1Amount);
-        double TodayPerson2Income = Trans.Where(t => t.ExpenseType == "Income" || t.ExpenseType == "Equity").Sum(d => d.Person2Amount);
-
-        Dynamo TodayDyno = new Dynamo
-            {
-                Month = thisMonth,
-                Year = thisYear,
-                DynamicCosts = new JArray()
-            };
-
-        foreach (var dci in ReportRunner.DynamicCostItems)
-        {
-            dynamic jsonObject = new JObject();
-            jsonObject.Name = dci.Name;
-            jsonObject.Projected = dci.Person1Amount + dci.Person2Amount;
-            jsonObject.Actual = dci.SpentReport;
-
-            TodayDyno.DynamicCosts.Add(jsonObject);
-        }
-
-        var test = (string)JsonConvert.SerializeObject(TodayDyno);
-        DateTime thisDateTime = new DateTime(yearInt, monthInt, 1);
-        snaps = await SnapshotRepo.AddOrUpdateAsync(new Snapshot
-            {
-                Month = thisDateTime.ToString("MMMM"),
-                Year = thisDateTime.Year,
-                Person1Income = TodayPerson1Income,
-                Person2Income = TodayPerson2Income,
-                Person1Transactions = TodayTransPerson1Total,
-                Person2Transactions = TodayTransPerson2Total,
-                TotalTransactions = TodayTransTotal,
-                Person1AmountProjected = TodayPerson1Projected,
-                Person2AmountProjected = TodayPerson2Projected,
-                Person1AmountActual = TodayPerson1Actual,
-                Person2AmountActual = TodayPerson2Actual,
-                DynamicJSON = test
-            });
-
-    }
+    
     private string TranColor(double num)
     {
         if (num > 0)

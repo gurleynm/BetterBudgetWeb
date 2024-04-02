@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using BetterBudgetWeb.Runner;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -64,8 +65,12 @@ namespace BetterBudgetWeb.Repo
             
             var tran = TW.catcher.Transactions;
 
+
             Constants.AssignCatches(TW.catcher);
 
+            if (trans.MonthYear() != Constants.MonthYear())
+                await ReportRunner.SetSnapshot(trans.DateOfTransaction);
+            
             return tran;
         }
         // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
