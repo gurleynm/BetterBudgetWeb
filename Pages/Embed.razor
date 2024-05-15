@@ -1,5 +1,65 @@
-﻿@page "/embed"
-<embed src="https://www.marketbeat.com/stocks/NASDAQ/IBM/price-target/" style="width:100%; height: 100vh">
+﻿@page "/easteregg"
+<style>
+    .video-container {
+        overflow: hidden;
+        position: relative;
+        height: fit-content;
+    }
+
+        .video-container video {
+            width: 100%;
+            position: absolute;
+            object-fit: cover;
+            z-index: 0;
+        }
+</style>
+<div style="display:flex;flex-direction:row;flex-wrap:wrap">
+    <div class="video-container">
+        <video autoplay loop>
+            <source src="videos/Grad_Video.mp4" type="video/mp4" />
+        </video>
+        <h1 style="width:65%;color:white;z-index: 1;
+        position: relative;padding-left:15%;padding-top:10%;
+            font-family: Lato, Helvetica, Arial, Lucida, sans-serif !important;
+                font-weight: 900 !important;
+                text-transform: uppercase !important;
+                font-size: 80px !important;
+                letter-spacing: 2px !important;
+                line-height: 1.2em !important;
+                text-shadow: 0 .1em .6em rgba(0,0,0,.6)!important;">
+            BLOW AWAY YOUR WEDDING PARTY
+        </h1>
+        <button class="btn btn-primary" style="font-size:large;z-index: 1; position: relative;margin-left:15%;margin-bottom:10vh">
+            Rent a Limo or Party Bus For Your Wedding
+        </button>
+    </div>
+
+    <div style="display:flex;flex-direction:row;justify-content:center;margin-top:2vh">
+        <div style="width:40%;display:flex;justify-content:center;vertical-align:middle">
+            <img fetchpriority="high" decoding="async" style="height:40%;border-radius:1vw"
+                 src="https://www.motortoys.com/wp-content/uploads/2020/05/Brown-wedding-07-01-11-compressed.jpg" alt=""
+                 title="Brown wedding 07-01-11 compressed" />
+        </div>
+        <div style="width:40%;padding:0;">
+            <div style="padding:0;">
+                <h3 style="padding:0;margin-top:0"><strong>Your Wedding Party Will Love Your Party Bus</strong></h3>
+                <div>
+                    <p>You’ve honored your friends and family by inviting them to be in your wedding.&nbsp; And they’re thrilled, right?&nbsp; Can we tell the truth and say it’s more like maybe?</p>
+                    <p>We all know some people don’t like being in weddings.</p>
+                    <p>There can be a lot of reasons.&nbsp; This isn’t a secret.&nbsp; Everyone knows this.&nbsp; But what if you could change that?&nbsp; What if being in your wedding was one of the greatest days of their lives?&nbsp; Can that be done?&nbsp; Can you give your wedding party the gift of fun?&nbsp; Heck yeah!&nbsp; You just have to know the secret.</p>
+                    <p>The Party Bus is the fun part of the day.&nbsp; More than the reception.</p>
+                    <p>Don’t get us wrong.&nbsp; Receptions are fun.&nbsp;</p>
+                    <p>But it’s hard to have fun when you are in the wedding party.&nbsp; All eyes are on you and your bridesmaids and groomsmen.&nbsp; All those people your parents invited want to say hi while the evening – evaporates.&nbsp; Everyone is watching and noticing anything that goes wrong.&nbsp; You get to the reception, and….&nbsp; your wedding party goes in 10 different directions and everything just kind of splinters apart.</p>
+                    <p>Darn it.</p>
+                </div>
+            </div>
+            <div style="display:flex;justify-content:center">
+                <a href="https://booking.motortoys.com"><button class="btn btn-primary">Rent a Limo or Party Bus</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+@* <embed src="https://www.marketbeat.com/stocks/NASDAQ/IBM/price-target/" style="position:relative;width:100%; height: 100vh"> *@
 @code {
 
 }

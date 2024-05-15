@@ -1,13 +1,12 @@
-﻿<div class="navbar navbar-dark" style="padding:0">
+﻿<div class="navbar navbar-dark sticky" style="padding:0;background-color:midnightblue;z-index:1">
     <div class="container-fluid">
         <a class="navbar-brand" href="">@(Constants.WebWho)</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
-</div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="width:100%">
     <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;justify-content:right">
         <span style='position:relative;font-size:large;top:1vw;text-align:center;color:white'>@(Constants.DarkMode ? "Dark Mode:" : "Light Mode:")&nbsp;</span>
         <label class="switch">
@@ -52,6 +51,7 @@
             </div>
         }
     </nav>
+</div>
 </div>
 
 @code {

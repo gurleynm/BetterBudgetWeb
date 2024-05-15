@@ -279,6 +279,10 @@
                 DesiredTransactionsDict[TKey] = new Transaction(transact);
             }
         }
+        
+        foreach (var key in DesiredTransactionsDict.Keys)
+            if (DesiredTransactionsDict[key].TotalAmount == 0)
+                DesiredTransactionsDict.Remove(key);
 
         Dictionary<string, Transaction> GeneralTransactions = new Dictionary<string, Transaction>();
         Transaction trans;

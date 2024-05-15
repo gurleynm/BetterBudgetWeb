@@ -50,7 +50,7 @@ main {
     }
 }
 
-@media (min-width: 641px) {
+/*@media (min-width: 641px) {
     .page {
         flex-direction: row;
     }
@@ -79,3 +79,4 @@ main {
         padding-right: 1.5rem !important;
     }
 }
+*/

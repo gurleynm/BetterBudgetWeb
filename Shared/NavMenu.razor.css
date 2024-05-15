@@ -50,13 +50,13 @@
     color: white;
 }
 
-@media (min-width: 641px) {
+/*@media (min-width: 641px) {
     .navbar-toggler {
         display: none;
     }
 
-    .collapse {
+    .collapse {*/
         /* Never collapse the sidebar for wide screens */
-        display: block;
+        /*display: block;
     }
-}
+}*/
