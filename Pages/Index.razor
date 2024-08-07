@@ -601,6 +601,7 @@ else
         Balances = Constants.catchAll.Balances;
         Transactions = Constants.catchAll.Transactions;
         FilteredTransactions = new List<Transaction>(Transactions);
+        var ca = Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
         MonthlyTransactions = new List<Transaction>(FilteredTransactions);
         ErrorMsg = string.Empty;

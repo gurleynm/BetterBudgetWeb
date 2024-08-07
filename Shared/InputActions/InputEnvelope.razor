@@ -34,7 +34,7 @@
         <div style="float:left; margin-right:10vw;">
             <label>Goal Amount:</label>
             <br />
-            <input type="text" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
+            <input type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
@@ -101,7 +101,7 @@ else
         <div style="float:left; margin-right:10vw;">
             <label>Goal Amount:</label>
             <br />
-            <input type="text" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
+            <input type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
         </div>
         <br style="clear:both" />
         <br />

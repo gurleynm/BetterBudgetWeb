@@ -44,7 +44,7 @@
             <div>
                 <label>APR:</label>
                 <br />
-                <input type="text" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
+                <input type="number" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
             </div>
         }
         else
@@ -59,7 +59,7 @@
         <div style="float:left; margin-right:10vw;">
             <label>Amount:</label>
             <br />
-            <input type="text" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
+            <input type="number" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
         </div>
         <div style="float:left; margin-right:10vw;">
             <label>Color:</label>
@@ -125,7 +125,7 @@ else
             <div style="float:left; margin-right:10vw;">
                 <label>APR:</label>
                 <br />
-                <input type="text" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
+                <input type="number" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
             </div>
         }
         else
@@ -139,7 +139,7 @@ else
         <div style="float:left; margin-right:10vw;">
             <label>Amount:</label>
             <br />
-            <input type="text" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
+            <input type="number" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
         </div>
         <div style="float:left; margin-right:10vw;">
             <label>Color:</label>

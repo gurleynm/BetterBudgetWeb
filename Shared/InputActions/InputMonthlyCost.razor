@@ -66,7 +66,7 @@
         <div>
             <label>@("Total Amount:")</label>
             <br />
-            <input type="text" placeholder="Amount" @bind-value="@TotalAmount" @oninput="@(async (ui) => { TotalAmount = (string) ui.Value;})" />
+            <input type="number" placeholder="Amount" @bind-value="@TotalAmount" @oninput="@(async (ui) => { TotalAmount = (string) ui.Value;})" />
         </div>
     }
     else
@@ -74,13 +74,13 @@
         <div>
             <label>@(Constants.Person1 + " Amount:")</label>
             <br />
-            <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
         </div>
         <br />
         <div>
             <label>@(Constants.Person2 + " Amount:")</label>
             <br />
-            <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
         </div>
     }
     <br style="clear:both;" />
@@ -133,7 +133,7 @@ else
             <div>
                 <label>@("Total Amount:")</label>
                 <br />
-                <input type="text" placeholder="Amount" @bind-value="@TotalAmount" @oninput="@(async (ui) => { TotalAmount = (string) ui.Value;})" />
+                <input type="number" placeholder="Amount" @bind-value="@TotalAmount" @oninput="@(async (ui) => { TotalAmount = (string) ui.Value;})" />
             </div>
         }
         else
@@ -141,12 +141,12 @@ else
             <div style="float:left;margin-right:10vw;">
                 <label>@(Constants.Person1 + " Amount:")</label>
                 <br />
-                <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+                <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
             </div>
             <div>
                 <label>@(Constants.Person2 + " Amount:")</label>
                 <br />
-                <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+                <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
             </div>
         }
         <br style="clear:both;" />
