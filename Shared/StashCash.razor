@@ -196,7 +196,7 @@ else
     private Data.Envelope SelectedEnv { get; set; }
     private Balance Person1Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person1Account);
     private Balance Person2Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person2Account);
-    
+
     public bool Mobile => Constants.Mobile;
 
 
@@ -245,6 +245,9 @@ else
             await Task.Delay(2000);
             SelectedEnv.Person1Amount += Person1Amount;
             SelectedEnv.Person2Amount += Person2Amount;
+            if (SelectedEnv.Goal < SelectedEnv.Person1Amount + SelectedEnv.Person2Amount)
+                SelectedEnv.Goal = SelectedEnv.Person1Amount + SelectedEnv.Person2Amount;
+
             StateHasChanged();
             Stashing = false;
             await runner;

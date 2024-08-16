@@ -98,6 +98,7 @@
                     amount -= (counter == 0 ? en.Person1Amount : en.Person2Amount) * BalanceTypeModifier;
                 }
             }
+            amount = Math.Round(amount, 2);
             return amount;
         }
 
