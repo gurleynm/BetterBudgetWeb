@@ -1,5 +1,5 @@
 using BetterBudgetWeb;
-using BetterBudgetWeb.Simulation;
+using BetterBudgetWeb.MonthView;
 using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

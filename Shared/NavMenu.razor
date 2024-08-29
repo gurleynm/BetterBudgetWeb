@@ -6,52 +6,48 @@
         </button>
     </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="width:100%">
-    <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;justify-content:right">
-        <span style='position:relative;font-size:large;top:1vw;text-align:center;color:white'>@(Constants.DarkMode ? "Dark Mode:" : "Light Mode:")&nbsp;</span>
-        <label class="switch">
-            <input type="checkbox" @bind=DarkMode>
-            <span class="slider round"></span>
-        </label>
-    </div>
-    <br />
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="width:100%">
+        <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;justify-content:right">
+            <span style='position:relative;font-size:large;top:1vw;text-align:center;color:white'>@(Constants.DarkMode ? "Dark Mode:" : "Light Mode:")&nbsp;</span>
+            <label class="switch">
+                <input type="checkbox" @bind=DarkMode>
+                <span class="slider round"></span>
+            </label>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="input">
-                <span class="oi oi-plus" aria-hidden="true"></span> Input
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="delete">
-                <span class="oi oi-minus" aria-hidden="true"></span> Delete
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="update">
-                <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="portfolio">
-                <span class="oi oi-dollar" aria-hidden="true"></span> Portfolio
-            </NavLink>
-        </div>
-
-        @if (Constants.Who == "Nathan")
-        {
+        <br />
+        <nav class="flex-column">
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="simulations">
-                    <span class="oi oi-terminal"></span> Simulations
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
                 </NavLink>
             </div>
-        }
-    </nav>
-</div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="input">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Input
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="delete">
+                    <span class="oi oi-minus" aria-hidden="true"></span> Delete
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="update">
+                    <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="portfolio">
+                    <span class="oi oi-dollar" aria-hidden="true"></span> Portfolio
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="forecast">
+                    <span class="oi oi-sun"></span> Forecast
+                </NavLink>
+            </div>
+        </nav>
+    </div>
 </div>
 
 @code {

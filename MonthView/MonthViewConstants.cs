@@ -1,18 +1,17 @@
 ﻿using BetterBudgetWeb.Data;
 using BetterBudgetWeb.Repo;
 
-namespace BetterBudgetWeb.Simulation
+namespace BetterBudgetWeb.MonthView
 {
-    public class SimulatedConstants
+    public class MonthViewConstants
     {
         public static List<DynamicCostItem> DynamicCostItems { get; set; }
         public static List<SavingsGoal> SavingsGoals { get; set; }
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
-        public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<ProjectedDatum> ProjectedData { get; set; }
-        public static List<SimulatedPrev> SimulatedPrevs { get; set; } = new List<SimulatedPrev>();
+        public static List<MonthViewPrev> MonthViewPrevs { get; set; } = new List<MonthViewPrev>();
         public static double TotalPerson1Expenses => GetTotalExpenses(Constants.Person1);
         public static double TotalPerson2Expenses => GetTotalExpenses(Constants.Person2);
         public static double TotalExpenses => GetTotalExpenses();
@@ -23,7 +22,6 @@ namespace BetterBudgetWeb.Simulation
         public static string PassKey { get; set; } = "no";
         public static async Task Init()
         {
-            Monthlies = await MonthlyRepo.GetMonthliesAsync();
             SetMonthlies(DateTime.Now.Month, DateTime.Now.Year);
         }
         public static List<Monthly> GetNeededMonthlies(int month, int year)
@@ -34,7 +32,7 @@ namespace BetterBudgetWeb.Simulation
             var DesiredMonthlies = new List<Monthly>();
             Monthly NewMonthly;
 
-            foreach (var mon in Monthlies)
+            foreach (var mon in Constants.Monthlies)
             {
                 if (mon.Dynamic == "DYNAMIC")
                 {
@@ -89,7 +87,7 @@ namespace BetterBudgetWeb.Simulation
             StaticMonthlyCosts = new List<StaticMonthlyCost>();
             ProjectedData = new List<ProjectedDatum>();
 
-            foreach (var mon in Monthlies)
+            foreach (var mon in Constants.Monthlies)
             {
                 if (mon.Dynamic == "DYNAMIC")
                 {

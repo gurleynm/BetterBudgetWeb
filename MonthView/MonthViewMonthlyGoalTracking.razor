@@ -1,0 +1,145 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo;
+@if (Mobile)
+{
+    <div style="width:100%;">
+        <table>
+            <tr>
+                <th colspan="2" style="font-size:3vw;background-color:rebeccapurple;color:white"><i>Monthly Goal Tracking</i></th>
+            </tr>
+            <tr>
+                <th style="font-size:3vw;"></th>
+                <th style="font-size:3vw;">Monthly Goal</th>
+            </tr>
+
+            <tr>
+                <td style="font-size:3vw;padding:.5vw 0;">Income</td>
+                <td style="font-size:3vw;">
+                    <input type="number" placeholder="Income" style="width:90%;"
+                           @bind=ProjectedIncomeAmountStr />
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;padding:.5vw 0;">Dynamic</td>
+                <td style="font-size:3vw;">@Constants.Pretty(DynamicCostAmount)</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;padding:.5vw 0;">Static</td>
+                <td style="font-size:3vw;">@Constants.Pretty(StaticCostAmount)</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;" colspan="2">=</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;"><strong>Net</strong></td>
+                <td style="font-size:3vw;">@Constants.Pretty(ProjectedNetAmount)</td>
+            </tr>
+        </table>
+    </div>
+}
+else
+{
+    <div style="width:100%;">
+        <table>
+            <tr>
+                <th colspan="2" style="background-color:rebeccapurple;color:white"><i>Monthly Goal Tracking</i></th>
+            </tr>
+            <tr>
+                <th></th>
+                <th>Monthly Goal</th>
+            </tr>
+            <tr>
+                <td style="padding:1em">Income</td>
+                <td>
+                    <input type="number" placeholder="Income" style="max-width:50%"
+                           @bind=ProjectedIncomeAmountStr />
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:1em">Dynamic</td>
+                <td>@Constants.Pretty(DynamicCostAmount)</td>
+            </tr>
+            <tr>
+                <td style="padding:1em">Static</td>
+                <td>@Constants.Pretty(StaticCostAmount)</td>
+            </tr>
+            <tr>
+                <td colspan="2">=</td>
+            </tr>
+            <tr>
+                <td style="padding:1em"><strong>Net</strong></td>
+                <td>@Constants.Pretty(ProjectedNetAmount)</td>
+            </tr>
+        </table>
+    </div>
+}
+
+@code {
+    public bool Mobile => Constants.Mobile;
+    [Parameter]
+    public double DynamicCostAmount { get; set; }
+    [Parameter]
+    public double StaticCostAmount { get; set; }
+
+    public double incomeOverflow { get; set; }
+    [Parameter]
+    public double IncomeOverflow
+    {
+        get => incomeOverflow;
+        set
+        {
+            if (incomeOverflow == value) return;
+            incomeOverflow = value;
+            IncomeOverflowChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<double> IncomeOverflowChanged { get; set; }
+
+
+    public string projectedIncomeAmountStrOG { get; set; }
+    public string projectedIncomeAmountStr { get; set; }    
+    public string ProjectedIncomeAmountStr
+    {
+        get { return projectedIncomeAmountStr; }
+        set
+        {
+            if (double.TryParse(value, out double tosser))
+            {
+                ProjectedIncomeAmount = tosser;
+                IncomeOverflow = ProjectedNetAmount;
+                projectedIncomeAmountStr = value;
+            }
+            else
+            {
+                ProjectedIncomeAmount = 0;
+                projectedIncomeAmountStr = "";
+            }
+        }
+    }
+
+    [Parameter]
+    public double ProjectedIncomeAmount { get; set; }
+
+    public double ProjectedNetAmount => ProjectedIncomeAmount - DynamicCostAmount - StaticCostAmount;
+
+    private List<SavingsGoal> ThisMonthSavingsGoals { get; set; } = new List<SavingsGoal>();
+
+    protected override Task OnInitializedAsync()
+    {
+        SavingsGoal Default1 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person1) && sg.Month == "All");
+        SavingsGoal Default2 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person2) && sg.Month == "All");
+
+        if (Default1 == null || Default2 == null)
+            return base.OnInitializedAsync();
+
+        ThisMonthSavingsGoals.Add(Default1);
+        ThisMonthSavingsGoals.Add(Default2);
+
+        projectedIncomeAmountStrOG = ThisMonthSavingsGoals.Sum(tmsg => tmsg.Goal).ToString();
+        ProjectedIncomeAmountStr = projectedIncomeAmountStrOG;
+
+        return base.OnInitializedAsync();
+    }
+}

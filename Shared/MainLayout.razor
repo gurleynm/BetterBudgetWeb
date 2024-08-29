@@ -47,25 +47,25 @@
         background-color: #333;
     }
 
-    ul > li {
-        display: inline-block;
-    }
+        ul > li {
+            display: inline-block;
+        }
 
-    ul > li a, .dropbtn {
-        display: inline-block;
-        color: white;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-    }
+            ul > li a, .dropbtn {
+                display: inline-block;
+                color: white;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
 
-    ul > li a:hover, .dropdown:hover .dropbtn {
-        background-color: purple;
-    }
+                ul > li a:hover, .dropdown:hover .dropbtn {
+                    background-color: purple;
+                }
 
-    ul > li.dropdown {
-        display: inline-block;
-    }
+            ul > li.dropdown {
+                display: inline-block;
+            }
 
     .dropdown-content {
         display: none;
@@ -77,19 +77,19 @@
         z-index: 10;
     }
 
-    .dropdown-content a {
-        color: white;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        text-align: left;
-        background-color: purple;
-        font-family: Papyrus;
-    }
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            background-color: purple;
+            font-family: Papyrus;
+        }
 
-    .dropdown-content a:hover {
-        background-color: midnightblue;
-    }
+            .dropdown-content a:hover {
+                background-color: midnightblue;
+            }
 
     .table {
         display: table; /* Allow the centering to work */
@@ -136,11 +136,11 @@
         height: 34px;
     }
 
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
     .slider {
         position: absolute;
@@ -154,17 +154,17 @@
         transition: .4s;
     }
 
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
-    }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
 
     input:not(:checked) + .slider {
         background-color: darkorange;
@@ -189,9 +189,9 @@
         border-radius: 34px;
     }
 
-    .slider.round:before {
-        border-radius: 50%;
-    }
+        .slider.round:before {
+            border-radius: 50%;
+        }
 
     .income-good {
         color: @Constants.ColorScheme["IncomeGood"];
@@ -218,33 +218,33 @@
         width: 75%;
     }
 
-    /* Style the buttons inside the tab */
-    .tab button {
-        background-color: inherit;
-        float: left;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        padding: 14px 16px;
-        transition: 0.3s;
-        font-size: 17px;
-        color: @Constants.ColorScheme["Text"];
-    }
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            color: @Constants.ColorScheme["Text"];
+        }
 
-    /* Change background color of buttons on hover */
-    .tab button:hover {
-        background-color: @Constants.ColorScheme["Tab-Hover"];
-        color: black;
-    }
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: @Constants.ColorScheme["Tab-Hover"];
+                color: black;
+            }
 
-    .tab button.active:hover {
-        color: @Constants.ColorScheme["Text"];
-    }
+            .tab button.active:hover {
+                color: @Constants.ColorScheme["Text"];
+            }
 
-    /* Create an active/current tablink class */
-    .tab button.active {
-        background-color: @Constants.ColorScheme["Tab-Active"];
-    }
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: @Constants.ColorScheme["Tab-Active"];
+            }
 
     /* Style the tab content */
     .tabcontent {
@@ -298,10 +298,10 @@
         border-radius: 10px;
     }
 
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-        background: #203957;
-    }
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #203957;
+        }
 
     .selected-account {
         background-color: @Constants.ColorScheme["Tab-Active"];
@@ -310,8 +310,8 @@
     .slot-background {
         background-color: @Constants.ColorScheme["Background"];
     }
-    
-    .text-color{
+
+    .text-color {
         color: @Constants.ColorScheme["Text"];
     }
 
@@ -414,7 +414,7 @@
                             }
                             <div style="display:inline-block">
                                 <label style="color:white">Username</label>
-                                <br/>
+                                <br />
                                 <input id="user" placeholder="Username" style="border-radius:5px;text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
                                 <br />
                                 <label style="color:white">Password</label>
@@ -518,14 +518,11 @@
                                 <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Chart
                             </a>
                         </li>
-                        @if (Constants.Who == "Nathan")
-                        {
-                            <li>
-                                <a class="navbar-brand" href="simulations" style="font-family:Papyrus; text-align:center;">
-                                    <span class="oi oi-terminal"></span> Simulations
-                                </a>
-                            </li>
-                        }
+                        <li>
+                            <a class="navbar-brand" href="forecast" style="font-family:Papyrus; text-align:center;">
+                                <span class="oi oi-sun"></span> Forecast
+                            </a>
+                        </li>
                     </ul>
 
                     <div style="position: absolute; top:.3vw; right:1vw; height:@HeightTopBar; vertical-align:middle">

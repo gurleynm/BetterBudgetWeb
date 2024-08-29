@@ -1,4 +1,4 @@
-﻿@using Simulation
+﻿@using MonthView
 
 @if (Mobile)
 {
@@ -63,8 +63,8 @@ else
     {
         double Total = 0;
 
-        int CurrentSimMonth = SimulatedConstants.Month;
-        int CurrentSimYear = SimulatedConstants.Year;
+        int CurrentSimMonth = MonthViewConstants.Month;
+        int CurrentSimYear = MonthViewConstants.Year;
 
         DateTime CurrentDate = DateTime.Now;
         int month;
@@ -74,11 +74,11 @@ else
         {
             month = CurrentDate.AddMonths(step).Month;
             year = CurrentDate.AddMonths(step).Year;
-            SimulatedConstants.SetMonthlies(month, year);
-            Total += person == Constants.Person1 ? SimulatedConstants.TotalPerson1Expenses : SimulatedConstants.TotalPerson2Expenses;
+            MonthViewConstants.SetMonthlies(month, year);
+            Total += person == Constants.Person1 ? MonthViewConstants.TotalPerson1Expenses : MonthViewConstants.TotalPerson2Expenses;
         }
 
-        SimulatedConstants.SetMonthlies(CurrentSimMonth, CurrentSimYear);
+        MonthViewConstants.SetMonthlies(CurrentSimMonth, CurrentSimYear);
 
         return Total;
     }

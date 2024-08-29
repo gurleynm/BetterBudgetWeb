@@ -133,7 +133,7 @@ BEGIN
         VALUES(@Id, @Name, @NumShares, @AvgCost, @Value, @StrikePrice, @SecType, @Person, @DateOfSecurity, @BalanceFrom)
 END
 go
-CREATE PROC [dbo].[AddOrUpdateCoreySimulatedPrev] 
+CREATE PROC [dbo].[AddOrUpdateCoreyMonthViewPrev] 
         @Id varchar(50) = NULL,
         @MonthType VARCHAR(10),
     	@Month VARCHAR(15), 

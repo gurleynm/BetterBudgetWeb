@@ -1,0 +1,205 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems
+@using BetterBudgetWeb.MainMenuItems.Chart
+@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.MonthView
+@using System.Data;
+@inject IJSRuntime JSRuntime
+
+@if (!Constants.Mobile)
+{
+    <div style="display:flex;justify-content:start;margin-bottom:2vh">
+        <div style="display:inline-block;margin-right:1vw;">
+            <!-- Dynamic Costs -->
+            <div style="width:40vw; margin-right:1vw;">
+                <table>
+                    <tr>
+                        <th colspan="2" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+                    </tr>
+                    <tr>
+                        <th>
+                            <span>Expense</span>
+                        </th>
+                        <th>Total Budget Amount</th>
+                    </tr>
+                    @foreach (var dci in MonthViewConstants.DynamicCostItems)
+                    {
+                        @if (dci.Name.Contains("EXAMPLE DATA"))
+                        {
+                            <tr>
+                                <td style="padding:.5vw 1vw;"><i>@dci.Name</i></td>
+                                <td>@Pretty(dci.Amount)</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td style="padding:.5vw 1vw;">
+                                    <span style="align-self:start">@dci.Name</span>
+                                </td>
+                                <td>@Pretty(dci.Amount)</td>
+                            </tr>
+                        }
+                    }
+                    <tr>
+                        <td colspan="2">=</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td>@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+        <!-- Set Monthly Costs Goals -->
+        <div style="display:inline-block">
+            <MonthViewSetMonthlyTable Month=Month Year=Year @bind-StaticMonthMap=StaticMonthMap />
+        </div>
+
+        <div style="display:flex;flex-direction:column;">
+            <!-- Monthly Goal Tracking -->
+            <MonthViewMonthlyGoalTracking DynamicCostAmount="@DynamicCostAmount"
+                                          StaticCostAmount="@StaticCostAmount" @bind-IncomeOverflow="IncomeOverflow" />
+        </div>
+    </div>
+}
+else
+{
+    <!-- Dynamic Costs -->
+    <div style="width:100%;">
+        <table>
+            <tr>
+                <th colspan="2" style="background-color:magenta;font-size:3vw;color:white"><i>Dynamic Monthly Costs</i></th>
+            </tr>
+            <tr>
+                <th style="font-size:3vw;">Expense</th>
+                <th style="font-size:3vw;">Total Budget Amount</th>
+            </tr>
+            @foreach (var dci in MonthViewConstants.DynamicCostItems)
+            {
+                @if (dci.Name.Contains("EXAMPLE DATA"))
+                {
+                    <tr>
+                        <td style="font-size:3vw;padding:.5vw 1vw;"><i>@dci.Name</i></td>
+                        <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td style="font-size:3vw;padding:.5vw 1vw;">
+                            <span style="align-self:start">@dci.Name</span>
+                        </td>
+                        <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
+                    </tr>
+                }
+            }
+            <tr>
+                <td style="font-size:3vw;" colspan="2">=</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;"><strong>Total</strong></td>
+                <td style="font-size:3vw;">@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+            </tr>
+        </table>
+    </div>
+
+    <br />
+
+    <!-- Set Monthly Costs Goals -->
+    <MonthViewSetMonthlyTable Month=Month Year=Year @bind-StaticMonthMap=StaticMonthMap />
+
+    <br style="clear:both" />
+    <br />
+
+    <!-- Monthly Goal Tracking -->
+    <MonthViewMonthlyGoalTracking DynamicCostAmount="@DynamicCostAmount"
+                                  StaticCostAmount="@StaticCostAmount" @bind-IncomeOverflow="IncomeOverflow" />
+
+    <br />
+    <br />
+}
+
+@code {
+    [Parameter]
+    public MonthRelations MR { get; set; }
+
+    public int Month => MR.Month;
+    public int Year => MR.Year;
+
+    public double incomeOverflow { get; set; }
+    public double IncomeOverflow {
+        get => incomeOverflow;
+        set
+        {
+            if (incomeOverflow == value) return;
+            incomeOverflow = value;
+            Person1Overflow = incomeOverflow / 2;
+            Person2Overflow = incomeOverflow / 2;
+        }
+    }
+
+    public double person1Overflow { get; set; }
+
+    [Parameter]
+    public double Person1Overflow
+    {
+        get => person1Overflow;
+        set
+        {
+            if (person1Overflow == value) return;
+            person1Overflow = value;
+            Person1OverflowChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<double> Person1OverflowChanged { get; set; }
+    
+    public double person2Overflow { get; set; }
+
+    [Parameter]
+    public double Person2Overflow
+    {
+        get => person2Overflow;
+        set
+        {
+            if (person2Overflow == value) return;
+            person2Overflow = value;
+            Person2OverflowChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<double> Person2OverflowChanged { get; set; }
+
+    // Monthly-Name -> (Person1-BalanceName, Person2-BalanceName)
+    private Dictionary<string, (string, string)> StaticMonthMap { get; set; } = new Dictionary<string, (string, string)>();
+    private Dictionary<string, (string, string)> DynaMonthMap { get; set; } = new Dictionary<string, (string, string)>();
+
+    private double DynamicCostAmount => MonthViewConstants.DynamicCostItems.Sum(d => d.Amount);
+    private double StaticCostAmount => MonthViewConstants.StaticMonthlyCosts.Sum(smc => smc.TotalAmount);
+
+    private string MonthYear => (new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString());
+
+    protected override async Task OnInitializedAsync()
+    {
+        MonthViewConstants.SetMonthlies(Month, Year);
+
+        StaticMonthMap = new Dictionary<string, (string, string)>();
+        DynaMonthMap = new Dictionary<string, (string, string)>();
+
+        StateHasChanged();
+    }
+
+    private string GoodOrBad(double money)
+    {
+        return money <= 0 ? "red" : "forestgreen";
+    }
+    private string Pretty(double num)
+    {
+        return Constants.Pretty(num);
+    }
+}

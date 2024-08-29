@@ -1,0 +1,106 @@
+﻿@using System.Globalization
+@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MonthView
+@if (Mobile)
+{
+    <div style="width:100%; float:left;">
+        <table>
+            <tr>
+                <th colspan="4" style="font-size:3vw;background-color:green;color:white"><i>Set Monthly Costs</i></th>
+            </tr>
+            <tr>
+                <td></td>
+                <td style="font-size:3vw;">@Constants.Person1</td>
+                <td style="font-size:3vw;">@Constants.Person2</td>
+                <td style="font-size:3vw;">Total</td>
+            </tr>
+            @foreach (var smc in MonthViewConstants.StaticMonthlyCosts)
+            {
+                <tr>
+                    <td style="font-size:3vw;padding:.5vw 1vw;">
+                        <span>@smc.Name</span>
+                    </td>
+                    <td style="font-size:3vw;">@("$" + smc.Person1Amount)</td>
+                    <td style="font-size:3vw;">@("$" + smc.Person2Amount)</td>
+                    <td style="font-size:3vw;">@("$" + smc.TotalAmount)</td>
+                </tr>
+            }
+            <tr>
+                <td style="font-size:3vw;" colspan="4">=</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;"><strong>Total</strong></td>
+                <td style="font-size:3vw;padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(MonthViewConstants.StaticMonthlyCosts.Sum(na => na.Person1Amount))</td>
+                <td style="font-size:3vw;padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(MonthViewConstants.StaticMonthlyCosts.Sum(la => la.Person2Amount))</td>
+                <td style="font-size:3vw;padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(MonthViewConstants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount))</td>
+            </tr>
+        </table>
+    </div>
+}
+else
+{
+    <div style="width:35vw; float:left;margin-right:2vw;">
+        <table>
+            <tr>
+                <th colspan="4" style="background-color:green;color:white"><i>Set Monthly Costs</i></th>
+            </tr>
+            <tr>
+                <td></td>
+                <td>@Constants.Person1</td>
+                <td>@Constants.Person2</td>
+                <td>Total</td>
+            </tr>
+            @foreach (var smc in MonthViewConstants.StaticMonthlyCosts)
+            {
+                <tr>
+                    <td style="padding:.5vw 1vw;">
+                        <span>@smc.Name</span>
+                    </td>
+                    <td>@("$" + smc.Person1Amount)</td>
+                    <td>@("$" + smc.Person2Amount)</td>
+                    <td>@("$" + smc.TotalAmount)</td>
+                </tr>
+            }
+            <tr>
+                <td colspan="4">=</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td style="padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(MonthViewConstants.StaticMonthlyCosts.Sum(na => na.Person1Amount))</td>
+                <td style="padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(MonthViewConstants.StaticMonthlyCosts.Sum(la => la.Person2Amount))</td>
+                <td style="padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(MonthViewConstants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount))</td>
+            </tr>
+        </table>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Month { get; set; }
+    [Parameter]
+    public int Year { get; set; }
+
+    public bool Mobile => Constants.Mobile;
+
+    public Dictionary<string, (string, string)> staticMonthMap { get; set; }
+
+    [Parameter]
+    public Dictionary<string, (string, string)> StaticMonthMap
+    {
+        get => staticMonthMap;
+        set
+        {
+            if (staticMonthMap == value) return;
+            staticMonthMap = value;
+            StaticMonthMapChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<Dictionary<string, (string, string)>> StaticMonthMapChanged { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+}

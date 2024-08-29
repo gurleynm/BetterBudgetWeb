@@ -1,7 +1,7 @@
 ﻿using BetterBudgetWeb.Data;
 using BetterBudgetWeb.Repo;
 using BetterBudgetWeb.Runner;
-using BetterBudgetWeb.Simulation;
+using BetterBudgetWeb.MonthView;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
 using System.Security.Cryptography;
@@ -53,7 +53,7 @@ namespace BetterBudgetWeb
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<Preset> Presets { get; set; } = new List<Preset>();
-        private static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
+        public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
         public static List<Security> Securities { get; set; } = new List<Security>();
         public static CatchAll catchAll { get; set; } = new CatchAll();
@@ -103,7 +103,7 @@ namespace BetterBudgetWeb
             Person2 = TW.Token.Person2;
 
             // Needed for Ideal Emergency Amount
-            await SimulatedConstants.Init();
+            await MonthViewConstants.Init();
         }
         public static async Task Init(bool PeopleDecide = false)
         {

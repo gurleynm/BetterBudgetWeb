@@ -1,7 +1,8 @@
 ﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MonthView
 @if (Mobile)
 {
-    <div style="width:100%">
+    <div style="width:100%;margin:0 0 2vh 0">
         <table>
             <tr>
                 <th colspan="2" style="font-size:3vw;background-color:dodgerblue;color:white"><i>Savings Goals</i></th>
@@ -18,14 +19,14 @@
             </tr>
             <tr>
                 <td style="font-size:3vw;"><strong>Total</strong></td>
-                <td style="font-size:3vw;">@Constants.Pretty(SimulatedConstants.SavingsGoals.Sum(s => s.Goal))</td>
+                <td style="font-size:3vw;">@Constants.Pretty(MonthViewConstants.SavingsGoals.Sum(s => s.Goal))</td>
             </tr>
         </table>
     </div>
 }
 else
 {
-    <div style="width:100%; margin-right:2vw; margin-top:0vh;">
+    <div style="width:100%; margin:0 0 2vh 0">
         <table>
             <tr>
                 <th colspan="2" style="background-color:dodgerblue;color:white"><i>Savings Goals</i></th>
@@ -65,8 +66,8 @@ else
     protected override Task OnInitializedAsync()
     {
 
-        Default1 = SimulatedConstants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person1) && sg.Month == "All");
-        Default2 = SimulatedConstants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person2) && sg.Month == "All");
+        Default1 = MonthViewConstants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person1) && sg.Month == "All");
+        Default2 = MonthViewConstants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person2) && sg.Month == "All");
         ReDrive();
         return base.OnInitializedAsync();
     }
@@ -74,9 +75,9 @@ else
     public void ReDrive()
     {
         ThisMonthSavingsGoals = new List<SavingsGoal>();
-        SimulatedConstants.SetMonthlies(Month, Year);
-        SavingsGoal ThisMonthPerson1 = SimulatedConstants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1 && sg.MonthYear() == SimulatedConstants.MonthYear(Month, Year));
-        SavingsGoal ThisMonthPerson2 = SimulatedConstants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2 && sg.MonthYear() == SimulatedConstants.MonthYear(Month, Year));
+        MonthViewConstants.SetMonthlies(Month, Year);
+        SavingsGoal ThisMonthPerson1 = MonthViewConstants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person1 && sg.MonthYear() == MonthViewConstants.MonthYear(Month, Year));
+        SavingsGoal ThisMonthPerson2 = MonthViewConstants.SavingsGoals.FirstOrDefault(sg => sg.Person == Constants.Person2 && sg.MonthYear() == MonthViewConstants.MonthYear(Month, Year));
 
         if (ThisMonthPerson1 == null)
             ThisMonthSavingsGoals.Add(Default1);

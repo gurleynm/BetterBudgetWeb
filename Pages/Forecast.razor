@@ -1,0 +1,139 @@
+﻿@page "/forecast"
+@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems
+@using BetterBudgetWeb.MainMenuItems.Chart
+@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.MonthView
+@using System.Data;
+@inject IJSRuntime JSRuntime
+
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+
+    button {
+        color: black;
+    }
+
+    th {
+        padding: 1em;
+    }
+</style>
+
+<PageTitle>Forecast</PageTitle>
+
+
+<div style="display:flex;flex-direction:column;justify-content:flex-start">
+    @foreach (var mr in MonthRels)
+    {
+        <button class="spendchart-btn" style="text-align:left" @onclick=@(() => mr.Show = !mr.Show)>
+            @if (mr.Show)
+            {
+                <h2>@(mr.Name)&nbsp;&nbsp;<i class="arrow down"></i></h2>
+            }
+            else
+            {
+                <h2>@(mr.Name)&nbsp;<i class="arrow right"></i></h2>
+            }
+        </button>
+        @if (mr.Show)
+        {
+            <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
+                <h2 style="text-align:center">
+                    @{
+                        double p1nw = GetNetWorthOf(mr, Constants.Person1);
+                        <span>@($"Projected {Constants.Person1}'s Net Worth:")</span> <span style="color:@GoodOrBad(p1nw)">@(Constants.Pretty(p1nw))</span>
+                    }
+                </h2>
+                <h2 style="text-align:center">
+                    @{
+                        double p2nw = GetNetWorthOf(mr, Constants.Person2);
+                        <span>@($"Projected {Constants.Person2}'s Net Worth:")</span> <span style="color:@GoodOrBad(p2nw)">@(Constants.Pretty(p2nw))</span>
+                    }
+                </h2>
+            </div>
+
+            <MonthView MR=mr @bind-Person1Overflow=mr.ProjectPerson1Income
+                       @bind-Person2Overflow=mr.ProjectPerson2Income />
+        }
+    }
+</div>
+
+<br />
+<br />
+
+@code {
+    private static int TotalNumMonths = 6;
+
+    private List<MonthRelations> MonthRels = new List<MonthRelations>();
+
+    private string ErrorMsg = string.Empty;
+
+    bool CompareYM(int mym, int mrym)
+    {
+        return mym <= mrym;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+
+        InitMonths();
+
+        StateHasChanged();
+    }
+
+    private void InitMonths()
+    {
+        MonthRels.Clear();
+
+        DateTime nextOne;
+        for (int cnt = 0; cnt < TotalNumMonths; cnt++)
+        {
+            nextOne = DateTime.Today.AddMonths(cnt + 1);
+            MonthRels.Add(new MonthRelations(nextOne.Month, nextOne.Year));
+        }
+    }
+
+    private string GoodOrBad(double money)
+    {
+        return money <= 0 ? "red" : "forestgreen";
+    }
+
+    private double GetNetWorthOf(MonthRelations monthRelations, string person)
+    {
+        double nw = IndexRunner.CalculateNetWorth(person, Constants.Balances);
+        foreach (var monthRel in MonthRels)
+        {
+            if (monthRel.YearMonth <= monthRelations.YearMonth)
+            {
+                if (person == Constants.Person1)
+                {
+                    if (monthRel.ProjectPerson1Income == int.MinValue)
+                        nw += monthRelations.ProjectPerson1Income;
+                    else
+                        nw += monthRel.ProjectPerson1Income;
+                }
+                else
+                {
+                    if (monthRel.ProjectPerson2Income == int.MinValue)
+                        nw += monthRelations.ProjectPerson2Income;
+                    else
+                        nw += monthRel.ProjectPerson2Income;
+                }
+            }
+        }
+        return nw;
+    }
+}
