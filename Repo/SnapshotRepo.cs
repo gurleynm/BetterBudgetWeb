@@ -10,7 +10,7 @@ namespace BetterBudgetWeb.Repo
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "Snapshot?token=" + Constants.Token;
+        private static string baseURI => Constants.BaseUri + "Snapshot?token=" + Constants.Token;
         public static List<Snapshot> Snapshots { get; set; } = new List<Snapshot>();
         public static async Task<List<Snapshot>> GetSnapshotsAsync()
         {

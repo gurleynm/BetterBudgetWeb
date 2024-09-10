@@ -1,5 +1,6 @@
 ﻿@using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Repo;
+@using BetterBudgetWeb.Shared.LoginStuff
 @inherits LayoutComponentBase
 @inject IJSRuntime jsRuntime
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
@@ -396,36 +397,22 @@
                 @if (Disabled)
                 {
                     <div style="background-color: #111827; height: 100vh; display: inline-block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw;">
-                        <BetterBudgetWeb.Pages.LoadingScreen Title="@LogTitle" />
+                        <LoadingScreen Title="@LogTitle" />
                     </div>
                 }
                 else
                 {
-                    <div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center">
-                        <div style="background-color:gray;border-radius:1vw;width:auto;padding:1vw;padding-bottom:2vw">
-                            <div>
-                                <h2 style="text-align:center;color:white">@($"Welcome!!")</h2>
-                            </div>
-                            @if (!string.IsNullOrEmpty(ErrorMsg))
-                            {
-                                <p class="income-bad" style="text-align:center">
-                                    @ErrorMsg
-                                </p>
-                            }
-                            <div style="display:inline-block">
-                                <label style="color:white">Username</label>
-                                <br />
-                                <input id="user" placeholder="Username" style="border-radius:5px;text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
-                                <br />
-                                <label style="color:white">Password</label>
-                                <br />
-                                <input id="pwd" placeholder="Password" style="border-radius:5px;text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
-                            </div>
-                            <div style="display:flex;justify-content:center;margin-top:2vh">
-                                <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
-                            </div>
+                    <UserPassLogin @bind-Username=@username
+                                   @bind-Username2=@username2
+                                   @bind-Password=@password
+                                   @bind-ConfirmPassword=@confirmPassword
+                                   @bind-CreatingAccount=@CreatingAccount
+                                   @bind-ErrorMsg=@ErrorMsg
+                                   Enter=@((e) => Enter(e))>
+                        <div style="display:flex;justify-content:center;margin-top:2vh">
+                            <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
                         </div>
-                    </div>
+                    </UserPassLogin>
                 }
             </div>
         }
@@ -434,36 +421,22 @@
             @if (Disabled)
             {
                 <div style="display:inline-block;width:100vw;height:100vh;">
-                    <BetterBudgetWeb.Pages.LoadingScreen Title="@LogTitle" />
+                    <LoadingScreen Title="@LogTitle" />
                 </div>
             }
             else
             {
-                <div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center">
-                    <div style="background-color:gray;border-radius:1vw;width:auto;padding:1vw;padding-bottom:2vw">
-                        <div>
-                            <h2 style="text-align:center;color:white">@($"Welcome!!")</h2>
-                        </div>
-                        @if (!string.IsNullOrEmpty(ErrorMsg))
-                        {
-                            <p class="income-bad" style="text-align:center">
-                                @ErrorMsg
-                            </p>
-                        }
-                        <div style="display:inline-block">
-                            <label style="color:white">Username</label>
-                            <br />
-                            <input id="user" placeholder="Username" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { username = (string) ui.Value;})" />
-                            <br />
-                            <label style="color:white">Password</label>
-                            <br />
-                            <input id="pwd" placeholder="Password" style="text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { password = (string) ui.Value;})" />
-                        </div>
-                        <div style="display:flex;justify-content:center;margin-top:2vh">
-                            <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
-                        </div>
+                <UserPassLogin @bind-Username=@username
+                               @bind-Username2=@username2
+                               @bind-Password=@password
+                               @bind-ConfirmPassword=@confirmPassword
+                               @bind-CreatingAccount=@CreatingAccount
+                               @bind-ErrorMsg=@ErrorMsg
+                               Enter=@((e) => Enter(e))>
+                    <div style="display:flex;justify-content:center;margin-top:2vh">
+                        <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
                     </div>
-                </div>
+                </UserPassLogin>
             }
         }
     }
@@ -472,7 +445,7 @@
         @if (mobile)
         {
             <div class="sidebar">
-                <NavMenu @bind-DarkMode=@DarkMode />
+                <NavMenu LogOff="SignOut" @bind-DarkMode=@DarkMode />
             </div>
         }
 
@@ -484,6 +457,8 @@
                         <a href="" style="font-size:large;font-family:Papyrus; text-align:center; float:left;color:white;">
                             <strong>@(Constants.WebWho)</strong>
                         </a>
+                        <span style="color:white"> | </span>
+                        <span style="cursor:pointer;font-size:small; text-align:center;color:white;" @onclick=SignOut>Sign Out</span>
                     </div>
 
                     <ul class="ps-3 navbar-dark" style="text-align: center;height:@HeightTopBar; list-style:none; padding-top:1vh;background-image:linear-gradient(purple,indigo);vertical-align:middle">
@@ -560,8 +535,12 @@
     private string ErrorMsg { get; set; }
     private bool WeIn { get; set; }
     private string username { get; set; }
+    private string username2 { get; set; }
     private string password { get; set; }
+    private string confirmPassword { get; set; }
+    private bool CreatingAccount { get; set; }
     private int pwdAttempts { get; set; }
+
     private bool disabled { get; set; } = true;
     private bool Disabled
     {
@@ -672,8 +651,10 @@
 
             Disabled = true;
 
-            verified = await UserRepo.VerifyUserAsync(username, password);
-            WeIn = verified;
+            if (CreatingAccount)
+                WeIn = await UserRepo.AddOrUpdateUser(username, username2, password, "NONE");
+            else
+                WeIn = await UserRepo.VerifyUserAsync(username, password);
         }
         else
         {
@@ -687,7 +668,6 @@
         if (WeIn)
         {
             ErrorMsg = "";
-            var ct = Constants.Token;
             await sessionStorage.SetItemAsync("token", Constants.Token);
 
             await Constants.Init(true);
@@ -702,5 +682,12 @@
         StateHasChanged();
 
         return WeIn;
+    }
+    private async void SignOut()
+    {
+        WeIn = false;
+        Constants.Token = "";
+        await sessionStorage.SetItemAsync("token", Constants.Token);
+        StateHasChanged();
     }
 }

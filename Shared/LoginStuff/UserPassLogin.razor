@@ -1,0 +1,174 @@
+﻿
+<div style="width:100vw;height:100vh;display:flex;align-items:center;justify-content:center">
+    <div style="background-color:gray;border-radius:1vw;width:auto;padding:1vw;padding-bottom:2vw">
+        <div>
+            <h2 style="text-align:center;color:white">@($"Welcome!!")</h2>
+        </div>
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p class="income-bad" style="text-align:center">
+                @ErrorMsg
+            </p>
+        }
+        @if (CreatingAccount)
+        {
+            <div style="display:inline-block">
+                <div style="display:flex;justify-content:center;flex-direction:row">
+                    <div style="display:flex;flex-direction:column">
+                        <label style="color:white">Username 1</label>
+                        <input id="user" placeholder="Username 1" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                    </div>
+                    <br />
+                    <div style="display:flex;flex-direction:column">
+                        <label style="color:white">Username 2</label>
+                        <input id="user2" placeholder="Username 2" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username2 = (string) ui.Value;})" />
+                    </div>
+                </div>
+                <br />
+                <div style="display:flex;justify-content:center;flex-direction:row">
+                    <div style="display:flex;flex-direction:column">
+                        <label style="color:white">Shared Password</label>
+                        <input id="pwd" placeholder="Password" style="text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { Password = (string) ui.Value;})" />
+                    </div>
+                    <br />
+                    <div style="display:flex;flex-direction:column">
+                        <label style="color:white">Confirm Shared Password</label>
+                        <input id="cpwd" placeholder="Confirm Password" style="text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { Password = (string) ui.Value;})" />
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div style="display:inline-block">
+                <label style="color:white">Username</label>
+                <br />
+                <input id="user" placeholder="Username" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                <br />
+                <label style="color:white">Password</label>
+                <br />
+                <input id="pwd" placeholder="Password" style="text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { Password = (string) ui.Value;})" />
+            </div>
+        }
+        @ChildContent
+        @if (false)
+        {
+            <hr />
+            <div style="display:flex;justify-content:center">
+                <span style="color:white">
+                    @AccountTxt
+                    <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
+                </span>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Username
+    {
+        get { return username; }
+        set
+        {
+            if (username == value) return;
+            username = value;
+            UsernameChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> UsernameChanged { get; set; }
+
+
+    [Parameter]
+    public string Username2
+    {
+        get { return username2; }
+        set
+        {
+            if (username2 == value) return;
+            username2 = value;
+            Username2Changed.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> Username2Changed { get; set; }
+
+    [Parameter]
+    public string Password
+    {
+        get { return password; }
+        set
+        {
+            if (password == value) return;
+            password = value;
+            PasswordChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> PasswordChanged { get; set; }
+
+    [Parameter]
+    public string ConfirmPassword
+    {
+        get { return confirmPassword; }
+        set
+        {
+            if (confirmPassword == value) return;
+            confirmPassword = value;
+            ConfirmPasswordChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> ConfirmPasswordChanged { get; set; }
+
+    [Parameter]
+    public string ErrorMsg
+    {
+        get { return errorMsg; }
+        set
+        {
+            if (errorMsg == value) return;
+            errorMsg = value;
+            ErrorMsgChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> ErrorMsgChanged { get; set; }
+
+    [Parameter]
+    public bool CreatingAccount
+    {
+        get { return creatingAccount; }
+        set
+        {
+            if (creatingAccount == value) return;
+            creatingAccount = value;
+            CreatingAccountChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> CreatingAccountChanged { get; set; }
+
+    [Parameter]
+    public Action<KeyboardEventArgs> Enter { get; set; }
+
+    private string username;
+    private string username2;
+    private string password;
+    private string confirmPassword;
+    private string errorMsg;
+    private bool creatingAccount { get; set; }
+
+    private string AccountTxt => CreatingAccount ? "Already have an account?" : "Don't have an account?";
+    private string SignTxt => CreatingAccount ? "Sign In" : "Sign Up";
+}

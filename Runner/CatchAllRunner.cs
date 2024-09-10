@@ -7,7 +7,7 @@ namespace BetterBudgetWeb.Runner
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "CatchAll?token=" + Constants.Token;
+        private static string baseURI => Constants.BaseUri + "CatchAll?token=" + Constants.Token;
         public static async Task<CatchAll> Grab()
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };

@@ -10,7 +10,7 @@ namespace BetterBudgetWeb.Repo
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "Preset?token=" + Constants.Token;
+        private static string baseURI => Constants.BaseUri + "Preset?token=" + Constants.Token;
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         public static async Task<List<Preset>> GetPresetsAsync()
         {

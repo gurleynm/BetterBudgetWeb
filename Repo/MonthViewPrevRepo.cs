@@ -10,7 +10,7 @@ namespace BetterBudgetWeb.Repo
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI = Constants.BaseUri + "MonthViewPrev?token=" + Constants.Token;
+        private static string baseURI => Constants.BaseUri + "MonthViewPrev?token=" + Constants.Token;
         public static List<MonthViewPrev> MonthViewPrevs { get; set; } = new List<MonthViewPrev>();
         public static async Task<List<MonthViewPrev>> GetMonthViewPrevsAsync()
         {
