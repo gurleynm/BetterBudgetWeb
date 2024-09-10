@@ -13,11 +13,9 @@
         color: black;
     }
 </style>
-@if (Mobile)
-{
-    <br />
-    <br />
-    <div>
+
+<div class="tabcontent">
+    <div style="float:left;margin-right:10vw;">
         <label>Envelope Name:</label>
         <br />
         <select @bind="Name">
@@ -28,46 +26,20 @@
             }
         </select>
     </div>
+
+    <br style="clear:both" />
+    <br style="clear:both" />
+    <button class="btn btn-secondary" disabled=@Disabled @onclick ="Submit">Submit</button>
     <br />
+
     @if (!string.IsNullOrEmpty(ErrorMsg))
     {
         <p style="color:@ErrorColor">@ErrorMsg</p>
     }
-    <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
-}
-else
-{
-    <div class="tabcontent">
-        <div style="float:left;margin-right:10vw;">
-            <label>Envelope Name:</label>
-            <br />
-            <select @bind="Name">
-                <option value="@string.Empty" selected disabled="disabled">(Choose Goal)</option>
-                @foreach (var env in Envelopes)
-                {
-                    <option value="@env.Name">@env.Name</option>
-                }
-            </select>
-        </div>
-
-        <br style="clear:both" />
-        <br style="clear:both" />
-        <button class="btn btn-secondary" disabled=@Disabled @onclick ="Submit">Submit</button>
-        <br />
-
-        @if (!string.IsNullOrEmpty(ErrorMsg))
-        {
-            <p style="color:@ErrorColor">@ErrorMsg</p>
-        }
-    </div>
-}
-<br />
+</div>
 <br />
 
 @code {
-    [Parameter]
-    public bool Mobile { get; set; }
-
     private List<Data.Envelope> Envelopes { get; set; } = new List<Data.Envelope>();
 
     private string name;

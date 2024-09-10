@@ -473,31 +473,46 @@
                                 <span class="oi oi-plus" aria-hidden="true"></span> Input
                             </a>
                         </li>
-                        <li>
-                            <a class="navbar-brand" href="delete" style="font-family:Papyrus; text-align:center;">
-                                <span class="oi oi-minus" aria-hidden="true"></span> Delete
-                            </a>
-                        </li>
-                        <li>
-                            <a class="navbar-brand" href="update" style="font-family:Papyrus; text-align:center;">
-                                <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
-                            </a>
-                        </li>
-                        <li>
-                            <a class="navbar-brand" href="portfolio" style="font-family:Papyrus; text-align:center;">
-                                <span class="oi oi-dollar"></span> Portfolio
-                            </a>
-                        </li>
-                        <li>
-                            <a class="navbar-brand" href="chart" style="font-family:Papyrus; text-align:center;">
-                                <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Chart
-                            </a>
-                        </li>
-                        <li>
-                            <a class="navbar-brand" href="forecast" style="font-family:Papyrus; text-align:center;">
-                                <span class="oi oi-sun"></span> Forecast
-                            </a>
-                        </li>
+                        @if (ShowDelete)
+                        {
+                            <li>
+                                <a class="navbar-brand" href="delete" style="font-family:Papyrus; text-align:center;">
+                                    <span class="oi oi-minus" aria-hidden="true"></span> Delete
+                                </a>
+                            </li>
+                        }
+                        @if (ShowUpdate)
+                        {
+                            <li>
+                                <a class="navbar-brand" href="update" style="font-family:Papyrus; text-align:center;">
+                                    <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
+                                </a>
+                            </li>
+                        }
+                        @if (ShowPortfolio)
+                        {
+                            <li>
+                                <a class="navbar-brand" href="portfolio" style="font-family:Papyrus; text-align:center;">
+                                    <span class="oi oi-dollar"></span> Portfolio
+                                </a>
+                            </li>
+                        }
+                        @if (ShowChart)
+                        {
+                            <li>
+                                <a class="navbar-brand" href="chart" style="font-family:Papyrus; text-align:center;">
+                                    <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Chart
+                                </a>
+                            </li>
+                        }
+                        @if (ShowForecast)
+                        {
+                            <li>
+                                <a class="navbar-brand" href="forecast" style="font-family:Papyrus; text-align:center;">
+                                    <span class="oi oi-sun"></span> Forecast
+                                </a>
+                            </li>
+                        }
                     </ul>
 
                     <div style="position: absolute; top:.3vw; right:1vw; height:@HeightTopBar; vertical-align:middle">
@@ -570,6 +585,12 @@
         }
     }
 
+    private bool ShowDelete => Constants.Balances != null && Constants.Balances.Count > 0;
+    private bool ShowUpdate => Constants.Balances != null && Constants.Balances.Count > 0;
+    private bool ShowPortfolio => Constants.Balances != null && Constants.Balances.FirstOrDefault(b => b.BalanceType == "Stocks") != null;
+    private bool ShowChart => Constants.Transactions != null && Constants.Transactions.Count > 0;
+    private bool ShowForecast => Constants.Monthlies != null && Constants.Monthlies.Count > 0;
+
     protected override async Task OnInitializedAsync()
     {
         ErrorMsg = "";
@@ -637,6 +658,7 @@
     public async Task<bool> CheckWeIn(bool countAttempt = true)
     {
         var token = await sessionStorage.GetItemAsync<string>("token");
+        await sessionStorage.SetItemAsync("token", "");
         bool verified;
         Disabled = true;
         StateHasChanged();

@@ -5,23 +5,26 @@
 <PageTitle>Delete</PageTitle>
 
 <h1>Delete</h1>
-@if (!Constants.Mobile)
-{
-    <div class="tab">
+<div class="tab" style="@StyleTxt">
+    <button class="tablinks @BalanceClass" @onclick="@ShowBalanceGoal">Balances</button>
+    @if(Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "DYNAMIC") != null)
+    {        
         <button class="tablinks @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
+    }
+    @if (Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "STATIC") != null)
+    {
         <button class="tablinks @StaticClass" @onclick="@ShowStaticGoal">Set Monthly</button>
+    }
+    @if(Constants.Envelopes.Count > 0)
+    {        
         <button class="tablinks @EnvelopesClass" @onclick="@ShowEnvelopes">Goal Envelopes</button>
-        @*<button class="tablinks @SavingsClass" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
-    </div>
-}
-else
+    }
+    @*<button class="tablinks @SavingsClass" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
+</div>
+
+@if (ShowBalance)
 {
-    <div class="tab" style="width:fit-content">
-        <button class="tablinks" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>
-        <button class="tablinks" @onclick="@ShowStaticGoal">Set Monthly</button>
-        <button class="tablinks" @onclick="@ShowEnvelopes">Goal Envelopes</button>
-        @*<button class="btn btn-primary" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
-    </div>
+    <DeleteBalance />
 }
 @if (ShowDynamic)
 {
@@ -42,6 +45,7 @@ else if (ShowSavings && false)
 
 
 @code {
+    private string StyleTxt => Constants.Mobile ? "width:fit-content" : "";
 
     private string TransactionName;
     private string ExpenseType;
@@ -74,15 +78,17 @@ else if (ShowSavings && false)
         }
     }
 
-    private bool ShowDynamic { get; set; } = true;
+    private bool ShowBalance { get; set; } = true;
+    private bool ShowDynamic { get; set; }
     private bool ShowStatic { get; set; }
     private bool ShowEnvelope { get; set; }
     private bool ShowSavings { get; set; }
 
-    private string DynamicClass => ShowDynamic ? "active" : "";
-    private string StaticClass => ShowStatic ? "active" : "";
-    private string EnvelopesClass => ShowEnvelope ? "active" : "";
-    private string SavingsClass => ShowSavings ? "active" : "";
+    private string BalanceClass => ShowBalance && !Constants.Mobile ? "active" : "";
+    private string DynamicClass => ShowDynamic && !Constants.Mobile ? "active" : "";
+    private string StaticClass => ShowStatic && !Constants.Mobile ? "active" : "";
+    private string EnvelopesClass => ShowEnvelope && !Constants.Mobile ? "active" : "";
+    private string SavingsClass => ShowSavings && !Constants.Mobile ? "active" : "";
 
     private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
 
@@ -91,9 +97,18 @@ else if (ShowSavings && false)
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
 
+    private void ShowBalanceGoal()
+    {
+        ShowBalance = !ShowBalance;
+        ShowDynamic = false;
+        ShowStatic = false;
+        ShowEnvelope = false;
+        ShowSavings = false;
+    }
     private void ShowDynamicGoal()
     {
         ShowDynamic = !ShowDynamic;
+        ShowBalance = false;
         ShowStatic = false;
         ShowEnvelope = false;
         ShowSavings = false;
@@ -101,6 +116,7 @@ else if (ShowSavings && false)
     private void ShowStaticGoal()
     {
         ShowStatic = !ShowStatic;
+        ShowBalance = false;
         ShowDynamic = false;
         ShowEnvelope = false;
         ShowSavings = false;
@@ -108,6 +124,7 @@ else if (ShowSavings && false)
     private void ShowSavingsGoal()
     {
         ShowSavings = !ShowSavings;
+        ShowBalance = false;
         ShowDynamic = false;
         ShowEnvelope = false;
         ShowStatic = false;
@@ -115,6 +132,7 @@ else if (ShowSavings && false)
     private void ShowEnvelopes()
     {
         ShowEnvelope = !ShowEnvelope;
+        ShowBalance = false;
         ShowDynamic = false;
         ShowSavings = false;
         ShowStatic = false;

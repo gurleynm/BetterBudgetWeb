@@ -23,7 +23,10 @@
 
 <div class="tab">
     <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
-    <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
+    @if (Constants.Envelopes.Count > 0)
+    {
+        <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
+    }
 </div>
 
 @if (ShowBal)

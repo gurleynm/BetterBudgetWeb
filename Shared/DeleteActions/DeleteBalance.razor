@@ -1,0 +1,82 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+<style>
+    option {
+        color: black;
+    }
+
+    select {
+        color: black;
+    }
+
+    input {
+        color: black;
+    }
+</style>
+    <div class="tabcontent">
+        <div style="float:left;margin-right:10vw;">
+            <label>Balance Name:</label>
+            <br />
+            <select @bind="Name">
+                <option value="@string.Empty" selected disabled="disabled">(Choose Balance)</option>
+                @foreach (var bal in Balances)
+                {
+                    <option value="@bal.Name">@bal.Name</option>
+                }
+            </select>
+        </div>
+
+        <br style="clear:both" />
+        <br style="clear:both" />
+        <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
+        <br />
+
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p style="color:@ErrorColor">@ErrorMsg</p>
+        }
+    </div>
+<br />
+
+@code {
+    private List<Data.Balance> Balances { get; set; } = new List<Data.Balance>();
+
+    private string name;
+    string Name { get; set; }
+
+    private string ErrorMsg { get; set; } = string.Empty;
+    private string ErrorColor { get; set; } = "red";
+
+    private bool Disabled;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Balances = await BalanceRepo.GetBalancesAsync();
+    }
+
+    public async Task Submit()
+    {
+        Disabled = true;
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+
+        if (string.IsNullOrEmpty(Name))
+            ErrorMsg += "Please select a balance.\n";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            var ChosenOne = Balances.FirstOrDefault(e => e.Name == Name);
+
+            Balances = await BalanceRepo.RemoveAsync(ChosenOne);
+            Constants.Balances = new List<Data.Balance>(Balances);
+
+            ErrorColor = "green";
+            ErrorMsg = $"Balance called '{Name}' was deleted!";
+
+            Name = string.Empty;
+        }
+
+        Disabled = false;
+        StateHasChanged();
+    }
+}

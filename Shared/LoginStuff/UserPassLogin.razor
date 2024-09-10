@@ -51,16 +51,13 @@
             </div>
         }
         @ChildContent
-        @if (false)
-        {
-            <hr />
-            <div style="display:flex;justify-content:center">
-                <span style="color:white">
-                    @AccountTxt
-                    <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
-                </span>
-            </div>
-        }
+        <hr />
+        <div style="display:flex;justify-content:center">
+            <span style="color:white">
+                @AccountTxt
+                <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
+            </span>
+        </div>
     </div>
 </div>
 

@@ -25,11 +25,9 @@
         color: black;
     }
 </style>
-@if (Mobile)
-{
-    <br />
-    <br />
-    <div>
+
+<div class="tabcontent">
+    <div style="float:left;margin-right:10vw;">
         <label>Set Cost Name:</label>
         <br />
         <select @bind="Name">
@@ -40,7 +38,6 @@
             }
         </select>
     </div>
-    <br />
     @if (!string.IsNullOrEmpty(Name))
     {
         <div style="float:left;margin-right:10vw;">
@@ -65,98 +62,31 @@
             }
         </div>
     }
+    <br style="clear:both;" />
     <br />
     <!--
-    <div>
+    <div style="float:left;margin-right:10vw;">
         <label>@(Constants.Person1 + " Amount:")</label>
         <br />
         <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
     </div>
-    <br />
     <div>
         <label>@(Constants.Person2 + " Amount:")</label>
         <br />
         <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
     </div>
     <br style="clear:both;" />
-
-    <br style="clear:both" />
-    <button class="btn btn-secondary" @onclick="Submit">Submit</button>
-    <br />
     -->
+
     <br style="clear:both" />
     <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
     <br />
+
     @if (!string.IsNullOrEmpty(ErrorMsg))
     {
         <p style="color:@ErrorColor">@ErrorMsg</p>
     }
-}
-else
-{
-    <div class="tabcontent">
-        <div style="float:left;margin-right:10vw;">
-            <label>Set Cost Name:</label>
-            <br />
-            <select @bind="Name">
-                <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
-                @foreach (var mon in MonthliesNames)
-                {
-                    <option value="@mon">@mon</option>
-                }
-            </select>
-        </div>
-        @if (!string.IsNullOrEmpty(Name))
-        {
-            <div style="float:left;margin-right:10vw;">
-                <label>When (Month Year):</label>
-                <br />
-                <select @bind="SelectMonth">
-                    <option value="@string.Empty" disabled="disabled">(Choose Month)</option>
-                    @foreach (var item in MonthsToShow)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                </select>
-                @if (!string.IsNullOrEmpty(SelectMonth))
-                {
-                    <select @bind="SelectYear">
-                        <option value="@string.Empty" disabled="disabled">(Choose Year)</option>
-                        @foreach (var item in YearsToShow)
-                        {
-                            <option value="@item">@item</option>
-                        }
-                    </select>
-                }
-            </div>
-        }
-        <br style="clear:both;" />
-        <br />
-        <!--
-        <div style="float:left;margin-right:10vw;">
-            <label>@(Constants.Person1 + " Amount:")</label>
-            <br />
-            <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
-        </div>
-        <div>
-            <label>@(Constants.Person2 + " Amount:")</label>
-            <br />
-            <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
-        </div>
-        <br style="clear:both;" />
-        -->
-
-        <br style="clear:both" />
-        <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
-        <br />
-
-        @if (!string.IsNullOrEmpty(ErrorMsg))
-        {
-            <p style="color:@ErrorColor">@ErrorMsg</p>
-        }
-    </div>
-}
-<br />
+</div>
 <br />
 
 @code {
@@ -164,8 +94,6 @@ else
     public string Person1Amount { get; set; }
     [Parameter]
     public string Person2Amount { get; set; }
-    [Parameter]
-    public bool Mobile { get; set; }
 
     List<Monthly> Monthlies { get; set; }
     List<string> MonthliesNames { get; set; }
