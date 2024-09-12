@@ -246,14 +246,6 @@ else
 
             </div>
         </div>
-
-        @if (ShowDeleteBal)
-        {
-            <DeleteConfirm Balan="@SelectedBalance"
-                           OnClose="@DeleteBalance">
-
-            </DeleteConfirm>
-        }
     }
     else
     {
@@ -482,8 +474,6 @@ else
     }
     private string SelectedDownload => SelectedMonth + " " + SelectedYear;
 
-    private bool ShowDeleteBal = false;
-
     private string MonthYear => (DateTime.Now.ToString("MMMM") + " " + DateTime.Now.Year.ToString());
 
     private string ErrorMsg = string.Empty;
@@ -640,23 +630,7 @@ else
     {
         return Constants.Pretty(num);
     }
-    private async void ShowDeleteBalBtn(Balance b)
-    {
-        SelectedBalance = b;
-        ShowDeleteBal = true;
-        await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
-    }
-    private async void DeleteBalance(bool accepted)
-    {
-        if (accepted)
-        {
-            Balances = await BalanceRepo.RemoveAsync(SelectedBalance);
-            Balances.Sort(Constants.CompareBalance);
-        }
-        ShowDeleteBal = false;
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
-        StateHasChanged();
-    }
+    
     private double CalculateNetWorth(string person)
     {
         return IndexRunner.CalculateNetWorth(person, Balances);
@@ -807,12 +781,6 @@ else
 
         if (UpdateState)
             StateHasChanged();
-    }
-    private async void DeleteConfirm()
-    {
-        SetDataPoints(true);
-        Balances.Sort(Constants.CompareBalance);
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
     private async void AddConfirm()
     {

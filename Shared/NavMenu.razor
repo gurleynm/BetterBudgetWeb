@@ -2,7 +2,9 @@
 
 <div class="navbar navbar-dark sticky" style="padding:0;background-color:midnightblue;z-index:1">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">@(Constants.WebWho)</a>
+        <a href="account" style="font-size:large;font-family:Papyrus; text-align:center; float:left;color:white;">
+            <strong>@("Welcome " + Constants.CUR_USER + "!")</strong>
+        </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -49,7 +51,7 @@
                 </NavLink>
             </div>
             <div class="nav-item px-3">
-                <a href="" style="text-align:right;float:right;color:white;" @onclick=SignOut>Sign out</a>
+                <a href="" style="text-align:right;float:right;color:white;" @onclick=LogOff>Sign out</a>
             </div>
         </nav>
     </div>
@@ -58,6 +60,9 @@
 @code {
     private bool collapseNavMenu = true;
     private bool darkMode;
+
+    [CascadingParameter]
+    public EventCallback LogOff { get; set; }
 
     [Parameter]
     public bool DarkMode
@@ -75,17 +80,10 @@
     [Parameter]
     public EventCallback<bool> DarkModeChanged { get; set; }
 
-    [Parameter]
-    public Action LogOff { get; set; }
-
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-    }
-    private async void SignOut(){
-        if (LogOff != null)
-            LogOff();
     }
 }

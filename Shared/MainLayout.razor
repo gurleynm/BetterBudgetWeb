@@ -3,6 +3,7 @@
 @using BetterBudgetWeb.Shared.LoginStuff
 @inherits LayoutComponentBase
 @inject IJSRuntime jsRuntime
+@inject NavigationManager NavMan
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <style>
@@ -117,7 +118,7 @@
 
     td, th {
         border: 1px solid #000000;
-        font-size: 1vw;
+        font-size: @(Constants.Mobile ? "3vw;" : "1vw");
         text-align: center;
     }
 
@@ -394,7 +395,7 @@
         @if (mobile)
         {
             <div style="display:inline-block;width:100vw;height:100vh;">
-                @if (Disabled)
+                @if (ShowLoading)
                 {
                     <div style="background-color: #111827; height: 100vh; display: inline-block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw;">
                         <LoadingScreen Title="@LogTitle" />
@@ -402,7 +403,7 @@
                 }
                 else
                 {
-                    <UserPassLogin @bind-Username=@username
+                    <UserPassLogin @ref="userpasslogin" @bind-Username=@username
                                    @bind-Username2=@username2
                                    @bind-Password=@password
                                    @bind-ConfirmPassword=@confirmPassword
@@ -418,7 +419,7 @@
         }
         else
         {
-            @if (Disabled)
+            @if (ShowLoading)
             {
                 <div style="display:inline-block;width:100vw;height:100vh;">
                     <LoadingScreen Title="@LogTitle" />
@@ -426,7 +427,7 @@
             }
             else
             {
-                <UserPassLogin @bind-Username=@username
+                <UserPassLogin @ref="userpasslogin" @bind-Username=@username
                                @bind-Username2=@username2
                                @bind-Password=@password
                                @bind-ConfirmPassword=@confirmPassword
@@ -445,7 +446,7 @@
         @if (mobile)
         {
             <div class="sidebar">
-                <NavMenu LogOff="SignOut" @bind-DarkMode=@DarkMode />
+                <NavMenu @bind-DarkMode=@DarkMode />
             </div>
         }
 
@@ -454,11 +455,9 @@
             {
                 <div class="table sticky">
                     <div style="position: absolute; top:1vw; left:1vw; height:@HeightTopBar; vertical-align:middle">
-                        <a href="" style="font-size:large;font-family:Papyrus; text-align:center; float:left;color:white;">
-                            <strong>@(Constants.WebWho)</strong>
+                        <a href="account" style="font-size:large;font-family:Papyrus; text-align:center; float:left;color:white;">
+                            <strong>@("Welcome " + Constants.CUR_USER + "!")</strong>
                         </a>
-                        <span style="color:white"> | </span>
-                        <span style="cursor:pointer;font-size:small; text-align:center;color:white;" @onclick=SignOut>Sign Out</span>
                     </div>
 
                     <ul class="ps-3 navbar-dark" style="text-align: center;height:@HeightTopBar; list-style:none; padding-top:1vh;background-image:linear-gradient(purple,indigo);vertical-align:middle">
@@ -525,7 +524,9 @@
                 </div>
             }
             <article class="content px-4" style="padding-top:@HeightTopBar">
-                @Body
+                <CascadingValue Value=LogOff>
+                    @Body
+                </CascadingValue>
             </article>
         </main>
     }
@@ -543,6 +544,7 @@
     private bool mobile => Constants.Mobile;
 
     private string LogTitle = "Logging in...";
+    EventCallback LogOff => EventCallback.Factory.Create(this, SignOut);
 
     private double heightTopBar = 8;
     private string HeightTopBar => heightTopBar + "vh";
@@ -556,19 +558,11 @@
     private bool CreatingAccount { get; set; }
     private int pwdAttempts { get; set; }
 
-    private bool disabled { get; set; } = true;
-    private bool Disabled
-    {
-        get
-        { return disabled; }
-        set
-        {
-            if (disabled != value)
-                StateHasChanged();
+    private UserPassLogin userpasslogin;
 
-            disabled = value;
-        }
-    }
+    private bool ShowLoading { get; set; } = false;
+    private bool Disabled { get; set; } = true;
+
     private bool darkMode { get; set; } = Constants.DarkMode;
     private bool DarkMode
     {
@@ -660,8 +654,6 @@
         var token = await sessionStorage.GetItemAsync<string>("token");
         await sessionStorage.SetItemAsync("token", "");
         bool verified;
-        Disabled = true;
-        StateHasChanged();
 
         if (string.IsNullOrEmpty(token))
         {
@@ -671,12 +663,33 @@
                 return false;
             }
 
-            Disabled = true;
-
             if (CreatingAccount)
-                WeIn = await UserRepo.AddOrUpdateUser(username, username2, password, "NONE");
+            {
+                countAttempt = false;
+                bool Passed = userpasslogin.passwordRules.CheckConditions();
+                if (Passed)
+                {
+                    Disabled = true;
+                    StateHasChanged();
+                    WeIn = await UserRepo.AddUser(username, username2, password);
+                    if (!WeIn)
+                    {
+                        ErrorMsg = "Denied. One of your usernames is already taken.";
+                    }
+                    else
+                        ShowLoading = true;
+                    StateHasChanged();
+                }
+                else
+                    WeIn = false;
+            }
             else
+            {
+                Disabled = true;
+                ShowLoading = true;
+                StateHasChanged();
                 WeIn = await UserRepo.VerifyUserAsync(username, password);
+            }
         }
         else
         {
@@ -692,7 +705,16 @@
             ErrorMsg = "";
             await sessionStorage.SetItemAsync("token", Constants.Token);
 
+            if (string.IsNullOrEmpty(username))
+                Constants.CUR_USER = await sessionStorage.GetItemAsync<string>("cur_user");
+            else
+                Constants.CUR_USER = username;
+
+            await sessionStorage.SetItemAsync("cur_user", Constants.CUR_USER);
+
+
             await Constants.Init(true);
+            NavMan.NavigateTo("");
         }
         else if (countAttempt)
         {
@@ -701,15 +723,17 @@
         }
 
         Disabled = false;
+        ShowLoading = false;
         StateHasChanged();
 
         return WeIn;
     }
-    private async void SignOut()
+    private async Task SignOut()
     {
         WeIn = false;
         Constants.Token = "";
         await sessionStorage.SetItemAsync("token", Constants.Token);
+        await sessionStorage.SetItemAsync("cur_user", "");
         StateHasChanged();
     }
 }

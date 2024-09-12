@@ -65,6 +65,7 @@ namespace BetterBudgetWeb
         public static string[] NotExpenses = new string[] { "Income", "Debt", "Equity", "Transfer" };
 
         public static string BaseUri = "https://davidbetterbudgetapi.azurewebsites.net/";
+        public static string CUR_USER { get; set; }
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Katie";
 

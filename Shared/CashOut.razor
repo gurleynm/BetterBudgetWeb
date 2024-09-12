@@ -50,7 +50,7 @@
                                       Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
                                     <div style="display:flex;flex-direction:column;justify-content:center">
-                                        <img src="/images/CashArrow.png" style="height:3vw;cursor:pointer" @onclick=@(() => HandleCash()) />
+                                        <img alt="Cash Arrow" src="/images/CashArrow.png" style="height:3vw;cursor:pointer" @onclick=@(() => HandleCash()) />
                                     </div>
 
                                     <div style="display:flex;flex-direction:column;justify-content:space-evenly">
@@ -148,7 +148,7 @@ else
                                         }
                                     </div>
                                     <div style="display:flex;flex-direction:column;justify-content:center;height:auto">
-                                        <img src="/images/CashArrowMobile.png" style="height:30vw;cursor:pointer" @onclick=@(() => HandleCash()) />
+                                        <img alt="Cash Arrow for Mobile" src="/images/CashArrowMobile.png" style="height:30vw;cursor:pointer" @onclick=@(() => HandleCash()) />
                                     </div>
                                     <div style="align-content:flex-end">
                                         <Envelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Open=true Adding=false

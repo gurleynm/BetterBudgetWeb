@@ -1,0 +1,207 @@
+﻿@page "/account"
+@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Shared.LoginStuff
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+<PageTitle>Account</PageTitle>
+
+<h3>Account Page</h3>
+@if (ShowUpdateConfirmation)
+{
+    <div style="display:flex;
+                justify-content:center;
+                margin:auto 0;
+                width:100%;
+                padding: 1vw;
+                height:100%;
+                outline:solid dodgerblue 1px;
+                border-radius:5px;
+                color:white;
+                text-align:center;
+                pointer-events:none;
+                z-index:10;">
+        Password successfully updated!
+    </div>
+}
+<h4>Your name is: <span>@Constants.CUR_USER</span></h4>
+<h4>The second user's name is: <span>@OtherUser</span></h4>
+<button class="btn btn-secondary" @onclick=@(() => {ShowUpdate = true; ErrorMsg = "";})>Update Password</button>
+<button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
+
+<button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsg = "";})>Delete Account</button>
+
+
+@if (ShowUpdate)
+{
+    <Confirmation OnClose="Update" LeftBtnTxt="Cancel" LeftBtnColor="btn-secondary" RightBtnTxt="Update" RightBtnColor="btn-primary"
+                  @bind-Disabled=@UpdateDisabled>
+        <div>
+            <span><strong>WARNING: All of your data will be deleted. This action cannot be reversed!</strong></span>
+            <br />
+            <br />
+            <span>To update your account, please enter in your current password and your new password below:</span>
+            <br />
+            <table>
+                <tr>
+                    <td>Current password:</td>
+                    <td>
+                        <PasswordInput Placeholder="Current Password" @bind-Password=@CurrentPassword />
+                    </td>
+                </tr>
+                <tr>
+                    <td>New password:</td>
+                    <td>
+                        <PasswordInput Placeholder="New Password" @bind-Password=@NewPassword />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Confirm new password:</td>
+                    <td>
+                        <PasswordInput Placeholder="Confirm New Password" @bind-Password=@ConfirmPassword />
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <PasswordRules @ref=@passwordRules Password="@NewPassword" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
+            <br />
+            <span style="color:red">@ErrorMsg</span>
+        </div>
+    </Confirmation>
+}
+@if (ShowDelete)
+{
+    <Confirmation OnClose="Delete" LeftBtnTxt="Cancel" LeftBtnColor="btn-secondary" RightBtnColor="btn-danger"
+                  @bind-Disabled=@DeleteDisabled>
+        <div>
+            <span><strong>WARNING: All of your data will be deleted. This action cannot be reversed!</strong></span>
+            <br />
+            <br />
+            <span>To delete your account, please enter in your name, the other user's name, and your password below:</span>
+            <table>
+                <tr>
+                    <td>Your name:</td>
+                    <td>
+                        <input id="delUser1" type="text" @bind-value=User1 placeholder=@Constants.CUR_USER />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Their name:</td>
+                    <td>
+                        <input id="delUser2" type="text" @bind-value=User2 placeholder=@OtherUser />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Password:</td>
+                    <td>
+                        <input id="delPass" type="password" @bind-value=Password placeholder="password" />
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <span style="color:red">@ErrorMsg</span>
+        </div>
+    </Confirmation>
+}
+
+
+@code {
+    [CascadingParameter]
+    public EventCallback LogOff { get; set; }
+
+    private string OtherUser => Constants.CUR_USER == Constants.Person1 ? Constants.Person2 : Constants.Person1;
+
+    private bool UpdateDisabled;
+    private bool DeleteDisabled;
+    private bool ShowUpdate;
+    private bool ShowDelete;
+    private bool ShowUpdateConfirmation;
+
+    private string User1 = "";
+    private string User2 = "";
+    private string Password = "";
+
+    private string CurrentPassword = "";
+    private string NewPassword = "";
+    private string ConfirmPassword = "";
+
+    private PasswordRules passwordRules;
+
+    private string ErrorMsg = "";
+
+    private async void Update(bool accepted)
+    {
+        if (accepted)
+        {
+            bool Passed = passwordRules.CheckConditions();
+
+            ErrorMsg = "";
+            if (string.IsNullOrEmpty(CurrentPassword))
+                ErrorMsg = "You must enter your current password.";
+
+            if (!string.IsNullOrEmpty(ErrorMsg) || !Passed)
+            {
+                UpdateDisabled = false;
+                return;
+            }
+
+            string UpdateUser = await UserRepo.UpdateUser(Constants.Person1, Constants.Person2, CurrentPassword, NewPassword);
+            if (UpdateUser != "Success")
+            {
+                ErrorMsg = UpdateUser;
+                UpdateDisabled = false;
+            }
+            else
+            {
+                ShowUpdate = false;
+                StateHasChanged();
+                ShowUpdateConfirmation = true;
+                StateHasChanged();
+                await Task.Delay(3000);
+                ShowUpdateConfirmation = false;
+            }
+        }
+        else
+            ShowUpdate = false;
+
+        UpdateDisabled = false;
+        StateHasChanged();
+    }
+
+    private async void Delete(bool accepted)
+    {
+        if (accepted)
+        {
+            ErrorMsg = "";
+
+            if (User1 != Constants.Person1)
+                ErrorMsg = "Name is incorrect.";
+            else if (User2 != Constants.Person2)
+                ErrorMsg = "Second name is incorrect.";
+            else if (string.IsNullOrEmpty(Password))
+                ErrorMsg = "Password must be entered";
+
+            if (!string.IsNullOrEmpty(ErrorMsg))
+            {
+                DeleteDisabled = false;
+                return;
+            }
+
+            bool DelUser = await UserRepo.DeleteUser(User1, User2, Password);
+            if (!DelUser)
+            {
+                ErrorMsg = "Incorrect password.";
+                DeleteDisabled = false;
+            }
+            else
+            {
+                ShowDelete = false;
+                await LogOff.InvokeAsync();
+            }
+        }
+        else
+            ShowDelete = false;
+
+        DeleteDisabled = false;
+        StateHasChanged();
+    }
+}

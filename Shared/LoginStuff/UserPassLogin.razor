@@ -28,14 +28,15 @@
                 <div style="display:flex;justify-content:center;flex-direction:row">
                     <div style="display:flex;flex-direction:column">
                         <label style="color:white">Shared Password</label>
-                        <input id="pwd" placeholder="Password" style="text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { Password = (string) ui.Value;})" />
+                        <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@Password />
                     </div>
                     <br />
                     <div style="display:flex;flex-direction:column">
                         <label style="color:white">Confirm Shared Password</label>
-                        <input id="cpwd" placeholder="Confirm Password" style="text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { Password = (string) ui.Value;})" />
+                        <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword />
                     </div>
                 </div>
+                <PasswordRules @ref=@passwordRules Password="@Password" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
             </div>
         }
         else
@@ -47,7 +48,7 @@
                 <br />
                 <label style="color:white">Password</label>
                 <br />
-                <input id="pwd" placeholder="Password" style="text-align:start;color:black;margin:1vh" type="password" @onkeydown="@Enter" @oninput="@(async (ui) => { Password = (string) ui.Value;})" />
+                <PasswordInput Enter="Enter" @bind-Password=@Password />
             </div>
         }
         @ChildContent
@@ -158,6 +159,8 @@
 
     [Parameter]
     public Action<KeyboardEventArgs> Enter { get; set; }
+
+    public PasswordRules passwordRules;
 
     private string username;
     private string username2;

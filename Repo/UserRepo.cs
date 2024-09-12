@@ -50,13 +50,54 @@ namespace BetterBudgetWeb.Repo
 
             return true;
         }
-        public static async Task<bool> AddOrUpdateUser(string user, string user2, string pass, string newPass)
+        public static async Task<bool> AddUser(string user, string user2, string pass)
+        {
+            return (await UpdateUser(user, user2, pass, "NONE")) == "Success";
+        }
+        public static async Task<string> UpdateUser(string user, string user2, string pass, string newPass)
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = baseURI + $"?user={user}&user2={user2}&pass={pass}&newPass={newPass}";
 
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
+
+            requestMessage.Content = JsonContent.Create("");
+
+            var response = await _client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (!response.IsSuccessStatusCode)
+                return "Invalid response";
+
+            if (string.IsNullOrEmpty(content))
+                return "No content";
+
+            if (content.Contains("message"))
+            {
+                var json = JObject.Parse(content);
+                return json["message"].ToString(); ;
+            }
+
+            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+
+            Constants.TW = TW;
+            Constants.Who = TW.Token.Name;
+            Constants.Token = TW.Token.Token;
+
+            return "Success";
+        }
+        public static async Task<bool> DeleteUser(string user, string user2, string pass)
+        {
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            string adjustedUrl = baseURI + $"?user={user}&user2={user2}&pass={pass}";
+
+            HttpClient _client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, adjustedUrl);
 
             requestMessage.Content = JsonContent.Create("");
 
