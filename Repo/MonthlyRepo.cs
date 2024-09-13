@@ -84,12 +84,12 @@ namespace BetterBudgetWeb.Repo
             Constants.SetMonthlies(TW.catcher.Monthlies);
             return TW.catcher.Monthlies;
         }
-        public static async Task<List<Monthly>> AddOrUpdateAsync(string name, double nathanAmount, double lindseyAmount, string dyna, string monYear)
+        public static async Task<List<Monthly>> AddOrUpdateAsync(string name, double person1Amount, double person2Amount, string dyna, string monYear)
         {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
-            Monthly month = new Monthly(name, nathanAmount, lindseyAmount, dyna, monYear);
+            Monthly month = new Monthly(name, person1Amount, person2Amount, dyna, monYear);
 
             requestMessage.Content = JsonContent.Create(month);
 

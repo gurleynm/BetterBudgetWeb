@@ -2,7 +2,7 @@
 
 <div class="navbar navbar-dark sticky" style="padding:0;background-color:midnightblue;z-index:1">
     <div class="container-fluid">
-        <a href="account" style="font-size:large;font-family:Papyrus; text-align:center; float:left;color:white;">
+        <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">
             <strong>@("Welcome " + Constants.CUR_USER + "!")</strong>
         </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -11,14 +11,6 @@
     </div>
 
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="width:100%">
-        <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;justify-content:right">
-            <span style='position:relative;font-size:large;top:1vw;text-align:center;color:white'>@(Constants.DarkMode ? "Dark Mode:" : "Light Mode:")&nbsp;</span>
-            <label class="switch">
-                <input type="checkbox" @bind=DarkMode>
-                <span class="slider round"></span>
-            </label>
-        </div>
-        <br />
         <nav class="flex-column">
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -59,26 +51,9 @@
 
 @code {
     private bool collapseNavMenu = true;
-    private bool darkMode;
 
     [CascadingParameter]
     public EventCallback LogOff { get; set; }
-
-    [Parameter]
-    public bool DarkMode
-    {
-        get => darkMode;
-        set
-        {
-            if (darkMode == value) return;
-            darkMode = value;
-
-            DarkModeChanged.InvokeAsync(value);
-        }
-    }
-
-    [Parameter]
-    public EventCallback<bool> DarkModeChanged { get; set; }
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 

@@ -25,7 +25,7 @@ namespace BetterBudgetWeb.Repo
             TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
 
             Constants.TW = TW;
-            Constants.Who = TW.Token.Name;
+            Constants.Person1 = TW.Token.Name;
             Constants.Token = TW.Token.Token;
 
             return true;
@@ -45,7 +45,7 @@ namespace BetterBudgetWeb.Repo
             TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
 
             Constants.TW = TW;
-            Constants.Who = TW.Token.Name;
+            Constants.Person1 = TW.Token.Name;
             Constants.Token = TW.Token.Token;
 
             return true;
@@ -86,7 +86,7 @@ namespace BetterBudgetWeb.Repo
             TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
 
             Constants.TW = TW;
-            Constants.Who = TW.Token.Name;
+            Constants.Person1 = TW.Token.Name;
             Constants.Token = TW.Token.Token;
 
             return "Success";
@@ -117,7 +117,7 @@ namespace BetterBudgetWeb.Repo
             TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
 
             Constants.TW = TW;
-            Constants.Who = TW.Token.Name;
+            Constants.Person1 = TW.Token.Name;
             Constants.Token = TW.Token.Token;
 
             return true;

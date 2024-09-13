@@ -59,21 +59,18 @@ namespace BetterBudgetWeb
         public static CatchAll catchAll { get; set; } = new CatchAll();
         public static DateRange DR { get; set; } = new DateRange();
 
-        public static bool DarkMode = true;
         public static Dictionary<string, string> ColorScheme = new Dictionary<string, string>();
 
         public static string[] NotExpenses = new string[] { "Income", "Debt", "Equity", "Transfer" };
 
-        public static string BaseUri = "https://davidbetterbudgetapi.azurewebsites.net/";
+        public static string BaseUri = "";
         public static string CUR_USER { get; set; }
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Katie";
 
         public static TokenWrapper TW = new TokenWrapper();
-        public static string Who = ""; // Nathan David Corey
 
         public static string Token = "Nice Try";
-        public static string WebWho { get; set; } // Nathan David Corey
 
         public static bool Test = false; // true false
 
@@ -91,7 +88,6 @@ namespace BetterBudgetWeb
             }
         }
         public static EventCallback<bool> MobileChanged { get; set; }
-        public static string PassKey { get; set; } = "no";
 
         public static readonly List<string> Months = new List<string>{"January", "February", "March", "April", "May",
                                                                 "June", "July", "August", "September",
@@ -99,8 +95,7 @@ namespace BetterBudgetWeb
 
         public static async Task RedrivePeople()
         {
-            Person1 = Who;
-            WebWho = "Better Budget";
+            Person1 = TW.Token.Name;
             Person2 = TW.Token.Person2;
 
             // Needed for Ideal Emergency Amount
@@ -108,7 +103,7 @@ namespace BetterBudgetWeb
         }
         public static async Task Init(bool PeopleDecide = false)
         {
-            DetermineDarkLight();
+            SetColorScheme();
             BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
             if (PeopleDecide)
             {
@@ -131,7 +126,7 @@ namespace BetterBudgetWeb
             Envelopes = catchAll.Envelopes;
             Presets = catchAll.Presets;
             Securities = catchAll.Securities ?? new List<Security>();
-            if (DR != null) 
+            if (DR != null)
             {
                 if (catchAll?.DR?.UniqueMonthYears?.Count > 0)
                     DR = catchAll.DR;
@@ -150,31 +145,31 @@ namespace BetterBudgetWeb
         }
         private static void LoadDefaults()
         {
-            if (Constants.DynamicCostItems.Count == 0)
+            if (DynamicCostItems.Count == 0)
             {
-                Constants.DynamicCostItems.Add(new DynamicCostItem("Food\n(EXAMPLE DATA)", 600, 200));
-                Constants.DynamicCostItems.Add(new DynamicCostItem("Fun\n(EXAMPLE DATA)", 300, 300));
-                Constants.DynamicCostItems.Add(new DynamicCostItem("Gas\n(EXAMPLE DATA)", 80, 180));
+                DynamicCostItems.Add(new DynamicCostItem("Food\n(EXAMPLE DATA)", 600, 200));
+                DynamicCostItems.Add(new DynamicCostItem("Fun\n(EXAMPLE DATA)", 300, 300));
+                DynamicCostItems.Add(new DynamicCostItem("Gas\n(EXAMPLE DATA)", 80, 180));
             }
 
-            if (Constants.SavingsGoals.Count == 0)
+            if (SavingsGoals.Count == 0)
             {
-                Constants.SavingsGoals.Add(new SavingsGoal(Person1 + "\n(EXAMPLE DATA)", 2000, "All", "1"));
-                Constants.SavingsGoals.Add(new SavingsGoal(Person2 + "\n(EXAMPLE DATA)", 1715, "All", "1"));
+                SavingsGoals.Add(new SavingsGoal(Person1 + "\n(EXAMPLE DATA)", 2000, "All", "1"));
+                SavingsGoals.Add(new SavingsGoal(Person2 + "\n(EXAMPLE DATA)", 1715, "All", "1"));
             }
 
-            if (Constants.StaticMonthlyCosts.Count == 0)
+            if (StaticMonthlyCosts.Count == 0)
             {
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Rent\n(EXAMPLE DATA)", 820, 800));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Car\n(EXAMPLE DATA)", 399.03, 0));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Food\n(EXAMPLE DATA)", 600, 200));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Entertainment\n(EXAMPLE DATA)", 300, 300));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Phone\n(EXAMPLE DATA)", 66, 65));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Gas\n(EXAMPLE DATA)", 20, 180));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Car Insurance\n(EXAMPLE DATA)", 80, 93));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Electric\n(EXAMPLE DATA)", 100, 0));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Internet\n(EXAMPLE DATA)", 70, 0));
-                Constants.StaticMonthlyCosts.Add(new StaticMonthlyCost("Subs \n(EXAMPLE DATA)", 78, 0));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Rent\n(EXAMPLE DATA)", 820, 800));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Car\n(EXAMPLE DATA)", 399.03, 0));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Food\n(EXAMPLE DATA)", 600, 200));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Entertainment\n(EXAMPLE DATA)", 300, 300));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Phone\n(EXAMPLE DATA)", 66, 65));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Gas\n(EXAMPLE DATA)", 20, 180));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Car Insurance\n(EXAMPLE DATA)", 80, 93));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Electric\n(EXAMPLE DATA)", 100, 0));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Internet\n(EXAMPLE DATA)", 70, 0));
+                StaticMonthlyCosts.Add(new StaticMonthlyCost("Subs \n(EXAMPLE DATA)", 78, 0));
             }
         }
         public static List<Monthly> GetMonthlies() { return Monthlies; }
@@ -276,29 +271,13 @@ namespace BetterBudgetWeb
                 || (mCM.Contains("All") && everyYear)
                 || (mCM.Contains("All") && year == DateTime.Now.Year.ToString());
         }
-        public static string SHA256(string value)
-        {
-            if (value == null) return null;
-            StringBuilder Sb = new StringBuilder();
-
-            using (SHA256 hash = SHA256Managed.Create())
-            {
-                Encoding enc = Encoding.UTF8;
-                Byte[] result = hash.ComputeHash(enc.GetBytes(value));
-
-                foreach (Byte b in result)
-                    Sb.Append(b.ToString("x2"));
-            }
-
-            return Sb.ToString();
-        }
         public static string Pretty(double num)
         {
             return num.ToString("C", CultureInfo.CurrentCulture);
         }
         public static string[] HandlePresets(string preset)
         {
-            Preset pres = Constants.Presets.FirstOrDefault(p => p.Name == preset);
+            Preset pres = Presets.FirstOrDefault(p => p.Name == preset);
             // 0 - Trans Name
             // 1 - ExpenseType
             // 2 - Paid With Person1
@@ -345,38 +324,20 @@ namespace BetterBudgetWeb
             return ExpInQuestion == null ? 0 : ExpInQuestion.TotalAmount;
         }
 
-        public static void DetermineDarkLight()
+        public static void SetColorScheme()
         {
-            if (DarkMode)
-            {
-                ColorScheme["Background"] = "#111827";
-                ColorScheme["Text"] = "silver";
-                ColorScheme["TableEven"] = "#203957";
-                ColorScheme["TableOdd"] = "#384152";
+            ColorScheme["Background"] = "#111827";
+            ColorScheme["Text"] = "silver";
+            ColorScheme["TableEven"] = "#203957";
+            ColorScheme["TableOdd"] = "#384152";
 
-                ColorScheme["IncomeGood"] = "forestgreen";
-                ColorScheme["EquityGood"] = "yellow";
-                ColorScheme["Debt"] = "lightseagreen";
+            ColorScheme["IncomeGood"] = "forestgreen";
+            ColorScheme["EquityGood"] = "yellow";
+            ColorScheme["Debt"] = "lightseagreen";
 
-                ColorScheme["Tab-Back"] = "#203957";
-                ColorScheme["Tab-Active"] = "#384152";
-                ColorScheme["Tab-Hover"] = "#05DDA9";
-            }
-            else
-            {
-                ColorScheme["Background"] = "white";
-                ColorScheme["Text"] = "black";
-                ColorScheme["TableEven"] = "#dddddd";
-                ColorScheme["TableOdd"] = "#ffffff";
-
-                ColorScheme["IncomeGood"] = "green";
-                ColorScheme["EquityGood"] = "goldenrod";
-                ColorScheme["Debt"] = "blue";
-
-                ColorScheme["Tab-Back"] = "#f1f1f1";
-                ColorScheme["Tab-Active"] = "#ccc";
-                ColorScheme["Tab-Hover"] = "#ddd";
-            }
+            ColorScheme["Tab-Back"] = "#203957";
+            ColorScheme["Tab-Active"] = "#384152";
+            ColorScheme["Tab-Hover"] = "#05DDA9";
         }
 
         public static bool Nighttime()

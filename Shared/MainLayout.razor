@@ -86,7 +86,7 @@
             display: block;
             text-align: left;
             background-color: purple;
-            font-family: Papyrus;
+            font-family: 'Imprint MT Shadow';
         }
 
             .dropdown-content a:hover {
@@ -446,7 +446,7 @@
         @if (mobile)
         {
             <div class="sidebar">
-                <NavMenu @bind-DarkMode=@DarkMode />
+                <NavMenu />
             </div>
         }
 
@@ -455,27 +455,27 @@
             {
                 <div class="table sticky">
                     <div style="position: absolute; top:1vw; left:1vw; height:@HeightTopBar; vertical-align:middle">
-                        <a href="account" style="font-size:large;font-family:Papyrus; text-align:center; float:left;color:white;">
+                        <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">
                             <strong>@("Welcome " + Constants.CUR_USER + "!")</strong>
                         </a>
                     </div>
 
-                    <ul class="ps-3 navbar-dark" style="text-align: center;height:@HeightTopBar; list-style:none; padding-top:1vh;background-image:linear-gradient(purple,indigo);vertical-align:middle">
+                    <ul class="ps-3 navbar-dark" style="text-align: center;height:@HeightTopBar; list-style:none; padding-top:1vh;background-color:indigo;vertical-align:middle">
 
                         <li>
-                            <a class="navbar-brand" href="" style="font-family:Papyrus; text-align:center;">
+                            <a class="navbar-brand" href="" style="font-family:'Imprint MT Shadow'; text-align:center;">
                                 <span class="oi oi-lightbulb"></span> Home
                             </a>
                         </li>
                         <li>
-                            <a class="navbar-brand" href="input" style="font-family:Papyrus; text-align:center;">
+                            <a class="navbar-brand" href="input" style="font-family:'Imprint MT Shadow'; text-align:center;">
                                 <span class="oi oi-plus" aria-hidden="true"></span> Input
                             </a>
                         </li>
                         @if (ShowDelete)
                         {
                             <li>
-                                <a class="navbar-brand" href="delete" style="font-family:Papyrus; text-align:center;">
+                                <a class="navbar-brand" href="delete" style="font-family:'Imprint MT Shadow'; text-align:center;">
                                     <span class="oi oi-minus" aria-hidden="true"></span> Delete
                                 </a>
                             </li>
@@ -483,7 +483,7 @@
                         @if (ShowUpdate)
                         {
                             <li>
-                                <a class="navbar-brand" href="update" style="font-family:Papyrus; text-align:center;">
+                                <a class="navbar-brand" href="update" style="font-family:'Imprint MT Shadow'; text-align:center;">
                                     <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
                                 </a>
                             </li>
@@ -491,7 +491,7 @@
                         @if (ShowPortfolio)
                         {
                             <li>
-                                <a class="navbar-brand" href="portfolio" style="font-family:Papyrus; text-align:center;">
+                                <a class="navbar-brand" href="portfolio" style="font-family:'Imprint MT Shadow'; text-align:center;">
                                     <span class="oi oi-dollar"></span> Portfolio
                                 </a>
                             </li>
@@ -499,7 +499,7 @@
                         @if (ShowChart)
                         {
                             <li>
-                                <a class="navbar-brand" href="chart" style="font-family:Papyrus; text-align:center;">
+                                <a class="navbar-brand" href="chart" style="font-family:'Imprint MT Shadow'; text-align:center;">
                                     <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Chart
                                 </a>
                             </li>
@@ -507,20 +507,12 @@
                         @if (ShowForecast)
                         {
                             <li>
-                                <a class="navbar-brand" href="forecast" style="font-family:Papyrus; text-align:center;">
+                                <a class="navbar-brand" href="forecast" style="font-family:'Imprint MT Shadow'; text-align:center;">
                                     <span class="oi oi-sun"></span> Forecast
                                 </a>
                             </li>
                         }
                     </ul>
-
-                    <div style="position: absolute; top:.3vw; right:1vw; height:@HeightTopBar; vertical-align:middle">
-                        <span style="position:relative;font-size:large;top:.5vw;text-align:center;color:white;">@(Constants.DarkMode ? "Dark Mode:" : "Light Mode:")</span>
-                        <label class="switch">
-                            <input type="checkbox" @bind=DarkMode>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
                 </div>
             }
             <article class="content px-4" style="padding-top:@HeightTopBar">
@@ -543,7 +535,7 @@
 @code {
     private bool mobile => Constants.Mobile;
 
-    private string LogTitle = "Logging in...";
+    private string LogTitle = "Logging in";
     EventCallback LogOff => EventCallback.Factory.Create(this, SignOut);
 
     private double heightTopBar = 8;
@@ -562,22 +554,6 @@
 
     private bool ShowLoading { get; set; } = false;
     private bool Disabled { get; set; } = true;
-
-    private bool darkMode { get; set; } = Constants.DarkMode;
-    private bool DarkMode
-    {
-        get
-        {
-            return darkMode;
-        }
-        set
-        {
-            if (value != darkMode)
-                ToggleLightDark();
-
-            darkMode = value;
-        }
-    }
 
     private bool ShowDelete => Constants.Balances != null && Constants.Balances.Count > 0;
     private bool ShowUpdate => Constants.Balances != null && Constants.Balances.Count > 0;
@@ -600,16 +576,11 @@
 
         string BeenToggled = await ReadCookies("DarkModePreference");
 
-
-        if (!string.IsNullOrEmpty(BeenToggled))
+        var token = await sessionStorage.GetItemAsync<string>("token");
+        if (!string.IsNullOrEmpty(token))
         {
-            bool TryToParseBool = bool.TryParse(BeenToggled, out bool WhatToSetToDarkMode);
-
-            if (TryToParseBool && !Constants.Nighttime())
-            {
-                DarkMode = WhatToSetToDarkMode;
-            }
-
+            ShowLoading = true;
+            StateHasChanged();
         }
 
         await CheckWeIn(false);
@@ -639,14 +610,6 @@
     {
         if (e.Code == "Enter" || e.Code == "NumpadEnter")
             CheckWeIn();
-    }
-
-    private async void ToggleLightDark()
-    {
-        Constants.DarkMode = !Constants.DarkMode;
-        Constants.DetermineDarkLight();
-        await WriteCookieAsync("DarkModePreference", Constants.DarkMode.ToString(), 10);
-        StateHasChanged();
     }
 
     public async Task<bool> CheckWeIn(bool countAttempt = true)
