@@ -111,17 +111,10 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        function TurnOffScroll() {
-            document.body.style.overflow = 'hidden';
-            return false;
-        }
-        function TurnOnScroll() {
-            document.body.style.overflow = 'auto';
-            return false;
-        }
-        function isDevice() {
+        let IsMobile;
+        window.onload = function () {
             google.charts.load('current', { 'packages': ['sankey'] });
-            const IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
+            IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
 
             if (IsMobile) {
                 LoadImg.style.height = "20vh";
@@ -131,7 +124,16 @@
                 LoadImg.style.height = "20vw";
                 LoadImg.style.width = "20vw";
             }
-
+        };
+        function TurnOffScroll() {
+            document.body.style.overflow = 'hidden';
+            return false;
+        }
+        function TurnOnScroll() {
+            document.body.style.overflow = 'auto';
+            return false;
+        }
+        function isDevice() {
             return IsMobile;
         }
         function drawChart(sankList) {
