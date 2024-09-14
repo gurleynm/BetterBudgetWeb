@@ -52,7 +52,8 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<bool> AddUser(string user, string user2, string pass)
         {
-            return (await UpdateUser(user, user2, pass, "NONE")) == "Success";
+            /* NEEDS UPDATING */
+            return (await UpdateUser(user, user2, pass, pass)) == "Success";
         }
         public static async Task<string> UpdateUser(string user, string user2, string pass, string newPass)
         {
