@@ -1,113 +1,49 @@
 ﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems.Chart.ChartHorizontal
 @using BetterBudgetWeb.Repo;
-@if (Mobile)
-{
-    <div style="width:100%; margin-right:2vw;">
-        <table>
+@using static BetterBudgetWeb.MainMenuItems.DonutChart
+<div class="chart-back-hor" style="width:100%;">
+    <table class="chart-hor" style="margin-bottom:1em">
+        <ChartBarHorizontal Value=@ActualIncomeAmount
+                            Label="Income Goal"
+                            Negative=false
+                            MaxValue=@ProjectedIncomeAmount
+                            BottomBorder=false />
+    </table>
+    <div style="display:flex;flex-direction:row;width:100%;justify-content:space-evenly">
+        <table style="background-color:transparent;border:none;margin-bottom:1em">
             <tr>
-                <th colspan="3" style="font-size:3vw;background-color:indigo;color:white"><i>Monthly Goal Tracking</i></th>
+                <th style="border:none"></th>
+                <th style="border:none">INCOME</th>
+                <th style="border:none">EXPENSES</th>
+                <th style="border:none">NET</th>
             </tr>
-            <tr>
-                <th style="font-size:3vw;">
-                    <label>Income Goal:</label>
-                    <br />
-                    <input type="number" placeholder="Income" style="width:15vw;padding:0;margin:0;margin-bottom:1vh"
-                    @bind=ProjectedIncomeAmountStr />
-                </th>
-                <th style="font-size:3vw;">Monthly Goal</th>
-                <th style="font-size:3vw;">MTD.</th>
+            <tr style="background-color:transparent">
+                <td style="border:none">Projected:</td>
+                <td style="border:none">
+                    <input type="number" placeholder="Income" style="width:5em;padding:0;margin:0;margin-bottom:1vh"
+                           @bind=ProjectedIncomeAmountStr />
+                </td>
+                <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ProjectedDynamicAmount + ProjectedStaticAmount))">@Constants.Pretty(ProjectedDynamicAmount + ProjectedStaticAmount)</span></td>
+                <td style="border:none"><span style="color:@Constants.GoodOrBad(ProjectedNetAmount)">@Constants.Pretty(ProjectedNetAmount)</span></td>
             </tr>
-
-            <tr>
-                <td style="font-size:3vw;padding:.5vw 0;">Income</td>
-                <td style="font-size:3vw;">@Constants.Pretty(ProjectedIncomeAmount)</td>
-                <td style="font-size:3vw;">@Constants.Pretty(ActualIncomeAmount)</td>
-            </tr>
-            <tr>
-                <td style="font-size:3vw;padding:.5vw 0;">Dynamic</td>
-                <td style="font-size:3vw;">@Constants.Pretty(ProjectedDynamicAmount)</td>
-                <td style="font-size:3vw;">@Constants.Pretty(ActualDynamicAmount)</td>
-            </tr>
-            @if (EnvelopeAmount > 0)
-            {
-                <tr>
-                    <td style="font-size:3vw;padding:.5vw 0;">Envelopes</td>
-                    <td style="font-size:3vw;">@Constants.Pretty(0)</td>
-                    <td style="font-size:3vw;">@Constants.Pretty(EnvelopeAmount)</td>
-                </tr>
-            }
-            <tr>
-                <td style="font-size:3vw;padding:.5vw 0;">Static</td>
-                <td style="font-size:3vw;">@Constants.Pretty(ProjectedStaticAmount)</td>
-                <td style="font-size:3vw;">@Constants.Pretty(ActualStaticAmount)</td>
-            </tr>
-            <tr>
-                <td style="font-size:3vw;" colspan="3">=</td>
-            </tr>
-            <tr>
-                <td style="font-size:3vw;"><strong>Net</strong></td>
-                <td style="font-size:3vw;">@Constants.Pretty(ProjectedNetAmount)</td>
-                <td style="font-size:3vw;">@Constants.Pretty(ActualNetAmount)</td>
+            <tr style="background-color:transparent">
+                <td style="border:none">Actual:</td>
+                <td style="border:none;color:@Constants.GoodOrBad(ActualIncomeAmount)"><span>@Constants.Pretty(ActualIncomeAmount)</span></td>
+                <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ActualDynamicAmount + ActualStaticAmount))">@Constants.Pretty(ActualDynamicAmount + ActualStaticAmount)</span></td>
+                <td style="border:none"><span style="color:@Constants.GoodOrBad(ActualNetAmount)">@Constants.Pretty(ActualNetAmount)</span></td>
             </tr>
         </table>
     </div>
-}
-else
-{
-    <div style="width:100%;">
-        <table>
-            <tr>
-                <th colspan="3" style="background-color:indigo;color:white"><i>Monthly Goal Tracking</i></th>
-            </tr>
-            <tr>
-                <th>
-                    <label>Income Goal:</label>
-                    <br/>
-                    <input type="number" placeholder="Income" style="width:5vw;padding:0;margin:0;margin-bottom:1vh"
-                    @bind=ProjectedIncomeAmountStr />
-                </th>
-                <th>Monthly Goal</th>
-                <th>MTD.</th>
-            </tr>
-            <tr>
-                <td>Income</td>
-                <td>@Constants.Pretty(ProjectedIncomeAmount)</td>
-                <td>@Constants.Pretty(ActualIncomeAmount)</td>
-            </tr>
-            <tr>
-                <td>Dynamic</td>
-                <td>@Constants.Pretty(ProjectedDynamicAmount)</td>
-                <td>@Constants.Pretty(ActualDynamicAmount)</td>
-            </tr>
-            <tr>
-                <td>Static</td>
-                <td>@Constants.Pretty(ProjectedStaticAmount)</td>
-                <td>@Constants.Pretty(ActualStaticAmount)</td>
-            </tr>
-            @if (EnvelopeAmount > 0)
-            {
-                <tr>
-                    <td>Envelopes</td>
-                    <td>@Constants.Pretty(0)</td>
-                    <td>@Constants.Pretty(EnvelopeAmount)</td>
-                </tr>
-            }
-            <tr>
-                <td colspan="3">=</td>
-            </tr>
-            <tr>
-                <td><strong>Net</strong></td>
-                <td>@Constants.Pretty(ProjectedNetAmount)</td>
-                <td>@Constants.Pretty(ActualNetAmount)</td>
-            </tr>
-        </table>
-    </div>
-}
+    @if (Expenses != null && Expenses.Count > 0)
+    {
+        <div class="chart-hor">
+            <DonutChart ChartId="donut1" Expenses=@Expenses />
+        </div>
+    }
+</div>
 
 @code {
-    [Parameter]
-    public bool Mobile { get; set; }
-
     [Parameter]
     public double ActualIncomeAmount { get; set; }
 
@@ -119,6 +55,9 @@ else
 
     [Parameter]
     public double EnvelopeAmount { get; set; }
+
+    [Parameter]
+    public List<Transaction> Transactions { get; set; }
 
     public string projectedIncomeAmountStrOG { get; set; }
     public string projectedIncomeAmountStr { get; set; }
@@ -149,14 +88,19 @@ else
     public double ProjectedNetAmount => ProjectedIncomeAmount - ProjectedDynamicAmount - ProjectedStaticAmount;
 
     private List<SavingsGoal> ThisMonthSavingsGoals { get; set; } = new List<SavingsGoal>();
+    private List<ExpenseAmount> Expenses { get; set; } = new List<ExpenseAmount>();
 
     protected override Task OnInitializedAsync()
     {
         SavingsGoal Default1 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person1) && sg.Month == "All");
         SavingsGoal Default2 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person2) && sg.Month == "All");
 
-        ProjectedDynamicAmount = Constants.DynamicCostItems.Sum(dci => dci.Amount);
-        ProjectedStaticAmount = Constants.StaticMonthlyCosts.Sum(smc => smc.TotalAmount);
+        var dcis = Constants.DynamicCostItems;
+        var dciNames = Constants.DynamicCostItems.Select(d => d.Name);
+        var smcs = Constants.StaticMonthlyCosts;
+
+        ProjectedDynamicAmount = dcis.Sum(dci => dci.Amount);
+        ProjectedStaticAmount = smcs.Sum(smc => smc.TotalAmount);
 
         if (Default1 == null || Default2 == null)
             return base.OnInitializedAsync();
@@ -166,6 +110,17 @@ else
 
         projectedIncomeAmountStrOG = ThisMonthSavingsGoals.Sum(tmsg => tmsg.Goal).ToString();
         ProjectedIncomeAmountStr = projectedIncomeAmountStrOG;
+
+        foreach (var dcin in dciNames)
+        {
+            double sum = Transactions.Where(t => t.ExpenseType == dcin).Sum(to => to.TotalAmount);
+            if (sum > 0)
+                Expenses.Add(new ExpenseAmount(dcin, sum));
+        }
+
+        var statics = Transactions.Where(tr => tr.ExpenseType == "Static Cost");
+        foreach (var stat in statics)
+            Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
 
         return base.OnInitializedAsync();
     }

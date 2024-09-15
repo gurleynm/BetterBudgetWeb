@@ -52,13 +52,13 @@
                 <h2 style="text-align:center">
                     @{
                         double p1nw = GetNetWorthOf(mr, Constants.Person1);
-                        <span>@($"Projected {Constants.Person1}'s Net Worth:")</span> <span style="color:@GoodOrBad(p1nw)">@(Constants.Pretty(p1nw))</span>
+                        <span>@($"Projected {Constants.Person1}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(p1nw)">@(Constants.Pretty(p1nw))</span>
                     }
                 </h2>
                 <h2 style="text-align:center">
                     @{
                         double p2nw = GetNetWorthOf(mr, Constants.Person2);
-                        <span>@($"Projected {Constants.Person2}'s Net Worth:")</span> <span style="color:@GoodOrBad(p2nw)">@(Constants.Pretty(p2nw))</span>
+                        <span>@($"Projected {Constants.Person2}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(p2nw)">@(Constants.Pretty(p2nw))</span>
                     }
                 </h2>
             </div>
@@ -104,11 +104,6 @@
             nextOne = DateTime.Today.AddMonths(cnt + 1);
             MonthRels.Add(new MonthRelations(nextOne.Month, nextOne.Year));
         }
-    }
-
-    private string GoodOrBad(double money)
-    {
-        return money <= 0 ? "red" : "forestgreen";
     }
 
     private double GetNetWorthOf(MonthRelations monthRelations, string person)

@@ -498,5 +498,9 @@ namespace BetterBudgetWeb
              */
             return 1;
         }
+        public static string GoodOrBad(double money)
+        {
+            return money <= 0 ? "red" : "forestgreen";
+        }
     }
 }

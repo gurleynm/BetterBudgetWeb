@@ -1,10 +1,11 @@
-﻿@using BetterBudgetWeb.Data
+﻿    @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.MainMenuItems
 @using BetterBudgetWeb.MainMenuItems.Chart
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.MonthView
 @using System.Data;
+@using static BetterBudgetWeb.MainMenuItems.DonutChart
 @inject IJSRuntime JSRuntime
 
 @if (!Constants.Mobile)
@@ -13,7 +14,7 @@
         <div style="display:inline-block;margin-right:1vw;">
             <!-- Dynamic Costs -->
             <div style="width:40vw; margin-right:1vw;">
-                <table>
+                <table class="toggle-table">
                     <tr>
                         <th colspan="2" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
                     </tr>
@@ -60,8 +61,8 @@
 
         <div style="display:flex;flex-direction:column;">
             <!-- Monthly Goal Tracking -->
-            <MonthViewMonthlyGoalTracking DynamicCostAmount="@DynamicCostAmount"
-                                          StaticCostAmount="@StaticCostAmount" @bind-IncomeOverflow="IncomeOverflow" />
+            <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
+                                          StaticCostAmount="@StaticCostAmount" Expenses=@Expenses @bind-IncomeOverflow="IncomeOverflow" />
         </div>
     </div>
 }
@@ -69,7 +70,7 @@ else
 {
     <!-- Dynamic Costs -->
     <div style="width:100%;">
-        <table>
+        <table class="toggle-table">
             <tr>
                 <th colspan="2" style="background-color:magenta;font-size:3vw;color:white"><i>Dynamic Monthly Costs</i></th>
             </tr>
@@ -115,8 +116,8 @@ else
     <br />
 
     <!-- Monthly Goal Tracking -->
-    <MonthViewMonthlyGoalTracking DynamicCostAmount="@DynamicCostAmount"
-                                  StaticCostAmount="@StaticCostAmount" @bind-IncomeOverflow="IncomeOverflow" />
+    <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
+                                  StaticCostAmount="@StaticCostAmount" Expenses=@Expenses @bind-IncomeOverflow="IncomeOverflow" />
 
     <br />
     <br />
@@ -130,7 +131,8 @@ else
     public int Year => MR.Year;
 
     public double incomeOverflow { get; set; }
-    public double IncomeOverflow {
+    public double IncomeOverflow
+    {
         get => incomeOverflow;
         set
         {
@@ -157,7 +159,7 @@ else
 
     [Parameter]
     public EventCallback<double> Person1OverflowChanged { get; set; }
-    
+
     public double person2Overflow { get; set; }
 
     [Parameter]
@@ -182,6 +184,8 @@ else
     private double DynamicCostAmount => MonthViewConstants.DynamicCostItems.Sum(d => d.Amount);
     private double StaticCostAmount => MonthViewConstants.StaticMonthlyCosts.Sum(smc => smc.TotalAmount);
 
+    private List<ExpenseAmount> Expenses = new List<ExpenseAmount>();
+
     private string MonthYear => (new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString());
 
     protected override async Task OnInitializedAsync()
@@ -191,12 +195,13 @@ else
         StaticMonthMap = new Dictionary<string, (string, string)>();
         DynaMonthMap = new Dictionary<string, (string, string)>();
 
-        StateHasChanged();
-    }
+        foreach (var dcin in MonthViewConstants.DynamicCostItems)
+            Expenses.Add(new ExpenseAmount(dcin.Name, dcin.Amount));
 
-    private string GoodOrBad(double money)
-    {
-        return money <= 0 ? "red" : "forestgreen";
+        foreach (var stat in MonthViewConstants.StaticMonthlyCosts)
+            Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
+
+        StateHasChanged();
     }
     private string Pretty(double num)
     {

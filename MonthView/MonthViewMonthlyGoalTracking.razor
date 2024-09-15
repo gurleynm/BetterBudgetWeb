@@ -1,81 +1,35 @@
 ﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems
 @using BetterBudgetWeb.Repo;
-@if (Mobile)
-{
-    <div style="width:100%;">
-        <table>
-            <tr>
-                <th colspan="2" style="font-size:3vw;background-color:indigo;color:white"><i>Monthly Goal Tracking</i></th>
-            </tr>
-            <tr>
-                <th style="font-size:3vw;"></th>
-                <th style="font-size:3vw;">Monthly Goal</th>
-            </tr>
-
-            <tr>
-                <td style="font-size:3vw;padding:.5vw 0;">Income</td>
-                <td style="font-size:3vw;">
-                    <input type="number" placeholder="Income" style="width:90%;"
-                           @bind=ProjectedIncomeAmountStr />
-                </td>
-            </tr>
-            <tr>
-                <td style="font-size:3vw;padding:.5vw 0;">Dynamic</td>
-                <td style="font-size:3vw;">@Constants.Pretty(DynamicCostAmount)</td>
-            </tr>
-            <tr>
-                <td style="font-size:3vw;padding:.5vw 0;">Static</td>
-                <td style="font-size:3vw;">@Constants.Pretty(StaticCostAmount)</td>
-            </tr>
-            <tr>
-                <td style="font-size:3vw;" colspan="2">=</td>
-            </tr>
-            <tr>
-                <td style="font-size:3vw;"><strong>Net</strong></td>
-                <td style="font-size:3vw;">@Constants.Pretty(ProjectedNetAmount)</td>
-            </tr>
-        </table>
+@using static BetterBudgetWeb.MainMenuItems.DonutChart
+<div class="chart-back-hor" style="width:100%;">
+    <div style="display:flex;flex-direction:row;width:100%;justify-content:space-evenly">
+        <div style="display:flex;flex-direction:column">
+            <span>INCOME</span>
+            <input type="number" placeholder="Income" style="width:5vw;padding:0;margin:0;margin-bottom:1vh"
+                   @bind=ProjectedIncomeAmountStr />
+        </div>
+        <div style="display:flex;flex-direction:column">
+            <span>EXPENSES</span>
+            <span style="color:@Constants.GoodOrBad(-(DynamicCostAmount + StaticCostAmount))">@Constants.Pretty(DynamicCostAmount + StaticCostAmount)</span>
+        </div>
+        <div style="display:flex;flex-direction:column">
+            <span>NET</span>
+            <span style="color:@Constants.GoodOrBad(ProjectedNetAmount)">@Constants.Pretty(ProjectedNetAmount)</span>
+        </div>
     </div>
-}
-else
-{
-    <div style="width:100%;">
-        <table>
-            <tr>
-                <th colspan="2" style="background-color:indigo;color:white"><i>Monthly Goal Tracking</i></th>
-            </tr>
-            <tr>
-                <th></th>
-                <th>Monthly Goal</th>
-            </tr>
-            <tr>
-                <td style="padding:1em">Income</td>
-                <td>
-                    <input type="number" placeholder="Income" style="max-width:50%"
-                           @bind=ProjectedIncomeAmountStr />
-                </td>
-            </tr>
-            <tr>
-                <td style="padding:1em">Dynamic</td>
-                <td>@Constants.Pretty(DynamicCostAmount)</td>
-            </tr>
-            <tr>
-                <td style="padding:1em">Static</td>
-                <td>@Constants.Pretty(StaticCostAmount)</td>
-            </tr>
-            <tr>
-                <td colspan="2">=</td>
-            </tr>
-            <tr>
-                <td style="padding:1em"><strong>Net</strong></td>
-                <td>@Constants.Pretty(ProjectedNetAmount)</td>
-            </tr>
-        </table>
-    </div>
-}
+    @if (Expenses != null && Expenses.Count > 0)
+    {
+        <div>
+            <DonutChart ChartId="@("donut_"+Month)" Expenses=@Expenses />
+        </div>
+    }
+</div>
 
 @code {
     public bool Mobile => Constants.Mobile;
+    [Parameter]
+    public int Month { get; set; }
     [Parameter]
     public double DynamicCostAmount { get; set; }
     [Parameter]
@@ -97,6 +51,8 @@ else
     [Parameter]
     public EventCallback<double> IncomeOverflowChanged { get; set; }
 
+    [Parameter]
+    public List<ExpenseAmount> Expenses { get; set; } = new List<ExpenseAmount>();
 
     public string projectedIncomeAmountStrOG { get; set; }
     public string projectedIncomeAmountStr { get; set; }    

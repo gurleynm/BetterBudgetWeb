@@ -57,10 +57,10 @@ else
 
     @if (!Constants.Mobile)
     {
-        <h1 style="text-align:center;color:@GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
+        <h1 style="text-align:center;color:@Constants.GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
         <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
             <h2 style="text-align:center">
-                <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person1NetWorth)">@(Pretty(Person1NetWorth))</span>
+                <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Person1NetWorth)">@(Pretty(Person1NetWorth))</span>
             </h2>
             @if (Envelopes != null && Envelopes.Count > 0)
             {
@@ -68,7 +68,7 @@ else
             }
 
             <h2 style="text-align:center">
-                <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
+                <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
             </h2>
         </div>
         <div style="display:flex;flex-direction:row;
@@ -139,25 +139,16 @@ else
                     <div style="display:flex;justify-content:center;margin-bottom:2vh;">
                         <div>
                             <!-- Savings Goals-->
-                            <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
+                            <MonthlyGoalTracking Transactions=@FilteredTransactions
+                                                 ActualDynamicAmount=@ActualDynamic
                                                  ActualStaticAmount=@ActualStatic
                                                  ActualIncomeAmount=@ActualIncome
                                                  EnvelopeAmount=@EnvelopeExpenses />
-                            <br style="clear:both;" />
-                            <!-- Set Monthly Costs Goals-->
-                            <SetMonthlyTable Trans=FilteredTransactions />
-
                         </div>
                         <br />
                         <!-- Dynamic Costs -->
                         <div style="margin-left:1vw">
-                            <table>
-                                <tr>
-                                    <td colspan="4">
-                                        <ChartHorizontal DPs=@DynamicCostItems />
-                                    </td>
-                                </tr>
-                            </table>
+                            <ChartHorizontal DPs=@DynamicCostItems />
                         </div>
                     </div>
                 </div>
@@ -200,7 +191,7 @@ else
                                 <div style="font-size:3vw;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
                                     @foreach (var env in Envelopes)
                                     {
-                                        <Envelope Name="@env.Name" Scale=11 Font_Size=1.375 
+                                        <Envelope Name="@env.Name" Scale=11 Font_Size=1.375
                                                   Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)
                                                   Saved=@env.TotalAmount FlipClick="true"
                                                   Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
@@ -211,6 +202,10 @@ else
                                 </div>
                             }
                             <AddExpense OnAddConfirm="Add" />
+                            <br style="clear:both;" />
+                            <!-- Set Monthly Costs Goals-->
+                            <SetMonthlyTable Trans=FilteredTransactions />
+                            <br style="clear:both;" />
                             <!-- Ideal Emergency Fund-->
                             <IdealEmergencyFund />
                         </div>
@@ -249,14 +244,14 @@ else
     }
     else
     {
-        <h1 style="text-align:center;color:@GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
+        <h1 style="text-align:center;color:@Constants.GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
         <div>
             <h2 style="float:left;text-align:center">
-                <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person1NetWorth)">@(Pretty(Person1NetWorth))</span>
+                <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Person1NetWorth)">@(Pretty(Person1NetWorth))</span>
             </h2>
 
             <h2 style="float:right;text-align:center">
-                <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
+                <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
             </h2>
         </div>
         <br />
@@ -315,8 +310,8 @@ else
                 <h4 class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")' style="text-align:center">@Constants.Pretty(ActualExpense)</h4>
                 <br />
                 <Chart DPs=DataPoints BarClicked=FilterDate />
-                <br/>
-                <br/>
+                <br />
+                <br />
                 <MonthlySpending All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
             }
 
@@ -327,6 +322,16 @@ else
 
         <AddExpense OnAddConfirm="Add" />
 
+        <br />
+
+        <!-- Savings Goals-->
+        <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic Transactions=@FilteredTransactions
+                             ActualStaticAmount=@ActualStatic
+                             ActualIncomeAmount=@ActualIncome
+                             EnvelopeAmount=@EnvelopeExpenses />
+
+        <br style="clear:both" />
+        <br style="clear:both" />
         @if (Envelopes != null && Envelopes.Count > 0)
         {
             <Envelope Name="@GoalTxt" Scale=40 Font_Size=5 OnClick=@ToggleGoals />
@@ -391,21 +396,14 @@ else
 
         <br />
 
-        <!-- Savings Goals-->
-        <MonthlyGoalTracking Mobile=true ActualDynamicAmount=@ActualDynamic
-                             ActualStaticAmount=@ActualStatic
-                             ActualIncomeAmount=@ActualIncome
-                             EnvelopeAmount=@EnvelopeExpenses />
+        <!-- Set Monthly Costs Goals-->
+        <SetMonthlyTable Trans=FilteredTransactions Mobile=true />
 
+        <br style="clear:both" />
         <br />
 
         <!-- Ideal Emergency Fund-->
         <IdealEmergencyFund Mobile=true />
-
-        <br />
-
-        <!-- Set Monthly Costs Goals-->
-        <SetMonthlyTable Trans=FilteredTransactions Mobile=true />
 
         <br style="clear:both" />
         <br />
@@ -622,15 +620,11 @@ else
         StateHasChanged();
     }
 
-    private string GoodOrBad(double money)
-    {
-        return money <= 0 ? "red" : "forestgreen";
-    }
     private string Pretty(double num)
     {
         return Constants.Pretty(num);
     }
-    
+
     private double CalculateNetWorth(string person)
     {
         return IndexRunner.CalculateNetWorth(person, Balances);

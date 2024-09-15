@@ -1,0 +1,62 @@
+﻿@using BetterBudgetWeb.Data
+@using System.Drawing
+@inject IJSRuntime JSRuntime
+
+<div style="display:flex;flex-direction:column;justify-content:center;width:100%">
+    <div class="donutCell" style="display:flex;flex-direction:column;justify-content:center">
+        <div class="centerLabel">@TotalCost</div>
+        <div id="@ChartId" class="donutDiv"></div>
+    </div>
+    <table>
+        <tr>
+            <th style="border:none;padding:1em">Color</th>
+            <th style="border:none;padding:1em">Expense</th>
+            <th style="border:none;padding:1em">Amount</th>
+        </tr>
+        @foreach (var ex in Expenses.OrderByDescending(e => e.Amount))
+        {
+            <tr>
+                <td style="display:flex;justify-content:center;border:none;padding:1em">
+                <div style="background-color:@ex.SegmentColor;border-radius:2em;width:2em;height:2em;"></div>
+            </td>
+            <td style="border:none">@ex.ExpenseType</td>
+            <td style="border:none">@Constants.Pretty(ex.Amount)</td>
+        </tr>
+        }
+    </table>
+</div>
+@code {
+    [Parameter]
+    public string ChartId { get; set; } //'donutchart'
+    [Parameter]
+    public List<ExpenseAmount> Expenses { get; set; } = new List<ExpenseAmount>();
+
+    private string TotalCost => Constants.Pretty(Expenses.Sum(e => e.Amount));
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender) DrawCoreChart();
+        base.OnAfterRender(firstRender);
+    }
+
+    public async void DrawCoreChart()
+    {
+        var json = System.Text.Json.JsonSerializer.Serialize(Expenses.ToArray());
+        await JSRuntime.InvokeAsync<object>("drawCoreChart", json, ChartId);
+    }
+
+    public class ExpenseAmount
+    {
+
+        private static Random rnd = new Random();
+        public string SegmentColor { get; set; }
+        public string ExpenseType { get; set; }
+        public double Amount { get; set; }
+        public ExpenseAmount(string et, double am) 
+        {
+            SegmentColor = "#" + rnd.Next(256).ToString("X2") + rnd.Next(256).ToString("X2") + rnd.Next(256).ToString("X2");
+            ExpenseType = et; 
+            Amount = am; 
+        }
+    }
+}

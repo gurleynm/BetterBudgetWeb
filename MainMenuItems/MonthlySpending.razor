@@ -3,7 +3,7 @@
 @using BetterBudgetWeb.Runner;
 @inject IJSRuntime JSRuntime
 
-<table class="" style="width:@(Constants.Mobile && TheBalance != null ? "90%" :"100%");margin-bottom:1vh">
+<table class="toggle-table" style="width:@(Constants.Mobile && TheBalance != null ? "90%" :"100%");margin-bottom:1vh">
     <tr style="height:3vw">
         <th style="padding:0 1vw;font-size: @(Constants.Mobile ? "3vw;" : "1vw");" colspan="100%">
             <span>@Title</span>

@@ -106,12 +106,12 @@
         color: @Constants.ColorScheme["Text"];
     }
 
-    tr:nth-child(even) {
+    .toggle-table > tr:nth-child(even) {
         background-color: @Constants.ColorScheme["TableEven"];
         color: @Constants.ColorScheme["Text"];
     }
 
-    tr:nth-child(odd) {
+    .toggle-table > tr:nth-child(odd) {
         background-color: @Constants.ColorScheme["TableOdd"];
         color: @Constants.ColorScheme["Text"];
     }
@@ -321,7 +321,7 @@
     .chart-hor {
         padding: 1rem;
         border-radius: 12px;
-        background-color: transparent;
+        background-color: #384152;
         text-align: center;
         display: flex;
         justify-content: flex-start;
@@ -336,7 +336,7 @@
         width: 100%;
         padding: 1rem;
         border-radius: 12px;
-        background-color: transparent;
+        background-color: #384152;
         text-align: center;
         display: inline-block;
         height: fit-content;
@@ -449,7 +449,18 @@
                 <NavMenu />
             </div>
         }
-
+        @* <div class="sidebar">
+            <div style="top:0;width:auto;margin-top:@HeightTopBar" class="sticky">
+                @if (Constants.Balances != null)
+                {
+                    @foreach (var bal in Constants.Balances)
+                    {
+                        <BalanceSlot TheBalance="bal"
+                                     SetClass="selected-account" IncludeGoals=false OnDeleteConfirm=@(()=>{}) OnEditConfirm=@(()=>{}) />
+                    }
+                }
+            </div>
+        </div> *@
         <main>
             @if (!mobile)
             {

@@ -3,32 +3,32 @@
 @if (Mobile)
 {
     <div style="width:100%; margin-right:2vw;">
-    <table>
-        <tr>
-            <th colspan="2" style="font-size:3vw;background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
-        </tr>
-        <tr>
-            <td style="font-size:3vw;padding:.5vw 0;">@Constants.Person1</td>
-            <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson1) + " - " + Constants.Pretty(SixMonthsPerson1))</td>
-        </tr>
-        <tr>
-            <td style="font-size:3vw;padding:.5vw 0;">@Constants.Person2</td>
-            <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson2))</td>
-        </tr>
-        <tr>
-            <td style="font-size:3vw;" colspan="2">=</td>
-        </tr>
-        <tr>
-            <td style="font-size:3vw;"><strong>Total</strong></td>
-            <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2))</td>
-        </tr>
-    </table>
-</div>
+        <table class="toggle-table">
+            <tr>
+                <th colspan="2" style="font-size:3vw;background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;padding:.5vw 0;">@Constants.Person1</td>
+                <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson1) + " - " + Constants.Pretty(SixMonthsPerson1))</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;padding:.5vw 0;">@Constants.Person2</td>
+                <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson2))</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;" colspan="2">=</td>
+            </tr>
+            <tr>
+                <td style="font-size:3vw;"><strong>Total</strong></td>
+                <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2))</td>
+            </tr>
+        </table>
+    </div>
 }
 else
 {
     <div style="width:100%;">
-        <table>
+        <table class="toggle-table">
             <tr>
                 <th colspan="2" style="background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
             </tr>
@@ -70,7 +70,7 @@ else
         int month;
         int year;
 
-        for(int step = 0; step < months; step++)
+        for (int step = 0; step < months; step++)
         {
             month = CurrentDate.AddMonths(step).Month;
             year = CurrentDate.AddMonths(step).Year;

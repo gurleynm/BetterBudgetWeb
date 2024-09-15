@@ -76,6 +76,22 @@
                 opacity: 0;
             }
         }
+
+        .donutCell {
+            position: relative;
+        }
+
+        .donutDiv {
+            width: 100%;
+            height: 100%;
+        }
+
+        .centerLabel {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 36px;
+            color: red;
+        }
     </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -108,12 +124,15 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
         let IsMobile;
         window.onload = function () {
             google.charts.load('current', { 'packages': ['sankey'] });
+            google.charts.load("current", { packages: ["corechart"] });
+
             IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
 
             if (IsMobile) {
@@ -136,10 +155,58 @@
         function isDevice() {
             return IsMobile;
         }
+        function drawCoreChart(coreList, chartId) {
+            var data = new google.visualization.DataTable();
+            coreList = JSON.parse(coreList);
+
+            const holder = [];
+            var temp = [];
+            var obj;
+            var colors = []
+
+            for (var i = 0; i < coreList.length; i++) {
+                temp = [];
+                obj = coreList[i];
+
+                temp.push(obj['ExpenseType']);
+                temp.push(obj['Amount']);
+                colors.push(obj['SegmentColor'])
+                //temp.push("<text style='font-family:Arial;font-size:16'>" + obj['From'] + ' -> ' + obj['To'] + '<br/>$' + obj['Amount'] +"</text>");
+                holder.push(temp);
+            }
+
+            data.addColumn('string', 'Expense Type');
+            data.addColumn('number', 'Amount');
+            //data.addColumn({ type: 'string', role: 'tooltip' });
+            data.addRows(
+                holder
+            );
+
+            //var data = google.visualization.arrayToDataTable(holder1);
+            //var data = google.visualization.arrayToDataTable([
+            //    ['Task', 'Hours per Day'],
+            //    ['Work', 11],
+            //    ['Eat', 2],
+            //    ['Commute', 2],
+            //    ['Watch TV', 2],
+            //    ['Sleep', 7]
+            //]);
+
+            var options = {
+                pieHole: 0.6,
+                backgroundColor: 'transparent',
+                legend: { position: 'none' },
+                pieSliceText: 'none',
+                colors: colors
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById(chartId));
+            chart.draw(data, options);
+        }
         function drawChart(sankList) {
             var data = new google.visualization.DataTable();
             sankList = JSON.parse(sankList);
-            console.log(sankList);
+
             const holder = [];
             var temp = [];
             var obj;
@@ -152,10 +219,6 @@
                 temp.push(obj['Amount']);
                 //temp.push("<text style='font-family:Arial;font-size:16'>" + obj['From'] + ' -> ' + obj['To'] + '<br/>$' + obj['Amount'] +"</text>");
                 holder.push(temp);
-            }
-
-            for (var j = 0; j < holder.length; j++) {
-                console.log('holder[' + j + ']:' + holder[j]);
             }
 
             data.addColumn('string', 'From');
