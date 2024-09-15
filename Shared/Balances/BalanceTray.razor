@@ -1,0 +1,41 @@
+﻿@using BetterBudgetWeb.Data
+@if (Balances != null)
+{
+    @foreach (var bal in Balances)
+    {
+        <BalanceSlot ShowSpending="false" TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals 
+                OnClick=@(() => RunClicked(bal)) />
+    }
+}
+
+@code {
+    [Parameter]
+    public List<Balance> Balances { get; set; } = new List<Balance>();
+    [Parameter]
+    public Action<Balance> OnSlotClick { get; set; } 
+
+    protected override Task OnInitializedAsync()
+    {
+        RefreshBalances();
+        return base.OnInitializedAsync();
+    }
+
+    private void RunClicked(Balance bal)
+    {
+        if (OnSlotClick != null)
+            OnSlotClick(bal);
+    }
+
+    private bool Goals;
+    public void SetGoals(bool goal)
+    {
+        Goals = goal;
+        StateHasChanged();
+    }
+    public void RefreshBalances()
+    {
+        Balances = Constants.catchAll.Balances;
+        Balances.Sort(Constants.CompareBalance);
+        StateHasChanged();
+    }
+}

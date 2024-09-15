@@ -41,7 +41,7 @@
                     {
                         <td style="padding:1vh;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
                             <span>@("- " + Constants.Person1)</span>
-                            @if (!string.IsNullOrEmpty(ExpenseType))
+                            @if (!string.IsNullOrEmpty(ExpenseType) || !string.IsNullOrEmpty(transaction.ExpenseType))
                             {
                                 <br/>
                                 <span>@("(" + transaction.PaidWithPerson1 + ")")</span>
@@ -62,7 +62,8 @@
                     {
                         <td style="padding:1vh;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
                             <span>@("- " + Constants.Person2)</span>
-                            @if (!string.IsNullOrEmpty(ExpenseType)) {
+                            @if (!string.IsNullOrEmpty(ExpenseType) || !string.IsNullOrEmpty(transaction.ExpenseType))
+                            {
                                 <br />
                                 <span>@("(" + transaction.PaidWithPerson2 + ")")</span>
                             }
@@ -150,7 +151,8 @@
 
     public bool ShowPerson => (TheBalance != null && TheBalance.Person == "Joint") || !string.IsNullOrEmpty(ExpenseType) || All;
 
-    private List<Transaction> FilteredTransactions => GetTransactions();
+    [Parameter]
+    public List<Transaction> FilteredTransactions { get; set; } 
 
     private bool Show { get; set; }
     private bool Disabled { get; set; }
@@ -158,6 +160,13 @@
     private bool ShowDelete { get; set; }
 
     private Transaction SelectedTransaction;
+
+    protected override Task OnInitializedAsync()
+    {
+        if (FilteredTransactions == null)
+            FilteredTransactions = GetTransactions();
+        return base.OnInitializedAsync();
+    }
 
     private string TranColor(string et, double amount)
     {

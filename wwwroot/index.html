@@ -89,7 +89,7 @@
         .centerLabel {
             text-align: center;
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 36px;
+            font-size:xx-large;
             color: red;
         }
     </style>
@@ -130,9 +130,7 @@
     <script>
         let IsMobile;
         window.onload = function () {
-            google.charts.load('current', { 'packages': ['sankey'] });
-            google.charts.load("current", { packages: ["corechart"] });
-
+            google.charts.load('current', { 'packages': ['sankey', 'corechart', 'line'] });
             IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
 
             if (IsMobile) {
@@ -154,6 +152,38 @@
         }
         function isDevice() {
             return IsMobile;
+        }
+        function drawLineChart(lineList, chartId) {
+            var data = new google.visualization.DataTable();
+
+            const holder = [];
+            var temp = [];
+            var obj;
+
+            for (var i = 0; i < lineList.length; i++) {
+                temp = [];
+                obj = lineList[i];
+
+                temp.push(obj['Month']);
+                temp.push(obj['Amount']);
+                temp.push(obj['Certainty']);
+                holder.push(temp);
+            }
+
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Amount');
+            data.addColumn({ type: 'boolean', role: 'certainty' }); // certainty col.
+            data.addRows(
+                holder
+            );
+            //data.addRows([
+            //    ['April', 1000, true],
+            //    ['May', 1170, true],
+            //    ['June', 660, true],
+            //    ['July', 1030, false]
+            //]);
+            var chartLineWithDash = new google.visualization.LineChart(document.getElementById(chartId));
+            chartLineWithDash.draw(data);
         }
         function drawCoreChart(coreList, chartId) {
             var data = new google.visualization.DataTable();

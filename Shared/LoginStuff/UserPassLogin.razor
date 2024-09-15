@@ -12,8 +12,8 @@
         }
         @if (CreatingAccount)
         {
-            <div style="display:inline-block">
-                <div style="display:flex;justify-content:center;flex-direction:row">
+            <div style="display:inline-block;padding:1em">
+                <div style="display:flex;justify-content:center;flex-direction:@(Constants.Mobile ? "column" : "row")">
                     <div style="display:flex;flex-direction:column">
                         <label style="color:white">Username 1</label>
                         <input id="user" placeholder="Username 1" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <br />
-                <div style="display:flex;justify-content:center;flex-direction:row">
+                <div style="display:flex;justify-content:center;flex-direction:@(Constants.Mobile ? "column" : "row")">
                     <div style="display:flex;flex-direction:column">
                         <label style="color:white">Shared Password</label>
                         <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@Password />

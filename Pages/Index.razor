@@ -5,6 +5,7 @@
 @using BetterBudgetWeb.MainMenuItems.Chart.ChartHorizontal
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.Shared.Balances
 @using BetterBudgetWeb.Shared.Tutorial
 @using static BetterBudgetWeb.Shared.AddExpense;
 @inject IJSRuntime JSRuntime
@@ -75,7 +76,7 @@ else
                 justify-content:@(DataPoints != null && DataPoints.Count > 0 ? "space-between" : "flex-end");width:100%">
             @if (DataPoints != null && DataPoints.Count > 0)
             {
-                <button class="spendchart-btn" @onclick="@ToggleChartBtn">
+                <button class="spendchart-btn" style="width:fit-content" @onclick="@ToggleChartBtn">
                     @if (!ShowChart)
                     {
                         <h2>Spending Chart&nbsp;<i class="arrow right"></i></h2>
@@ -96,9 +97,6 @@ else
         {
             <br />
             <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
-                <h2 style="text-align:center">
-                    <span>Month Projected Expenses:</span> <span class="income-bad">@Constants.Pretty(ProjectedExpense)</span>
-                </h2>
                 @if (EnvelopeExpenses > 0)
                 {
                     <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;align-items:baseline;justify-content:center">
@@ -109,30 +107,17 @@ else
                         </label>
                     </div>
                 }
-                <h2 style="text-align:center">
-                    <span>Month Actual Expenses:</span> <span class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")'>@Constants.Pretty(ActualExpense)</span>
-                </h2>
             </div>
             <br />
 
             <Chart DPs=DataPoints BarClicked=FilterDate />
             <br />
             <br />
-            <MonthlySpending All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
+            <MonthlySpending FilteredTransactions=@FilteredTransactions All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
         }
         <br />
 
         <div style="display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between">
-            <div style="min-width:20vw; width: auto; height:fit-content; margin-right:2vw; overflow: auto; position: relative;border: solid gray 1px;padding:0">
-                @if (Balances != null)
-                {
-                    @foreach (var bal in Balances)
-                    {
-                        <BalanceSlot TheBalance="bal" OnClick="@(() => SetBalance(bal))"
-                                     SetClass="selected-account" IncludeGoals=Goals OnDeleteConfirm=@CloseModal OnEditConfirm=@CloseModal />
-                    }
-                }
-            </div>
             <div style="display:flex;justify-content:start;">
 
                 <div style="width:100%;float:left; margin-right:1vw; margin-bottom:2vh;display:inline-block;">
@@ -304,15 +289,10 @@ else
                         </label>
                     </div>
                 }
-                <h3>Month Projected Expenses:</h3>
-                <h4 class="income-bad" style="text-align:center">@Constants.Pretty(ProjectedExpense)</h4>
-                <h3>Month Actual Expenses:</h3>
-                <h4 class='@(ActualExpense > ProjectedExpense ? "income-bad" : "income-good")' style="text-align:center">@Constants.Pretty(ActualExpense)</h4>
-                <br />
                 <Chart DPs=DataPoints BarClicked=FilterDate />
                 <br />
                 <br />
-                <MonthlySpending All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
+                <MonthlySpending FilteredTransactions=@FilteredTransactions All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
             }
 
             <br />
@@ -397,7 +377,7 @@ else
         <br />
 
         <!-- Set Monthly Costs Goals-->
-        <SetMonthlyTable Trans=FilteredTransactions Mobile=true />
+        <SetMonthlyTable Trans=FilteredTransactions />
 
         <br style="clear:both" />
         <br />
@@ -430,6 +410,9 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public BalanceTray GlobalBT { get; set; }
+
     private DateTime StartDate => DateTime.Now;
     private DateTime EndDate => new DateTime(StartDate.Year,
                                              StartDate.Month,
@@ -484,7 +467,8 @@ else
     private List<string> FoundYears => GetYears();
     private List<DataPoint> DataPoints = new List<DataPoint>();
 
-    private bool Goals;
+    private bool goals;
+    private bool Goals { get { return goals; } set { goals = value; if (!Constants.Mobile) GlobalBT.SetGoals(goals); } }
 
     private bool filtered;
     private string AddConfirmClass = "collapse";
@@ -525,6 +509,7 @@ else
     private void SetBalance(Balance bal)
     {
         SelectedBalance = bal;
+        ShowChart = !ShowChart;
         FilterBalance(bal.Name);
         StateHasChanged();
     }
@@ -616,6 +601,8 @@ else
             ShowTutorial = false;
 
         SetDataPoints();
+
+        GlobalBT.OnSlotClick += SetBalance;
 
         StateHasChanged();
     }
@@ -779,7 +766,10 @@ else
     private async void AddConfirm()
     {
         SetDataPoints();
-        Balances.Sort(Constants.CompareBalance);
+        if (!Constants.Mobile)
+            GlobalBT.RefreshBalances();
+        else
+            Balances.Sort(Constants.CompareBalance);
 
         AddConfirmClass = "floaty";
         await Task.Delay(3000);
@@ -832,6 +822,8 @@ else
     }
     private void ToggleChartBtn()
     {
+        if (ShowChart)
+            ResetFilters();
         ShowChart = !ShowChart;
     }
     private async void ToggleGoals()

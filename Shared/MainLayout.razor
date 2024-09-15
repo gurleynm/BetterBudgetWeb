@@ -1,5 +1,6 @@
 ﻿@using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Repo;
+@using BetterBudgetWeb.Shared.Balances
 @using BetterBudgetWeb.Shared.LoginStuff
 @inherits LayoutComponentBase
 @inject IJSRuntime jsRuntime
@@ -389,7 +390,17 @@
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
-    @if (!WeIn)
+    @if (NavMan.Uri.Contains("policy"))
+    {
+        <main>
+            <article class="content px-4" style="padding-top:@HeightTopBar">
+                <CascadingValue Value=LogOff>
+                    @Body
+                </CascadingValue>
+            </article>
+        </main>
+    }
+    else if (!WeIn)
     {
         <PageTitle>Enter Password</PageTitle>
         @if (mobile)
@@ -441,7 +452,7 @@
             }
         }
     }
-    else if (WeIn)
+    else
     {
         @if (mobile)
         {
@@ -449,18 +460,6 @@
                 <NavMenu />
             </div>
         }
-        @* <div class="sidebar">
-            <div style="top:0;width:auto;margin-top:@HeightTopBar" class="sticky">
-                @if (Constants.Balances != null)
-                {
-                    @foreach (var bal in Constants.Balances)
-                    {
-                        <BalanceSlot TheBalance="bal"
-                                     SetClass="selected-account" IncludeGoals=false OnDeleteConfirm=@(()=>{}) OnEditConfirm=@(()=>{}) />
-                    }
-                }
-            </div>
-        </div> *@
         <main>
             @if (!mobile)
             {
@@ -525,22 +524,22 @@
                         }
                     </ul>
                 </div>
+                <div style="position: fixed; top:@HeightTopBar; left:0; width:@(WidthLeftBar);height:100vh">
+                    <div style="z-index:1;width: @WidthLeftBar; height:100%; margin-right:2vw; overflow: auto; position: relative;border: solid gray 1px;padding:0">
+                        <BalanceTray @ref=@GlobalBT />
+                    </div>
+                </div>
             }
-            <article class="content px-4" style="padding-top:@HeightTopBar">
+            <article class="content px-4" style="padding-top:@HeightTopBar;@PaddingLeft">
                 <CascadingValue Value=LogOff>
-                    @Body
+                    <CascadingValue Value=GlobalBT>
+                        @Body
+                    </CascadingValue>
                 </CascadingValue>
             </article>
         </main>
     }
-    else
-    {
-        <div style="display:inline-block;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width:100vw">
-            <div style="display:flex;justify-content:center;width:50%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
-                <h2 style="text-align:center">Login successful ✔</h2>
-            </div>
-        </div>
-    }
+    <Footer />
 </div>
 
 @code {
@@ -549,8 +548,16 @@
     private string LogTitle = "Logging in";
     EventCallback LogOff => EventCallback.Factory.Create(this, SignOut);
 
+    public BalanceTray GlobalBT { get; set; } = new BalanceTray();
+
     private double heightTopBar = 8;
     private string HeightTopBar => heightTopBar + "vh";
+    private double widthLeftBar = 20;
+    private string WidthLeftBar => widthLeftBar + "em";
+    private double widthLeftBarPlus => widthLeftBar * 1.1;
+    private string WidthLeftBarPlus => widthLeftBarPlus + "em";
+    private string PaddingLeft => Constants.Mobile ? "" : "padding-left:" + WidthLeftBarPlus + " !important;";
+
     private string theView { get; set; }
     private string ErrorMsg { get; set; }
     private bool WeIn { get; set; }
@@ -560,6 +567,8 @@
     private string confirmPassword { get; set; }
     private bool CreatingAccount { get; set; }
     private int pwdAttempts { get; set; }
+
+    private List<Balance> Balances = new List<Balance>();
 
     private UserPassLogin userpasslogin;
 
@@ -689,6 +698,9 @@
 
             await Constants.Init(true);
             NavMan.NavigateTo("");
+
+            Balances = Constants.catchAll.Balances;
+            Balances.Sort(Constants.CompareBalance);
         }
         else if (countAttempt)
         {

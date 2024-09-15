@@ -27,9 +27,9 @@
 <h4>The second user's name is: <span>@OtherUser</span></h4>
 <button class="btn btn-secondary" @onclick=@(() => {ShowUpdate = true; ErrorMsg = "";})>Update Password</button>
 <button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
-
+@* 
 <button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsg = "";})>Delete Account</button>
-
+ *@
 
 @if (ShowUpdate)
 {

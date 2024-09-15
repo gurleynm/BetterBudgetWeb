@@ -37,6 +37,8 @@
     [Parameter]
     public bool IncludeGoals { get; set; }
     [Parameter]
+    public bool ShowSpending { get; set; } = true;
+    [Parameter]
     public string SetClass { get; set; }
 
     [Parameter]
@@ -72,8 +74,9 @@
         }
         else
         {
-            Show = !Show;
-            //await OnClick.InvokeAsync(TheBalance);
+            Show = !Show && ShowSpending;
+            if (OnClick.HasDelegate)
+                await OnClick.InvokeAsync(TheBalance);
         }
     }
     private bool ThisBalance(Transaction t)
