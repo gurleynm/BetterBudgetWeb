@@ -126,10 +126,9 @@
     table {
         font-family: arial, sans-serif;
         font-size: 1vw;
-        border-collapse: collapse;
         width: 100%;
         overflow: hidden;
-        border-radius: @(mobile ? "5vw;" : "1vw;");
+        border-radius: @(Constants.Mobile ? "5vw;" : "1vw;");
     }
 
     .switch {
@@ -410,9 +409,12 @@
         background-color: transparent;
         color: white;
         border: none;
-        border-bottom: solid white 1px;
+        border: solid white 1px;
         text-align: center;
         color: @Constants.ColorScheme["Text"];
+    }
+    span {
+        color:white;
     }
 </style>
 

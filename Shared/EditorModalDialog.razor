@@ -24,7 +24,7 @@
             <div class="modal-content" style="width:fit-content;position: absolute;left: 50%; top: 50%;
                         transform: translate(-50%, 0%);background-color:#384153;">
                 <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:black;">
+                    <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:white;">
                         <strong>Editting Transaction</strong>
                     </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
@@ -55,21 +55,25 @@
                             </tr>
                             <tr>
                                 <td style="padding:1vw">
-                                    <InputDate @bind-Value="Transact.DateOfTransaction" />
+                                    <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
                                 </td>
                                 <td style="padding:1vw">
                                     <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
                                 </td>
                                 <td style="padding:1vw">
-                                    <InputText @bind-Value="Transact.Name" />
+                                    <InputText @bind-Value="Transact.Name" style="color:white"  />
                                 </td>
                                 <td style="padding:1vw">
-                                    <InputNumber @bind-Value="Transact.Person1Amount" style="width: 5vw;margin-bottom:.5vw" />
+                                    <span style="border:solid white 1px;padding-left:1em">
+                                        $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
+                                    </span>
                                     <PaymentInput @bind-NewExpense="@Transact.ExpenseType" 
                                             @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Constants.Person1" />
                                 </td>
                                 <td style="padding:1vw">
-                                    <InputNumber @bind-Value="Transact.Person2Amount" style="width: 5vw;margin-bottom:.5vw" />
+                                    <span style="border:solid white 1px;padding-left:1em">
+                                        $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
+                                    </span>
                                     <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
                                               @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Constants.Person2" />
                                 </td>
@@ -96,9 +100,9 @@ else
 {
     <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
         <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:fit-content;margin:0 auto;background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+            <div class="modal-content" style="width:fit-content;margin:0 auto;background-color:#384153;">
                 <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:black;">
+                    <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:white;">
                         <strong>Editting Transaction</strong>
                     </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
@@ -116,7 +120,7 @@ else
                                     <label>Date</label>
                                 </td>
                                 <td style="font-size:3vw;padding:1vw">
-                                    <InputDate @bind-Value="Transact.DateOfTransaction" />
+                                    <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
                                 </td>
                             </tr>
                             <tr>
@@ -132,7 +136,7 @@ else
                                     <label>Name</label>
                                 </td>
                                 <td style="font-size:3vw;padding:1vw">
-                                    <InputText @bind-Value="Transact.Name" />
+                                    <InputText @bind-Value="Transact.Name" style="color:white" />
                                 </td>
                             </tr>
                             <tr>
@@ -140,7 +144,9 @@ else
                                     <label>@(Constants.Person1 + " Values")</label>
                                 </td>
                                 <td style="font-size:3vw;padding:1vw">
-                                    <InputNumber @bind-Value="Transact.Person1Amount" style="width: 15vw;margin-bottom:.5vw" />
+                                    <span style="border:solid white 1px;padding-left:1em">
+                                        $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
+                                    </span>
                                     <br />
                                     <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
                                               @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Constants.Person1" />
@@ -151,7 +157,9 @@ else
                                     <label>@(Constants.Person2 + " Values")</label>
                                 </td>
                                 <td style="font-size:3vw;padding:1vw">
-                                    <InputNumber @bind-Value="Transact.Person2Amount" style="width: 15vw;margin-bottom:.5vw" />
+                                    <span style="border:solid white 1px;padding-left:1em">
+                                        $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
+                                    </span>
                                     <br />
                                     <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
                                               @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Constants.Person2" />

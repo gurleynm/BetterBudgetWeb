@@ -382,8 +382,7 @@ else
 
         if (Years.Count == 1 && Years[0].MyClass != "active")
             Years[0].MyClass = "active";
-
-        snaps = await ReportRunner.SetSnapshot(DateTime.Now);
+        snaps = await SnapshotRepo.GetSnapshotsAsync();
 
         await LoadTable();
     }

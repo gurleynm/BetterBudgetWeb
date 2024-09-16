@@ -17,7 +17,7 @@
     </div>
     @if (!Mobile)
     {
-        <table class="chart-hor">
+        <div class="chart-hor" style="display:flex;flex-direction:column;justify-content:center;">
             @foreach (var dp in DPs)
             {
                 @if (DPs != null && DPs.Count > 0 && dp.Name == DPs[DPs.Count - 1].Name)
@@ -40,7 +40,7 @@
                 }
 
             }
-        </table>
+        </div>
     }
     else
     {

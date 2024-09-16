@@ -37,13 +37,13 @@
                         <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw;color:silver" />
                     </td>
                     <td colspan="2">
-                        <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" />
+                        <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" style="color:white" />
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <span>
-                            $<input type="number" style="width:5em;color:@TextColor" @bind=@NewTrans.TopAmount>
+                        <span style="border:solid white 1px;padding-left:1em">
+                            $<input type="number" style="width:5em;border:none;color:@TextColor" @bind=@NewTrans.TopAmount>
                         </span>
                     </td>
                     <td>
@@ -75,7 +75,7 @@
                 {
                     <tr>
                         <td>
-                            <span>
+                            <span style="border:solid white 1px;padding-left:1em">
                                 $<input type="number" style="width:5em;" @bind=@NewTrans.BottomAmount>
                             </span>
                         </td>
@@ -137,8 +137,7 @@
                     <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-evenly">
                         <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw;color:silver" />
 
-                        <InputText style="width:30vw;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;
-                                        color:white;border:none;border-bottom:solid white 1px;text-align:center;" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
+                        <InputText style="width:30vw;color:white" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
                     </td>
                 </tr>
                 <tr>

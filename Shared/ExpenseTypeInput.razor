@@ -10,7 +10,7 @@ else
 {
     @if (!Mobile)
     {
-        <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="NewExpense" title="Pick an Expense Type ">
+        <select class="custom-select" style="margin:1vh 0 1vh 0;background-color:transparent;border:solid white 1px;color:white" @bind="NewExpense" title="Pick an Expense Type ">
             <option value="@string.Empty" selected disabled="disabled">Expense Type</option>
             @foreach (var et in ExpenseTypes)
             {
@@ -28,7 +28,7 @@ else
     }
     else
     {
-        <select class="custom-select" style="font-size:3vw;margin:1vh 0 1vh 0;width:20vw;" @bind="NewExpense" title="Pick an Expense Type ">
+        <select class="custom-select" style="font-size:3vw;margin:1vh 0 1vh 0;width:20vw;background-color:transparent;border:solid white 1px;color:white" @bind="NewExpense" title="Pick an Expense Type ">
             <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Expense</option>
             @foreach (var et in ExpenseTypes)
             {

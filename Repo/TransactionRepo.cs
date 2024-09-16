@@ -67,10 +67,7 @@ namespace BetterBudgetWeb.Repo
 
 
             Constants.AssignCatches(TW.catcher);
-
-            if (trans.MonthYear() != Constants.MonthYear())
-                await ReportRunner.SetSnapshot(trans.DateOfTransaction);
-            
+                        
             return tran;
         }
         // THIS IS UNIQUE!!! IT RETURNS A CatchAll!

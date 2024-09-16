@@ -2,7 +2,7 @@
 
 @if (!Mobile)
 {
-    <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="PaidWith" title="Pick a payment type ">
+    <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;background-color:transparent;border:solid white 1px;color:white" @bind="PaidWith" title="Pick a payment type ">
         @if (Envelopes != null && Envelopes.Count > 0 && NewExpense == "Envelope")
         {
             <option selected value="@string.Empty" disabled>@Envelope1Header</option>
@@ -29,7 +29,7 @@
 }
 else
 {
-    <select class="custom-select" style="font-size:3vw;width:30vw;margin:1vh 0 1vh 0;" @bind="PaidWith" title="Pick a payment type ">
+    <select class="custom-select" style="font-size:3vw;width:30vw;margin:1vh 0 1vh 0;background-color:transparent;border:solid white 1px;color:white" @bind="PaidWith" title="Pick a payment type ">
         @if (Envelopes != null && Envelopes.Count > 0 && NewExpense == "Envelope")
         {
             <option selected value="@string.Empty" disabled>@Envelope1Header</option>
