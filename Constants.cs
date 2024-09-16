@@ -104,7 +104,7 @@ namespace BetterBudgetWeb
         public static async Task Init(bool PeopleDecide = false)
         {
             SetColorScheme();
-            BaseUri = Test ? "https://localhost:7234/" : "https://couplesbetterbudget.com:1212/";
+            BaseUri = Test ? "https://localhost:7234/" : "https://api.couplesbetterbudget.com/";
             //BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
             if (PeopleDecide)
             {
