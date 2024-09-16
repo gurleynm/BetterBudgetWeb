@@ -329,6 +329,7 @@ namespace BetterBudgetWeb
         {
             ColorScheme["Background"] = "#111827";
             ColorScheme["Text"] = "silver";
+            ColorScheme["TextOnSilver"] = "white";
             ColorScheme["TableEven"] = "#203957";
             ColorScheme["TableOdd"] = "#384152";
 

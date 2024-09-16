@@ -113,7 +113,9 @@ else
             <Chart DPs=DataPoints BarClicked=FilterDate />
             <br />
             <br />
-            <MonthlySpending FilteredTransactions=@FilteredTransactions All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
+            <MonthlySpending FilteredTransactions=@FilteredTransactions All=true
+                             Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
+                             OnDeleteConfirm=@CloseModal />
         }
         <br />
 
@@ -292,7 +294,9 @@ else
                 <Chart DPs=DataPoints BarClicked=FilterDate />
                 <br />
                 <br />
-                <MonthlySpending FilteredTransactions=@FilteredTransactions All=true Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")" />
+                <MonthlySpending FilteredTransactions=@FilteredTransactions All=true
+                                 Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
+                                 OnDeleteConfirm=@CloseModal />
             }
 
             <br />
@@ -822,8 +826,12 @@ else
     }
     private void ToggleChartBtn()
     {
-        if (ShowChart)
+        if (!ShowChart)
+        {
             ResetFilters();
+            FilteredTransactions = new List<Transaction>(Constants.catchAll.Transactions);
+            FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+        }
         ShowChart = !ShowChart;
     }
     private async void ToggleGoals()

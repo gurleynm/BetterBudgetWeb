@@ -27,7 +27,7 @@
 <h4>The second user's name is: <span>@OtherUser</span></h4>
 <button class="btn btn-secondary" @onclick=@(() => {ShowUpdate = true; ErrorMsg = "";})>Update Password</button>
 <button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
-@* 
+@*
 <button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsg = "";})>Delete Account</button>
  *@
 
@@ -36,31 +36,34 @@
     <Confirmation OnClose="Update" LeftBtnTxt="Cancel" LeftBtnColor="btn-secondary" RightBtnTxt="Update" RightBtnColor="btn-primary"
                   @bind-Disabled=@UpdateDisabled>
         <div>
-            <span><strong>WARNING: All of your data will be deleted. This action cannot be reversed!</strong></span>
+            <span style="color:red"><strong>WARNING: All of your data will be deleted. This action cannot be reversed!</strong></span>
             <br />
             <br />
-            <span>To update your account, please enter in your current password and your new password below:</span>
+            <span style="color:@Constants.ColorScheme["TextOnSilver"]">To update your account, please enter in your current password and your new password below:</span>
             <br />
-            <table>
-                <tr>
-                    <td>Current password:</td>
-                    <td>
-                        <PasswordInput Placeholder="Current Password" @bind-Password=@CurrentPassword />
-                    </td>
-                </tr>
-                <tr>
-                    <td>New password:</td>
-                    <td>
-                        <PasswordInput Placeholder="New Password" @bind-Password=@NewPassword />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Confirm new password:</td>
-                    <td>
-                        <PasswordInput Placeholder="Confirm New Password" @bind-Password=@ConfirmPassword />
-                    </td>
-                </tr>
-            </table>
+            <br />
+            <div style="display:flex;justify-content:center;flex-direction:row">
+                <table style="color:@Constants.ColorScheme["Text"]">
+                    <tr>
+                        <td style="border:none;color:white">Current password:</td>
+                        <td style="border:none">
+                            <PasswordInput Placeholder="Current Password" @bind-Password=@CurrentPassword />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border:none;color:white">New password:</td>
+                        <td style="border:none">
+                            <PasswordInput Placeholder="New Password" @bind-Password=@NewPassword />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border:none;color:white">Confirm new password:</td>
+                        <td style="border:none">
+                            <PasswordInput Placeholder="Confirm New Password" @bind-Password=@ConfirmPassword />
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <br />
             <PasswordRules @ref=@passwordRules Password="@NewPassword" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
             <br />
@@ -144,7 +147,7 @@
                 return;
             }
 
-            string UpdateUser = await UserRepo.UpdateUser(Constants.CUR_USER, "UPDATE_USER_"+Constants.CUR_USER, 
+            string UpdateUser = await UserRepo.UpdateUser(Constants.CUR_USER, "UPDATE_USER_" + Constants.CUR_USER,
                                                                 CurrentPassword, NewPassword);
             if (UpdateUser != "Success")
             {

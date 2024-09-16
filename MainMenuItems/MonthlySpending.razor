@@ -1,6 +1,7 @@
 ﻿@using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Repo;
 @using BetterBudgetWeb.Runner;
+@using BetterBudgetWeb.Shared.Balances
 @inject IJSRuntime JSRuntime
 
 <table class="toggle-table" style="width:@(Constants.Mobile && TheBalance != null ? "90%" :"100%");margin-bottom:1vh">
@@ -128,6 +129,9 @@
     </Confirmation>
 }
 @code {
+    [CascadingParameter]
+    public BalanceTray GlobalBT { get; set; }
+
     [Parameter]
     public string Title { get; set; } = "Transactions";
 
@@ -215,7 +219,8 @@
         if (accepted)
         {
             // TransactionRepo sets everything in Constants
-            await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
+            FilteredTransactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
+            GlobalBT.RefreshBalances();
             await RefreshParent.InvokeAsync();
             await OnDeleteConfirm.InvokeAsync(accepted);
         }

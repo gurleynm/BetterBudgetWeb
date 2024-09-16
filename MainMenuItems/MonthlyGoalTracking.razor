@@ -1,14 +1,16 @@
 ﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems.Chart
 @using BetterBudgetWeb.MainMenuItems.Chart.ChartHorizontal
 @using BetterBudgetWeb.Repo;
 @using static BetterBudgetWeb.MainMenuItems.DonutChart
 <div class="chart-back-hor" style="width:100%;">
     <table class="chart-hor" style="margin-bottom:1em">
-        <ChartBarHorizontal Value=@ActualIncomeAmount
-                            Label="Income Goal"
-                            Negative=false
-                            MaxValue=@ProjectedIncomeAmount
-                            BottomBorder=false />
+        <CustomChartBarHor Value=@ActualIncomeAmount
+                           Label="Income Goal"
+                           Negative=false
+                           MaxValue=@ProjectedIncomeAmount
+                           FillColor="green"
+                           BackgroundColor="#c3b4f3" />
     </table>
     <div style="display:flex;flex-direction:row;width:100%;justify-content:space-evenly">
         <table style="background-color:transparent;border:none;margin-bottom:1em">
@@ -20,8 +22,10 @@
             </tr>
             <tr style="background-color:transparent">
                 <td style="border:none">Projected:</td>
-                <td style="border:none">
-                    <input type="number" placeholder="Income" style="width:5em;padding:0;margin:0;margin-bottom:1vh"
+                <td style="border:none;padding-left:1em">
+                    <input type="number" placeholder="Income"
+                           style="width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
+                                    border:none;border-bottom:solid white 1px;text-align:center;"
                            @bind=ProjectedIncomeAmountStr />
                 </td>
                 <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ProjectedDynamicAmount + ProjectedStaticAmount))">@Constants.Pretty(ProjectedDynamicAmount + ProjectedStaticAmount)</span></td>

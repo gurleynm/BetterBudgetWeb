@@ -34,7 +34,7 @@
             {
                 <tr>
                     <td colspan="1">
-                        <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw" />
+                        <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw;color:silver" />
                     </td>
                     <td colspan="2">
                         <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" />
@@ -42,7 +42,9 @@
                 </tr>
                 <tr>
                     <td>
-                        <InputNumber style="width:6vw" @bind-Value=NewTrans.TopAmount />
+                        <span>
+                            $<input type="number" style="width:5em;color:@TextColor" @bind=@NewTrans.TopAmount>
+                        </span>
                     </td>
                     <td>
                         <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
@@ -65,7 +67,7 @@
                         }
                         else
                         {
-                            <div style="color:white"> Who Paid?</div>
+                            <div style="color:@TextColor"> Who Paid?</div>
                         }
                     </td>
                 </tr>
@@ -73,7 +75,9 @@
                 {
                     <tr>
                         <td>
-                            <InputNumber style="width:9vw" @bind-Value=NewTrans.BottomAmount />
+                            <span>
+                                $<input type="number" style="width:5em;" @bind=@NewTrans.BottomAmount>
+                            </span>
                         </td>
                         <td>
                             <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.BottomPaidWith" />
@@ -96,7 +100,7 @@
                             }
                             else
                             {
-                                <div style="color:white">Who Paid?</div>
+                                <div style="color:@TextColor">Who Paid?</div>
                             }
                         </td>
                     </tr>
@@ -131,14 +135,18 @@
             {
                 <tr>
                     <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-evenly">
-                        <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw" />
+                        <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw;color:silver" />
 
-                        <InputText style="width:30vw" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
+                        <InputText style="width:30vw;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;
+                                        color:white;border:none;border-bottom:solid white 1px;text-align:center;" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
                     </td>
                 </tr>
                 <tr>
                     <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-around;align-items:center;">
-                        <InputNumber style="width:20vw" @bind-Value=NewTrans.TopAmount />
+                        <span>
+                            $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
+                                    border:none;border-bottom:solid white 1px;text-align:center;" @bind=@NewTrans.TopAmount>
+                        </span>
 
                         <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
 
@@ -159,7 +167,7 @@
                         }
                         else
                         {
-                            <div style="color:white"> Who Paid?</div>
+                            <div style="color:@TextColor"> Who Paid?</div>
                         }
                     </td>
                 </tr>
@@ -167,7 +175,10 @@
                 {
                     <tr>
                         <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-around;align-items:center;">
-                            <InputNumber style="width:20vw" @bind-Value=NewTrans.BottomAmount />
+                            <span>
+                                $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
+                                    border:none;border-bottom:solid white 1px;text-align:center;" @bind=@NewTrans.BottomAmount>
+                            </span>
 
                             <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.BottomPaidWith" />
 
@@ -188,7 +199,7 @@
                             }
                             else
                             {
-                                <div style="color:white">Who Paid?</div>
+                                <div style="color:@TextColor">Who Paid?</div>
                             }
                         </td>
                     </tr>
@@ -225,6 +236,7 @@
 
 @code {
     private bool Mobile => Constants.Mobile;
+    private string TextColor => @Constants.ColorScheme["Text"];
 
     private NewTransaction newTrans { get; set; }
     [Parameter]

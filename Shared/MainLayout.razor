@@ -359,7 +359,7 @@
         width: 100%;
         border: 1px solid #313131;
         border-radius: 12px;
-        background-color: #c3b4f3;
+        background-color: @Constants.ColorScheme["IncomeGood"]; /*#c3b4f3*/
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -367,7 +367,7 @@
     }
 
     .chart-bar-hor__fill {
-        background-color: @Constants.ColorScheme["IncomeGood"];
+        background-color: red;
         height: 1rem;
         transition: all 0.3s ease-out;
     }
@@ -386,6 +386,33 @@
         color: @Constants.ColorScheme["Text"];
         margin: 1vh;
         vertical-align: central;
+    }
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
+    .better::placeholder {
+        color: @Constants.ColorScheme["Text"];
+    }
+
+    input{
+        padding: 0;
+        margin: 0;
+        margin-bottom: 1vh;
+        background-color: transparent;
+        color: white;
+        border: none;
+        border-bottom: solid white 1px;
+        text-align: center;
+        color: @Constants.ColorScheme["Text"];
     }
 </style>
 

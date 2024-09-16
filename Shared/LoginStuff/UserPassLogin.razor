@@ -16,12 +16,12 @@
                 <div style="display:flex;justify-content:center;flex-direction:@(Constants.Mobile ? "column" : "row")">
                     <div style="display:flex;flex-direction:column">
                         <label style="color:white">Username 1</label>
-                        <input id="user" placeholder="Username 1" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                        <input class="better" id="user" placeholder="Username 1" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
                     </div>
                     <br />
                     <div style="display:flex;flex-direction:column">
                         <label style="color:white">Username 2</label>
-                        <input id="user2" placeholder="Username 2" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username2 = (string) ui.Value;})" />
+                        <input class="better" id="user2" placeholder="Username 2" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username2 = (string) ui.Value;})" />
                     </div>
                 </div>
                 <br />
@@ -44,7 +44,7 @@
             <div style="display:inline-block">
                 <label style="color:white">Username</label>
                 <br />
-                <input id="user" placeholder="Username" style="text-align:start;color:black;margin:1vh" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                <input class="better" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
                 <br />
                 <label style="color:white">Password</label>
                 <br />

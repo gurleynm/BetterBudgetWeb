@@ -14,7 +14,7 @@
                  style="width:@BarFillWidth"></div>
         }
     </td>
-    <td class="chart-bar-hor__label" style="border:none;width:100%">
+    <td class="chart-bar-hor__label" style="border:none;width:100%;">
         @if (Negative)
         {
             <span @onclick=OnClick style="color:red;cursor:pointer">@(Constants.Pretty(Value) + "/" + Constants.Pretty(MaxValue).Trim('$'))</span>
@@ -26,7 +26,8 @@
 
         @if (Show)
         {
-            <div style="display:flex;justify-content:center;flex-wrap:wrap;flex-direction:row;width:100%">
+            @* <div style="display:flex;justify-content:center;flex-wrap:wrap;flex-direction:row;width:100%"> *@
+                <div>
                 <MonthlySpending @ref="Child" ExpenseType=@Label RefreshParent="@RefreshMe" />
                 @if (BottomBorder)
                 {
@@ -67,7 +68,7 @@
 
             if (MaxValue > 0)
             {
-                BarFillWidth = Math.Round((val / MaxValue) * 100) + "%";
+                BarFillWidth = (100-Math.Round((val / MaxValue) * 100)) + "%";
                 StateHasChanged();
             }
 
@@ -86,7 +87,7 @@
 
             if (maxVal > 0)
             {
-                BarFillWidth = Math.Round((val / maxVal) * 100) + "%";
+                BarFillWidth = (100 - Math.Round((val / MaxValue) * 100)) + "%";
                 StateHasChanged();
             }
         }
