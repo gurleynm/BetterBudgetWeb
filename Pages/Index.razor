@@ -593,9 +593,6 @@ else
 
         GlobalBT.OnSlotClick += SetBalance;
 
-        GenServ.DataChanged += OnDataClassChanged;
-        GenServ.ExampleInstances.CollectionChanged += OnCollectionChanged;
-
         StateHasChanged();
     }
 
@@ -816,8 +813,6 @@ else
     }
     private void ToggleChartBtn()
     {
-        GenServ.Data = "No more";
-        GenServ.ExampleInstances.Add(new Transaction());
         if (!ShowChart)
         {
             ResetFilters();
