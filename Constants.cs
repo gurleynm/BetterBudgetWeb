@@ -74,7 +74,6 @@ namespace BetterBudgetWeb
 
         public static bool Test = false; // true false
 
-        public static string AccountIndexStr = "";
         private static bool mobile = true;
         public static bool Mobile
         {

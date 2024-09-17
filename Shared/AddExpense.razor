@@ -54,7 +54,7 @@
                         {
                             @if (string.IsNullOrEmpty(NewTrans.TopWhoPaid))
                             {
-                                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="@NewTrans.TopWhoPaid">
+                                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="@NewTrans.TopWhoPaid">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
@@ -87,7 +87,7 @@
                             {
                                 @if (string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
                                 {
-                                    <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;" @bind="@NewTrans.BottomWhoPaid">
+                                    <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="@NewTrans.BottomWhoPaid">
                                         <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                         <option>@Constants.Person1</option>
                                         <option>@Constants.Person2</option>
@@ -153,7 +153,7 @@
                         {
                             @if (string.IsNullOrEmpty(NewTrans.TopWhoPaid))
                             {
-                                <select class="custom-select" style="font-size:3vw;" @bind="@NewTrans.TopWhoPaid">
+                                <select class="custom-select" style="font-size:3vw;color:white" @bind="@NewTrans.TopWhoPaid">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
@@ -185,7 +185,7 @@
                             {
                                 @if (string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
                                 {
-                                    <select class="custom-select" style="font-size:3vw" @bind="@NewTrans.BottomWhoPaid">
+                                    <select class="custom-select" style="font-size:3vw;color:white" @bind="@NewTrans.BottomWhoPaid">
                                         <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                         <option>@Constants.Person1</option>
                                         <option>@Constants.Person2</option>

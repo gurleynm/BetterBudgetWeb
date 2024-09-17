@@ -1,18 +1,6 @@
 ﻿@using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Repo
-<style>
-    option {
-        color: black;
-    }
 
-    select {
-        color: black;
-    }
-
-    input {
-        color: black;
-    }
-</style>
 @if (Mobile)
 {
     @if (!string.IsNullOrEmpty(BalanceSelected))
@@ -111,74 +99,67 @@ else
 {
     @if (!string.IsNullOrEmpty(BalanceSelected))
     {
-        <br />
-        <div style="float:left; margin: 0 1vw;">
-            <label>Security Name:</label>
-            <br />
-            <input type="text" placeholder="Name" style="text-transform:uppercase;width:6vw" 
-            @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
-        </div>
-        <div style="float:left; margin-right:1vw;">
-            <label>Security Type:</label>
-            <br />
-            <select class="custom-select" @bind="SecType" title="Type of Balance is required ">
-                <option value="Stock" selected>Stock</option>
-                <option value="ETF">ETF</option>
-                @*<option value="Call">Call Option</option>
-                <option value="Put">Put Option</option>*@
-                <option value="Crypto">Crypto</option>
-            </select>
-        </div>
-        <br style="clear:both" />
-        <br />
-        @if (@SecType == "Call" || @SecType == "Put")
-        {
-            <div style="float:left; margin: 0 1vw;">
-                <label>Strike Price:</label>
-                <br />
-                <input type="number" style="width:7vw" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
+        <div style="display:flex;flex-direction:row;justify-content:center;padding-top:1em">
+            <div style="margin: 0 1vw;display:flex;flex-direction:column;justify-content:start">
+                <label>Security Name:</label>
+                <input type="text" placeholder="Name" style="text-transform:uppercase;width:6vw"
+                       @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
             </div>
-            <div>
-                <label>Expiration Date:</label>
-                <br />
-                <input type="date" @bind="@ExpirationDate" />
-            </div>
-            <br style="clear:both" />
-        }
-        <div style="float:left; margin: 0 1vw;">
-            <label># of Shares:</label>
-            <br />
-            <input type="number" style="width:7vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
-        </div>
-        <div style="float:left; margin: 0 1vw;">
-            <label>Cost Per Share:</label>
-            <br />
-            <input type="number" style="width:8vw" placeholder="Cost Per Share" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
-        </div>
-        <br style="clear:both" />
-        <br />
-        @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
-        {
-            <div style="float:left; margin: 0 1vw;">
-                <label>Person:</label>
-                <br />
-                <select class="custom-select" @bind="Person" title="Person's Balance ">
-                    <option value="@Constants.Person1" selected>@Constants.Person1</option>
-                    <option value="@Constants.Person2">@Constants.Person2</option>
+            <div style="display:flex;flex-direction:column;justify-content:start;margin:0 1vw;">
+                <label>Security Type:</label>
+                <select class="custom-select" @bind="SecType" title="Type of Balance is required ">
+                    <option value="Stock" selected>Stock</option>
+                    <option value="ETF">ETF</option>
+                    @*<option value="Call">Call Option</option>
+            <option value="Put">Put Option</option>*@
+                    <option value="Crypto">Crypto</option>
                 </select>
             </div>
-        }
+            @if (@SecType == "Call" || @SecType == "Put")
+            {
+                <div style="display:flex;flex-direction:column;justify-content:start;margin: 0 1vw;">
+                    <label>Strike Price:</label>
+                    <br />
+                    <input type="number" style="width:7vw" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
+                </div>
+                <div>
+                    <label>Expiration Date:</label>
+                    <br />
+                    <input type="date" @bind="@ExpirationDate" />
+                </div>
+                <br style="clear:both" />
+            }
+            <div style="display:flex;flex-direction:column;justify-content:start;margin: 0 1vw;">
+                <label># of Shares:</label>
+                <input type="number" style="width:7vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+            </div>
+            <div style="display:flex;flex-direction:column;justify-content:start;margin: 0 1vw;">
+                <label>Cost Per Share:</label>
+                <input type="number" style="width:8vw" placeholder="Cost Per Share" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
+            </div>
+            @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
+            {
+                <div style="display:flex;flex-direction:column;justify-content:start; margin: 0 1vw;">
+                    <label>Person:</label>
+                    <br />
+                    <select class="custom-select" @bind="Person" title="Person's Balance ">
+                        <option value="@Constants.Person1" selected>@Constants.Person1</option>
+                        <option value="@Constants.Person2">@Constants.Person2</option>
+                    </select>
+                </div>
+            }
+            <div style="display:flex;flex-direction:column;justify-content:center;">
+                <button class="btn btn-secondary" style="margin: 0 1vw;width:fit-content;height:fit-content" disabled=@Disabled @onclick=Submit>
+                    @("Buy in " + ChosenBalance.Name
+                        )
+                </button>
+            </div>
+        </div>
     }
-    <br style="clear:both" />
-    <br />
     @if (!string.IsNullOrEmpty(ErrorMsg))
     {
         <p style="margin:0 1vw;overflow-wrap:normal;color:@ErrorColor">@ErrorMsg</p>
     }
-    <button class="btn btn-secondary" style="margin: 0 1vw;" disabled=@Disabled @onclick=Submit>
-        @("Buy in " + ChosenBalance.Name
-            )
-    </button>
 
     <br />
     <br />

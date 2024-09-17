@@ -1,4 +1,5 @@
 ﻿@page "/portfolio"
+@page "/portfolio/{BalanceName}"
 @using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Repo;
 @using BetterBudgetWeb.Shared.InputActions
@@ -15,7 +16,7 @@ else
 {
     @if (!Constants.Mobile)
     {
-        <div style="display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between">
+        <div style="display:flex;flex-direction:column;flex-wrap:nowrap;justify-content:space-between">
             <div style="width: auto; height:fit-content; max-height:80vh; overflow: auto; position: relative;border: solid gray 1px;padding:0">
                 <div class="tab" style="width:100%">
                     <button class="tablinks @BuyClass" @onclick="@ShowBuyTab">Buy</button>
@@ -29,136 +30,129 @@ else
                 {
                     <DeleteSecurity OnClick="UpdateEverything" SelectedBalance="@SelectedBalance" />
                 }
-                <label style="font-size:large;padding:.5vw">All Investment Accounts</label>
-                @if (InvestmentAccounts != null && InvestmentAccounts.Count > 0)
-                {
-                    @foreach (var ia in InvestmentAccounts)
-                    {
-                        @if (SelectedBalance.Id == ia.Id)
-                        {
-                            <InvestmentAccountBlock TheBalance="ia" OnClick="@(() => UpdateSelectedBalance(ia))" SetClass="selected-account" />
-                        }
-                        else
-                        {
-                            <InvestmentAccountBlock TheBalance="ia" OnClick="@(() => UpdateSelectedBalance(ia))" />
-                        }
-                    }
-                }
             </div>
-            <div style="overflow:auto">
-                @if (AccountSecurities != null)
-                {
-                    <table class="toggle-table" style="width:100%;">
-                        <tr>
-                            <th colspan="6" style="background-color:forestgreen;color:white;white-space:nowrap;padding:1vw"><i>@(SelectedBalance.Name + " Account")</i></th>
-                        </tr>
-                        <tr style="height:3vw">
-                            <th style="width:10vw;padding:1vw;">Symbol</th>
-                            <th style="width:10vw;padding:1vw;">Last Price</th>
-                            <th style="width:10vw;padding:1vw;">% Gain/Loss</th>
-                            <th style="width:10vw;padding:1vw;">Value</th>
-                            <th style="width:10vw;padding:1vw;">Quantity<br />(% of Portfolio)</th>
-                            <th style="width:10vw;padding:1vw;">Cost Basis</th>
-                        </tr>
-                        @foreach (var accsec in AccountSecurities)
-                        {
-                            <tr style="height:3vw">
-                                <th style="padding:1vw;">@accsec.Name</th>
-                                <th style="padding:1vw;">@Constants.Pretty(accsec.Value/accsec.NumShares)</th>
-                                <th style="padding:1vw;">@(accsec.CalculateReturn() + "%")</th>
-                                <th style="padding:1vw;">@Constants.Pretty(accsec.Value)</th>
-                                <th style="padding:1vw;">
-                                    @Math.Round(accsec.NumShares,2)
-                                    <br />@("(" + Math.Round(accsec.Value / AccountValue * 100, 2) + "%)")
-                                </th>
-                                <th style="padding:1vw;">@Constants.Pretty(accsec.AvgCost * accsec.NumShares)</th>
-                            </tr>
-                        }
-                        @if (SelectedBalance.Value > 0)
-                        {
+            <div style="margin-top:1em;display:flex;flex-direction:row;justify-content:space-around">
+                <div style="overflow:auto;">
+                    @if (AccountSecurities != null)
+                    {
+                        <table class="toggle-table" style="width:100%;">
                             <tr>
-                                <th style="padding:1vw;">Cash</th>
-                                <th style="padding:1vw;">@Constants.Pretty(1)</th>
-                                <th style="padding:1vw;">---</th>
-                                <th style="padding:1vw;">@Constants.Pretty(SelectedBalance.Value)</th>
-                                <th style="padding:1vw;">
-                                    @Constants.Pretty(SelectedBalance.Value).Trim('$')
-                                    <br />@("(" + Math.Round(SelectedBalance.Value / AccountValue * 100, 2) + "%)")
-                                </th>
-                                <th style="padding:1vw;">---</th>
+                                <th colspan="5" style="background-color:forestgreen;color:white;white-space:nowrap;padding:1vw"><i>@(SelectedBalance.Name + " Account")</i></th>
                             </tr>
-                        }
-                        <tr>
-                            <td colspan="6" style="color:white;white-space:nowrap;padding:1vw">=</td>
-                        </tr>
-                        <tr style="height:3vw">
-                            <th style="padding:1vw;">Total</th>
-                            <th style="padding:1vw;"></th>
-                            <th style="padding:1vw;">@(CalculateReturn() + "%")</th>
-                            <th style="padding:1vw;">@Constants.Pretty(AccountValue)</th>
-                            <th style="padding:1vw;"></th>
-                            <th style="padding:1vw;">@Constants.Pretty(TotalCostBasis)</th>
-                        </tr>
-                    </table>
-                }
-            </div>
-            <div style="width: auto; height:fit-content; max-height:80vh; overflow: auto; position: relative;border: solid gray 1px;padding:0">
-                <div>
-                    <span class="oi oi-reload" aria-hidden="true" style="float:right; margin:.2vw; cursor:pointer" @onclick=Reload></span>
-                    <label style="font-size:.8vw;margin:2.5px 0 0 0;float:right;padding:0 .2vw;"><i>@("Refreshed at " + RefreshTime)</i></label>
+                            <tr style="height:3vw">
+                                <th style="width:10vw;padding:1vw;">
+                                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                        <div>Symbol</div>
+                                        <div>Last Price</div>
+                                    </div>
+                                </th>
+                                <th style="width:10vw;padding:1vw;">Gain/Loss %</th>
+                                <th style="width:10vw;padding:1vw;">Value</th>
+                                <th style="width:10vw;padding:1vw;">Quantity<br />(% of Portfolio)</th>
+                                <th style="width:10vw;padding:1vw;">Cost Basis</th>
+                            </tr>
+                            @foreach (var accsec in AccountSecurities)
+                            {
+                                <tr style="height:3vw">
+                                    <td style="padding:1vw;">
+                                        <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                            <div>@accsec.Name</div>
+                                            <div>@Constants.Pretty(accsec.Value / accsec.NumShares)</div>
+                                        </div>
+                                    </td>
+                                    <td style="padding:1vw;">@(accsec.CalculateReturn() + "%")</td>
+                                    <td style="padding:1vw;">@Constants.Pretty(accsec.Value)</td>
+                                    <td style="padding:1vw;">
+                                        @Math.Round(accsec.NumShares, 2)
+                                        <br />@("(" + Math.Round(accsec.Value / AccountValue * 100, 2) + "%)")
+                                    </td>
+                                    <td style="padding:1vw;">@Constants.Pretty(accsec.AvgCost * accsec.NumShares)</td>
+                                </tr>
+                            }
+                            @if (SelectedBalance.Value > 0)
+                            {
+                                <tr>
+                                    <td style="padding:1vw;">
+                                        <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                            <div>Cash</div>
+                                            <div>@Constants.Pretty(1)</div>
+                                        </div>
+                                    </td>
+                                    <td style="padding:1vw;">---</td>
+                                    <td style="padding:1vw;">@Constants.Pretty(SelectedBalance.Value)</td>
+                                    <td style="padding:1vw;">
+                                        @Constants.Pretty(SelectedBalance.Value).Trim('$')
+                                        <br />@("(" + Math.Round(SelectedBalance.Value / AccountValue * 100, 2) + "%)")
+                                    </td>
+                                    <td style="padding:1vw;">---</td>
+                                </tr>
+                            }
+                            <tr>
+                                <td colspan="5" style="color:white;white-space:nowrap;padding:1vw">=</td>
+                            </tr>
+                            <tr style="height:3vw">
+                                <td style="padding:1vw;">Total</td>
+                                <td style="padding:1vw;">@(CalculateReturn() + "%")</td>
+                                <td style="padding:1vw;">@Constants.Pretty(AccountValue)</td>
+                                <td style="padding:1vw;"></td>
+                                <td style="padding:1vw;">@Constants.Pretty(TotalCostBasis)</td>
+                            </tr>
+                        </table>
+                    }
                 </div>
-                <br />
-                <br />
-                @if (TotalOption != null && TotalOption.Count > 0)
-                {
-                    <div style="display:flex;justify-content:center;">
-                        <label style="font-size:large">All Options</label>
+                <div style="width: auto; height:fit-content; max-height:80vh; overflow: auto; position: relative;border: solid gray 1px;padding:0">
+                    <div>
+                        <span class="oi oi-reload" aria-hidden="true" style="float:right; margin:.2vw; cursor:pointer" @onclick=Reload></span>
+                        <label style="font-size:.8vw;margin:2.5px 0 0 0;float:right;padding:0 .2vw;"><i>@("Refreshed at " + RefreshTime)</i></label>
                     </div>
-                    @foreach (var sec in TotalOption)
+                    <br />
+                    <br />
+                    @if (TotalOption != null && TotalOption.Count > 0)
                     {
-                        <SecurityBlock TheSecurity="sec" />
+                        <div style="display:flex;justify-content:center;">
+                            <label style="font-size:large">All Options</label>
+                        </div>
+                        @foreach (var sec in TotalOption)
+                        {
+                            <SecurityBlock TheSecurity="sec" />
+                        }
                     }
-                }
-                @if (TotalStock != null && TotalStock.Count > 0)
-                {
-                    <div style="display:flex;justify-content:center;">
-                        <label style="font-size:large">All Stocks</label>
-                    </div>
-                    @foreach (var sec in TotalStock)
+                    @if (TotalStock != null && TotalStock.Count > 0)
                     {
-                        <SecurityBlock TheSecurity="sec" />
+                        <div style="display:flex;justify-content:center;">
+                            <label style="font-size:large">All Stocks</label>
+                        </div>
+                        @foreach (var sec in TotalStock)
+                        {
+                            <SecurityBlock TheSecurity="sec" />
+                        }
                     }
-                }
-                @if (TotalETF != null && TotalETF.Count > 0)
-                {
-                    <div style="display:flex;justify-content:center;">
-                        <label style="font-size:large">All ETFs</label>
-                    </div>
-                    @foreach (var sec in TotalETF)
+                    @if (TotalETF != null && TotalETF.Count > 0)
                     {
-                        <SecurityBlock TheSecurity="sec" />
+                        <div style="display:flex;justify-content:center;">
+                            <label style="font-size:large">All ETFs</label>
+                        </div>
+                        @foreach (var sec in TotalETF)
+                        {
+                            <SecurityBlock TheSecurity="sec" />
+                        }
                     }
-                }
-                @if (TotalCrypto != null && TotalCrypto.Count > 0)
-                {
-                    <div style="display:flex;justify-content:center;">
-                        <label style="font-size:large">All Crypto</label>
-                    </div>
-                    @foreach (var sec in TotalCrypto)
+                    @if (TotalCrypto != null && TotalCrypto.Count > 0)
                     {
-                        <SecurityBlock TheSecurity="sec" />
+                        <div style="display:flex;justify-content:center;">
+                            <label style="font-size:large">All Crypto</label>
+                        </div>
+                        @foreach (var sec in TotalCrypto)
+                        {
+                            <SecurityBlock TheSecurity="sec" />
+                        }
                     }
-                }
+                </div>
             </div>
         </div>
     }
     else
     {
-        <style>
-            div, td, tr, th {
-                font-size: 3vw;
-            }
-        </style>
         <div style="display:flex;flex-direction:column;flex-wrap:nowrap;justify-content:space-between;margin-bottom:2vh">
             <div style="overflow:auto;margin-bottom:2vh;">
                 <div style="border:solid gray 1px;margin-bottom:2vh;">
@@ -182,12 +176,16 @@ else
                 {
                     <table class="toggle-table" style="width:100%;">
                         <tr>
-                            <th colspan="6" style="background-color:forestgreen;color:white;white-space:nowrap;padding:1vw"><i>@(SelectedBalance.Name + " Account")</i></th>
+                            <th colspan="5" style="background-color:forestgreen;color:white;white-space:nowrap;padding:1vw"><i>@(SelectedBalance.Name + " Account")</i></th>
                         </tr>
                         <tr style="height:3vw">
-                            <th style="width:10vw;padding:1vw;">Symbol</th>
-                            <th style="width:10vw;padding:1vw;">Last Price</th>
-                            <th style="width:10vw;padding:1vw;">% Gain/Loss</th>
+                            <th style="width:fit-content;padding:1vw;">
+                                <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                    <div>Symbol</div>
+                                    <div>Last Price</div>
+                                </div>
+                            </th>
+                            <th style="width:10vw;padding:1vw;">Gain/Loss %</th>
                             <th style="width:10vw;padding:1vw;">Value</th>
                             <th style="width:10vw;padding:1vw;">Cost Basis</th>
                             <th style="width:10vw;padding:1vw;">Quantity<br />(% of Portfolio)</th>
@@ -195,43 +193,50 @@ else
                         @foreach (var accsec in AccountSecurities)
                         {
                             <tr style="height:3vw">
-                                <th style="padding:1vw;">@accsec.Name</th>
-                                <th style="padding:1vw;">@Constants.Pretty(accsec.Value/accsec.NumShares)</th>
-                                <th style="padding:1vw;">@(accsec.CalculateReturn() + "%")</th>
-                                <th style="padding:1vw;">@Constants.Pretty(accsec.Value)</th>
-                                <th style="padding:1vw;">@Constants.Pretty(accsec.AvgCost * accsec.NumShares)</th>
-                                <th style="padding:1vw;">
-                                    @Math.Round(accsec.NumShares,2)
+                                <td style="padding:1vw;">
+                                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                        <div>@accsec.Name</div>
+                                        <div>@Constants.Pretty(accsec.Value / accsec.NumShares)</div>
+                                    </div>
+                                </td>
+                                <td style="padding:1vw;">@(accsec.CalculateReturn() + "%")</td>
+                                <td style="padding:1vw;">@Constants.Pretty(accsec.Value)</td>
+                                <td style="padding:1vw;">@Constants.Pretty(accsec.AvgCost * accsec.NumShares)</td>
+                                <td style="padding:1vw;">
+                                    @Math.Round(accsec.NumShares, 2)
                                     <br />@("(" + Math.Round(accsec.Value / AccountValue * 100, 2) + "%)")
-                                </th>
+                                </td>
                             </tr>
                         }
                         @if (SelectedBalance.Value > 0)
                         {
                             <tr>
-                                <th style="padding:1vw;">Cash</th>
-                                <th style="padding:1vw;">@Constants.Pretty(1)</th>
-                                <th style="padding:1vw;">---</th>
-                                <th style="padding:1vw;">
+                                <td style="padding:1vw;">
+                                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                        <div>Cash</div>
+                                        <div>@Constants.Pretty(1)</div>
+                                    </div>
+                                </td>
+                                <td style="padding:1vw;">---</td>
+                                <td style="padding:1vw;">
                                     @Constants.Pretty(SelectedBalance.Value)
-                                </th>
-                                <th style="padding:1vw;">---</th>
-                                <th style="padding:1vw;">
+                                </td>
+                                <td style="padding:1vw;">---</td>
+                                <td style="padding:1vw;">
                                     @Constants.Pretty(SelectedBalance.Value).Trim('$')
                                     <br />@("(" + Math.Round(SelectedBalance.Value / AccountValue * 100, 2) + "%)")
-                                </th>
+                                </td>
                             </tr>
                         }
                         <tr>
-                            <td colspan="6" style="color:white;white-space:nowrap;padding:1vw">=</td>
+                            <td colspan="5" style="color:white;white-space:nowrap;padding:1vw">=</td>
                         </tr>
                         <tr style="height:3vw">
-                            <th style="padding:1vw;">Total</th>
-                            <th style="padding:1vw;"></th>
-                            <th style="padding:1vw;">@(CalculateReturn() + "%")</th>
-                            <th style="padding:1vw;">@Constants.Pretty(AccountValue)</th>
-                            <th style="padding:1vw;">@Constants.Pretty(TotalCostBasis)</th>
-                            <th style="padding:1vw;"></th>
+                            <td style="padding:1vw;">Total</td>
+                            <td style="padding:1vw;">@(CalculateReturn() + "%")</td>
+                            <td style="padding:1vw;">@Constants.Pretty(AccountValue)</td>
+                            <td style="padding:1vw;">@Constants.Pretty(TotalCostBasis)</td>
+                            <td style="padding:1vw;"></td>
                         </tr>
                     </table>
                 }
@@ -305,6 +310,9 @@ else
 }
 
 @code {
+    [Parameter]
+    public string BalanceName { get; set; }
+
     private bool ShowBuy { get; set; } = true;
     private bool ShowSell { get; set; }
 
@@ -334,19 +342,15 @@ else
         if (NoInvestments)
             return;
 
-        int BalanceIndex = 0;
-        if (!string.IsNullOrEmpty(Constants.AccountIndexStr))
+        if (string.IsNullOrEmpty(BalanceName))
+            SelectedBalance = InvestmentAccounts[0];
+        else
         {
-            for(int ia = 0; ia < InvestmentAccounts.Count; ia++)
-            {
-                if (InvestmentAccounts[ia].Name.ToUpper() == Constants.AccountIndexStr.ToUpper())
-                    BalanceIndex = ia;
-            }
+            var exists = InvestmentAccounts.FirstOrDefault(bal => bal.Name.ToUpper() == BalanceName.ToUpper());
+
+            SelectedBalance = exists == null ? InvestmentAccounts[0] : exists;
         }
 
-        Constants.AccountIndexStr = "";
-
-        SelectedBalance = InvestmentAccounts[BalanceIndex];
         AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
         RefreshTime = DateTime.Now.ToString();
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
@@ -385,6 +389,19 @@ else
         RefreshTime = DateTime.Now.ToString();
         Constants.Securities = Securities;
         SelectedBalance = Constants.Balances.First(b => b.Id == SelectedBalance.Id);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (string.IsNullOrEmpty(BalanceName))
+            return;
+
+        var exists = InvestmentAccounts.FirstOrDefault(bal => bal.Name.ToUpper() == BalanceName.ToUpper());
+        if (exists == null)
+            return;
+
+        SelectedBalance = exists;
+        AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
     }
 
     private double CalculateReturn()

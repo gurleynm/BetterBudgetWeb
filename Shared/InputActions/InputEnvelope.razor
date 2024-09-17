@@ -1,22 +1,10 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
-<style>
-    option {
-        color: black;
-    }
 
-    select {
-        color: black;
-    }
-
-    input {
-        color: black;
-    }
-</style>
 @if (Mobile)
 {
     <br style="clear:both" />
-    <div style="border: 2px solid green; width:90vw;height:fit-content;">
+    <div style="width:90vw;height:fit-content;">
         <h1 style="text-align:center;">Envelope Preview:</h1>
         <div style="display:flex;justify-content:center">
             <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
@@ -142,7 +130,7 @@ else
             <br />
             <input @bind="UpdateCheck" type="checkbox" />
         </div>
-        <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
+        <div style="position:absolute;width:18vw;height:80vh;right:1vw;top:15vh;">
             <h1 style="text-align:center;">Envelope Preview:</h1>
             <div>
                 <Envelope Name="@EnvName" Scale=15 Font_Size=2 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />

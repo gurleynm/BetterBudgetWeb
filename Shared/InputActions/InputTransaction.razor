@@ -13,18 +13,6 @@
         background-color: green;
     }
 
-    option {
-        color: black;
-    }
-
-    select {
-        color: black;
-    }
-
-    input {
-        color: black;
-    }
-
     h4 {
         margin-left: 1vw;
     }
@@ -35,7 +23,7 @@
         @if (Presets != null && Presets.Count > 0)
         {
             <br style="clear:both" />
-            <div style="border: 2px solid green; width:90vw;height:fit-content;right:1vw;top:15vh;">
+            <div style="width:90vw;height:fit-content;right:1vw;top:15vh;">
                 <h1 style="text-align:center">Presets:</h1>
                 <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                     <h4>Food:</h4>
@@ -723,14 +711,14 @@ else
 
         @if (Presets != null && Presets.Count > 0)
         {
-            <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
+            <div style="position:absolute; width:20vw;height:80vh;right:1vw;top:15vh;">
                 <h1 style="text-align:center">Presets:</h1>
                 <div style="justify-content:flex-start;align-content:flex-start;flex-wrap:wrap;height:70%;overflow-y:auto;">
                     <div style="display:flex;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         <h4>Food:</h4>
                         @foreach (var pre in Presets.Where(p => p.ExpenseType == "Grocery" || p.ExpenseType == "Eating Out"))
                         {
-                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick='@(() => Preset(@pre))'>@pre.Name</button>
+                            <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick="@(() => Preset(@pre))">@pre.Name</button>
                         }
                     </div>
                     <br />
@@ -789,7 +777,10 @@ else
             <div style="float:right; margin-right:1vw;display:inline-block;">
                 <div style="display:flex;justify-content:end">
                     <label style="float:left;margin-right:1vw">Text Color:</label>
-                    <input @bind="TextColor" type="color" />
+                    <select class="custom-select" @bind=TextColor title="Balance color is required ">
+                        <option value="white">White</option>
+                        <option value="black">Black</option>
+                    </select>
                 </div>
                 <br />
                 <div style="display:flex;justify-content:end">
@@ -804,10 +795,10 @@ else
             <button class="btn btn-secondary" style="float:left;" disabled=@Disabled @onclick="Submit">Submit</button>
             @if (!string.IsNullOrEmpty(TransactionName))
             {
-                <button class="btn btn-primary" style="float:right;background-color:@Hex;color:@TextColor;" @onclick="AddPreset">
+                <button class="btn btn-primary" style="float:right;background-color:@Hex;" @onclick="AddPreset">
                     <span>Add Preset For:</span>
                     <br />
-                    <span>@TransactionName</span>
+                    <span style="color:@TextColor;">@TransactionName</span>
                 </button>
             }
         </div>
@@ -841,9 +832,9 @@ else
     [Parameter]
     public Action<Preset> Preset { get; set; }
     [Parameter]
-    public string Hex { get; set; } = "#28A745";
+    public string Hex { get; set; }
     [Parameter]
-    public string TextColor { get; set; } = "#FFFFFF";
+    public string TextColor { get; set; }
 
     public List<Preset> Presets { get; set; }
     public List<Preset> PresetsForDel { get; set; }

@@ -1,26 +1,40 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Shared.Balances
 @if (Mobile)
 {
 
     <br style="clear:both" />
-    <div style="border: 2px solid green; width:90vw;height:40vh;">
+    <div style="width:90vw;height:fit-content;display:flex;justify-content:start;flex-direction:column;align-items:center;border:solid silver 1px">
         <h1 style="text-align:center;">Balance Preview:</h1>
-        <BalanceBlock TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
-                                    Value = double.TryParse(Amount, out double v) ? v : 0})"
-                      FontSize="4" />
+        <BalanceSlot TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
+                                    Value = double.TryParse(Amount, out double v) ? v : 0, BalanceType =  BalanceType})" IsPreview="true" />
+        <div style="display:flex;flex-direction:row;justify-content:space-around;">
+            <div style="display:flex;flex-direction:row;justify-content:flex-start;padding:1em;align-self:start">
+                <label style="margin-right:1em">Color:</label>
+                <input type="color" @bind=Color />
+            </div>
+            <div style="display:flex;flex-direction:row;justify-content:flex-start;padding:1em">
+                <label style="margin-right:1em">Text Color:</label>
+                <select class="custom-select" @bind=TextColor title="Type of Balance is required ">
+                    <option value="white" selected>White</option>
+                    <option value="black">Black</option>
+                </select>
+            </div>
+        </div>
     </div>
     <br />
-    <div style="position:relative;">
-        <div>
-            <label>Balance Name:</label>
-            <br />
+    <div style="position:relative;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-around;align-items:center">
+        <div style="display:flex;flex-direction:row;justify-content:flex-start">
+            <label style="margin-right:1em">Balance Name:</label>
             <input type="text" placeholder="Balance Name" @bind=BalName @oninput="@(async (ui) => { BalName = (string) ui.Value;})" />
         </div>
-        <br />
-        <div style="float:left; margin-right:9vw;">
-            <label>Balance Type:</label>
-            <br />
+        <div style="display:flex;flex-direction:row;justify-content:flex-start">
+            <label style="margin-right:1em">Initial Amount:</label>
+            <input type="number" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
+        </div>
+        <div style="display:flex;flex-direction:row;justify-content:flex-start;padding:1em 0">
+            <label style="margin-right:1em">Expense Type:</label>
             <select class="custom-select" @bind=BalanceType title="Type of Balance is required ">
                 <option value="Select" selected disabled="disabled">(Choose Balance Type)</option>
                 <option value="Equity">Equity</option>
@@ -29,52 +43,34 @@
                 <option value="Stocks">Stocks/Options/Securities</option>
             </select>
         </div>
-        <div style="float:left; margin-right:10vw;">
-            <label>Text Color:</label>
-            <br />
-            <select class="custom-select" @bind=TextColor title="Type of Balance is required ">
-                <option value="white" selected>White</option>
-                <option value="black">Black</option>
-            </select>
-        </div>
-        <br style="clear:both" />
-        <br />
         @if (BalanceType != "Stocks")
         {
-            <div>
-                <label>APR:</label>
-                <br />
+            <div style="display:flex;flex-direction:row;justify-content:flex-start">
+                <label style="margin-right:1em">APR:</label>
                 <input type="number" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
             </div>
         }
         else
         {
-            <div>
+            <div style="float:left; margin-right:10vw;">
                 <label>Paid Through Work:</label>
                 <br />
                 <input @bind="PaidThroughWork" type="checkbox" />
             </div>
         }
-        <br />
-        <div style="float:left; margin-right:10vw;">
-            <label>Amount:</label>
-            <br />
-            <input type="number" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
-        </div>
-        <div style="float:left; margin-right:10vw;">
-            <label>Color:</label>
-            <br />
-            <input type="color" @bind=Color />
-        </div>
-        <br style="clear:both" />
-        <br />
-        <div style="float:left; margin-right:10vw;">
-            <label>Person:</label>
-            <br />
+        <div style="display:flex;flex-direction:row;justify-content:flex-start;padding:1em">
+            <label style="margin-right:1em">Person:</label>
             <select class="custom-select" @bind="Person" title="Person's Balance ">
                 <option value="@Constants.Person1" selected>@Constants.Person1</option>
                 <option value="@Constants.Person2">@Constants.Person2</option>
                 <option value="Joint">Joint</option>
+            </select>
+        </div>
+        <div style="display:flex;flex-direction:row;justify-content:flex-start;padding:1em">
+            <label style="margin-right:1em">Text Color:</label>
+            <select class="custom-select" @bind=TextColor title="Type of Balance is required ">
+                <option value="white" selected>White</option>
+                <option value="black">Black</option>
             </select>
         </div>
         <br style="clear:both" />
@@ -83,7 +79,9 @@
         {
             <p style="color:@ErrorColor">@ErrorMsg</p>
         }
-        <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
+        <div style="width:100%;display:flex;flex-direction:row;justify-content:center">
+            <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
+        </div>
         <br />
         <br />
         <br />
@@ -92,76 +90,66 @@
 }
 else
 {
-
-    <div class="tabcontent">
-        <div style="float:left; margin-right:10vw;">
-            <label>Balance Name:</label>
-            <br />
-            <input type="text" placeholder="Balance Name" @bind=BalName @oninput="@(async (ui) => { BalName = (string) ui.Value;})" />
-        </div>
-        <div style="float:left; margin-right:9vw;">
-            <label>Balance Type:</label>
-            <br />
-            <select class="custom-select" @bind=BalanceType title="Type of Balance is required ">
-                <option value="Select" selected disabled="disabled">(Choose Balance Type)</option>
-                <option value="Equity">Equity</option>
-                <option value="Loan">Credit Card/Loan</option>
-                <option value="Income">Savings/Checkings/Income</option>
-                <option value="Stocks">Stocks/Options/Securities</option>
-            </select>
-        </div>
-        <div style="float:left; margin-right:10vw;">
-            <label>Text Color:</label>
-            <br />
-            <select class="custom-select" @bind=TextColor title="Type of Balance is required ">
-                <option value="white" selected>White</option>
-                <option value="black">Black</option>
-            </select>
-        </div>
-        <br style="clear:both" />
-        <br />
-        @if (BalanceType != "Stocks")
-        {
-            <div style="float:left; margin-right:10vw;">
-                <label>APR:</label>
-                <br />
-                <input type="number" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
+    <div class="tabcontent" style="display:flex;flex-direction:column;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:row;justify-content:space-around">
+            <div style="display:flex;flex-direction:column;justify-content:space-around">
+                <label>Balance Name:</label>
+                <input type="text" placeholder="Balance Name" @bind=BalName @oninput="@(async (ui) => { BalName = (string) ui.Value;})" />
             </div>
-        }
-        else
-        {
-            <div style="float:left; margin-right:10vw;">
-                <label>Paid Through Work:</label>
-                <br />
-                <input @bind="PaidThroughWork" type="checkbox" />
+            <div style="display:flex;flex-direction:column;justify-content:space-around">
+                <label>Initial Amount:</label>
+                <input type="number" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
             </div>
-        }
-        <div style="float:left; margin-right:10vw;">
-            <label>Amount:</label>
-            <br />
-            <input type="number" placeholder="Initial Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
+            <div style="display:flex;flex-direction:column;justify-content:start">
+                <label>Expense Type:</label>
+                <select class="custom-select" @bind=BalanceType title="Type of Balance is required ">
+                    <option value="Select" selected disabled="disabled">(Choose Balance Type)</option>
+                    <option value="Equity">Equity</option>
+                    <option value="Loan">Credit Card/Loan</option>
+                    <option value="Income">Savings/Checkings/Income</option>
+                    <option value="Stocks">Stocks/Options/Securities</option>
+                </select>
+            </div>
         </div>
-        <div style="float:left; margin-right:10vw;">
-            <label>Color:</label>
-            <br />
-            <input type="color" @bind=Color />
+        <div style="display:flex;flex-direction:row;justify-content:space-around">
+            <div style="display:flex;flex-direction:column;justify-content:start">
+                <label>Person:</label>
+                <select class="custom-select" @bind="Person" title="Person's Balance ">
+                    <option value="@Constants.Person1" selected>@Constants.Person1</option>
+                    <option value="@Constants.Person2">@Constants.Person2</option>
+                    <option value="Joint">Joint</option>
+                </select>
+            </div>
+            @if (BalanceType != "Stocks")
+            {
+                <div style="display:flex;flex-direction:column;justify-content:space-around">
+                    <label>APR:</label>
+                    <input type="number" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
+                </div>
+            }
+            else
+            {
+                <div style="display:flex;flex-direction:row;justify-content:center;align-items:baseline;align-self:center">
+                    <label style="padding-right:1em">Paid Through Work:</label>
+                    <input @bind="PaidThroughWork" type="checkbox" />
+                </div>
+            }
+            <div style="display:flex;flex-direction:column;justify-content:start">
+                <label>Text Color:</label>
+                <select class="custom-select" @bind=TextColor title="Type of Balance is required ">
+                    <option value="white" selected>White</option>
+                    <option value="black">Black</option>
+                </select>
+            </div>
+            <div style="display:flex;flex-direction:column;justify-content:start">
+                <label>Color:</label>
+                <input type="color" @bind=Color />
+            </div>
         </div>
-        <br style="clear:both" />
-        <br />
-        <div style="float:left; margin-right:10vw;">
-            <label>Person:</label>
-            <br />
-            <select class="custom-select" @bind="Person" title="Person's Balance ">
-                <option value="@Constants.Person1" selected>@Constants.Person1</option>
-                <option value="@Constants.Person2">@Constants.Person2</option>
-                <option value="Joint">Joint</option>
-            </select>
-        </div>
-        <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
+        <div style="position:absolute; width:18vw;height:80vh;right:1vw;top:15vh;">
             <h1 style="text-align:center;">Balance Preview:</h1>
-            <BalanceBlock TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
-                                    Value = double.TryParse(Amount, out double v) ? v : 0, BalanceType = BalanceType})"
-                          FontSize="2" />
+            <BalanceSlot TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
+                                    Value = double.TryParse(Amount, out double v) ? v : 0, BalanceType = BalanceType})" IsPreview="true" />
         </div>
         <br style="clear:both" />
         <br />
@@ -169,7 +157,9 @@ else
         {
             <p style="color:@ErrorColor">@ErrorMsg</p>
         }
-        <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
+        <div style="width:100%;display:flex;flex-direction:row;justify-content:flex-start">
+            <button class="btn btn-secondary" disabled=@Disabled @onclick=Submit>Submit</button>
+        </div>
     </div>
     <br />
     <br />

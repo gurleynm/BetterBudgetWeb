@@ -12,7 +12,7 @@
 <div class="bal-block" style="display:flex;justify-content:center;margin-right:1vw;margin-bottom:1vw;" @onmouseover=MouseOver @onmouseout=MouseOut>
     <div style="z-index:2;display:flex;justify-content:flex-end; flex-direction:column;flex-wrap:wrap; border-radius:5px;width:@(FontSize*5 + "vw;");
     background-color:@(string.IsNullOrEmpty(Color) ? "#32A852" : Color);color:@TextColor;padding:0">
-        <h1 style="flex-grow:4;cursor:pointer;text-align:center;font-size:@(FontSize + "vw;")" @onclick=Clicked>
+        <h1 style="flex-grow:4;cursor:pointer;text-align:center;font-size:@(FontSize + "vw;")">
             @(string.IsNullOrEmpty(BalName) ? "Savings" : BalName)
             <br />
             Balance
@@ -93,17 +93,6 @@
             returnStr = "0";
 
         return returnStr;
-    }
-
-    private async void Clicked()
-    {
-        if (TheBalance.BalanceType == "Stocks")
-        {
-            Constants.AccountIndexStr = TheBalance.Name;
-            NavManager.NavigateTo("/portfolio");
-        }
-        else
-            await OnClick.InvokeAsync(TheBalance.Name);
     }
     private Task Delete()
     {
