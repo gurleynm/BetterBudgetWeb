@@ -113,7 +113,7 @@ else
             <Chart DPs=DataPoints BarClicked=FilterDate />
             <br />
             <br />
-            <MonthlySpending FilteredTransactions=@FilteredTransactions All=true
+            <MonthlySpending FilteredTransactions=@FilteredTransactions
                              Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
                              OnDeleteConfirm=@CloseModal />
         }
@@ -294,7 +294,7 @@ else
                 <Chart DPs=DataPoints BarClicked=FilterDate />
                 <br />
                 <br />
-                <MonthlySpending FilteredTransactions=@FilteredTransactions All=true
+                <MonthlySpending FilteredTransactions=@FilteredTransactions
                                  Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
                                  OnDeleteConfirm=@CloseModal />
             }

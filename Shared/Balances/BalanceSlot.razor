@@ -23,7 +23,7 @@
 </div>
 @if (Show)
 {
-    <MonthlySpending OnDeleteConfirm=@CloseModal OnEditConfirm=@CloseModal TheBalance=@TheBalance RefreshParent="@RefreshMe" />
+    <MonthlySpending OnDeleteConfirm=@CloseModal OnEditConfirm=@CloseModal TheBalance=@TheBalance.Name RefreshParent="@RefreshMe" />
 }
 
 <hr style="margin:0" />
