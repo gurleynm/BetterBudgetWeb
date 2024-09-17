@@ -7,7 +7,8 @@
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Shared.Balances
 @using BetterBudgetWeb.Shared.Tutorial
-@using static BetterBudgetWeb.Shared.AddExpense;
+@using System.Collections.Specialized
+@using static BetterBudgetWeb.Shared.AddExpense
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Index</PageTitle>
@@ -36,7 +37,6 @@ else
             </div>
         }
     </div>
-
 
     @if (!Constants.Mobile)
     {
@@ -108,7 +108,8 @@ else
                     <div style="display:flex;justify-content:center;margin-bottom:2vh;">
                         <div>
                             <!-- Savings Goals-->
-                            <MonthlyGoalTracking Transactions=@FilteredTransactions
+                            <MonthlyGoalTracking @ref=MGT
+                                                 Transactions=@FilteredTransactions
                                                  ActualDynamicAmount=@ActualDynamic
                                                  ActualStaticAmount=@ActualStatic
                                                  ActualIncomeAmount=@ActualIncome
@@ -291,7 +292,7 @@ else
         <br />
 
         <!-- Savings Goals-->
-        <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic Transactions=@FilteredTransactions
+        <MonthlyGoalTracking @ref=MGT ActualDynamicAmount=@ActualDynamic Transactions=@FilteredTransactions
                              ActualStaticAmount=@ActualStatic
                              ActualIncomeAmount=@ActualIncome
                              EnvelopeAmount=@EnvelopeExpenses />
@@ -398,6 +399,8 @@ else
 @code {
     [CascadingParameter]
     public BalanceTray GlobalBT { get; set; }
+
+    private MonthlyGoalTracking MGT;
 
     private DateTime StartDate => DateTime.Now;
     private DateTime EndDate => new DateTime(StartDate.Year,
@@ -590,6 +593,9 @@ else
 
         GlobalBT.OnSlotClick += SetBalance;
 
+        GenServ.DataChanged += OnDataClassChanged;
+        GenServ.ExampleInstances.CollectionChanged += OnCollectionChanged;
+
         StateHasChanged();
     }
 
@@ -761,6 +767,7 @@ else
         await Task.Delay(3000);
 
         AddConfirmClass = "floaty-rev";
+        MGT.Refresh();
         StateHasChanged();
     }
     private async void CloseModal(bool accepted)
@@ -775,6 +782,7 @@ else
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
             Balances = Constants.Balances;
             Balances.Sort(Constants.CompareBalance);
+            MGT.Refresh();
         }
 
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
@@ -808,6 +816,8 @@ else
     }
     private void ToggleChartBtn()
     {
+        GenServ.Data = "No more";
+        GenServ.ExampleInstances.Add(new Transaction());
         if (!ShowChart)
         {
             ResetFilters();

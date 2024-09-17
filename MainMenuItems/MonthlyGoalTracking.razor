@@ -4,15 +4,7 @@
 @using BetterBudgetWeb.Repo;
 @using static BetterBudgetWeb.MainMenuItems.DonutChart
 <div class="chart-back-hor" style="width:100%;">
-    <table class="chart-hor" style="margin-bottom:1em">
-        <CustomChartBarHor Value=@ActualIncomeAmount
-                           Label="Income Goal"
-                           Negative=false
-                           MaxValue=@ProjectedIncomeAmount
-                           FillColor="green"
-                           BackgroundColor="#c3b4f3" />
-    </table>
-    <div style="display:flex;flex-direction:row;width:100%;justify-content:space-evenly">
+    <div style="display:flex;flex-direction:row;width:100%;justify-content:space-evenly;border:solid black 1px;border-radius:10px;margin-bottom:1em;padding:1em">
         <table style="background-color:transparent;border:none;margin-bottom:1em">
             <tr>
                 <th style="border:none"></th>
@@ -39,6 +31,14 @@
             </tr>
         </table>
     </div>
+    <table class="chart-hor" style="margin-bottom:1em">
+        <CustomChartBarHor Value=@ActualIncomeAmount
+                           Label="Income Goal"
+                           Negative=false
+                           MaxValue=@ProjectedIncomeAmount
+                           FillColor="green"
+                           BackgroundColor="#c3b4f3" />
+    </table>
     @if (Expenses != null && Expenses.Count > 0)
     {
         <div class="chart-hor">
@@ -96,6 +96,14 @@
 
     protected override Task OnInitializedAsync()
     {
+        Refresh();
+
+        return base.OnInitializedAsync();
+    }
+    public void Refresh()
+    {
+        Expenses.Clear();
+        ThisMonthSavingsGoals.Clear();
         SavingsGoal Default1 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person1) && sg.Month == "All");
         SavingsGoal Default2 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person2) && sg.Month == "All");
 
@@ -107,7 +115,7 @@
         ProjectedStaticAmount = smcs.Sum(smc => smc.TotalAmount);
 
         if (Default1 == null || Default2 == null)
-            return base.OnInitializedAsync();
+            return;
 
         ThisMonthSavingsGoals.Add(Default1);
         ThisMonthSavingsGoals.Add(Default2);
@@ -125,7 +133,6 @@
         var statics = Transactions.Where(tr => tr.ExpenseType == "Static Cost");
         foreach (var stat in statics)
             Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
-
-        return base.OnInitializedAsync();
+        StateHasChanged();
     }
 }
