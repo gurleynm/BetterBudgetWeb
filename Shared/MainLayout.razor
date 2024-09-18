@@ -214,38 +214,7 @@
         @if (mobile)
         {
             <div style="display:inline-block;width:100vw;height:100vh;">
-                @if (ShowLoading)
-                {
-                    <div style="background-color: #111827; height: 100vh; display: inline-block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw;">
-                        <LoadingScreen Title="@LogTitle" />
-                    </div>
-                }
-                else
-                {
-                    <UserPassLogin @ref="userpasslogin" @bind-Username=@username
-                                   @bind-Username2=@username2
-                                   @bind-Password=@password
-                                   @bind-ConfirmPassword=@confirmPassword
-                                   @bind-CreatingAccount=@CreatingAccount
-                                   @bind-ErrorMsg=@ErrorMsg
-                                   Enter=@((e) => Enter(e))>
-                        <div style="display:flex;justify-content:center;margin-top:2vh">
-                            <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
-                        </div>
-                    </UserPassLogin>
-                }
-            </div>
-        }
-        else
-        {
-            @if (ShowLoading)
-            {
-                <div style="display:inline-block;width:100vw;height:100vh;">
-                    <LoadingScreen Title="@LogTitle" />
-                </div>
-            }
-            else
-            {
+
                 <UserPassLogin @ref="userpasslogin" @bind-Username=@username
                                @bind-Username2=@username2
                                @bind-Password=@password
@@ -254,10 +223,46 @@
                                @bind-ErrorMsg=@ErrorMsg
                                Enter=@((e) => Enter(e))>
                     <div style="display:flex;justify-content:center;margin-top:2vh">
-                        <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
+                        @if (!Disabled)
+                        {
+                            <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
+                        }
+                        else
+                        {
+                            <div style="display:flex;flex-direction:row;justify-content:space-around">
+                                <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
+                                <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
+                                <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
+                            </div>
+                        }
                     </div>
                 </UserPassLogin>
-            }
+            </div>
+        }
+        else
+        {
+            <UserPassLogin @ref="userpasslogin" @bind-Username=@username
+                           @bind-Username2=@username2
+                           @bind-Password=@password
+                           @bind-ConfirmPassword=@confirmPassword
+                           @bind-CreatingAccount=@CreatingAccount
+                           @bind-ErrorMsg=@ErrorMsg
+                           Enter=@((e) => Enter(e))>
+                <div style="display:flex;justify-content:center;margin-top:2vh">
+                    @if (!Disabled)
+                    {
+                        <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
+                    }
+                    else
+                    {
+                        <div style="display:flex;flex-direction:row;justify-content:space-around">
+                            <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
+                            <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
+                            <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
+                        </div>
+                    }
+                </div>
+            </UserPassLogin>
         }
     }
     else

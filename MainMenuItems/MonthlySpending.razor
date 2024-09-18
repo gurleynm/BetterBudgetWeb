@@ -160,13 +160,14 @@
     private async void CloseModal(bool accepted)
     {
         ShowModal = false;
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+
         if (accepted)
         {
             await OnEditConfirm.InvokeAsync(accepted);
             await RefreshParent.InvokeAsync();
             StateHasChanged();
         }
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
     private async void OpenModal(Transaction trans)
     {
@@ -177,16 +178,17 @@
     }
     private async void Delete(bool accepted)
     {
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         if (accepted)
         {
             // TransactionRepo sets everything in Constants
             await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
-            GlobalBT.RefreshBalances();
+            if (!Constants.Mobile) 
+                GlobalBT.RefreshBalances();
             await RefreshParent.InvokeAsync();
             await OnDeleteConfirm.InvokeAsync(accepted);
         }
         ShowDelete = false;
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         StateHasChanged();
     }
     private List<Transaction> GetTransactions()

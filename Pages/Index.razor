@@ -18,27 +18,7 @@
     <div>Login successful. Pulling data...</div>
 }
 else
-{
-    <div class="@AddConfirmClass" style="display:flex;justify-content:center">
-        @if (AddConfirmClass != "collapse")
-        {
-            <div style="display:flex;
-                justify-content:center;
-                margin:auto 0;
-                width:fit-content;
-                padding: 1vw;
-                height:100%;
-                background-color:green;
-                border-radius:5px;
-                color:white;
-                text-align:center;
-                pointer-events:none;
-                z-index:10;">
-                <span>Add was successfully completed</span><span>&#160;&#10003;&#10003;&#10003;</span>
-            </div>
-        }
-    </div>
-
+{    
     @if (!Constants.Mobile)
     {
         <h1 style="text-align:center;color:@Constants.GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
@@ -169,7 +149,7 @@ else
                                     }
                                 </div>
                             }
-                            <AddExpense OnAddConfirm="Add" />
+                            <AddExpense OnAddConfirm="Add" Added="Added" />
                             <br style="clear:both;" />
                             <!-- Set Monthly Costs Goals-->
                             <SetMonthlyTable Trans=FilteredTransactions />
@@ -284,7 +264,7 @@ else
             <br />
         }
 
-        <AddExpense OnAddConfirm="Add" />
+        <AddExpense OnAddConfirm="Add" Added="Added" />
 
         <br />
 
@@ -397,6 +377,8 @@ else
     [CascadingParameter]
     public BalanceTray GlobalBT { get; set; }
 
+    private bool Added { get; set; }
+
     private DateTime StartDate => DateTime.Now;
     private DateTime EndDate => new DateTime(StartDate.Year,
                                              StartDate.Month,
@@ -455,7 +437,6 @@ else
     private bool Goals { get { return goals; } set { goals = value; if (!Constants.Mobile) GlobalBT.SetGoals(goals); } }
 
     private bool filtered;
-    private string AddConfirmClass = "collapse";
 
     private bool ViewReports { get; set; }
     private bool StashCashBool { get; set; }
@@ -586,7 +567,8 @@ else
 
         SetDataPoints();
 
-        GlobalBT.OnSlotClick += SetBalance;
+        if (!Constants.Mobile)
+            GlobalBT.OnSlotClick += SetBalance;
         Constants.TransactionsChanged += TransactionsUpdated;
 
         StateHasChanged();
@@ -756,10 +738,9 @@ else
         else
             Balances.Sort(Constants.CompareBalance);
 
-        AddConfirmClass = "floaty";
+        Added = true;
         await Task.Delay(3000);
-
-        AddConfirmClass = "floaty-rev";
+        Added = false;
         StateHasChanged();
     }
     private async void CloseModal(bool accepted)
@@ -893,7 +874,7 @@ else
 
         FilteredTransactions = e.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
         MonthlyTransactions = new List<Transaction>(FilteredTransactions);
-        
+
         StateHasChanged();
     }
 
