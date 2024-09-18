@@ -6,17 +6,12 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
 @inject IJSRuntime jsRuntime
-<style>
-    td {
-        padding: 0 2vw;
-    }
-</style>
 @if (!Mobile)
 {
     <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
         <div class="modal-dialog" role="document">
             <div class="modal-content" style="width:fit-content;position: absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+                        transform: translate(-50%, 0%);background-color:#384153">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:black;">
                         <strong>Your Reports</strong>
@@ -34,7 +29,7 @@
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
                 </div>
-                <div class="modal-body" style="width:fit-content;color:black;overflow:auto">
+                <div class="modal-body" style="width:100%;color:black;overflow:auto">
                     <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
                         @if (SFDs != null && SFDs.Count > 0)
                         {
@@ -63,7 +58,7 @@
                                     <br style="clear:both" />
                                 </div>
                             }
-                            <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;width:fit-content">
+                            <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;width:100%">
                                 <table class="toggle-table">
                                     <tr>
                                         <th>
@@ -150,8 +145,8 @@ else
 {
     <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);display: block !important;">
         <div class="modal-dialog" style="overflow-y: initial !important" role="document">
-            <div class="modal-content" style="width:fit-content;absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-image:url('https://www.publicdomainpictures.net/pictures/410000/velka/pergament-papier-hintergrund-braun.jpg');">
+            <div class="modal-content" style="width:fit-content;position:absolute;left: 50%; top: 50%;
+                        transform: translate(-50%, 0%);background-color:#384153;">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:black;">
                         <strong>Your Reports</strong>
