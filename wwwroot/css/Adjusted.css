@@ -227,3 +227,7 @@ span {
 option {
     color: black;
 }
+
+report-table > td {
+    padding: 0 2vw;
+}

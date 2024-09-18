@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using static BetterBudgetWeb.Shared.AddExpense;
+using System;
 
 namespace BetterBudgetWeb
 {
@@ -61,11 +62,25 @@ namespace BetterBudgetWeb
                 }
             }
         }
+        public static EventHandler<List<Balance>> BalancesChanged = (sender, value) => { };
+
+        private static List<Balance> balances = new List<Balance>();
+        public static List<Balance> Balances
+        {
+            get => balances;
+            set
+            {
+                if (balances != value)
+                {
+                    balances = value;
+                    BalancesChanged?.Invoke(typeof(Constants), balances);
+                }
+            }
+        }
         public static List<DynamicCostItem> DynamicCostItems { get; set; }
         public static List<SavingsGoal> SavingsGoals { get; set; }
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
         public static List<ProjectedDatum> ProjectedData { get; set; }
-        public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
@@ -100,6 +115,10 @@ namespace BetterBudgetWeb
                 MobileChanged.InvokeAsync(value);
             }
         }
+        public static double Person1NetWorth => IndexRunner.CalculateNetWorth(Person1, Balances);
+        public static double Person2NetWorth => IndexRunner.CalculateNetWorth(Person2, Balances);
+        public static double TotalNetWorth => Person1NetWorth + Person2NetWorth;
+        public EventCallback<double> Person2NetWorthChanged { get; set; }
         public static EventCallback<bool> MobileChanged { get; set; }
 
         public static readonly List<string> Months = new List<string>{"January", "February", "March", "April", "May",

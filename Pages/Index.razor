@@ -18,13 +18,13 @@
     <div>Login successful. Pulling data...</div>
 }
 else
-{    
+{
     @if (!Constants.Mobile)
     {
-        <h1 style="text-align:center;color:@Constants.GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
+        @* <h1 style="text-align:center;color:@Constants.GoodOrBad(Constants.Person1NetWorth + Constants.Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Constants.Person1NetWorth + Constants.Person2NetWorth))</h1>
         <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
             <h2 style="text-align:center">
-                <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Person1NetWorth)">@(Pretty(Person1NetWorth))</span>
+                <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Constants.Person1NetWorth)">@(Pretty(Constants.Person1NetWorth))</span>
             </h2>
             @if (Envelopes != null && Envelopes.Count > 0)
             {
@@ -32,11 +32,11 @@ else
             }
 
             <h2 style="text-align:center">
-                <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
+                <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Constants.Person2NetWorth)">@(Pretty(Constants.Person2NetWorth))</span>
             </h2>
-        </div>
-        <div style="display:flex;flex-direction:row;
-                justify-content:@(DataPoints != null && DataPoints.Count > 0 ? "space-between" : "flex-end");width:100%">
+        </div> *@
+
+        <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%;align-content:center">
             @if (DataPoints != null && DataPoints.Count > 0)
             {
                 <button class="spendchart-btn" style="width:fit-content" @onclick="@ToggleChartBtn">
@@ -51,9 +51,17 @@ else
                 </button>
 
             }
+            @if (Envelopes != null && Envelopes.Count > 0)
+            {
+                <div style="display:flex;flex-direction:column;justify-content:center;padding-top:1em">
+                    <Envelope Name="@GoalTxt" Scale=8 Font_Size=1 OnClick=@ToggleGoals />
+                </div>
+            }
             @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
             {
-                <button class="btn btn-secondary" style="align-self:flex-end" @onclick=@(() => ToggleReports())>View Reports</button>
+                <div style="display:flex;flex-direction:column;justify-content:center;">
+                    <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
+                </div>
             }
         </div>
         @if (ShowChart)
@@ -192,14 +200,22 @@ else
     }
     else
     {
-        <h1 style="text-align:center;color:@Constants.GoodOrBad(Person1NetWorth + Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Person1NetWorth + Person2NetWorth))</h1>
+        <h1 style="text-align:center;color:@Constants.GoodOrBad(Constants.Person1NetWorth + Constants.Person2NetWorth)">
+            TOTAL NET WORTH: @(Pretty(Constants.Person1NetWorth + Constants.Person2NetWorth))
+        </h1>
         <div>
             <h2 style="float:left;text-align:center">
-                <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Person1NetWorth)">@(Pretty(Person1NetWorth))</span>
+                <span>@($"{Constants.Person1}'s Net Worth:")</span>
+                <span style="color:@Constants.GoodOrBad(Constants.Person1NetWorth)">
+                    @(Pretty(Constants.Person1NetWorth))
+                </span>
             </h2>
 
             <h2 style="float:right;text-align:center">
-                <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Person2NetWorth)">@(Pretty(Person2NetWorth))</span>
+                <span>@($"{Constants.Person2}'s Net Worth:")</span>
+                <span style="color:@Constants.GoodOrBad(Constants.Person2NetWorth)">
+                    @(Pretty(Constants.Person2NetWorth))
+                </span>
             </h2>
         </div>
         <br />
@@ -391,8 +407,6 @@ else
     private List<Balance> Balances;
     private List<Security> Securities;
     private List<DynamicCostItem> DynamicCostItems;
-    private double Person1NetWorth => CalculateNetWorth(Constants.Person1);
-    private double Person2NetWorth => CalculateNetWorth(Constants.Person2);
 
     private Balance SelectedBalance;
     private bool ValidChoice = true;
@@ -577,11 +591,6 @@ else
     private string Pretty(double num)
     {
         return Constants.Pretty(num);
-    }
-
-    private double CalculateNetWorth(string person)
-    {
-        return IndexRunner.CalculateNetWorth(person, Balances);
     }
 
     private List<string> GetMonths()

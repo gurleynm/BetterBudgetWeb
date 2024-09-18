@@ -6,7 +6,7 @@
 {
     <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
         <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:30vw;position: absolute;left: 50%; top: 50%;
+            <div class="modal-content" style="min-width:30vw;width:fit-content;position: absolute;left: 50%; top: 50%;
                         transform: translate(-50%, 0%);background-color:#384153">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:white">
@@ -23,15 +23,15 @@
                 <div class="modal-footer">
                     @if (LeftBtnShow)
                     {
-                        <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">@LeftBtnTxt</button>
+                        <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
                     }
                     @if (MidBtnShow)
                     {
-                        <button type="button" disabled=@Disabled class="btn @MidBtnColor" data-dismiss="modal" @onclick="@ModalMidClick">@MidBtnTxt</button>
+                        <button type="button" disabled=@Disabled class="btn @MidBtnColor" data-dismiss="modal" @onclick="@MiddleClicked">@MidBtnTxt</button>
                     }
                     @if (RightBtnShow)
                     {
-                        <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@ModalAccept">@RightBtnTxt</button>
+                        <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
                     }
                 </div>
             </div>
@@ -56,11 +56,11 @@ else
                 <div class="modal-footer" style="display:flex;justify-content:space-around">
                     @if (LeftBtnShow)
                     {
-                        <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="float:left" data-dismiss="modal" @onclick="@ModalCancel">@LeftBtnTxt</button>
+                        <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="float:left" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
                     }
                     @if (RightBtnShow)
                     {
-                        <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@ModalAccept">@RightBtnTxt</button>
+                        <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
                     }
                 </div>
             </div>
@@ -81,7 +81,13 @@ else
     public EventCallback<bool> OnClose { get; set; }
 
     [Parameter]
-    public EventCallback<bool> OnMidClick { get; set; }
+    public EventCallback<bool> LeftBtnClick { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> MidBtnClick { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> RightBtnClick { get; set; }
 
     [Parameter]
     public string LeftBtnTxt { get; set; }
@@ -124,16 +130,34 @@ else
     public EventCallback<bool> DisabledChanged { get; set; }
     private bool disabled;
 
+    private Task RightClicked()
+    {
+        if (!RightBtnClick.HasDelegate)
+            return ModalAccept();
+        else
+            return RightBtnClick.InvokeAsync(true);
+    }
+
+    private Task MiddleClicked()
+    {
+        if (!MidBtnClick.HasDelegate)
+            return ModalCancel();
+        else
+            return MidBtnClick.InvokeAsync(true);
+    }
+    
+    private Task LeftClicked()
+    {
+        if (!LeftBtnClick.HasDelegate)
+            return ModalCancel();
+        else
+            return LeftBtnClick.InvokeAsync(true);
+    }
+
     private Task ModalCancel()
     {
         Disabled = true;
         return OnClose.InvokeAsync(false);
-    }
-    
-    private Task ModalMidClick()
-    {
-        Disabled = true;
-        return OnMidClick.InvokeAsync(false);
     }
 
     private Task ModalAccept()
