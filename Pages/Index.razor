@@ -10,6 +10,7 @@
 @using System.Collections.Specialized
 @using static BetterBudgetWeb.Shared.AddExpense
 @inject IJSRuntime JSRuntime
+@implements IDisposable
 
 <PageTitle>Index</PageTitle>
 @if (Transactions == null)
@@ -95,8 +96,7 @@ else
             <Chart DPs=DataPoints BarClicked=FilterDate />
             <br />
             <br />
-            <MonthlySpending FilteredTransactions=@FilteredTransactions
-                             Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
+            <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
                              OnDeleteConfirm=@CloseModal />
         }
         <br />
@@ -108,9 +108,7 @@ else
                     <div style="display:flex;justify-content:center;margin-bottom:2vh;">
                         <div>
                             <!-- Savings Goals-->
-                            <MonthlyGoalTracking @ref=MGT
-                                                 Transactions=@FilteredTransactions
-                                                 ActualDynamicAmount=@ActualDynamic
+                            <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
                                                  ActualStaticAmount=@ActualStatic
                                                  ActualIncomeAmount=@ActualIncome
                                                  EnvelopeAmount=@EnvelopeExpenses />
@@ -277,8 +275,7 @@ else
                 <Chart DPs=DataPoints BarClicked=FilterDate />
                 <br />
                 <br />
-                <MonthlySpending FilteredTransactions=@FilteredTransactions
-                                 Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
+                <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
                                  OnDeleteConfirm=@CloseModal />
             }
 
@@ -292,7 +289,7 @@ else
         <br />
 
         <!-- Savings Goals-->
-        <MonthlyGoalTracking @ref=MGT ActualDynamicAmount=@ActualDynamic Transactions=@FilteredTransactions
+        <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
                              ActualStaticAmount=@ActualStatic
                              ActualIncomeAmount=@ActualIncome
                              EnvelopeAmount=@EnvelopeExpenses />
@@ -399,8 +396,6 @@ else
 @code {
     [CascadingParameter]
     public BalanceTray GlobalBT { get; set; }
-
-    private MonthlyGoalTracking MGT;
 
     private DateTime StartDate => DateTime.Now;
     private DateTime EndDate => new DateTime(StartDate.Year,
@@ -564,7 +559,7 @@ else
         Balances = Constants.catchAll.Balances;
         Transactions = Constants.catchAll.Transactions;
         FilteredTransactions = new List<Transaction>(Transactions);
-        var ca = Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
         MonthlyTransactions = new List<Transaction>(FilteredTransactions);
         ErrorMsg = string.Empty;
@@ -592,6 +587,7 @@ else
         SetDataPoints();
 
         GlobalBT.OnSlotClick += SetBalance;
+        Constants.TransactionsChanged += TransactionsUpdated;
 
         StateHasChanged();
     }
@@ -764,7 +760,6 @@ else
         await Task.Delay(3000);
 
         AddConfirmClass = "floaty-rev";
-        MGT.Refresh();
         StateHasChanged();
     }
     private async void CloseModal(bool accepted)
@@ -779,7 +774,6 @@ else
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
             Balances = Constants.Balances;
             Balances.Sort(Constants.CompareBalance);
-            MGT.Refresh();
         }
 
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
@@ -891,5 +885,20 @@ else
 
         Disabled = false;
         StateHasChanged();
+    }
+
+    private void TransactionsUpdated(object sender, List<Transaction> e)
+    {
+        Transactions = new List<Transaction>(e);
+
+        FilteredTransactions = e.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+        MonthlyTransactions = new List<Transaction>(FilteredTransactions);
+        
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.TransactionsChanged -= TransactionsUpdated;
     }
 }

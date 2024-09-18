@@ -46,11 +46,25 @@ namespace BetterBudgetWeb
             { "November", 11 },
             { "December", 12 }
         };
+        public static EventHandler<List<Transaction>> TransactionsChanged = (sender, value) => { };
+
+        private static List<Transaction> transactions = new List<Transaction>();
+        public static List<Transaction> Transactions
+        {
+            get => transactions;
+            set
+            {
+                if (transactions != value)
+                {
+                    transactions = value;
+                    TransactionsChanged?.Invoke(typeof(Constants), transactions);
+                }
+            }
+        }
         public static List<DynamicCostItem> DynamicCostItems { get; set; }
         public static List<SavingsGoal> SavingsGoals { get; set; }
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
         public static List<ProjectedDatum> ProjectedData { get; set; }
-        public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();

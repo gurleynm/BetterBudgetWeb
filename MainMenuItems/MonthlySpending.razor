@@ -3,6 +3,7 @@
 @using BetterBudgetWeb.Runner;
 @using BetterBudgetWeb.Shared.Balances
 @inject IJSRuntime JSRuntime
+@implements IDisposable
 
 <table style="width:100%;margin-bottom:1vh">
     <tr style="height:3vw">
@@ -116,7 +117,6 @@
     [Parameter]
     public EventCallback RefreshParent { get; set; }
 
-    [Parameter]
     public List<Transaction> FilteredTransactions { get; set; }
 
     [Parameter]
@@ -131,13 +131,13 @@
 
     protected override Task OnInitializedAsync()
     {
-        if (FilteredTransactions == null)
-            FilteredTransactions = GetTransactions();
+        FilteredTransactions = GetTransactions();
 
         if (!string.IsNullOrEmpty(TheBalance))
             FilteredTransactions = FilteredTransactions.Where(tr =>
                             (tr.PaidWithPerson1 + " " + tr.PaidWithPerson2).Contains(TheBalance)).ToList();
 
+        Constants.TransactionsChanged += TransactionsUpdated;
         return base.OnInitializedAsync();
     }
 
@@ -181,7 +181,7 @@
         if (accepted)
         {
             // TransactionRepo sets everything in Constants
-            FilteredTransactions = await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
+            await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
             GlobalBT.RefreshBalances();
             await RefreshParent.InvokeAsync();
             await OnDeleteConfirm.InvokeAsync(accepted);
@@ -205,5 +205,16 @@
     public void RefreshMe()
     {
         StateHasChanged();
+    }
+
+    private void TransactionsUpdated(object sender, List<Transaction> e)
+    {
+        FilteredTransactions = GetTransactions();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.TransactionsChanged -= TransactionsUpdated;
     }
 }

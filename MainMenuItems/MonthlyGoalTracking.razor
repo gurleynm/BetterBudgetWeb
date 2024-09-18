@@ -2,6 +2,8 @@
 @using BetterBudgetWeb.MainMenuItems.Chart
 @using BetterBudgetWeb.MainMenuItems.Chart.ChartHorizontal
 @using BetterBudgetWeb.Repo;
+@implements IDisposable
+
 @using static BetterBudgetWeb.MainMenuItems.DonutChart
 <div class="chart-back-hor" style="width:100%;">
     <div style="display:flex;flex-direction:row;width:100%;justify-content:space-evenly;border:solid black 1px;border-radius:10px;margin-bottom:1em;padding:1em">
@@ -42,7 +44,7 @@
     @if (Expenses != null && Expenses.Count > 0)
     {
         <div class="chart-hor">
-            <DonutChart ChartId="donut1" Expenses=@Expenses />
+            <DonutChart @ref=Donut ChartId="donut1" Expenses=@Expenses />
         </div>
     }
 </div>
@@ -60,7 +62,8 @@
     [Parameter]
     public double EnvelopeAmount { get; set; }
 
-    [Parameter]
+    public DonutChart Donut { get; set; }
+
     public List<Transaction> Transactions { get; set; }
 
     public string projectedIncomeAmountStrOG { get; set; }
@@ -96,11 +99,14 @@
 
     protected override Task OnInitializedAsync()
     {
+        Constants.TransactionsChanged += TransactionsUpdated;
+
         Refresh();
 
         return base.OnInitializedAsync();
     }
-    public void Refresh()
+
+    private void Refresh()
     {
         Expenses.Clear();
         ThisMonthSavingsGoals.Clear();
@@ -122,6 +128,7 @@
 
         projectedIncomeAmountStrOG = ThisMonthSavingsGoals.Sum(tmsg => tmsg.Goal).ToString();
         ProjectedIncomeAmountStr = projectedIncomeAmountStrOG;
+        Transactions = Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
 
         foreach (var dcin in dciNames)
         {
@@ -133,6 +140,19 @@
         var statics = Transactions.Where(tr => tr.ExpenseType == "Static Cost");
         foreach (var stat in statics)
             Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
+
         StateHasChanged();
+    }
+
+    private void TransactionsUpdated(object sender, List<Transaction> e)
+    {
+        Refresh();
+        Donut.DrawCoreChart();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.TransactionsChanged -= TransactionsUpdated;
     }
 }
