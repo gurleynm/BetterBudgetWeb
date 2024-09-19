@@ -76,7 +76,7 @@
         .centerLabel {
             text-align: center;
             font-family: Arial, Helvetica, sans-serif;
-            font-size:xx-large;
+            font-size: xx-large;
             color: red;
         }
     </style>
@@ -249,7 +249,6 @@
 
             // Sets chart options.
             var options = {
-                width: 1500,
                 sankey: {
                     iterations: 100,
                     colors: [
@@ -257,7 +256,12 @@
                         '#1f78b4',        // Nodes will cycle through this palette
                         '#b2df8a',        // giving the links for that node the color.
                         '#33a02c'
-                    ]
+                    ],
+                    node: {
+                        label: {
+                            color: 'white'
+                        }
+                    }
                 }
                 //tooltip: { isHtml: true }
             };
