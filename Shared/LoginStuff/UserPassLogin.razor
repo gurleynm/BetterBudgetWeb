@@ -14,59 +14,39 @@
         {
             <div style="display:flex;flex-direction:@(Constants.Mobile ? "column" : "row");justify-content:start; padding:1em">
                 <div style="display:flex;flex-direction:column;justify-content:center">
+                    <div style="display:flex;flex-direction:row;justify-content:start;">
                     <label style="color:white">Username</label>
-                    <div style="display:flex;flex-direction:row;justify-content:center;">
+                    </div>
+                    <div style="display:flex;flex-direction:row;justify-content:start;">
                         <input class="better" id="user" placeholder="Username 1" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
                     </div>
                     <br />
                     <label style="color:white">Shared Password</label>
                     <div style="display:flex;flex-direction:row;justify-content:center;">
-                        <PasswordInput Enter="Enter" @bind-Password=@Password />
+                        <PasswordInput Enter="Enter" Placeholder="Shared Password" @bind-Password=@Password />
                     </div>
                 </div>
                 <div style="display:flex;flex-direction:column;justify-content:center;">
-                    <label style="color:white">Username</label>
-                    <div style="display:flex;flex-direction:row;justify-content:center;">
+                    <label style="color:white">Username 2</label>
+                    <div style="display:flex;flex-direction:row;justify-content:start;">
                         <input class="better" id="user" placeholder="Username 2" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
                     </div>
                     <br />
-                    <label style="color:white">Confirm Password</label>
+                    <div style="display:flex;flex-direction:row;justify-content:start;">
+                        <label style="color:white">Confirm Password</label>
+                    </div>
                     <div style="display:flex;flex-direction:row;justify-content:center;">
-                        <PasswordInput Enter="Enter" @bind-Password=@ConfirmPassword />
-                    </div>
-                </div>
-@* 
-                <div style="display:flex;justify-content:center;flex-direction:@(Constants.Mobile ? "column" : "row")">
-                    <div style="display:flex;flex-direction:column;margin-right:1em">
-                        <label style="color:white">Username 1</label>
-                        <input class="better" id="user" placeholder="Username 1" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
-                    </div>
-                    <br />
-                    <div style="display:flex;flex-direction:column">
-                        <label style="color:white">Username 2</label>
-                        <input class="better" id="user2" placeholder="Username 2" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username2 = (string) ui.Value;})" />
-                    </div>
-                </div>
-                <br />
-                <div style="display:flex;justify-content:center;flex-direction:@(Constants.Mobile ? "column" : "row")">
-                    <div style="display:flex;flex-direction:column;margin-right:1em">
-                        <label style="color:white">Shared Password</label>
-                        <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@Password />
-                    </div>
-                    <br />
-                    <div style="display:flex;flex-direction:column">
-                        <label style="color:white">Confirm Shared Password</label>
                         <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword />
                     </div>
-                </div> *@
+                </div>
             </div>
-                <PasswordRules @ref=@passwordRules Password="@Password" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
+            <PasswordRules @ref=@passwordRules Password="@Password" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
         }
         else
         {
-            <div style="display:flex;flex-direction:column;justify-content:center">
+            <div style="display:flex;flex-direction:column;justify-content:start">
                 <label style="color:white">Username</label>
-                <div style="display:flex;flex-direction:row;justify-content:center;">
+                <div style="display:flex;flex-direction:row;justify-content:start;">
                     <input class="better" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
                 </div>
                 <br />
