@@ -52,11 +52,17 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<bool> AddUser(string user, string user2, string pass)
         {
+            if (Constants.Token == "DEMO")
+                return true;
+
             /* NEEDS UPDATING */
             return (await UpdateUser(user, user2, pass, pass)) == "Success";
         }
         public static async Task<string> UpdateUser(string user, string user2, string pass, string newPass)
         {
+            if (Constants.Token == "DEMO")
+                return "Success";
+
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = baseURI + $"?user={user}&user2={user2}&pass={pass}&newPass={newPass}";
 
@@ -94,6 +100,9 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<bool> DeleteUser(string user, string user2, string pass)
         {
+            if (Constants.Token == "DEMO")
+                return true;
+
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = baseURI + $"?user={user}&user2={user2}&pass={pass}";
 

@@ -85,7 +85,7 @@ else
             <br />
             <br />
             <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                             OnDeleteConfirm=@CloseModal />
+                             OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
         }
         <br />
 
@@ -272,7 +272,7 @@ else
                 <br />
                 <br />
                 <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                                 OnDeleteConfirm=@CloseModal />
+                                 OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
             }
 
             <br />
@@ -408,7 +408,7 @@ else
     private List<Security> Securities;
     private List<DynamicCostItem> DynamicCostItems;
 
-    private Balance SelectedBalance;
+    private string SelectedBalance = "";
     private bool ValidChoice = true;
     private string selectedMonth = DateTime.Now.ToString("MMMM");
     private string selectedYear = DateTime.Now.Year.ToString();
@@ -487,9 +487,16 @@ else
 
     private void SetBalance(Balance bal)
     {
-        SelectedBalance = bal;
-        ShowChart = !ShowChart;
-        FilterBalance(bal.Name);
+        if (SelectedBalance == bal.Name){
+            SelectedBalance = "";
+            ResetFilters();
+        }
+        else{
+            SelectedBalance = bal.Name;
+            ShowChart = true;
+            FilterBalance(SelectedBalance);
+        }
+
         StateHasChanged();
     }
 
@@ -564,26 +571,25 @@ else
 
         DynamicCostItems = new List<DynamicCostItem>(Constants.DynamicCostItems);
 
-        string GoalsOpen = await ReadCookies("GoalsOpen");
-        string TutorialSeen = await ReadCookies("TutorialSeen");
 
-        if (string.IsNullOrEmpty(GoalsOpen) || GoalsOpen == "NO")
-            Goals = false;
-        else
-            Goals = true;
+        Goals = false;
 
         GoalTxt = Goals ? "GOALS (ON)" : "GOALS";
 
+        /* 
+         * string TutorialSeen = await ReadCookies("TutorialSeen");
         if (string.IsNullOrEmpty(TutorialSeen))
             ShowTutorial = true;
         else
             ShowTutorial = false;
+            */
 
         SetDataPoints();
 
         if (!Constants.Mobile)
             GlobalBT.OnSlotClick += SetBalance;
         Constants.TransactionsChanged += TransactionsUpdated;
+        Constants.EnvelopesChanged += EnvelopesUpdated;
 
         StateHasChanged();
     }
@@ -595,7 +601,7 @@ else
 
     private List<string> GetMonths()
     {
-        return IndexRunner.GetMonths(false);
+        return IndexRunner.GetMonths();
     }
 
     private List<string> GetYears()
@@ -610,17 +616,20 @@ else
         if (filtered)
             ResetFilters();
 
-        if (date)
-            FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
-        else if (balance)
-            FilteredTransactions = FilteredTransactions.Where(ft => ft.PaidWithPerson1 == filter ||
-                                                                    ft.PaidWithPerson2 == filter ||
-                                                                    ft.PaidOffPerson1 == filter ||
-                                                                    ft.PaidOffPerson2 == filter).ToList();
-        else
-            FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
+        if (!string.IsNullOrEmpty(filter))
+        {
+            if (date)
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
+            else if (balance)
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.PaidWithPerson1 == filter ||
+                                                                        ft.PaidWithPerson2 == filter ||
+                                                                        ft.PaidOffPerson1 == filter ||
+                                                                        ft.PaidOffPerson2 == filter).ToList();
+            else
+                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
 
-        filtered = true;
+            filtered = true;
+        }
 
         StateHasChanged();
     }
@@ -748,7 +757,7 @@ else
             Balances.Sort(Constants.CompareBalance);
 
         Added = true;
-        await Task.Delay(3000);
+        await Task.Delay(2000);
         Added = false;
         StateHasChanged();
     }
@@ -802,6 +811,7 @@ else
             ResetFilters();
             FilteredTransactions = new List<Transaction>(Constants.catchAll.Transactions);
             FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+            SelectedBalance = "";
         }
         ShowChart = !ShowChart;
     }
@@ -886,9 +896,18 @@ else
 
         StateHasChanged();
     }
+    
+    private void EnvelopesUpdated(object sender, List<Data.Envelope> e)
+    {
+        Envelopes = e.OrderByDescending(ev => ev.TotalAmount / ev.Goal).ToList();
+        Envelopes = new List<Data.Envelope>(Envelopes);
+
+        StateHasChanged();
+    }
 
     public void Dispose()
     {
         Constants.TransactionsChanged -= TransactionsUpdated;
+        Constants.EnvelopesChanged -= EnvelopesUpdated;
     }
 }

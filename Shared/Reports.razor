@@ -277,6 +277,7 @@ else
 
     public bool Rebalancing = false;
 
+    private List<Transaction> Transactions = new List<Transaction>();
     private List<SnapForDynamic> SFDs = new List<SnapForDynamic>();
 
     private List<DynamicCostItem> DCIs = new List<DynamicCostItem>();
@@ -285,9 +286,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Constants.Transactions = await TransactionRepo.GetTransactionsAsync("ALL");
+        Transactions = await TransactionRepo.GetTransactionsAsync("ALL");
 
-        var MonthYears = IndexRunner.GetMonths();
+        var MonthYears = IndexRunner.GetMonthsAndYears(Transactions);
         if (MonthYears.Count > 0)
         {
             MonthYears.Reverse();
@@ -382,7 +383,7 @@ else
 
         if (SelectedMonth == "All")
         {
-            Trans = new List<Transaction>(Constants.Transactions.Where(t => t.DateOfTransaction.Year.ToString() == SelectedYear));
+            Trans = new List<Transaction>(Transactions.Where(t => t.DateOfTransaction.Year.ToString() == SelectedYear));
 
             List<Snapshot> ThisYearSnaps = snaps.Where(sn => sn.Year.ToString() == SelectedYear).ToList();
 
@@ -430,7 +431,7 @@ else
         }
         else
         {
-            Trans = new List<Transaction>(Constants.Transactions.Where(t => t.MonthYear() == SelectedMonth + " " + SelectedYear));
+            Trans = new List<Transaction>(Transactions.Where(t => t.MonthYear() == SelectedMonth + " " + SelectedYear));
 
             Snapshot SelSnap = snaps.FirstOrDefault(sn => sn.Month == SelectedMonth && sn.Year.ToString() == SelectedYear);
 

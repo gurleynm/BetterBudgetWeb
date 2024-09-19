@@ -7,7 +7,7 @@
             <br />
             <select @bind="Name">
                 <option value="@string.Empty" selected disabled="disabled">(Choose Balance)</option>
-                @foreach (var bal in Balances)
+                @foreach (var bal in Balances.OrderBy(b => b.Name))
                 {
                     <option value="@bal.Name">@bal.Name</option>
                 }
@@ -27,7 +27,7 @@
 <br />
 
 @code {
-    private List<Data.Balance> Balances { get; set; } = new List<Data.Balance>();
+    private List<Data.Balance> Balances => Constants.Balances;
 
     private string name;
     string Name { get; set; }
@@ -39,7 +39,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Balances = await BalanceRepo.GetBalancesAsync();
+        //await BalanceRepo.GetBalancesAsync();
     }
 
     public async Task Submit()
@@ -55,7 +55,7 @@
         {
             var ChosenOne = Balances.FirstOrDefault(e => e.Name == Name);
 
-            Balances = await BalanceRepo.RemoveAsync(ChosenOne);
+            await BalanceRepo.RemoveAsync(ChosenOne);
             Constants.Balances = new List<Data.Balance>(Balances);
 
             ErrorColor = "green";

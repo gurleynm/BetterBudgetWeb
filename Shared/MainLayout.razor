@@ -1,5 +1,6 @@
 ﻿@using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Repo;
+@using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Shared.Balances
 @using BetterBudgetWeb.Shared.LoginStuff
 @inherits LayoutComponentBase
@@ -114,7 +115,7 @@
     .chart-hor {
         padding: 1rem;
         border-radius: 12px;
-        background-color: #384152;
+        background-color: @Constants.ColorScheme["ComponentBackground"];
         text-align: center;
         display: flex;
         justify-content: flex-start;
@@ -129,7 +130,7 @@
         width: 100%;
         padding: 1rem;
         border-radius: 12px;
-        background-color: #384152;
+        background-color: @Constants.ColorScheme["ComponentBackground"];
         text-align: center;
         display: inline-block;
         height: fit-content;
@@ -211,6 +212,7 @@
     else if (!WeIn)
     {
         <PageTitle>Enter Password</PageTitle>
+        <button @onclick=GrabDemo class="btn btn-primary">View Demo</button>
         @if (mobile)
         {
             <div style="display:inline-block;width:100vw;height:100vh;">
@@ -427,6 +429,20 @@
         }
 
         await CheckWeIn(false);
+    }
+
+    private async void GrabDemo()
+    {
+        Constants.Token = "DEMO";
+        Constants.CUR_USER = "Optimus";
+        TokenWrapper tokenWrapper = await CatchAllRunner.GrabDemo();
+        await Constants.Init(true);
+        NavMan.NavigateTo("");
+
+        Balances = Constants.catchAll.Balances;
+        Balances.Sort(Constants.CompareBalance);
+        WeIn = true;
+        StateHasChanged();
     }
 
     protected async Task<string> ReadCookies(string CookieName)

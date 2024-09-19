@@ -1,4 +1,6 @@
 ﻿@using BetterBudgetWeb.Data
+@implements IDisposable
+
 @if (Balances != null)
 {
     <h3 style="text-align:center;">
@@ -35,6 +37,7 @@
 
     protected override Task OnInitializedAsync()
     {
+        Constants.BalancesChanged += BalancesUpdated;
         RefreshBalances();
         return base.OnInitializedAsync();
     }
@@ -51,10 +54,24 @@
         Goals = goal;
         StateHasChanged();
     }
+
     public void RefreshBalances()
     {
         Balances = Constants.catchAll.Balances;
         Balances.Sort(Constants.CompareBalance);
         StateHasChanged();
+    }
+
+    private void BalancesUpdated(object sender, List<Balance> e)
+    {
+        Balances = new List<Balance>(e);
+        Balances.Sort(Constants.CompareBalance);
+
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.BalancesChanged -= BalancesUpdated;
     }
 }

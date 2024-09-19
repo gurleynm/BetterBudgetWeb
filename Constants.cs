@@ -77,13 +77,27 @@ namespace BetterBudgetWeb
                 }
             }
         }
+        public static EventHandler<List<Envelope>> EnvelopesChanged = (sender, value) => { };
+
+        private static List<Envelope> envelopes = new List<Envelope>();
+        public static List<Envelope> Envelopes
+        {
+            get => envelopes;
+            set
+            {
+                if (envelopes != value)
+                {
+                    envelopes = value;
+                    EnvelopesChanged?.Invoke(typeof(Constants), envelopes);
+                }
+            }
+        }
         public static List<DynamicCostItem> DynamicCostItems { get; set; }
         public static List<SavingsGoal> SavingsGoals { get; set; }
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
         public static List<ProjectedDatum> ProjectedData { get; set; }
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
-        public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
         public static List<Security> Securities { get; set; } = new List<Security>();
         public static CatchAll catchAll { get; set; } = new CatchAll();
         public static DateRange DR { get; set; } = new DateRange();
@@ -153,12 +167,12 @@ namespace BetterBudgetWeb
             if (ca != null)
                 catchAll = new CatchAll(ca);
 
-            Transactions = catchAll.Transactions;
-            Balances = catchAll.Balances;
-            Monthlies = catchAll.Monthlies;
-            Envelopes = catchAll.Envelopes;
-            Presets = catchAll.Presets;
-            Securities = catchAll.Securities ?? new List<Security>();
+            Transactions = new List<Transaction>(catchAll.Transactions);
+            Balances = new List<Balance>(catchAll.Balances);
+            Monthlies = new List<Monthly>(catchAll.Monthlies);
+            Envelopes = new List<Envelope>(catchAll.Envelopes);
+            Presets = new List<Preset>(catchAll.Presets);
+            Securities = new List<Security>(catchAll.Securities) ?? new List<Security>();
             if (DR != null)
             {
                 if (catchAll?.DR?.UniqueMonthYears?.Count > 0)
@@ -360,10 +374,11 @@ namespace BetterBudgetWeb
         public static void SetColorScheme()
         {
             ColorScheme["Background"] = "#111827";
+            ColorScheme["ComponentBackground"] = "#384153";
             ColorScheme["Text"] = "silver";
             ColorScheme["TextOnSilver"] = "white";
             ColorScheme["TableEven"] = "#203957";
-            ColorScheme["TableOdd"] = "#384152";
+            ColorScheme["TableOdd"] = "#384153";
 
             ColorScheme["IncomeGood"] = "forestgreen";
             ColorScheme["EquityGood"] = "yellow";

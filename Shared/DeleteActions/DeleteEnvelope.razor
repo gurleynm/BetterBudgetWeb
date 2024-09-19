@@ -6,7 +6,7 @@
         <br />
         <select @bind="Name">
             <option value="@string.Empty" selected disabled="disabled">(Choose Goal)</option>
-            @foreach (var env in Envelopes)
+            @foreach (var env in Envelopes.OrderBy(e => e.Name))
             {
                 <option value="@env.Name">@env.Name</option>
             }
@@ -26,7 +26,7 @@
 <br />
 
 @code {
-    private List<Data.Envelope> Envelopes { get; set; } = new List<Data.Envelope>();
+    private List<Data.Envelope> Envelopes => Constants.Envelopes;
 
     private string name;
     string Name { get; set; }
@@ -38,7 +38,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
+        
     }
 
     public async Task Submit()
@@ -54,7 +54,7 @@
         {
             var ChosenOne = Envelopes.FirstOrDefault(e => e.Name == Name);
 
-            Envelopes = await EnvelopeRepo.RemoveAsync(ChosenOne);
+            await EnvelopeRepo.RemoveAsync(ChosenOne);
             Constants.Envelopes = new List<Data.Envelope>(Envelopes);
 
             ErrorColor = "green";

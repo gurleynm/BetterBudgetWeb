@@ -168,7 +168,7 @@ namespace BetterBudgetWeb.Runner
             double stocks = 0;
             try
             {
-                stocks = Constants.Securities.Where(stock => stock.Person.ToUpper() == "JOINT").Sum(s => s.Value)/2;
+                stocks = Constants.Securities.Where(stock => stock.Person.ToUpper() == "JOINT").Sum(s => s.Value) / 2;
                 stocks += Constants.Securities.Where(stock => stock.Person == person).Sum(s => s.Value);
             }
             catch (Exception e)
@@ -182,8 +182,8 @@ namespace BetterBudgetWeb.Runner
         public static List<string> GetMonths(List<Transaction> trans, bool includeYear = true)
         {
             List<string> months = new List<string>();
-            
-            foreach(Transaction transaction in trans)
+
+            foreach (Transaction transaction in trans)
             {
                 months.Add(transaction.DateOfTransaction.ToString("MMMM"));
             }
@@ -205,24 +205,41 @@ namespace BetterBudgetWeb.Runner
 
             return ret_months;
         }
-        
-        public static List<string> GetMonths(bool includeYear = true)
+
+        public static List<string> GetMonths()
         {
             List<string> months = Constants.DR.UniqueMonthYears;
             List<string> ret_months = new List<string>(months);
 
-            if (!includeYear)
+            ret_months.Clear();
+            foreach (string month in months)
             {
-                ret_months.Clear();
-                foreach (string month in months)
+                var split = month.Split(' ');
+                if (!ret_months.Contains(split[0]))
                 {
-                    var split = month.Split(' ');
-                    if (!ret_months.Contains(split[0]))
-                    {
-                        ret_months.Add(split[0]);
-                    }
+                    ret_months.Add(split[0]);
                 }
             }
+
+            ret_months.Sort(Constants.SortMonths);
+
+            return ret_months;
+        }
+        public static List<string> GetMonthsAndYears(List<Transaction> transactions)
+        {
+            List<string> uniqueMonthYears = new List<string>();
+
+            string monthYear;
+            foreach (var trans in transactions.OrderByDescending(t => t.DateOfTransaction))
+            {
+                monthYear = trans.DateOfTransaction.ToString("MMMM") + " " + trans.DateOfTransaction.Year.ToString();
+
+                if (!uniqueMonthYears.Contains(monthYear))
+                    uniqueMonthYears.Add(monthYear);
+            }
+
+            List<string> months = Constants.DR.UniqueMonthYears;
+            List<string> ret_months = new List<string>(months);
 
             ret_months.Sort(Constants.SortMonths);
 

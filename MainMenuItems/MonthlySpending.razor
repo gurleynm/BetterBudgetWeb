@@ -9,6 +9,10 @@
     <tr style="height:3vw">
         <th style="background-color: @Constants.ColorScheme["TableOdd"];padding:0 1vw;font-size: @(Constants.Mobile ? "3vw;" : "1vw");" colspan="100%">
             <span>@Title</span>
+            @if (!string.IsNullOrEmpty(TheBalance))
+            {
+                <span>@(" for " + TheBalance)</span>
+            }
         </th>
     </tr>
     @if (FilteredTransactions != null)
@@ -120,7 +124,18 @@
     public List<Transaction> FilteredTransactions { get; set; }
 
     [Parameter]
-    public string TheBalance { get; set; }
+    public string TheBalance { 
+        get { return theBalance; }
+        set
+        {
+            if (theBalance == value)
+                return;
+            theBalance = value;
+
+            FilteredTransactions = GetTransactions();
+        }
+    }
+    public string theBalance { get; set; }
 
     private bool Show { get; set; }
     private bool Disabled { get; set; }
@@ -132,10 +147,6 @@
     protected override Task OnInitializedAsync()
     {
         FilteredTransactions = GetTransactions();
-
-        if (!string.IsNullOrEmpty(TheBalance))
-            FilteredTransactions = FilteredTransactions.Where(tr =>
-                            (tr.PaidWithPerson1 + " " + tr.PaidWithPerson2).Contains(TheBalance)).ToList();
 
         Constants.TransactionsChanged += TransactionsUpdated;
         return base.OnInitializedAsync();
@@ -198,6 +209,10 @@
         if (!string.IsNullOrEmpty(ExpenseType))
         {
             transactions = transactions.Where(t => t.ExpenseType == ExpenseType).ToList();
+        } else if (!string.IsNullOrEmpty(TheBalance))
+        {
+            transactions = transactions.Where(tr =>
+                            (tr.PaidWithPerson1 + " " + tr.PaidWithPerson2).Contains(TheBalance)).ToList();
         }
 
         transactions = transactions.OrderByDescending(t => t.DateOfTransaction).ToList();

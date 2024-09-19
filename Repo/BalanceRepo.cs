@@ -15,6 +15,9 @@ namespace BetterBudgetWeb.Repo
         public static List<Balance> Balances { get; set; }
         public static async Task<List<Balance>> GetBalancesAsync()
         {
+            if(Constants.Token == "DEMO")
+                return Constants.Balances;
+
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(baseURI);
             var content = await response.Content.ReadAsStringAsync();
@@ -28,35 +31,18 @@ namespace BetterBudgetWeb.Repo
 
             TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
             Balances = TW.catcher.Balances;
-            Constants.Balances = new List<Balance>(Balances);
+
             return Balances;
         }
         public static List<Balance> GetBalances()
         {
+            if (Constants.Token == "DEMO")
+                return Constants.Balances;
+
             Task.Run(async () => await GetBalancesAsync());
             return Balances;
         }
-        public static Balance GetBalanceFromName(string name)
-        {
-            bool FirstLoad = false;
-            if (Balances == null)
-            {
-                Balances = GetBalances();
-                if (Balances == null) return null;
-
-                FirstLoad = false;
-            }
-
-            var TheBal = Balances.FirstOrDefault(b => b.Name == name);
-
-            if (TheBal == null && !FirstLoad)
-            {
-                Balances = GetBalances();
-                TheBal = Balances.FirstOrDefault(b => b.Name == name);
-            }
-
-            return TheBal;
-        }
+        
         public static string GetId(string name)
         {
             bool FirstLoad = false;
@@ -101,6 +87,22 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Balance>> AddOrUpdateAsync(Balance bal)
         {
+            if (Constants.Token == "DEMO")
+            {
+                var Exists = Constants.Balances.FirstOrDefault(t => t.Id == bal.Id);
+
+                if (Exists == null)
+                    Constants.catchAll.Balances.Add(bal);
+                else
+                {
+                    Constants.catchAll.Balances.Remove(Exists);
+                    Constants.catchAll.Balances.Add(bal);
+                }
+                
+                Constants.Balances = new List<Balance>(Constants.catchAll.Balances);
+                return Constants.Balances;
+            }
+
             bal.Name = bal.Name.Trim();
 
             HttpClient _client = new HttpClient();
@@ -126,6 +128,12 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Balance>> RemoveAsync(Balance bal)
         {
+            if (Constants.Token == "DEMO")
+            {
+                Constants.catchAll.Balances.Remove(bal);
+                Constants.Balances = new List<Balance>(Constants.catchAll.Balances);
+                return Constants.Balances;
+            }
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
@@ -145,23 +153,6 @@ namespace BetterBudgetWeb.Repo
             Balances = TW.catcher.Balances;
             Constants.Balances = new List<Balance>(Balances);
             Constants.catchAll.Balances = Balances;
-            return Balances;
-        }
-        public static List<Balance> AddOrUpdate(Balance bal)
-        {
-            Task.Run(async () => await AddOrUpdateAsync(bal));
-            return Balances;
-        }
-        public static List<Balance> Remove(Balance bal)
-        {
-            Task.Run(async () => await RemoveAsync(bal));
-            return Balances;
-        }
-        public static List<Balance> Remove(string id)
-        {
-            var bal = Balances.FirstOrDefault(b => b.Id == id);
-
-            Task.Run(async () => await RemoveAsync(bal));
             return Balances;
         }
     }

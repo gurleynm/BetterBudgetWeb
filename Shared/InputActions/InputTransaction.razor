@@ -900,8 +900,8 @@ else
         others.Add("Other");
         string DynaText = "-- Dynamic Costs --";
 
-        int longestDCI = dcis.OrderByDescending(s => s.Length).First().Length;
-        int longestOther = others.OrderByDescending(s => s.Length).First().Length;
+        int longestDCI = dcis.OrderByDescending(s => s.Length).FirstOrDefault().Length;
+        int longestOther = others.OrderByDescending(s => s.Length).FirstOrDefault().Length;
         int longestOfEach = Math.Max(longestDCI, longestOther);
 
         if (longestOfEach > DynaText.Length)

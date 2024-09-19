@@ -1,5 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -13,6 +14,9 @@ namespace BetterBudgetWeb.Repo
         public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
         public static async Task<List<Envelope>> GetEnvelopesAsync()
         {
+            if (Constants.Token == "DEMO")
+                return Constants.Envelopes;
+
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(baseURI);
             var content = await response.Content.ReadAsStringAsync();
@@ -29,13 +33,23 @@ namespace BetterBudgetWeb.Repo
             Envelopes = TW.catcher.Envelopes;
             return TW.catcher.Envelopes;
         }
-        public static List<Envelope> GetEnvelopes()
-        {
-            Task.Run(async () => await GetEnvelopesAsync());
-            return Envelopes;
-        }
         public static async Task<List<Envelope>> AddOrUpdateAsync(Envelope small)
         {
+            if (Constants.Token == "DEMO")
+            {
+                var Exists = Constants.Envelopes.FirstOrDefault(t => t.Id == small.Id);
+
+                if (Exists == null)
+                    Constants.catchAll.Envelopes.Add(small);
+                else
+                {
+                    Constants.catchAll.Envelopes.Remove(Exists);
+                    Constants.catchAll.Envelopes.Add(small);
+                }
+
+                Constants.Envelopes = new List<Envelope>(Constants.catchAll.Envelopes);
+                return Constants.Envelopes;
+            }
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
@@ -57,31 +71,14 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Envelope>> RemoveAsync(Envelope small)
         {
-            HttpClient _client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-
-            requestMessage.Content = JsonContent.Create(small);
-
-            var response = await _client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
+            if (Constants.Token == "DEMO")
             {
-                throw new ApplicationException(content);
+                Constants.catchAll.Envelopes.Remove(small);
+                Constants.Envelopes = new List<Envelope>(Constants.catchAll.Envelopes);
+                return Constants.Envelopes;
             }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
-            Envelopes = TW.catcher.Envelopes;
-            return TW.catcher.Envelopes;
-        }
-        public static async Task<List<Envelope>> RemoveAsync(string id)
-        {
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-
-            var small = Envelopes.FirstOrDefault(t => t.Id == id);
 
             requestMessage.Content = JsonContent.Create(small);
 

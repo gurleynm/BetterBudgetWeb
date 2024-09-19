@@ -3,6 +3,7 @@
 @using BetterBudgetWeb.Repo;
 @using BetterBudgetWeb.Shared.UpdateActions
 @inject IJSRuntime JSRuntime
+@implements IDisposable
 
 <PageTitle>Update</PageTitle>
 
@@ -23,7 +24,7 @@
         <br />
         <select @bind=SelectedBalance title="Select Balance ">
             <option value="" selected>(Choose a Balance)</option>
-            @foreach (var bal in Balances)
+            @foreach (var bal in Balances.OrderBy(b => b.Name))
             {
                 <option value=@bal.Id>@bal.Name</option>
             }
@@ -51,7 +52,7 @@ else if (ShowEnv)
         <br />
         <select @bind=SelectedEnv title="Selectn Envelope ">
             <option value="" selected>(Choose an Envelope)</option>
-            @foreach (var envs in Envelopes)
+            @foreach (var envs in Envelopes.OrderBy(e => e.Name))
             {
                 <option value=@envs.Id>@envs.Name</option>
             }
@@ -80,7 +81,7 @@ else if (ShowEnv)
     private string ColorBal = "#32A852";
     private string TColorBal = "#32A852";
 
-    private List<Balance> Balances = new List<Balance>();
+    private List<Balance> Balances => Constants.Balances;
     private bool ShowBal { get; set; } = true;
     private string BalClass => ShowBal ? "active" : "";
 
@@ -131,7 +132,7 @@ else if (ShowEnv)
     private string GoalAmountEnv;
     private bool UpdateCheckEnv;
 
-    private List<Data.Envelope> Envelopes = new List<Data.Envelope>();
+    private List<Data.Envelope> Envelopes => Constants.Envelopes;
     private bool ShowEnv { get; set; }
     private string EnvClass => ShowEnv ? "active" : "";
 
@@ -177,19 +178,29 @@ else if (ShowEnv)
     protected override async Task OnInitializedAsync()
     {
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
-        Balances = await BalanceRepo.GetBalancesAsync();
-        Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
         SelectedBalance = "";
         SelectedEnv = "";
+        Constants.BalancesChanged += BalancesUpdated;
+        Constants.EnvelopesChanged += EnvelopesUpdated;
     }
 
-
-
-    private void Refresh(bool accepted)
+    private void BalancesUpdated(object sender, List<Balance> e)
     {
-        if (accepted)
-        {
-            StateHasChanged();
-        }
+        SelectedBalance = Balances.Count > 0 ? Balances[0].Name : "";
+        ShowBal = false;
+        StateHasChanged();
+    }
+
+    private void EnvelopesUpdated(object sender, List<Data.Envelope> e)
+    {
+        SelectedEnv = Envelopes.Count > 0 ? Envelopes[0].Name : "";
+        ShowEnv = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.BalancesChanged -= BalancesUpdated;
+        Constants.EnvelopesChanged -= EnvelopesUpdated;
     }
 }

@@ -105,6 +105,12 @@ else
                         <span class="oi oi-reload" aria-hidden="true" style="float:right; margin:.2vw; cursor:pointer" @onclick=Reload></span>
                         <label style="font-size:.8vw;margin:2.5px 0 0 0;float:right;padding:0 .2vw;"><i>@("Refreshed at " + RefreshTime)</i></label>
                     </div>
+                    @if (Constants.Token == "DEMO")
+                    {
+                        <div style="width:100%;display:flex;flex-direction:row;justify-content:center">
+                            <label style="font-size:.8vw;margin:2.5px 0 0 0;float:right;padding:0 .2vw;"><i>(Refresh disabled in DEMO mode)</i></label>
+                        </div>
+                    }
                     <br />
                     <br />
                     @if (TotalOption != null && TotalOption.Count > 0)
@@ -262,6 +268,12 @@ else
                     <span class="oi oi-reload" aria-hidden="true" style="float:right; margin:.5vw; cursor:pointer" @onclick=Reload></span>
                     <label style="font-size:2.5vw;margin:.75vw .2vw 0 0;float:right;padding:0 .2vw;"><i>@("Refreshed at " + RefreshTime)</i></label>
                 </div>
+                @if (Constants.Token == "DEMO")
+                {
+                    <div style="width:100%;display:flex;flex-direction:row;justify-content:center">
+                        <label style="font-size:.8vw;margin:2.5px 0 0 0;float:right;padding:0 .2vw;"><i>(Refresh disabled in DEMO mode)</i></label>
+                    </div>
+                }
                 <br />
                 <br />
                 @if (TotalOption != null && TotalOption.Count > 0)
@@ -385,10 +397,13 @@ else
 
     private void Reload()
     {
+        @if (Constants.Token == "DEMO")
+            return;
+
         Securities = SecurityRepo.GetSecurities();
         RefreshTime = DateTime.Now.ToString();
         Constants.Securities = Securities;
-        SelectedBalance = Constants.Balances.First(b => b.Id == SelectedBalance.Id);
+        SelectedBalance = Constants.Balances.FirstOrDefault(b => b.Id == SelectedBalance.Id);
     }
 
     protected override async Task OnParametersSetAsync()

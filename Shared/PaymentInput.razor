@@ -104,8 +104,8 @@ else
         var Person1Balances = Constants.Balances.Where(b => ValidPaymentBalance(b, Constants.Person1)).OrderBy(ba => ba.Name).ToList();
         var Person2Balances = Constants.Balances.Where(b => ValidPaymentBalance(b, Constants.Person2)).OrderBy(ba => ba.Name).ToList();
         
-        int maxP1B = Person1Balances.Count == 0 ? 0 : Person1Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
-        int maxP1E = Person1Envelopes.Count > 0 ? Person1Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length : 0;
+        int maxP1B = Person1Balances.Count == 0 ? 0 : Person1Balances.OrderByDescending(s => s.Name.Length).FirstOrDefault().Name.Length;
+        int maxP1E = Person1Envelopes.Count > 0 ? Person1Envelopes.OrderByDescending(s => s.Name.Length).FirstOrDefault().Name.Length : 0;
         int maxP1 = Math.Max(maxP1B, maxP1E);
 
         if (maxP1 > Envelope1Header.Length)
@@ -115,8 +115,8 @@ else
             Balance1Header = "Payment ".PadRight(maxP1, '-');
         }
 
-        int maxP2B = Person2Balances.Count == 0 ? 0 : Person2Balances.OrderByDescending(s => s.Name.Length).First().Name.Length;
-        int maxP2E = Person2Envelopes.Count > 0 ? Person2Envelopes.OrderByDescending(s => s.Name.Length).First().Name.Length : 0;
+        int maxP2B = Person2Balances.Count == 0 ? 0 : Person2Balances.OrderByDescending(s => s.Name.Length).FirstOrDefault().Name.Length;
+        int maxP2E = Person2Envelopes.Count > 0 ? Person2Envelopes.OrderByDescending(s => s.Name.Length).FirstOrDefault().Name.Length : 0;
         int maxP2 = Math.Max(maxP2B, maxP2E);
 
         if (maxP2 > Envelope2Header.Length)

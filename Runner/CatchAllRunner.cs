@@ -25,5 +25,27 @@ namespace BetterBudgetWeb.Runner
             TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
             return TW.catcher;
         }
+        public static async Task<TokenWrapper> GrabDemo()
+        {
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var response = await client.GetAsync(baseURI);
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            TokenWrapper TW = JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+
+            Constants.TW = TW;
+            Constants.Person1 = TW.Token.Name;
+            Constants.Token = TW.Token.Token;
+
+            return TW;
+        }
     }
 }

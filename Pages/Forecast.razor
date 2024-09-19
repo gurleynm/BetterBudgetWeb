@@ -21,17 +21,17 @@
 <PageTitle>Forecast</PageTitle>
 
 
-<div style="display:flex;flex-direction:column;justify-content:flex-start">
+<div style="display:flex;flex-direction:column;justify-content:flex-start;">
     @foreach (var mr in MonthRels)
     {
-        <button class="spendchart-btn" style="text-align:left" @onclick=@(() => mr.Show = !mr.Show)>
+        <button class="spendchart-btn" style="text-align:left;width:100%" @onclick=@(() => mr.Show = !mr.Show)>
             @if (mr.Show)
             {
-                <h2>@(mr.Name)&nbsp;&nbsp;<i class="arrow down"></i></h2>
+                <h2 style="width:100%">@(mr.Name)&nbsp;&nbsp;<i class="arrow down"></i></h2>
             }
             else
             {
-                <h2>@(mr.Name)&nbsp;<i class="arrow right"></i></h2>
+                <h2 style="width:100%">@(mr.Name)&nbsp;<i class="arrow right"></i></h2>
             }
         </button>
         @if (mr.Show)

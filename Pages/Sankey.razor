@@ -79,16 +79,16 @@
     </div>
 }
 
-    <table style="margin: auto 10vw; width:40vw; float:right">
+    <table class="toggle-table" style="margin:auto; width:40vw; float:right;">
         <tr>
-            <th>Total In</th>
-            <th>Total Out</th>
-            <th>Difference</th>
+            <th style="padding:0 2vw">Total In</th>
+            <th style="padding:0 2vw">Total Out</th>
+            <th style="padding:0 2vw">Difference</th>
         </tr>
         <tr>
-            <td style="color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</td>
-            <td style="color:red">@Constants.Pretty(TotalOut)</td>
-            <td style="color:@DecideColor(TotalIn - TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</td>
+            <td style="padding:0 2vw;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</td>
+            <td style="padding:0 2vw;color:red">@Constants.Pretty(TotalOut)</td>
+            <td style="padding:0 2vw;color:@DecideColor(TotalIn - TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</td>
         </tr>
     </table>
 </div>
@@ -160,7 +160,7 @@
     {
         List<string> AllFoundMonths;
         if (SelectedYear == "All")
-            AllFoundMonths = IndexRunner.GetMonths(false);
+            AllFoundMonths = IndexRunner.GetMonths();
 
         else
             AllFoundMonths = IndexRunner.GetMonths(Constants.Transactions.Where(tr => tr.DateOfTransaction.Year.ToString() == SelectedYear).ToList(), false);
