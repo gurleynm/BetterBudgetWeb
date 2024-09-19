@@ -212,7 +212,7 @@
     else if (!WeIn)
     {
         <PageTitle>Enter Password</PageTitle>
-        <button @onclick=GrabDemo class="btn btn-primary">View Demo</button>
+
         @if (mobile)
         {
             <div style="display:inline-block;width:100vw;height:100vh;">
@@ -223,7 +223,8 @@
                                @bind-ConfirmPassword=@confirmPassword
                                @bind-CreatingAccount=@CreatingAccount
                                @bind-ErrorMsg=@ErrorMsg
-                               Enter=@((e) => Enter(e))>
+                               Enter=@((e) => Enter(e))
+                               GrabDemo=GrabDemo>
                     <div style="display:flex;justify-content:center;margin-top:2vh">
                         @if (!Disabled)
                         {
@@ -249,7 +250,8 @@
                            @bind-ConfirmPassword=@confirmPassword
                            @bind-CreatingAccount=@CreatingAccount
                            @bind-ErrorMsg=@ErrorMsg
-                           Enter=@((e) => Enter(e))>
+                           Enter=@((e) => Enter(e))
+                           GrabDemo=GrabDemo>
                 <div style="display:flex;justify-content:center;margin-top:2vh">
                     @if (!Disabled)
                     {
@@ -433,6 +435,7 @@
 
     private async void GrabDemo()
     {
+        Disabled = true;
         Constants.Token = "DEMO";
         Constants.CUR_USER = "Optimus";
         TokenWrapper tokenWrapper = await CatchAllRunner.GrabDemo();
@@ -556,6 +559,7 @@
     private async Task SignOut()
     {
         WeIn = false;
+        Disabled = false;
         Constants.Token = "";
         await sessionStorage.SetItemAsync("token", Constants.Token);
         await sessionStorage.SetItemAsync("cur_user", "");

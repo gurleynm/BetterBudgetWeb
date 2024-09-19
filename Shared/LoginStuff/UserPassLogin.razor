@@ -12,9 +12,32 @@
         }
         @if (CreatingAccount)
         {
-            <div style="display:inline-block;padding:1em">
+            <div style="display:flex;flex-direction:@(Constants.Mobile ? "column" : "row");justify-content:start; padding:1em">
+                <div style="display:flex;flex-direction:column;justify-content:center">
+                    <label style="color:white">Username</label>
+                    <div style="display:flex;flex-direction:row;justify-content:center;">
+                        <input class="better" id="user" placeholder="Username 1" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                    </div>
+                    <br />
+                    <label style="color:white">Shared Password</label>
+                    <div style="display:flex;flex-direction:row;justify-content:center;">
+                        <PasswordInput Enter="Enter" @bind-Password=@Password />
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;justify-content:center;">
+                    <label style="color:white">Username</label>
+                    <div style="display:flex;flex-direction:row;justify-content:center;">
+                        <input class="better" id="user" placeholder="Username 2" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                    </div>
+                    <br />
+                    <label style="color:white">Confirm Password</label>
+                    <div style="display:flex;flex-direction:row;justify-content:center;">
+                        <PasswordInput Enter="Enter" @bind-Password=@ConfirmPassword />
+                    </div>
+                </div>
+@* 
                 <div style="display:flex;justify-content:center;flex-direction:@(Constants.Mobile ? "column" : "row")">
-                    <div style="display:flex;flex-direction:column">
+                    <div style="display:flex;flex-direction:column;margin-right:1em">
                         <label style="color:white">Username 1</label>
                         <input class="better" id="user" placeholder="Username 1" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
                     </div>
@@ -26,7 +49,7 @@
                 </div>
                 <br />
                 <div style="display:flex;justify-content:center;flex-direction:@(Constants.Mobile ? "column" : "row")">
-                    <div style="display:flex;flex-direction:column">
+                    <div style="display:flex;flex-direction:column;margin-right:1em">
                         <label style="color:white">Shared Password</label>
                         <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@Password />
                     </div>
@@ -35,20 +58,22 @@
                         <label style="color:white">Confirm Shared Password</label>
                         <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword />
                     </div>
-                </div>
-                <PasswordRules @ref=@passwordRules Password="@Password" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
+                </div> *@
             </div>
+                <PasswordRules @ref=@passwordRules Password="@Password" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
         }
         else
         {
-            <div style="display:inline-block">
+            <div style="display:flex;flex-direction:column;justify-content:center">
                 <label style="color:white">Username</label>
-                <br />
-                <input class="better" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                <div style="display:flex;flex-direction:row;justify-content:center;">
+                    <input class="better" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                </div>
                 <br />
                 <label style="color:white">Password</label>
-                <br />
-                <PasswordInput Enter="Enter" @bind-Password=@Password />
+                <div style="display:flex;flex-direction:row;justify-content:center;">
+                    <PasswordInput Enter="Enter" @bind-Password=@Password />
+                </div>
             </div>
         }
         @ChildContent
@@ -59,13 +84,23 @@
                 <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
             </span>
         </div>
+        @if (!Disabled)
+        {
+            <button style="width:100%;margin-top:1em;background-image:linear-gradient(to left, cyan,indigo)" class="btn btn-primary"
+                    @onclick=ExecuteGrabDemo>
+                View Demo
+            </button>
+        }
     </div>
-<Footer />
+    <Footer />
 </div>
 
 @code {
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback GrabDemo { get; set; }
 
     [Parameter]
     public string Username
@@ -81,7 +116,6 @@
 
     [Parameter]
     public EventCallback<string> UsernameChanged { get; set; }
-
 
     [Parameter]
     public string Username2
@@ -162,6 +196,7 @@
     public Action<KeyboardEventArgs> Enter { get; set; }
 
     public PasswordRules passwordRules;
+    public bool Disabled = false;
 
     private string username;
     private string username2;
@@ -172,4 +207,10 @@
 
     private string AccountTxt => CreatingAccount ? "Already have an account?" : "Don't have an account?";
     private string SignTxt => CreatingAccount ? "Sign In" : "Sign Up";
+
+    private void ExecuteGrabDemo()
+    {
+        Disabled = true;
+        GrabDemo.InvokeAsync();
+    }
 }
