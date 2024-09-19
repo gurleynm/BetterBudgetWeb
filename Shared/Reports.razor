@@ -6,264 +6,237 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
 @inject IJSRuntime jsRuntime
+
 @if (!Mobile)
 {
-    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:fit-content;position: absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-color:#384153">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:black;">
-                        <strong>Your Reports</strong>
-                    </h5>
-                    @if (SelectedMonth == "All")
-                    {
-                        <div style="position:relative;margin:0;left:50%;top:0%;-ms-transform:translate(-50%,0%);transform:translate(-50%,0%); display:flex;justify-content:flex-end">
-                            <button type="button" class="btn btn-primary" @onclick="@(() => {
-                                Rebalancing = !Rebalancing;
-                            })">
-                                Rebalance to Spent
-                            </button>
+    <Confirmation Title="Your Reports" OnClose="ModalCancel"
+                  RightBtnTxt="@(SelectedMonth == "All" ? "Rebalance to Spent" : "")"
+                  RightBtnColor="btn-primary"
+                  RightBtnClick="@(() => { if (SelectedMonth == "All") Rebalancing = !Rebalancing; })">
+        <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
+            @if (SFDs != null && SFDs.Count > 0)
+            {
+                @if (Years != null && Years.Count > 1)
+                {
+                    <div class="tab" style="width:75vw">
+                        @foreach (var y in Years)
+                        {
+                            <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
+                        }
+                        <div class="tab" style="width:100vw">
+                            @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
+                            {
+                                <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                            }
                         </div>
-                    }
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
-                    </button>
-                </div>
-                <div class="modal-body" style="width:100%;color:black;overflow:auto">
-                    <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
-                        @if (SFDs != null && SFDs.Count > 0)
-                        {
-                            @if (Years != null && Years.Count > 1)
-                            {
-                                <div class="tab" style="width:75vw">
-                                    @foreach (var y in Years)
-                                    {
-                                        <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
-                                    }
-                                    <div class="tab" style="width:100vw">
-                                        @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
-                                        {
-                                            <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
-                                        }
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="tab" style="width:110vw;">
-                                    @foreach (var mt in MonthTabs)
-                                    {
-                                        <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
-                                    }
-                                    <br style="clear:both" />
-                                </div>
-                            }
-                            <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;width:100%">
-                                <table class="toggle-table">
-                                    <tr>
-                                        <th>
-                                        </th>
-                                        <th>
-                                            @Constants.Person1
-                                        </th>
-                                        <th>
-                                            @Constants.Person2
-                                        </th>
-                                        <th>
-                                            Total
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <td>Transactions:</td>
-                                        <td>@Person1TransCount</td>
-                                        <td>@Person2TransCount</td>
-                                        <td>
-                                            @TotalTransCount
-                                            @if (Person1TransCount + Person2TransCount > TotalTransCount)
-                                            {
-                                                <br />
-                                                <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
-                                            }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Projected Expense Total:
-                                        </td>
-                                        <td>@Pretty(Person1Projected)</td>
-                                        <td>@Pretty(Person2Projected)</td>
-                                        <td>@Pretty(TotalProjected)</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Actual Expense Total:
-                                        </td>
-                                        <td class="income-bad">@Pretty(Person1Actual)</td>
-                                        <td class="income-bad">@Pretty(Person2Actual)</td>
-                                        <td class="income-bad">@Pretty(TotalActual)</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Income + Added Equity Total:
-                                        </td>
-                                        <td class="income-good">@Pretty(Person1Income)</td>
-                                        <td class="income-good">@Pretty(Person2Income)</td>
-                                        <td class="income-good">@Pretty(TotalIncome)</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4">=</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Net for Month:
-                                        </td>
-                                        <td class="@TranColor(Person1Income - Person1Actual)">@Pretty(Person1Income - Person1Actual)</td>
-                                        <td class="@TranColor(Person2Income - Person2Actual)">@Pretty(Person2Income - Person2Actual)</td>
-                                        <td class="@TranColor(TotalIncome - TotalActual)">@Pretty(TotalIncome - TotalActual)</td>
-                                    </tr>
-                                </table>
-                                <br style="clear:both;" />
-                                <ReportDynamic SFDs=@SFDs Rebalancing=@(Rebalancing && 
-                                                                        SelectedMonth == "All")
-                                    NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => 
-                                                                    ye.MyClass == "active").MyYear).Count() - 1) />
-                            </div>
-                        }
-                        else
-                        {
-                            <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
-                                <div style="text-align:center;font-size:1vw">Loading...</div>
-                            </div>
-                        }
                     </div>
+                }
+                else
+                {
+                    <div class="tab" style="width:110vw;">
+                        @foreach (var mt in MonthTabs)
+                        {
+                            <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                        }
+                        <br style="clear:both" />
+                    </div>
+                }
+                <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;width:100%">
+                    <table class="toggle-table report-table">
+                        <tr>
+                            <th colspan="4" style="background-color:darkblue;color:white;"><i>Summary</i></th>
+                        </tr>
+                        <tr>
+                            <th>
+                            </th>
+                            <th>
+                                @Constants.Person1
+                            </th>
+                            <th>
+                                @Constants.Person2
+                            </th>
+                            <th>
+                                Total
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>Transactions:</td>
+                            <td>@Person1TransCount</td>
+                            <td>@Person2TransCount</td>
+                            <td>
+                                @TotalTransCount
+                                @if (Person1TransCount + Person2TransCount > TotalTransCount)
+                                {
+                                    <br />
+                                    <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Projected Expense Total:
+                            </td>
+                            <td>@Pretty(Person1Projected)</td>
+                            <td>@Pretty(Person2Projected)</td>
+                            <td>@Pretty(TotalProjected)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Actual Expense Total:
+                            </td>
+                            <td class="income-bad">@Pretty(Person1Actual)</td>
+                            <td class="income-bad">@Pretty(Person2Actual)</td>
+                            <td class="income-bad">@Pretty(TotalActual)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Income + Added Equity Total:
+                            </td>
+                            <td class="income-good">@Pretty(Person1Income)</td>
+                            <td class="income-good">@Pretty(Person2Income)</td>
+                            <td class="income-good">@Pretty(TotalIncome)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">=</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Net for Month:
+                            </td>
+                            <td class="@TranColor(Person1Income - Person1Actual)">@Pretty(Person1Income - Person1Actual)</td>
+                            <td class="@TranColor(Person2Income - Person2Actual)">@Pretty(Person2Income - Person2Actual)</td>
+                            <td class="@TranColor(TotalIncome - TotalActual)">@Pretty(TotalIncome - TotalActual)</td>
+                        </tr>
+                    </table>
+                    <br style="clear:both;" />
+                    <ReportDynamic SFDs=@SFDs Rebalancing=@(Rebalancing &&
+                           SelectedMonth == "All")
+                                   NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye =>
+                           ye.MyClass == "active").MyYear).Count() - 1) />
                 </div>
-            </div>
+            }
+            else
+            {
+                <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
+                    <div style="text-align:center;font-size:1vw">Loading...</div>
+                </div>
+            }
         </div>
-    </div>
+    </Confirmation>
 }
 else
 {
-    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);display: block !important;">
-        <div class="modal-dialog" style="overflow-y: initial !important" role="document">
-            <div class="modal-content" style="width:fit-content;position:absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-color:#384153;">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:black;">
-                        <strong>Your Reports</strong>
-                    </h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
-                    </button>
-                </div>
-                <div class="modal-body" style="width:fit-content;max-height:85vh;color:black;overflow-y:scroll;">
-                    @if (SFDs != null && SFDs.Count > 0)
-                    {
-                        @if (Years != null && Years.Count > 1)
+    <Confirmation Title="Your Reports" OnClose="ModalCancel"
+                  RightBtnTxt="" >
+        <div class="modal-body" style="width:fit-content;max-height:85vh;color:black;overflow-y:scroll;">
+            @if (SFDs != null && SFDs.Count > 0)
+            {
+                @if (Years != null && Years.Count > 1)
+                {
+                    <div class="tab" style="width:100%">
+                        @foreach (var y in Years)
                         {
-                            <div class="tab" style="width:100%">
-                                @foreach (var y in Years)
-                                {
-                                    <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
-                                }
-                                <div class="tab" style="width:100%">
-                                    @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
-                                    {
-                                        <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
-                                    }
-                                </div>
-                            </div>
+                            <button class="tablinks @y.MyClass" @onclick="() => ToggleYClasses(y.MyYear)">@y.MyYear</button>
                         }
-                        else
-                        {
-                            <div class="tab" style="width:100%;">
-                                @foreach (var mt in MonthTabs)
-                                {
-                                    <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
-                                }
-                                <br style="clear:both" />
-                            </div>
-                        }
-                        <div style="display:flex;flex-direction:column;justify-content:space-between;">
-                            <div>
-                                <table class="toggle-table">
-                                    <tr>
-                                        <th style="font-size:3vw;padding:5px">
-                                            Statistic
-                                        </th>
-                                        <th style="font-size:3vw;padding:5px">
-                                            @Constants.Person1
-                                        </th>
-                                        <th style="font-size:3vw;padding:5px">
-                                            @Constants.Person2
-                                        </th>
-                                        <th style="font-size:3vw;padding:5px">
-                                            Total
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:3vw;padding:5px">Transactions:</td>
-                                        <td style="font-size:3vw;padding:5px">@Person1TransCount</td>
-                                        <td style="font-size:3vw;padding:5px">@Person2TransCount</td>
-                                        <td style="font-size:3vw;padding:5px">
-                                            @TotalTransCount
-                                            @if (Person1TransCount + Person2TransCount > TotalTransCount)
-                                            {
-                                                <br />
-                                                <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
-                                            }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:3vw;padding:5px">
-                                            Projected Expense Total:
-                                        </td>
-                                        <td style="font-size:3vw;padding:5px">@Pretty(Person1Projected)</td>
-                                        <td style="font-size:3vw;padding:5px">@Pretty(Person2Projected)</td>
-                                        <td style="font-size:3vw;padding:5px">@Pretty(TotalProjected)</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:3vw;padding:5px">
-                                            Actual Expense Total:
-                                        </td>
-                                        <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(Person1Actual)</td>
-                                        <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(Person2Actual)</td>
-                                        <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(TotalActual)</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:3vw;padding:5px">
-                                            Income + Added Equity Total:
-                                        </td>
-                                        <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person1Income)</td>
-                                        <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person2Income)</td>
-                                        <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(TotalIncome)</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="4" style="font-size:3vw;padding:5px">=</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="font-size:3vw;padding:5px">
-                                            Net for Month:
-                                        </td>
-                                        <td class="@TranColor(Person1Income - Person1Actual)" style="font-size:3vw;padding:5px">@Pretty(Person1Income - Person1Actual)</td>
-                                        <td class="@TranColor(Person2Income - Person2Actual)" style="font-size:3vw;padding:5px">@Pretty(Person2Income - Person2Actual)</td>
-                                        <td class="@TranColor(TotalIncome - TotalActual)" style="font-size:3vw;padding:5px">@Pretty(TotalIncome - TotalActual)</td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <br style="clear:both;" />
-                            <div>
-                                <ReportDynamic SFDs=@SFDs />
-                            </div>
-
+                        <div class="tab" style="width:100%">
+                            @foreach (var mt in MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye => ye.MyClass == "active").MyYear))
+                            {
+                                <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                            }
                         </div>
-                    }
-                    else
-                    {
-                        <span>Loading...</span>
-                    }
+                    </div>
+                }
+                else
+                {
+                    <div class="tab" style="width:100%;">
+                        @foreach (var mt in MonthTabs)
+                        {
+                            <button class="tablinks @mt.MyClass" @onclick="() => ToggleClasses(mt.MyMonth)">@mt.MyMonth</button>
+                        }
+                        <br style="clear:both" />
+                    </div>
+                }
+                <div style="display:flex;flex-direction:column;justify-content:space-between;margin-top:1em">
+                    <div>
+                        <table class="toggle-table report-table">
+                            <tr>
+                                <th colspan="4" style="background-color:darkblue;color:white;"><i>Summary</i></th>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <th style="font-size:3vw;padding:5px">
+                                    @Constants.Person1
+                                </th>
+                                <th style="font-size:3vw;padding:5px">
+                                    @Constants.Person2
+                                </th>
+                                <th style="font-size:3vw;padding:5px">
+                                    Total
+                                </th>
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw;padding:5px">Transactions:</td>
+                                <td style="font-size:3vw;padding:5px">@Person1TransCount</td>
+                                <td style="font-size:3vw;padding:5px">@Person2TransCount</td>
+                                <td style="font-size:3vw;padding:5px">
+                                    @TotalTransCount
+                                    @if (Person1TransCount + Person2TransCount > TotalTransCount)
+                                    {
+                                        <br />
+                                        <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw;padding:5px">
+                                    Projected Expense Total:
+                                </td>
+                                <td style="font-size:3vw;padding:5px">@Pretty(Person1Projected)</td>
+                                <td style="font-size:3vw;padding:5px">@Pretty(Person2Projected)</td>
+                                <td style="font-size:3vw;padding:5px">@Pretty(TotalProjected)</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw;padding:5px">
+                                    Actual Expense Total:
+                                </td>
+                                <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(Person1Actual)</td>
+                                <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(Person2Actual)</td>
+                                <td class="income-bad" style="font-size:3vw;padding:5px">@Pretty(TotalActual)</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw;padding:5px">
+                                    Income + Added Equity Total:
+                                </td>
+                                <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person1Income)</td>
+                                <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(Person2Income)</td>
+                                <td class="income-good" style="font-size:3vw;padding:5px">@Pretty(TotalIncome)</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="font-size:3vw;padding:5px">=</td>
+                            </tr>
+                            <tr>
+                                <td style="font-size:3vw;padding:5px">
+                                    Net for Month:
+                                </td>
+                                <td class="@TranColor(Person1Income - Person1Actual)" style="font-size:3vw;padding:5px">@Pretty(Person1Income - Person1Actual)</td>
+                                <td class="@TranColor(Person2Income - Person2Actual)" style="font-size:3vw;padding:5px">@Pretty(Person2Income - Person2Actual)</td>
+                                <td class="@TranColor(TotalIncome - TotalActual)" style="font-size:3vw;padding:5px">@Pretty(TotalIncome - TotalActual)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <br style="clear:both;" />
+                    <div>
+                        <ReportDynamic SFDs=@SFDs />
+                    </div>
+
                 </div>
-            </div>
+            }
+            else
+            {
+                <span>Loading...</span>
+            }
         </div>
-    </div>
+    </Confirmation>
 }
 
 @code {
@@ -508,7 +481,7 @@ else
 
         StateHasChanged();
     }
-    
+
     private string TranColor(double num)
     {
         if (num > 0)
