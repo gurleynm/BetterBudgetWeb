@@ -3,172 +3,141 @@
 
 @if (!Mobile)
 {
-    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:fit-content;position: absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"];">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:white;">
-                        <strong>Editting Transaction</strong>
-                    </h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
-                    </button>
-                </div>
-                <div class="modal-body" style="width:fit-content;color:black;">
-                    <EditForm Model="@Transact">
-                        <table class="toggle-table">
-                            <tr>
-                                <td>
-                                    <label>Date</label>
-                                </td>
-                                <td>
-                                    <label>Expense Type</label>
-                                </td>
-                                <td>
-                                    <label>Name</label>
-                                </td>
-                                <td>
-                                    <label>@(Constants.Person1)</label>
-                                </td>
-                                <td>
-                                    <label>@(Constants.Person2)</label>
-                                </td>
-                                <td>
-                                    <label>Total</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding:1vw">
-                                    <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
-                                </td>
-                                <td style="padding:1vw">
-                                    <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
-                                </td>
-                                <td style="padding:1vw">
-                                    <InputText @bind-Value="Transact.Name" style="color:white"  />
-                                </td>
-                                <td style="padding:1vw">
-                                    <span style="border:solid white 1px;padding-left:1em">
-                                        $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
-                                    </span>
-                                    <PaymentInput @bind-NewExpense="@Transact.ExpenseType" 
-                                            @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Constants.Person1" />
-                                </td>
-                                <td style="padding:1vw">
-                                    <span style="border:solid white 1px;padding-left:1em">
-                                        $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
-                                    </span>
-                                    <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
-                                              @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Constants.Person2" />
-                                </td>
-                                <td style="padding:1vw">
-                                    <label>@Transact.TotalAmount</label>
-                                </td>
-                            </tr>
-                        </table>
-                    </EditForm>
-                    <p style="color:red">@ErrorMsg</p>
-                </div>
-                <div class="modal-footer">
-
-                    <button type="button" disabled=@Disabled class="btn btn-secondary" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Close</button>
-                    <button type="button" disabled=@Disabled class="btn btn-danger" data-dismiss="modal" @onclick="@ModalDecline">Decline</button>
-                    <button type="button" disabled=@Disabled class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Accept</button>
-
-                </div>
-            </div>
-        </div>
-    </div>
+    <Confirmation Title="Editting Transaction" OnClose="ModalCancel"
+                  LeftBtnClick="ModalCancel" LeftBtnTxt="Close" LeftBtnColor="btn-secondary"
+                  MidBtnClick="ModalDecline" MidBtnTxt="Decline" MidBtnColor="btn-danger"
+                  RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
+        <EditForm Model="@Transact">
+            <table class="toggle-table">
+                <tr>
+                    <td>
+                        <label>Date</label>
+                    </td>
+                    <td>
+                        <label>Expense Type</label>
+                    </td>
+                    <td>
+                        <label>Name</label>
+                    </td>
+                    <td>
+                        <label>@(Constants.Person1)</label>
+                    </td>
+                    <td>
+                        <label>@(Constants.Person2)</label>
+                    </td>
+                    <td>
+                        <label>Total</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:1vw">
+                        <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
+                    </td>
+                    <td style="padding:1vw">
+                        <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
+                    </td>
+                    <td style="padding:1vw">
+                        <InputText @bind-Value="Transact.Name" style="color:white" />
+                    </td>
+                    <td style="padding:1vw">
+                        <span style="border:solid white 1px;padding-left:1em">
+                            $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
+                        </span>
+                        <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
+                                      @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Constants.Person1" />
+                    </td>
+                    <td style="padding:1vw">
+                        <span style="border:solid white 1px;padding-left:1em">
+                            $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
+                        </span>
+                        <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
+                                      @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Constants.Person2" />
+                    </td>
+                    <td style="padding:1vw">
+                        <label>@Transact.TotalAmount</label>
+                    </td>
+                </tr>
+            </table>
+        </EditForm>
+        <p style="color:red">@ErrorMsg</p>
+    </Confirmation>
 }
 else
 {
-    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:fit-content;margin:0 auto;background-color:@Constants.ColorScheme["ComponentBackground"];">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:white;">
-                        <strong>Editting Transaction</strong>
-                    </h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
-                    </button>
-                </div>
-                <div class="modal-body" style="width:100%;color:black;">
-                    <EditForm Model="@Transact">
-                        <table class="toggle-table">
-                            <tr>
-                                <td style="font-size:3vw;"><label style="text-decoration:underline">Parameter</label></td>
-                                <td style="font-size:3vw;"><label style="text-decoration:underline">Value</label></td>
-                            </tr>
-                            <tr>
-                                <td style="font-size:3vw">
-                                    <label>Date</label>
-                                </td>
-                                <td style="font-size:3vw;padding:1vw">
-                                    <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size:3vw;padding:1vw">
-                                    <label>Expense Type</label>
-                                </td>
-                                <td style="font-size:3vw;padding:1vw">
-                                    <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size:3vw">
-                                    <label>Name</label>
-                                </td>
-                                <td style="font-size:3vw;padding:1vw">
-                                    <InputText @bind-Value="Transact.Name" style="color:white" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size:3vw;padding:1vw;">
-                                    <label>@(Constants.Person1 + " Values")</label>
-                                </td>
-                                <td style="font-size:3vw;padding:1vw">
-                                    <span style="border:solid white 1px;padding-left:1em">
-                                        $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
-                                    </span>
-                                    <br />
-                                    <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
-                                              @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Constants.Person1" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="font-size:3vw;padding:1vw;">
-                                    <label>@(Constants.Person2 + " Values")</label>
-                                </td>
-                                <td style="font-size:3vw;padding:1vw">
-                                    <span style="border:solid white 1px;padding-left:1em">
-                                        $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
-                                    </span>
-                                    <br />
-                                    <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
-                                              @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Constants.Person2" />
-                                </td>
-                            </tr>
-                            <tr>
+    <Confirmation Title="Editting Transaction" OnClose="ModalCancel"
+                  LeftBtnClick="ModalCancel" LeftBtnTxt="Decline" LeftBtnColor="btn-danger"
+                  RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
+        <div class="modal-body" style="width:100%;color:black;">
+            <EditForm Model="@Transact">
+                <table class="toggle-table">
+                    <tr>
+                        <td style="font-size:3vw;"><label style="text-decoration:underline">Parameter</label></td>
+                        <td style="font-size:3vw;"><label style="text-decoration:underline">Value</label></td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:3vw">
+                            <label>Date</label>
+                        </td>
+                        <td style="font-size:3vw;padding:1vw">
+                            <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:3vw;padding:1vw">
+                            <label>Expense Type</label>
+                        </td>
+                        <td style="font-size:3vw;padding:1vw">
+                            <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:3vw">
+                            <label>Name</label>
+                        </td>
+                        <td style="font-size:3vw;padding:1vw">
+                            <InputText @bind-Value="Transact.Name" style="color:white" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:3vw;padding:1vw;">
+                            <label>@(Constants.Person1 + " Values")</label>
+                        </td>
+                        <td style="font-size:3vw;padding:1vw">
+                            <span style="border:solid white 1px;padding-left:1em">
+                                $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
+                            </span>
+                            <br />
+                            <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
+                                          @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Constants.Person1" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size:3vw;padding:1vw;">
+                            <label>@(Constants.Person2 + " Values")</label>
+                        </td>
+                        <td style="font-size:3vw;padding:1vw">
+                            <span style="border:solid white 1px;padding-left:1em">
+                                $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
+                            </span>
+                            <br />
+                            <PaymentInput @bind-NewExpense="@Transact.ExpenseType"
+                                          @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Constants.Person2" />
+                        </td>
+                    </tr>
+                    <tr>
 
-                                <td style="font-size:3vw">
-                                    <label>Total</label>
-                                </td>
-                                <td style="font-size:3vw;padding:1vw">
-                                    <label>@Transact.TotalAmount</label>
-                                </td>
-                            </tr>
-                        </table>
-                    </EditForm>
-                    <p style="color:red">@ErrorMsg</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" disabled=@Disabled class="btn btn-danger" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@ModalCancel">Decline</button>
-                    <button type="button" disabled=@Disabled class="btn btn-success" data-dismiss="modal" @onclick="@ModalAccept">Accept</button>
-                </div>
-            </div>
+                        <td style="font-size:3vw">
+                            <label>Total</label>
+                        </td>
+                        <td style="font-size:3vw;padding:1vw">
+                            <label>@Transact.TotalAmount</label>
+                        </td>
+                    </tr>
+                </table>
+            </EditForm>
+            <p style="color:red">@ErrorMsg</p>
         </div>
-    </div>
+    </Confirmation>
 }
 
 @code {

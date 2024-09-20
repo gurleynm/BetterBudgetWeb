@@ -1,6 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using BetterBudgetWeb.Repo;
-using static BetterBudgetWeb.Shared.AddExpense;
+using static BetterBudgetWeb.MainMenuItems.AddExpense;
 
 namespace BetterBudgetWeb.Runner
 {

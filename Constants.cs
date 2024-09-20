@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using static BetterBudgetWeb.Shared.AddExpense;
+using static BetterBudgetWeb.MainMenuItems.AddExpense;
 using System;
 
 namespace BetterBudgetWeb
