@@ -29,8 +29,8 @@
     @if (Added)
     {
         <div class="floaty-rev" style="position:absolute;height:100%;width:100%;background-color:green;border-radius:@BorderRadius;"></div>
-        <div class="floaty-rev" style="position:absolute;height:100%;width:100%;border-radius:@BorderRadius;
-                display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div class="floaty-rev flex-c" style="position:absolute;height:100%;width:100%;border-radius:@BorderRadius;
+                                                align-items:center;">
             <span class="oi oi-circle-check" style="font-size:x-large"></span>
         </div>
     }
@@ -144,14 +144,14 @@
                 else
                 {
                     <tr>
-                        <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-evenly">
+                        <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-evenly">
                             <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw;color:silver" />
 
                             <InputText style="width:30vw;color:white" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-around;align-items:center;">
+                        <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-around;align-items:center;">
                             <span>
                                 $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
                                     border:none;border-bottom:solid white 1px;text-align:center;" @bind=@NewTrans.TopAmount>
@@ -183,7 +183,7 @@
                     @if (ShowSecond)
                     {
                         <tr>
-                            <td style="font-size:3vw;padding:1vw;display:flex;justify-content:space-around;align-items:center;">
+                            <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-around;align-items:center;">
                                 <span>
                                     $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
                                     border:none;border-bottom:solid white 1px;text-align:center;" @bind=@NewTrans.BottomAmount>

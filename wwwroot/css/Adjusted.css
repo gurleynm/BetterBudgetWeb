@@ -231,3 +231,21 @@ option {
 report-table > td {
     padding: 0 2vw;
 }
+
+.flex-r {
+    display:flex;
+    flex-direction:row;
+    justify-content:center;
+}
+
+.flex-c{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.flex-c-start {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}

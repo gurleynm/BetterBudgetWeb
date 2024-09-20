@@ -6,7 +6,7 @@
     <br style="clear:both" />
     <div style="border: 2px solid green; width:90vw;height:fit-content;">
         <h1 style="text-align:center;">Envelope Preview:</h1>
-        <div style="display:flex;justify-content:center">
+        <div class="flex-r">
             <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@(double.TryParse(GoalAmount, out double ga) ? ga : 0)" Saved="@(Person1Amount+Person2Amount)" />
         </div>
     </div>

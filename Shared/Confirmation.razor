@@ -53,7 +53,7 @@ else
                 <div class="modal-body" style="width:fit-content;color:black;">
                     @ChildContent
                 </div>
-                <div class="modal-footer" style="display:flex;justify-content:space-around">
+                <div class="modal-footer flex-r" style="justify-content:space-around">
                     @if (LeftBtnShow)
                     {
                         <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="float:left" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>

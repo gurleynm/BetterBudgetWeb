@@ -2,8 +2,8 @@
 @using System.Drawing
 @inject IJSRuntime JSRuntime
 
-<div style="display:flex;flex-direction:column;justify-content:center;width:100%">
-    <div class="donutCell" style="display:flex;flex-direction:column;justify-content:center">
+<div class="flex-c" style="width:100%">
+    <div class="donutCell flex-c">
         <div class="centerLabel">@TotalCost</div>
         <div id="@ChartId" class="donutDiv"></div>
     </div>
@@ -16,7 +16,7 @@
         @foreach (var ex in Expenses.OrderByDescending(e => e.Amount))
         {
             <tr>
-                <td style="display:flex;justify-content:center;border:none;padding:1em">
+                <td class="flex-r" style="border:none;padding:1em">
                 <div style="background-color:@ex.SegmentColor;border-radius:2em;width:2em;height:2em;"></div>
             </td>
             <td style="border:none">@ex.ExpenseType</td>

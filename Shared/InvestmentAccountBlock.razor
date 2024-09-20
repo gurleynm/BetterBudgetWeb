@@ -7,14 +7,14 @@
 </style>
 
 <hr style="margin:0" />
-<div class="@SetClass" style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between;padding:0; margin: 0;cursor:pointer;" @onclick=Clicked>
+<div class="flex-r @SetClass" style="flex-wrap:wrap;justify-content:space-between;padding:0; margin: 0;cursor:pointer;" @onclick=Clicked>
     <div style="align-self:flex-start">
-        <div style="display:flex;flex-direction:column;justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
+        <div class="flex-c" style="justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
             <label style="cursor:pointer;font-size:medium;align-self:flex-start;margin:0;"><strong>@TheBalance.Name</strong></label>
         </div>
     </div>
     <div style="align-self:flex-end;padding:0; margin: 0;">
-        <div style="display:flex;flex-direction:column;justify-content:space-between;padding:0 .5vw 0 0; margin: 0">
+        <div class="flex-c" style="justify-content:space-between;padding:0 .5vw 0 0; margin: 0">
             <label style="cursor:pointer;font-size:medium;align-self:flex-end;margin:0">@Constants.Pretty(TheBalance.GetValueWithStock())</label>
             @if (TheBalance.APR == 0)
             {

@@ -6,7 +6,7 @@
     <br style="clear:both" />
     <div style="width:90vw;height:fit-content;">
         <h1 style="text-align:center;">Envelope Preview:</h1>
-        <div style="display:flex;justify-content:center">
+        <div class="flex-r">
             <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
         </div>
     </div>

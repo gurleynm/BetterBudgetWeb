@@ -9,8 +9,8 @@
     }
 </style>
 
-<div class="bal-block" style="display:flex;justify-content:center;margin-right:1vw;margin-bottom:1vw;" @onmouseover=MouseOver @onmouseout=MouseOut>
-    <div style="z-index:2;display:flex;justify-content:flex-end; flex-direction:column;flex-wrap:wrap; border-radius:5px;width:@(FontSize*5 + "vw;");
+<div class="bal-block flex-r" style="margin-right:1vw;margin-bottom:1vw;" @onmouseover=MouseOver @onmouseout=MouseOut>
+    <div class="flex-c" style="z-index:2;justify-content:flex-end;flex-wrap:wrap; border-radius:5px;width:@(FontSize*5 + "vw;");
     background-color:@(string.IsNullOrEmpty(Color) ? "#32A852" : Color);color:@TextColor;padding:0">
         <h1 style="flex-grow:4;cursor:pointer;text-align:center;font-size:@(FontSize + "vw;")">
             @(string.IsNullOrEmpty(BalName) ? "Savings" : BalName)

@@ -81,7 +81,7 @@
             </div>
             <br style="clear:both" />
         }
-        <div style="width:100%; padding:0; margin:0;display:flex;justify-content:center">
+        <div class="flex-r" style="width:100%; padding:0; margin:0;">
             <button class="btn btn-secondary" style="margin:auto 0" disabled=@Disabled @onclick=Submit>
                 @("Buy in " + ChosenBalance.Name
                     )
@@ -99,13 +99,13 @@ else
 {
     @if (!string.IsNullOrEmpty(BalanceSelected))
     {
-        <div style="display:flex;flex-direction:row;justify-content:center;padding-top:1em">
-            <div style="margin: 0 1vw;display:flex;flex-direction:column;justify-content:start">
+        <div class="flex-r" style="padding-top:1em">
+            <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Security Name:</label>
                 <input type="text" placeholder="Name" style="text-transform:uppercase;width:6vw"
                        @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
             </div>
-            <div style="display:flex;flex-direction:column;justify-content:start;margin:0 1vw;">
+            <div class="flex-c-start" style="margin:0 1vw;">
                 <label>Security Type:</label>
                 <select class="custom-select" @bind="SecType" title="Type of Balance is required ">
                     <option value="Stock" selected>Stock</option>
@@ -117,7 +117,7 @@ else
             </div>
             @if (@SecType == "Call" || @SecType == "Put")
             {
-                <div style="display:flex;flex-direction:column;justify-content:start;margin: 0 1vw;">
+                <div class="flex-c-start" style="margin: 0 1vw;">
                     <label>Strike Price:</label>
                     <br />
                     <input type="number" style="width:7vw" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
@@ -129,17 +129,17 @@ else
                 </div>
                 <br style="clear:both" />
             }
-            <div style="display:flex;flex-direction:column;justify-content:start;margin: 0 1vw;">
+            <div class="flex-c-start" style="margin: 0 1vw;">
                 <label># of Shares:</label>
                 <input type="number" style="width:7vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
             </div>
-            <div style="display:flex;flex-direction:column;justify-content:start;margin: 0 1vw;">
+            <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Cost Per Share:</label>
                 <input type="number" style="width:8vw" placeholder="Cost Per Share" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
             </div>
             @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
             {
-                <div style="display:flex;flex-direction:column;justify-content:start; margin: 0 1vw;">
+                <div class="flex-c-start" style="margin: 0 1vw;">
                     <label>Person:</label>
                     <br />
                     <select class="custom-select" @bind="Person" title="Person's Balance ">
@@ -148,7 +148,7 @@ else
                     </select>
                 </div>
             }
-            <div style="display:flex;flex-direction:column;justify-content:center;">
+            <div class="flex-c">
                 <button class="btn btn-secondary" style="margin: 0 1vw;width:fit-content;height:fit-content" disabled=@Disabled @onclick=Submit>
                     @("Buy in " + ChosenBalance.Name
                         )

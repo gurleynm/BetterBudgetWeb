@@ -1,8 +1,8 @@
-﻿<div class="text-color" style="display:flex;flex-direction:column;justify-content:center;background-color:transparent;width:100%;">
-    <div class="chart-bar-hor__label" style="display:flex;flex-direction:row;justify-content:center;border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
+﻿<div class="text-color flex-c" style="background-color:transparent;width:100%;">
+    <div class="chart-bar-hor__label flex-r" style="border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
         <span class="text-color">@Label</span>
     </div>
-    <div class="chart-bar-hor__inner" style="display:flex;flex-direction:row;justify-content:start;cursor:pointer" @onclick=OnClick>
+    <div class="chart-bar-hor__inner flex-r" style="justify-content:start;cursor:pointer" @onclick=OnClick>
         @if (Negative)
         {
             <div class="chart-bar-hor__fill-bad"
@@ -14,7 +14,7 @@
                  style="width:@BarFillWidth"></div>
         }
     </div>
-    <div class="chart-bar-hor__label" style="display:flex;flex-direction:column;justify-content:center;border:none;width:100%;">
+    <div class="chart-bar-hor__label flex-c" style="border:none;width:100%;">
         @if (Negative)
         {
             <span @onclick=OnClick style="color:red;cursor:pointer">@(Constants.Pretty(Value) + "/" + Constants.Pretty(MaxValue).Trim('$'))</span>
@@ -26,7 +26,7 @@
 
         @if (Show)
         {
-            <div style="display:flex;justify-content:center;flex-wrap:wrap;flex-direction:row;width:100%">
+            <div class="flex-r" style="flex-wrap:wrap;width:100%">
                 <MonthlySpending @ref="Child" ExpenseType=@Label RefreshParent="@RefreshMe" />
                 @if (BottomBorder)
                 {

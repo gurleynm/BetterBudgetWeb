@@ -15,7 +15,7 @@
                     </button>
                 </div>
                 <div class="modal-body" style="width:100%;color:black;">
-                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                    <div class="flex-c" style="justify-content:space-between">
                         @if (Envelopes != null && Envelopes.Count > 0)
                         {
                             <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
@@ -28,19 +28,19 @@
                             @if (SelectedEnv != null)
                             {
                                 <br />
-                                <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%;">
+                                <div class="flex-r" style="justify-content:space-between;width:100%;">
                                     <div style="align-content:flex-start">
                                         <Envelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Open=true Adding=false
                                       Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
-                                    <div style="display:flex;flex-direction:column;justify-content:center">
+                                    <div class="flex-c">
                                         <img alt="Cash Arrow" src="/images/CashArrow.png" style="height:3vw;cursor:pointer" @onclick=@(() => HandleCash()) />
                                     </div>
 
-                                    <div style="display:flex;flex-direction:column;justify-content:space-evenly">
+                                    <div class="flex-c" style="justify-content:space-evenly">
                                         @if (SelectedEnv.Person1Account != "NONE")
                                         {
-                                            <div style="display:flex;flex-direction:row;justify-content:space-between">
+                                            <div class="flex-r" style="justify-content:space-between">
                                                 <label>@Constants.Person1:</label>
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person1Amount" />
@@ -51,7 +51,7 @@
                                         }
                                         @if (SelectedEnv.Person2Account != "NONE")
                                         {
-                                            <div style="display:flex;flex-direction:row;justify-content:space-between">
+                                            <div class="flex-r" style="justify-content:space-between">
                                                 <label>@Constants.Person2:</label>
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person2Amount" />
@@ -89,7 +89,7 @@ else
                     </button>
                 </div>
                 <div class="modal-body" style="width:100%;color:black;">
-                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                    <div class="flex-c" style="justify-content:space-between">
                         @if (Envelopes != null && Envelopes.Count > 0)
                         {
                             <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
@@ -102,11 +102,11 @@ else
                             @if (SelectedEnv != null)
                             {
                                 <br />
-                                <div style="display:flex;flex-direction:column;justify-content:space-between;width:100%;">
-                                    <div style="display:flex;flex-direction:column;justify-content:space-evenly">
+                                <div class="flex-c" style="justify-content:space-between;width:100%;">
+                                    <div class="flex-c" style="justify-content:space-evenly">
                                         @if (SelectedEnv.Person1Account != "NONE")
                                         {
-                                            <div style="display:flex;flex-direction:row;justify-content:space-between">
+                                            <div class="flex-r" style="justify-content:space-between">
                                                 <label>@Constants.Person1:</label>
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person1Amount" />
@@ -121,7 +121,7 @@ else
                                         }
                                         @if (SelectedEnv.Person2Account != "NONE")
                                         {
-                                            <div style="display:flex;flex-direction:row;justify-content:space-between">
+                                            <div class="flex-r" style="justify-content:space-between">
                                                 <label>@Constants.Person2:</label>
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person2Amount" />
@@ -131,7 +131,7 @@ else
                                             </div>
                                         }
                                     </div>
-                                    <div style="display:flex;flex-direction:column;justify-content:center;height:auto">
+                                    <div class="flex-c" style="height:auto">
                                         <img alt="Cash Arrow for Mobile" src="/images/CashArrowMobile.png" style="height:30vw;cursor:pointer" @onclick=@(() => HandleCash()) />
                                     </div>
                                     <div style="align-content:flex-end">

@@ -5,12 +5,12 @@
 @inject NavigationManager NavManager
 @inject IJSRuntime JSRuntime
 
-<div class="@SetClass" @onmouseover="MouseOver" @onmouseout="MouseOut" style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-between;
+<div class="flex-r @SetClass" @onmouseover="MouseOver" @onmouseout="MouseOut" style="flex-wrap:wrap;justify-content:space-between;
                                 padding:0; margin: 0;cursor:@(IsPreview ? "auto" :"pointer");
                                 width:@(Constants.Mobile ? "90%" :"100%");border: 1px gray solid;background-image: linear-gradient(to left,indigo,@TheBalance.HexColor);
                                     color:@TheBalance.TextColor" @onclick=Clicked>
     <div style="align-self:flex-start">
-        <div style="display:flex;flex-direction:column;justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
+        <div class="flex-c" style="justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
             <label style="cursor:pointer;font-size:medium;align-self:flex-start;margin:0;"><strong>@TheBalance.Name</strong></label>
 
             @if (ShowTradable)
@@ -34,7 +34,7 @@
         </div>
     </div>
     <div class="slot-background" style="align-self:flex-end;padding:0; margin: 0;width:35%">
-        <div style="display:flex;flex-direction:column;justify-content:space-between;padding:0 .5vw 0 0; margin: 0">
+        <div class="flex-c" style="justify-content:space-between;padding:0 .5vw 0 0; margin: 0">
             <label class="@ColorClass()" style="cursor:pointer;font-size:medium;align-self:flex-end;margin:0">@Constants.Pretty(Amount)</label>
             <br />
         </div>

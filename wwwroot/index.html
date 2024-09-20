@@ -248,6 +248,9 @@
             );
 
             // Sets chart options.
+            let FontSize = 10;
+            if (IsMobile)
+                FontSize = 8;
             var options = {
                 sankey: {
                     iterations: 100,
@@ -259,7 +262,8 @@
                     ],
                     node: {
                         label: {
-                            color: 'white'
+                            color: 'white',
+                            fontSize: FontSize
                         }
                     }
                 }

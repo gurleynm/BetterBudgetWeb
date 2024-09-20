@@ -14,7 +14,7 @@
                     </button>
                 </div>
                 <div class="modal-body" style="width:100%;color:black;">
-                    <div style="display:flex;flex-direction:column;justify-content:center;">
+                    <div class="flex-c">
                         @for (int index = 0; index < Pages.Count; index++)
                         {
                             @if (index == PageNum)
@@ -23,7 +23,7 @@
                             }
                         }
                         <br />
-                        <div style="display:flex;flex-direction:row;justify-content:space-between">
+                        <div class="flex-r" style="justify-content:space-between">
                             @if (PageNum > 0)
                             {
                                 <button class="btn btn-primary" style="align-self:flex-start;width:5vw" @onclick=@Retreat>@PreviousText</button>
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer" style="display:flex;flex-direction:row;justify-content:center">
+                <div class="modal-footer flex-r">
                     <label style="color:black">Don't show again:</label>
                     <input type="checkbox" @bind=@Seen />
                 </div>

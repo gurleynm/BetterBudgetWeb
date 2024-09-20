@@ -3,17 +3,17 @@
 @using BetterBudgetWeb.Repo;
 @using static BetterBudgetWeb.MainMenuItems.DonutChart
 <div class="chart-back-hor" style="width:100%;">
-    <div style="display:flex;flex-direction:row;width:100%;justify-content:space-evenly">
-        <div style="display:flex;flex-direction:column">
+    <div class="flex-r" style="width:100%;justify-content:space-evenly">
+        <div class="flex-c-start">
             <span>INCOME</span>
             <input type="number" placeholder="Income" style="width:5em;padding:0;margin:0;margin-bottom:1vh"
                    @bind=ProjectedIncomeAmountStr />
         </div>
-        <div style="display:flex;flex-direction:column">
+        <div class="flex-c-start">
             <span>EXPENSES</span>
             <span style="color:@Constants.GoodOrBad(-(DynamicCostAmount + StaticCostAmount))">@Constants.Pretty(DynamicCostAmount + StaticCostAmount)</span>
         </div>
-        <div style="display:flex;flex-direction:column">
+        <div class="flex-c-start">
             <span>NET</span>
             <span style="color:@Constants.GoodOrBad(ProjectedNetAmount)">@Constants.Pretty(ProjectedNetAmount)</span>
         </div>

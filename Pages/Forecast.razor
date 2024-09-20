@@ -21,7 +21,7 @@
 <PageTitle>Forecast</PageTitle>
 
 
-<div style="display:flex;flex-direction:column;justify-content:flex-start;">
+<div class="flex-c-start">
     @foreach (var mr in MonthRels)
     {
         <button class="spendchart-btn" style="text-align:left;width:100%" @onclick=@(() => mr.Show = !mr.Show)>
@@ -36,7 +36,7 @@
         </button>
         @if (mr.Show)
         {
-            <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
+            <div class="flex-r" style="justify-content:space-between;width:100%">
                 <h2 style="text-align:center">
                     @{
                         double p1nw = GetNetWorthOf(mr, Constants.Person1);

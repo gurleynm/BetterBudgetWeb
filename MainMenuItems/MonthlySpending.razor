@@ -30,8 +30,8 @@
                 </tr>
             }
             <tr style="border:1px black solid;background-color: @Constants.ColorScheme["TableOdd"];">
-                <td style="display:flex;flex:row; font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
-                    <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:start;padding:1em">
+                <td class="flex-r" style="font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                    <div class="flex-c" style="justify-content:space-between;align-items:start;padding:1em">
                         <div style="color:white">
                             @transaction.Name
                         </div>
@@ -72,7 +72,7 @@
                     </td>
                 }
                 <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
-                    <div style="display:flex;justify-content:center;font-size: @(Constants.Mobile ? "3vw;" : "1vw");">
+                    <div class="flex-r" style="font-size: @(Constants.Mobile ? "3vw;" : "1vw");">
                         @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                         {
                             <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>

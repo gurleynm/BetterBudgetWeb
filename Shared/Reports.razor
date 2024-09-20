@@ -13,7 +13,7 @@
                   RightBtnTxt="@(SelectedMonth == "All" ? "Rebalance to Spent" : "")"
                   RightBtnColor="btn-primary"
                   RightBtnClick="@(() => { if (SelectedMonth == "All") Rebalancing = !Rebalancing; })">
-        <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
+        <div class="flex-c" style="flex-wrap:wrap;">
             @if (SFDs != null && SFDs.Count > 0)
             {
                 @if (Years != null && Years.Count > 1)
@@ -41,7 +41,7 @@
                         <br style="clear:both" />
                     </div>
                 }
-                <div class="tabcontent" style="display:flex;flex-direction:row; justify-content:space-between;width:100%">
+                <div class="tabcontent flex-r" style="justify-content:space-between;width:100%">
                     <table class="toggle-table report-table">
                         <tr>
                             <th colspan="4" style="background-color:darkblue;color:white;"><i>Summary</i></th>
@@ -117,7 +117,7 @@
             }
             else
             {
-                <div style="display:flex;flex-direction:column;flex-wrap:wrap;justify-content:center;">
+                <div class="flex-c" style="flex-wrap:wrap;">
                     <div style="text-align:center;font-size:1vw">Loading...</div>
                 </div>
             }
@@ -156,7 +156,7 @@ else
                         <br style="clear:both" />
                     </div>
                 }
-                <div style="display:flex;flex-direction:column;justify-content:space-between;margin-top:1em">
+                <div class="flex-c" style="justify-content:space-between;margin-top:1em">
                     <div>
                         <table class="toggle-table report-table">
                             <tr>

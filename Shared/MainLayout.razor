@@ -225,14 +225,14 @@
                                @bind-ErrorMsg=@ErrorMsg
                                Enter=@((e) => Enter(e))
                                GrabDemo=GrabDemo>
-                    <div style="display:flex;justify-content:center;margin-top:2vh">
+                    <div class="flex-r" style="margin-top:2vh">
                         @if (!Disabled)
                         {
                             <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
                         }
                         else
                         {
-                            <div style="display:flex;flex-direction:row;justify-content:space-around">
+                            <div class="flex-r" style="justify-content:space-around">
                                 <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
                                 <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
                                 <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
@@ -252,14 +252,14 @@
                            @bind-ErrorMsg=@ErrorMsg
                            Enter=@((e) => Enter(e))
                            GrabDemo=GrabDemo>
-                <div style="display:flex;justify-content:center;margin-top:2vh">
+                <div class="flex-r" style="margin-top:2vh">
                     @if (!Disabled)
                     {
                         <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
                     }
                     else
                     {
-                        <div style="display:flex;flex-direction:row;justify-content:space-around">
+                        <div class="flex-r" style="justify-content:space-around">
                             <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
                             <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
                             <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>

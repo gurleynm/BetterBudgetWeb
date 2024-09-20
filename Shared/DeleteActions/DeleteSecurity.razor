@@ -4,7 +4,7 @@
 @if (Mobile)
 {
     <div style="float:left; margin:auto 0;width:100%;">
-        <div style="margin:2vh 0;width:100%;display:flex;flex-direction:row;justify-content:center">
+        <div class="flex-r" style="margin:2vh 0;width:100%;">
             <label style="margin:2vw">Sell</label>
             <label class="switch">
                 <input type="checkbox" @bind=DeleteIsSet>
@@ -81,8 +81,8 @@
 }
 else
 {
-    <div style="display:flex;flex-direction:column;justify-content:center;margin:1vw 1vw;">
-        <div style="display:flex;flex-direction:row;align-items:center;justify-content:center">
+    <div class="flex-c" style="margin:1vw 1vw;">
+        <div class="flex-r" style="align-items:center;">
             <label style="margin:0 1vw">Sell</label>
             <label class="switch">
                 <input type="checkbox" @bind=DeleteIsSet>
@@ -90,8 +90,8 @@ else
             </label>
             <label style="margin:0 1vw">Delete</label>
         </div>
-        <div style="display:flex;flex-direction:row;justify-content:center;">
-            <div style="margin:0 1vw;display:flex;flex-direction:column;justify-content:start">
+        <div class="flex-r">
+            <div class="flex-c-start" style="margin:0 1vw;">
                 <label>Security Name:</label>
                 <select @bind="SecID">
                     <option value="@string.Empty" selected disabled="disabled">(Choose Security)</option>
@@ -106,11 +106,11 @@ else
             </div>
             @if (!DeleteIsSet)
             {
-                <div style="margin:0 1vw;display:flex;flex-direction:column;justify-content:start">
+                <div class="flex-c-start" style="margin:0 1vw;">
                     <label>Number of Shares:</label>
                     <input type="number" style="width:7vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
                 </div>
-                <div style="margin:0 1vw;display:flex;flex-direction:column;justify-content:start">
+                <div class="flex-c-start" style="margin:0 1vw;">
                     <label>Share Price at Sale:</label>
                     <input type="number" style="width:8vw" placeholder="Price per Share" @bind-value="@SalePrice" @oninput="@(async (ui) => { SalePrice = (string) ui.Value;})" />
                 </div>

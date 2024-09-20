@@ -22,7 +22,7 @@ else
     @if (!Constants.Mobile)
     {
         @* <h1 style="text-align:center;color:@Constants.GoodOrBad(Constants.Person1NetWorth + Constants.Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Constants.Person1NetWorth + Constants.Person2NetWorth))</h1>
-        <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
+        <div class="flex-r" style="justify-content:space-between;width:100%">
             <h2 style="text-align:center">
                 <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Constants.Person1NetWorth)">@(Pretty(Constants.Person1NetWorth))</span>
             </h2>
@@ -36,7 +36,7 @@ else
             </h2>
         </div> *@
 
-        <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%;align-content:center">
+        <div class="flex-r" style="justify-content:space-between;width:100%;align-content:center">
             @if (DataPoints != null && DataPoints.Count > 0)
             {
                 <button class="spendchart-btn" style="width:fit-content" @onclick="@ToggleChartBtn">
@@ -53,13 +53,13 @@ else
             }
             @if (Envelopes != null && Envelopes.Count > 0)
             {
-                <div style="display:flex;flex-direction:column;justify-content:center;padding-top:1em">
+                <div class="flex-c" style="padding-top:1em">
                     <Envelope Name="@GoalTxt" Scale=8 Font_Size=1 OnClick=@ToggleGoals />
                 </div>
             }
             @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
             {
-                <div style="display:flex;flex-direction:column;justify-content:center;">
+                <div class="flex-c">
                     <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
                 </div>
             }
@@ -67,10 +67,10 @@ else
         @if (ShowChart)
         {
             <br />
-            <div style="display:flex;flex-direction:row;justify-content:space-between;width:100%">
+            <div class="flex-r" style="justify-content:space-between;width:100%">
                 @if (EnvelopeExpenses > 0)
                 {
-                    <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;align-items:baseline;justify-content:center">
+                    <div class="flex-r" style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;align-items:baseline;">
                         <span style='position:relative;top:.3vw;font-size:x-large;text-align:center;'>Envelopes (Include/Exclude):&nbsp;</span>
                         <label class="switch">
                             <input type="checkbox" @bind=HideEnvExp>
@@ -89,11 +89,11 @@ else
         }
         <br />
 
-        <div style="display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between">
-            <div style="display:flex;justify-content:start;">
+        <div class="flex-r" style="flex-wrap:nowrap;justify-content:space-between">
+            <div class="flex-r" style="justify-content:start;">
 
                 <div style="width:100%;float:left; margin-right:1vw; margin-bottom:2vh;display:inline-block;">
-                    <div style="display:flex;justify-content:center;margin-bottom:2vh;">
+                    <div class="flex-r" style="margin-bottom:2vh;">
                         <div>
                             <!-- Savings Goals-->
                             <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
@@ -111,7 +111,7 @@ else
 
                 <br />
                 <div style="display:inline-block;width:50%;">
-                    <div style="display:flex;padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
+                    <div class="flex-r" style="padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
                         <div style="width:100%">
                             @if (Goals)
                             {
@@ -122,7 +122,7 @@ else
                                 <br />
                                 <br />
 
-                                <div style="display:flex;flex-direction:column;justify-content:center">
+                                <div class="flex-c">
                                     <div style="font-size:1.5vw;text-align:center">
                                         Total Goals:
                                         <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
@@ -132,19 +132,19 @@ else
                                         <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
                                     </div>
                                     <hr />
-                                    <div style="font-size:1.25vw;display:flex;flex-direction:row;justify-content:space-evenly">
-                                        <div style="font-size:1.25vw;display:flex;flex-direction:column;justify-content:space-between">
+                                    <div class="flex-r" style="font-size:1.25vw;justify-content:space-evenly">
+                                        <div class="flex-c" style="font-size:1.25vw;justify-content:space-between">
                                             <div style="text-align:center;">@Constants.Person1 Saved:</div>
                                             <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
                                         </div>
-                                        <div style="font-size:1.25vw;display:flex;flex-direction:column;justify-content:space-between">
+                                        <div class="flex-c" style="font-size:1.25vw;justify-content:space-between">
                                             <div style="text-align:center;">@Constants.Person2 Saved:</div>
                                             <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
                                         </div>
                                     </div>
                                 </div>
                                 <br />
-                                <div style="font-size:3vw;display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
+                                <div class="flex-r" style="font-size:3vw;flex-wrap:wrap;">
                                     @foreach (var env in Envelopes)
                                     {
                                         <Envelope Name="@env.Name" Scale=11 Font_Size=1.375
@@ -220,7 +220,7 @@ else
         </div>
         <br />
         <br />
-        <div style="display:flex;justify-content:center;flex-wrap:wrap;width:95vw;">
+        <div class="flex-r" style="flex-wrap:wrap;width:95vw;">
             @if (Balances != null)
             {
                 @foreach (var bal in Balances)
@@ -236,7 +236,7 @@ else
         <br style="clear:both;" />
         @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
         {
-            <div style="display:flex;justify-content:center">
+            <div class="flex-r">
                 <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
             </div>
             <br style="clear:both;" />
@@ -259,8 +259,7 @@ else
                 <!-- Monthly Expenses -->
                 @if (EnvelopeExpenses > 0)
                 {
-                    <div style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;display:flex;
-                                align-items:center;justify-content:center">
+                    <div class="flex-r" style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;align-items:center;">
                         <span style='position:relative;top:.3vw;font-size:large;text-align:center;'>Envelopes (Include/Exclude):&nbsp;</span>
                         <label class="switch">
                             <input type="checkbox" @bind=HideEnvExp>
@@ -306,7 +305,7 @@ else
                 <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
                 <br />
                 <br />
-                <div style="display:flex;flex-direction:column;justify-content:center">
+                <div class="flex-c">
                     <div style="font-size:5vw;text-align:center">
                         Total Goals:
                         <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
@@ -316,19 +315,19 @@ else
                         <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
                     </div>
                     <hr />
-                    <div style="font-size:4vw;display:flex;flex-direction:row;justify-content:space-evenly">
-                        <div style="font-size:4vw;display:flex;flex-direction:column;justify-content:space-between">
+                    <div class="flex-r" style="font-size:4vw;justify-content:space-evenly">
+                        <div class="flex-c" style="font-size:4vw;justify-content:space-between">
                             <div style="text-align:center;">@Constants.Person1 Saved:</div>
                             <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
                         </div>
-                        <div style="font-size:4vw;display:flex;flex-direction:column;justify-content:space-between">
+                        <div class="flex-c" style="font-size:4vw;justify-content:space-between">
                             <div style="text-align:center;">@Constants.Person2 Saved:</div>
                             <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
                         </div>
                     </div>
                 </div>
                 <br />
-                <div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center">
+                <div class="flex-r" style="flex-wrap:wrap;">
                     @foreach (var env in Envelopes)
                     {
                         <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)

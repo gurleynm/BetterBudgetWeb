@@ -16,7 +16,7 @@ else
 {
     @if (!Constants.Mobile)
     {
-        <div style="display:flex;flex-direction:column;flex-wrap:nowrap;justify-content:space-between">
+        <div class="flex-c" style="flex-wrap:nowrap;justify-content:space-between">
             <div style="width: auto; height:fit-content; max-height:80vh; overflow: auto; position: relative;border: solid gray 1px;padding:0">
                 <div class="tab" style="width:100%">
                     <button class="tablinks @BuyClass" @onclick="@ShowBuyTab">Buy</button>
@@ -31,7 +31,7 @@ else
                     <DeleteSecurity OnClick="UpdateEverything" SelectedBalance="@SelectedBalance" />
                 }
             </div>
-            <div style="margin-top:1em;display:flex;flex-direction:row;justify-content:space-around">
+            <div class="flex-r" style="margin-top:1em;justify-content:space-around">
                 <div style="overflow:auto;">
                     @if (AccountSecurities != null)
                     {
@@ -41,7 +41,7 @@ else
                             </tr>
                             <tr style="height:3vw">
                                 <th style="width:10vw;padding:1vw;">
-                                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                    <div class="flex-c" style="justify-content:space-between">
                                         <div>Symbol</div>
                                         <div>Last Price</div>
                                     </div>
@@ -55,7 +55,7 @@ else
                             {
                                 <tr style="height:3vw">
                                     <td style="padding:1vw;">
-                                        <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                        <div class="flex-c" style="justify-content:space-between">
                                             <div>@accsec.Name</div>
                                             <div>@Constants.Pretty(accsec.Value / accsec.NumShares)</div>
                                         </div>
@@ -73,7 +73,7 @@ else
                             {
                                 <tr>
                                     <td style="padding:1vw;">
-                                        <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                        <div class="flex-c" style="justify-content:space-between">
                                             <div>Cash</div>
                                             <div>@Constants.Pretty(1)</div>
                                         </div>
@@ -107,7 +107,7 @@ else
                     </div>
                     @if (Constants.Token == "DEMO")
                     {
-                        <div style="width:100%;display:flex;flex-direction:row;justify-content:center">
+                        <div class="flex-r" style="width:100%;">
                             <label style="font-size:.8vw;margin:2.5px 0 0 0;float:right;padding:0 .2vw;"><i>(Refresh disabled in DEMO mode)</i></label>
                         </div>
                     }
@@ -115,7 +115,7 @@ else
                     <br />
                     @if (TotalOption != null && TotalOption.Count > 0)
                     {
-                        <div style="display:flex;justify-content:center;">
+                        <div class="flex-r">
                             <label style="font-size:large">All Options</label>
                         </div>
                         @foreach (var sec in TotalOption)
@@ -125,7 +125,7 @@ else
                     }
                     @if (TotalStock != null && TotalStock.Count > 0)
                     {
-                        <div style="display:flex;justify-content:center;">
+                        <div class="flex-r">
                             <label style="font-size:large">All Stocks</label>
                         </div>
                         @foreach (var sec in TotalStock)
@@ -135,7 +135,7 @@ else
                     }
                     @if (TotalETF != null && TotalETF.Count > 0)
                     {
-                        <div style="display:flex;justify-content:center;">
+                        <div class="flex-r">
                             <label style="font-size:large">All ETFs</label>
                         </div>
                         @foreach (var sec in TotalETF)
@@ -145,7 +145,7 @@ else
                     }
                     @if (TotalCrypto != null && TotalCrypto.Count > 0)
                     {
-                        <div style="display:flex;justify-content:center;">
+                        <div class="flex-r">
                             <label style="font-size:large">All Crypto</label>
                         </div>
                         @foreach (var sec in TotalCrypto)
@@ -159,7 +159,7 @@ else
     }
     else
     {
-        <div style="display:flex;flex-direction:column;flex-wrap:nowrap;justify-content:space-between;margin-bottom:2vh">
+        <div class="flex-c" style="flex-wrap:nowrap;justify-content:space-between;margin-bottom:2vh">
             <div style="overflow:auto;margin-bottom:2vh;">
                 <div style="border:solid gray 1px;margin-bottom:2vh;">
                     <label style="font-size:large;padding:.5vw;width:100%;text-align:center;text-decoration:underline">All Investment Accounts</label>
@@ -186,7 +186,7 @@ else
                         </tr>
                         <tr style="height:3vw">
                             <th style="width:fit-content;padding:1vw;">
-                                <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                <div class="flex-c" style="justify-content:space-between">
                                     <div>Symbol</div>
                                     <div>Last Price</div>
                                 </div>
@@ -200,7 +200,7 @@ else
                         {
                             <tr style="height:3vw">
                                 <td style="padding:1vw;">
-                                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                    <div class="flex-c" style="justify-content:space-between">
                                         <div>@accsec.Name</div>
                                         <div>@Constants.Pretty(accsec.Value / accsec.NumShares)</div>
                                     </div>
@@ -218,7 +218,7 @@ else
                         {
                             <tr>
                                 <td style="padding:1vw;">
-                                    <div style="display:flex;flex-direction:column;justify-content:space-between">
+                                    <div class="flex-c" style="justify-content:space-between">
                                         <div>Cash</div>
                                         <div>@Constants.Pretty(1)</div>
                                     </div>
@@ -270,7 +270,7 @@ else
                 </div>
                 @if (Constants.Token == "DEMO")
                 {
-                    <div style="width:100%;display:flex;flex-direction:row;justify-content:center">
+                    <div class="flex-r" style="width:100%;">
                         <label style="font-size:.8vw;margin:2.5px 0 0 0;float:right;padding:0 .2vw;"><i>(Refresh disabled in DEMO mode)</i></label>
                     </div>
                 }
@@ -278,7 +278,7 @@ else
                 <br />
                 @if (TotalOption != null && TotalOption.Count > 0)
                 {
-                    <div style="display:flex;justify-content:center;">
+                    <div class="flex-r">
                         <label style="font-size:large">All Options</label>
                     </div>
                     @foreach (var sec in TotalOption)
@@ -288,7 +288,7 @@ else
                 }
                 @if (TotalStock != null && TotalStock.Count > 0)
                 {
-                    <div style="display:flex;justify-content:center;">
+                    <div class="flex-r">
                         <label style="font-size:large">All Stocks</label>
                     </div>
                     @foreach (var sec in TotalStock)
@@ -298,7 +298,7 @@ else
                 }
                 @if (TotalETF != null && TotalETF.Count > 0)
                 {
-                    <div style="display:flex;justify-content:center;">
+                    <div class="flex-r">
                         <label style="font-size:large">All ETFs</label>
                     </div>
                     @foreach (var sec in TotalETF)
@@ -308,7 +308,7 @@ else
                 }
                 @if (TotalCrypto != null && TotalCrypto.Count > 0)
                 {
-                    <div style="display:flex;justify-content:center;">
+                    <div class="flex-r">
                         <label style="font-size:large">All Crypto</label>
                     </div>
                     @foreach (var sec in TotalCrypto)

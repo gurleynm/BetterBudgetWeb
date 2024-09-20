@@ -8,88 +8,79 @@
 
 <PageTitle>Sankey Chart</PageTitle>
 
-<div id="sankey_basic" style="width: 100%; height: 75vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
+<div id="sankey_basic" style="width: 100%; height:fit-content;min-height: 75vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
                                 overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 1em 1em 0;"></div>
-<div style="float:left;margin-right:2vw">
-    <label>Year</label>
-    <br />
-    <select class="custom-select" @bind="SelectedYear" title="Pick a Timeframe ">
-        <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option>
-        @if (FoundYears.Count > 1)
-        {
+<div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="justify-content:space-evenly;align-items:center;flex-wrap:wrap">
+    <div>
+        <label>Year</label>
+        <br />
+        <select class="custom-select" @bind="SelectedYear" title="Pick a Timeframe ">
+            <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option>
+            @if (FoundYears.Count > 1)
+            {
+                <option value="All">All</option>
+            }
+            @foreach (var dt in FoundYears)
+            {
+                <option value="@dt">@dt</option>
+            }
+        </select>    
+    </div>
+    <div>
+        <label>Month</label>
+        <br />
+        <select class="custom-select" @bind="SelectedMonth" title="Pick a Timeframe ">
+            <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option
             <option value="All">All</option>
-        }
-        @foreach (var dt in FoundYears)
-        {
-            <option value="@dt">@dt</option>
-        }
-    </select>
-    
-</div>
-<div style="float:left;margin-right:2vw">
-    <label>Month</label>
-    <br />
-    <select class="custom-select" @bind="SelectedMonth" title="Pick a Timeframe ">
-        <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option
-        <option value="All">All</option>
-        @foreach (var dt in FoundMonths)
-        {
-            <option value="@dt">@dt</option>
-        }
-    </select>
-</div>
-@*
-<div style="float:left;margin-right:2vw">
-    <label>Person</label>
-    <br />
-    <select class="custom-select" @bind="SelectedPerson" title="Pick a Person ">
-        <option value="Both" selected>Both</option>
-        <option value="@Constants.Person1">@Constants.Person1</option>
-        <option value="@Constants.Person2">@Constants.Person2</option>
-    </select>
-</div>
-*@
-<div style="display:flex;justify-content:space-between">
-
-<div style="float:left;">
-    @if (Levels != null && Levels.Count > 0)
-    {
-    <label>Level</label>
-    <br />
-        <select class="custom-select" @bind="SelectedLevel" title="Pick a Level ">
-            <option value="@string.Empty" selected disabled="disabled">(Choose a level)</option>
-            <option value="All">All</option>
-            @foreach (var dt in Levels)
+            @foreach (var dt in FoundMonths)
             {
                 <option value="@dt">@dt</option>
             }
         </select>
-    }
-    else
-    {
-        <br />
-        <label style="color:red">No values for this combination.</label>
-    }
-</div>
-@if (Levels != null && Levels.Count > 0)
-{
-    <div style="float:left;margin-top:.5vw">
-        <button class="btn btn-primary" style="margin: auto 5vw" @onclick=DrawChart>Enter</button>
     </div>
-}
-
-    <table class="toggle-table" style="margin:auto; width:40vw; float:right;">
-        <tr>
-            <th style="padding:0 2vw">Total In</th>
-            <th style="padding:0 2vw">Total Out</th>
-            <th style="padding:0 2vw">Difference</th>
-        </tr>
-        <tr>
-            <td style="padding:0 2vw;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</td>
-            <td style="padding:0 2vw;color:red">@Constants.Pretty(TotalOut)</td>
-            <td style="padding:0 2vw;color:@DecideColor(TotalIn - TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</td>
-        </tr>
-    </table>
+    
+    <div >
+        @if (Levels != null && Levels.Count > 0)
+        {
+        <label>Level</label>
+        <br />
+            <select class="custom-select" @bind="SelectedLevel" title="Pick a Level ">
+                <option value="@string.Empty" selected disabled="disabled">(Choose a level)</option>
+                <option value="All">All</option>
+                @foreach (var dt in Levels)
+                {
+                    <option value="@dt">@dt</option>
+                }
+            </select>
+        }
+        else
+        {
+            <br />
+            <label style="color:red">No values for this combination.</label>
+        }
+    </div>
+    <div style="@(Constants.Mobile ? "" : "align-self:end")">
+        @if (Levels != null && Levels.Count > 0)
+        {
+            <div class="flex-r">
+                <button class="btn btn-primary" @onclick=DrawChart>Enter</button>
+            </div>
+        }
+    </div>
+    <div>
+        <table class="toggle-table">
+            <tr>
+                <th style="padding:0 2vw">Total In</th>
+                <th style="padding:0 2vw">Total Out</th>
+                <th style="padding:0 2vw">Difference</th>
+            </tr>
+            <tr>
+                <td style="padding:0 2vw;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</td>
+                <td style="padding:0 2vw;color:red">@Constants.Pretty(TotalOut)</td>
+                <td style="padding:0 2vw;color:@DecideColor(TotalIn - TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</td>
+            </tr>
+        </table>    
+    </div>
 </div>
 
 

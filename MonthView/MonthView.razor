@@ -10,13 +10,13 @@
 
 @if (!Constants.Mobile)
 {
-    <div style="display:flex;flex-direction:row;flex-wrap:wrap;justify-content:space-evenly;margin-bottom:2vh">
-        <div style="display:flex;flex-direction:column;">
+    <div class="flex-r" style="flex-wrap:wrap;justify-content:space-evenly;margin-bottom:2vh">
+        <div class="flex-c">
             <!-- Monthly Goal Tracking -->
             <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
                                           StaticCostAmount="@StaticCostAmount" Expenses=@Expenses @bind-IncomeOverflow="IncomeOverflow" />
         </div>
-        <div style="display:flex;flex-direction:column;justify-content:start">
+        <div class="flex-c-start">
             <!-- Dynamic Costs -->
 
             <div style="width:100%;margin-bottom:1em">
