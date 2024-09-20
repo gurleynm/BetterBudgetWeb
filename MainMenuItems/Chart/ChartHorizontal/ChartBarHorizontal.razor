@@ -1,8 +1,8 @@
 ﻿<div class="text-color flex-c" style="background-color:transparent;width:100%;">
-    <div class="chart-bar-hor__label flex-r" style="border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
+    <div class="chart-bar-hor__label flex-r" style="justify-content:start;border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
         <span class="text-color">@Label</span>
     </div>
-    <div class="chart-bar-hor__inner flex-r" style="justify-content:start;cursor:pointer" @onclick=OnClick>
+    <div class="chart-bar-hor__inner flex-r" style="@BackgroundColorAdjusted;justify-content:start;cursor:pointer" @onclick=OnClick>
         @if (Negative)
         {
             <div class="chart-bar-hor__fill-bad"
@@ -11,7 +11,7 @@
         else
         {
             <div class="chart-bar-hor__fill"
-                 style="width:@BarFillWidth"></div>
+                 style="@FillColorAdjusted;width:@BarFillWidth"></div>
         }
     </div>
     <div class="chart-bar-hor__label flex-c" style="border:none;width:100%;">
@@ -27,7 +27,7 @@
         @if (Show)
         {
             <div class="flex-r" style="flex-wrap:wrap;width:100%">
-                <MonthlySpending @ref="Child" ExpenseType=@Label RefreshParent="@RefreshMe" />
+                <MonthlySpending @ref="Child" ExpenseType=@ST RefreshParent="@RefreshMe" />
                 @if (BottomBorder)
                 {
                     <hr style="width:100%" />
@@ -45,11 +45,22 @@
     [Parameter]
     public string Label { get; set; }
     [Parameter]
+    public string SearchTerm { get; set; }
+    [Parameter]
     public bool BottomBorder { get; set; }
     [Parameter]
     public bool Negative { get; set; }
     [Parameter]
     public EventCallback<string> DateBarClicked { get; set; }
+    [Parameter]
+    public string FillColor { get; set; }
+    [Parameter]
+    public string BackgroundColor { get; set; }
+
+    private string FillColorAdjusted => string.IsNullOrEmpty(FillColor) ? "" : "background-color:" + FillColor;
+    private string BackgroundColorAdjusted => string.IsNullOrEmpty(BackgroundColor) ? "" : "background-color:" + BackgroundColor;
+
+    public string ST => string.IsNullOrEmpty(SearchTerm) ? Label : SearchTerm;
 
     private MonthlySpending Child;
     private bool Show;

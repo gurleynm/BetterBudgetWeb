@@ -33,14 +33,15 @@
             </tr>
         </table>
     </div>
-    <table class="chart-hor" style="margin-bottom:1em">
-        <CustomChartBarHor Value=@ActualIncomeAmount
-                           Label="Income Goal"
-                           Negative=false
-                           MaxValue=@ProjectedIncomeAmount
-                           FillColor="green"
-                           BackgroundColor="#c3b4f3" />
-    </table>
+    <div class="chart-hor" style="margin-bottom:1em">
+        <ChartBarHorizontal Value=@ActualIncomeAmount
+                            Label="Income Goal"
+                            MaxValue=ProjectedIncomeAmount
+                            FillColor="green"
+                            BackgroundColor="#c3b4f3"
+                            SearchTerm="Income"
+                            BottomBorder=false/>
+    </div>
     @if (Expenses != null && Expenses.Count > 0)
     {
         <div class="chart-hor">

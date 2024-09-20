@@ -45,18 +45,24 @@
                     <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
                     </td>
-                    <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
-                        <div>@(" - " + Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
-                    </td>
+                    @if (ShowPerson)
+                    {
+                        <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                            <div>@(Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
+                        </td>
+                    }
                 }
                 else if (transaction.Person2Amount == transaction.TotalAmount)
                 {
                     <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
                     </td>
-                    <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
-                        <div>@(" - " + Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
-                    </td>
+                    @if (ShowPerson)
+                    {
+                        <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                            <div>@(Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
+                        </td>
+                    }
                 }
                 else
                 {
@@ -65,11 +71,14 @@
                         <br />
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
                     </td>
-                    <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
-                        <div>@(" - " + Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
-                        <br />
-                        <div>@(" - " + Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
-                    </td>
+                    @if (ShowPerson)
+                    {
+                        <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                            <div>@(Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
+                            <br />
+                            <div>@(Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
+                        </td>
+                    }
                 }
                 <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
                     <div class="flex-r" style="font-size: @(Constants.Mobile ? "3vw;" : "1vw");">
@@ -119,12 +128,16 @@
     public string ExpenseType { get; set; }
 
     [Parameter]
+    public bool ShowPerson { get; set; } = true;
+
+    [Parameter]
     public EventCallback RefreshParent { get; set; }
 
     public List<Transaction> FilteredTransactions { get; set; }
 
     [Parameter]
-    public string TheBalance { 
+    public string TheBalance
+    {
         get { return theBalance; }
         set
         {
@@ -193,7 +206,7 @@
         {
             // TransactionRepo sets everything in Constants
             await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
-            if (!Constants.Mobile) 
+            if (!Constants.Mobile)
                 GlobalBT.RefreshBalances();
             await RefreshParent.InvokeAsync();
             await OnDeleteConfirm.InvokeAsync(accepted);
@@ -209,7 +222,8 @@
         if (!string.IsNullOrEmpty(ExpenseType))
         {
             transactions = transactions.Where(t => t.ExpenseType == ExpenseType).ToList();
-        } else if (!string.IsNullOrEmpty(TheBalance))
+        }
+        else if (!string.IsNullOrEmpty(TheBalance))
         {
             transactions = transactions.Where(tr =>
                             (tr.PaidWithPerson1 + " " + tr.PaidWithPerson2).Contains(TheBalance)).ToList();

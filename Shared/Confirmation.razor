@@ -10,7 +10,7 @@
                         transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"]">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:white">
-                        <strong>Are you sure?</strong>
+                        <strong>@Title</strong>
                     </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
@@ -45,7 +45,7 @@ else
             <div class="modal-content" style="width:fit-content;margin:0 auto;background-color:@Constants.ColorScheme["ComponentBackground"];">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:'Imprint MT Shadow';color:white;">
-                        <strong>Are you sure?</strong>
+                        <strong>@Title</strong>
                     </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
@@ -75,7 +75,7 @@ else
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
-    public string Title { get; set; }
+    public string Title { get; set; } = "Are you sure?";
 
     [Parameter]
     public EventCallback<bool> OnClose { get; set; }

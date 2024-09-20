@@ -1,5 +1,5 @@
 ﻿@inject IJSRuntime JSRuntime
-@if (TopButton && !ShowWorth)
+@if (TopButton && ShowButton)
 {
     <div class="flex-c" style="margin:1em 0">
         <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)"
@@ -11,7 +11,7 @@
 <div id="@Id" class="pop-up">
     @ChildContent
 </div>
-@if (ShowButton)
+@if (BottomButton && ShowButton)
 {
     <div class="flex-c" style="margin:1em 0">
         <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)"
@@ -40,14 +40,20 @@
 
             showWorth = value;
             ToggleShowWorth(false);
+            ShowWorthChanged.InvokeAsync(value);
         }
     }
+    [Parameter]
+    public EventCallback<bool> ShowWorthChanged { get; set; }
 
     [Parameter]
     public bool ShowButton { get; set; } = true;
 
     [Parameter]
     public bool TopButton { get; set; } = false;
+
+    [Parameter]
+    public bool BottomButton { get; set; } = true;
 
     [Parameter]
     public string ShowTxt { get; set; } = "Show Net Worth";

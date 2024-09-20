@@ -21,10 +21,12 @@ else
 {
     @if (!Constants.Mobile)
     {
-        <PopTray Id="char1" ShowWorth=!ShowChart ShowButton=false>
+        <PopTray Id="mobile-spend" @bind-ShowWorth=ShowChart 
+                    ShowTxt="Show Spending Chart" 
+                    HideTxt="Hide Spending Chart" 
+                    TopButton=true
+                    BottomButton=false>
             <Chart DPs=DataPoints BarClicked=FilterDate />
-            <br />
-            <br />
         </PopTray>
         <br />
 
@@ -43,7 +45,7 @@ else
                         <br />
 
                         <div class="flex-c-start" style="margin-left:1vw">
-                            <PopTray Id="char" ShowWorth=!ShowChart ShowButton=false>
+                            <PopTray Id="char" ShowWorth=ShowChart ShowButton=false>
                                 <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
                                                  OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
                             </PopTray>
@@ -145,7 +147,7 @@ else
     }
     else
     {
-        <BalanceTray @ref=@GlobalBT OnReportClick=ToggleReports OnChartClick=ToggleChartBtn OnEnvelopeClick=ToggleGoals />
+        <BalanceTray @ref=@GlobalBT OnReportClick=ToggleReports OnEnvelopeClick=ToggleGoals />
         @if (Goals)
         {
             <div style="display:inline-block;width:100%">
@@ -196,7 +198,7 @@ else
 
         @if (DataPoints != null && DataPoints.Count > 0)
         {
-            <PopTray Id="mobile-spend" ShowWorth=!ShowChart ShowTxt="Show Spending Chart" HideTxt="Hide Spending Chart" TopButton=true>
+            <PopTray Id="mobile-spend" ShowWorth=ShowChart ShowTxt="Show Spending Chart" HideTxt="Hide Spending Chart" TopButton=true BottomButton=false>
 
                 <Chart DPs=DataPoints BarClicked=FilterDate />
                 <br />
@@ -314,7 +316,7 @@ else
 
     private string ErrorMsg = string.Empty;
 
-    private bool ShowChart;
+    private bool ShowChart = true;
 
     private bool ShowTutorial;
 
@@ -359,23 +361,6 @@ else
     private List<string> ETs => FillEts();
 
     private bool Disabled;
-
-    private void SetBalance(Balance bal)
-    {
-        if (SelectedBalance == bal.Name)
-        {
-            SelectedBalance = "";
-            ResetFilters();
-        }
-        else
-        {
-            SelectedBalance = bal.Name;
-            ShowChart = true;
-            FilterBalance(SelectedBalance);
-        }
-
-        StateHasChanged();
-    }
 
     private List<string> FillEts()
     {
@@ -465,10 +450,8 @@ else
 
         if (!Constants.Mobile)
         {
-            GlobalBT.OnSlotClick += SetBalance;
             GlobalBT.OnEnvelopeClick += ToggleGoals;
             GlobalBT.OnReportClick += ToggleReports;
-            GlobalBT.OnChartClick += ToggleChartBtn;
         }
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
@@ -789,10 +772,8 @@ else
     {
         if (!Constants.Mobile)
         {
-            GlobalBT.OnSlotClick -= SetBalance;
             GlobalBT.OnEnvelopeClick -= ToggleGoals;
             GlobalBT.OnReportClick -= ToggleReports;
-            GlobalBT.OnChartClick -= ToggleChartBtn;
         }
         Constants.TransactionsChanged -= TransactionsUpdated;
         Constants.EnvelopesChanged -= EnvelopesUpdated;

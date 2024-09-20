@@ -35,18 +35,13 @@
                     <div class="flex-c" style="padding-top:1em">
                         <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
                     </div>
-
-                    <div class="flex-c" style="padding-top:1em">
-                        <button class="btn btn-secondary" @onclick=@(() => ToggleChart())>View Spending</button>
-                    </div>
                 }
             </div>
         </PopTray>
         <div style="padding-bottom:2vh">
             @foreach (var bal in Balances)
             {
-                <BalanceSlot ShowSpending="false" TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals
-                             OnClick=@(() => RunClicked(bal)) />
+                <BalanceSlot TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals ShowPersonInMonthly=Constants.Mobile />
             }
         </div>
     </div>
@@ -61,8 +56,6 @@
     public Action OnEnvelopeClick { get; set; }
     [Parameter]
     public Action OnReportClick { get; set; }
-    [Parameter]
-    public Action OnChartClick { get; set; }
 
     private bool FirstToggle = true;
     private bool ShowWorth = true;
@@ -81,12 +74,6 @@
         if (FirstToggle)
             FirstToggle = false;
         ShowWorth = !ShowWorth;
-    }
-
-    private void RunClicked(Balance bal)
-    {
-        if (OnSlotClick != null)
-            OnSlotClick(bal);
     }
 
     private bool Goals;
@@ -111,13 +98,6 @@
         if (OnReportClick != null)
             OnReportClick();
     }
-
-    private void ToggleChart()
-    {
-        if (OnChartClick != null)
-            OnChartClick();
-    }
-
     public void RefreshBalances()
     {
         Balances = Constants.catchAll.Balances;
