@@ -130,6 +130,13 @@
                 LoadImg.style.width = "20vw";
             }
         };
+        window.addEventListener('resize', Resized);
+        function Resized() {
+            const CurMobile = IsMobile;
+            IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
+            if (CurMobile != IsMobile)
+                window.location.reload();
+        }
         function TurnOffScroll() {
             document.body.style.overflow = 'hidden';
             return false;
@@ -140,7 +147,7 @@
         }
         function isDevice() {
             return IsMobile;
-        }
+        }        
         function drawLineChart(lineList, chartId) {
             var data = new google.visualization.DataTable();
 

@@ -60,7 +60,7 @@
                 <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
             </span>
         </div>
-        @if (!Disabled)
+        @if (!Hide)
         {
             <button style="width:100%;margin-top:1em;background-image:linear-gradient(to left, cyan,indigo)" class="btn btn-primary"
                     @onclick=ExecuteGrabDemo>
@@ -171,8 +171,10 @@
     [Parameter]
     public Action<KeyboardEventArgs> Enter { get; set; }
 
+    [Parameter]
+    public bool Hide { get; set; }
+
     public PasswordRules passwordRules;
-    public bool Disabled = false;
 
     private string username;
     private string username2;
@@ -186,7 +188,7 @@
 
     private void ExecuteGrabDemo()
     {
-        Disabled = true;
+        Hide = true;
         GrabDemo.InvokeAsync();
     }
 }
