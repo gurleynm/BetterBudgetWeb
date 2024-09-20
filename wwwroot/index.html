@@ -79,6 +79,23 @@
             font-size: xx-large;
             color: red;
         }
+
+        /*.pop-up {
+            max-height: 0;
+            transition: max-height 1s ease-out;
+            overflow: hidden;
+        }
+
+        .pop-up-rev {
+            max-height: 100em;
+            transition: max-height 1s ease-in;
+            overflow: hidden;
+        }*/
+        .pop-up {
+            height: 0px;
+            transition: height 0.3s ease;
+            overflow: hidden;
+        }
     </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -136,6 +153,14 @@
             IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
             if (CurMobile != IsMobile)
                 window.location.reload();
+        }
+        function toggleExpand(id) {
+            var element = document.getElementById(id);
+            if (!element.style.height || element.style.height == '0px') {
+                element.style.height = Array.prototype.reduce.call(element.childNodes, function (p, c) { return p + (c.scrollHeight || 0); }, 0) + 'px';
+            } else {
+                element.style.height = '0px';
+            }
         }
         function TurnOffScroll() {
             document.body.style.overflow = 'hidden';

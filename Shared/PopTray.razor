@@ -1,0 +1,69 @@
+﻿@inject IJSRuntime JSRuntime
+@if (TopButton && !ShowWorth)
+{
+    <div class="flex-c" style="margin:1em 0">
+        <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)"
+                @onclick=@(() => ToggleShowWorthBtn())>
+            @WorthTxt
+        </button>
+    </div>
+}
+<div id="@Id" class="pop-up">
+    @ChildContent
+</div>
+@if (ShowButton)
+{
+    <div class="flex-c" style="margin:1em 0">
+        <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)"
+                @onclick=@(() => ToggleShowWorthBtn())>
+            @WorthTxt
+        </button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
+
+    private bool showWorth { get; set; } = true;
+    [Parameter]
+    public bool ShowWorth
+    {
+        get { return showWorth; }
+        set
+        {
+            if (showWorth == value)
+                return;
+
+            showWorth = value;
+            ToggleShowWorth(false);
+        }
+    }
+
+    [Parameter]
+    public bool ShowButton { get; set; } = true;
+
+    [Parameter]
+    public bool TopButton { get; set; } = false;
+
+    [Parameter]
+    public string ShowTxt { get; set; } = "Show Net Worth";
+
+    [Parameter]
+    public string HideTxt { get; set; } = "Hide Net Worth";
+
+    private bool FirstToggle = true;
+    private string WorthTxt => showWorth ? ShowTxt : HideTxt;
+
+    private void ToggleShowWorthBtn()
+    {
+        ShowWorth = !ShowWorth;
+    }
+    private async void ToggleShowWorth(bool invert = true)
+    {
+        await JSRuntime.InvokeAsync<object>("toggleExpand", Id);
+    }
+}

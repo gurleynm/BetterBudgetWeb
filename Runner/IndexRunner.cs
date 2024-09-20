@@ -238,12 +238,9 @@ namespace BetterBudgetWeb.Runner
                     uniqueMonthYears.Add(monthYear);
             }
 
-            List<string> months = Constants.DR.UniqueMonthYears;
-            List<string> ret_months = new List<string>(months);
+            uniqueMonthYears.Sort(Constants.SortMonths);
 
-            ret_months.Sort(Constants.SortMonths);
-
-            return ret_months;
+            return uniqueMonthYears;
         }
 
         public static List<string> GetYears()

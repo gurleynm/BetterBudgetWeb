@@ -7,7 +7,7 @@
 
 <div class="flex-r @SetClass" @onmouseover="MouseOver" @onmouseout="MouseOut" style="flex-wrap:wrap;justify-content:space-between;
                                 padding:0; margin: 0;cursor:@(IsPreview ? "auto" :"pointer");
-                                width:@(Constants.Mobile ? "90%" :"100%");border: 1px gray solid;background-image: linear-gradient(to left,indigo,@TheBalance.HexColor);
+                                width:100%;border: 1px gray solid;background-image: linear-gradient(to left,indigo,@TheBalance.HexColor);
                                     color:@TheBalance.TextColor" @onclick=Clicked>
     <div style="align-self:flex-start">
         <div class="flex-c" style="justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
@@ -44,8 +44,6 @@
 {
     <MonthlySpending OnDeleteConfirm=@CloseModal OnEditConfirm=@CloseModal TheBalance=@TheBalance.Name RefreshParent="@RefreshMe" />
 }
-
-<hr style="margin:0" />
 
 
 @code {

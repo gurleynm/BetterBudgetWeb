@@ -1,69 +1,8 @@
 ﻿@inject NavigationManager NaviMan
 
-<style>
-    .container-env {
-        position: relative;
-        text-align: center;
-        color: black;
-        margin-bottom: 2vh;
-    }
-
-    .bottom-left {
-        position: absolute;
-        bottom: 8px;
-        left: 16px;
-    }
-
-    .top-left {
-        position: absolute;
-        top: 8px;
-        left: 16px;
-    }
-
-    .top-right {
-        position: absolute;
-        top: 8px;
-        right: 16px;
-    }
-
-    .bottom-right {
-        position: absolute;
-        bottom: 8px;
-        right: 16px;
-    }
-
-    .centered {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .top-centered {
-        position: absolute;
-        top: 20%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .bottom-mid-centered {
-        position: absolute;
-        top: 70%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    .bottom-centered {
-        position: absolute;
-        top: 80%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    }
-</style>
-
 @if (!ShowBack)
 {
-    <div class="container-env" style="height:auto;width:auto;padding:0;
+    <div class="container-env" style="height:auto;width:fit-content;padding:0;
         cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
         @if (Open)
         {

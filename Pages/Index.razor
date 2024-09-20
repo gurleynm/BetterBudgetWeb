@@ -21,72 +21,11 @@ else
 {
     @if (!Constants.Mobile)
     {
-        @* <h1 style="text-align:center;color:@Constants.GoodOrBad(Constants.Person1NetWorth + Constants.Person2NetWorth)">TOTAL NET WORTH: @(Pretty(Constants.Person1NetWorth + Constants.Person2NetWorth))</h1>
-        <div class="flex-r" style="justify-content:space-between;width:100%">
-            <h2 style="text-align:center">
-                <span>@($"{Constants.Person1}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Constants.Person1NetWorth)">@(Pretty(Constants.Person1NetWorth))</span>
-            </h2>
-            @if (Envelopes != null && Envelopes.Count > 0)
-            {
-                <Envelope Name="@GoalTxt" Scale=8 Font_Size=1 OnClick=@ToggleGoals />
-            }
-
-            <h2 style="text-align:center">
-                <span>@($"{Constants.Person2}'s Net Worth:")</span> <span style="color:@Constants.GoodOrBad(Constants.Person2NetWorth)">@(Pretty(Constants.Person2NetWorth))</span>
-            </h2>
-        </div> *@
-
-        <div class="flex-r" style="justify-content:space-between;width:100%;align-content:center">
-            @if (DataPoints != null && DataPoints.Count > 0)
-            {
-                <button class="spendchart-btn" style="width:fit-content" @onclick="@ToggleChartBtn">
-                    @if (!ShowChart)
-                    {
-                        <h2>Spending Chart&nbsp;<i class="arrow right"></i></h2>
-                    }
-                    else
-                    {
-                        <h2>Spending Chart&nbsp;&nbsp;<i class="arrow down"></i></h2>
-                    }
-                </button>
-
-            }
-            @if (Envelopes != null && Envelopes.Count > 0)
-            {
-                <div class="flex-c" style="padding-top:1em">
-                    <Envelope Name="@GoalTxt" Scale=8 Font_Size=1 OnClick=@ToggleGoals />
-                </div>
-            }
-            @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
-            {
-                <div class="flex-c">
-                    <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
-                </div>
-            }
-        </div>
-        @if (ShowChart)
-        {
-            <br />
-            <div class="flex-r" style="justify-content:space-between;width:100%">
-                @if (EnvelopeExpenses > 0)
-                {
-                    <div class="flex-r" style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;align-items:baseline;">
-                        <span style='position:relative;top:.3vw;font-size:x-large;text-align:center;'>Envelopes (Include/Exclude):&nbsp;</span>
-                        <label class="switch">
-                            <input type="checkbox" @bind=HideEnvExp>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                }
-            </div>
-            <br />
-
+        <PopTray Id="char1" ShowWorth=!ShowChart ShowButton=false>
             <Chart DPs=DataPoints BarClicked=FilterDate />
             <br />
             <br />
-            <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                             OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
-        }
+        </PopTray>
         <br />
 
         <div class="flex-r" style="flex-wrap:nowrap;justify-content:space-between">
@@ -102,8 +41,14 @@ else
                                                  EnvelopeAmount=@EnvelopeExpenses />
                         </div>
                         <br />
-                        <!-- Dynamic Costs -->
-                        <div style="margin-left:1vw">
+
+                        <div class="flex-c-start" style="margin-left:1vw">
+                            <PopTray Id="char" ShowWorth=!ShowChart ShowButton=false>
+                                <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
+                                                 OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
+                            </PopTray>
+
+                            <!-- Dynamic Costs -->
                             <ChartHorizontal DPs=@DynamicCostItems />
                         </div>
                     </div>
@@ -200,102 +145,7 @@ else
     }
     else
     {
-        <h1 style="text-align:center;color:@Constants.GoodOrBad(Constants.Person1NetWorth + Constants.Person2NetWorth)">
-            TOTAL NET WORTH: @(Pretty(Constants.Person1NetWorth + Constants.Person2NetWorth))
-        </h1>
-        <div>
-            <h2 style="float:left;text-align:center">
-                <span>@($"{Constants.Person1}'s Net Worth:")</span>
-                <span style="color:@Constants.GoodOrBad(Constants.Person1NetWorth)">
-                    @(Pretty(Constants.Person1NetWorth))
-                </span>
-            </h2>
-
-            <h2 style="float:right;text-align:center">
-                <span>@($"{Constants.Person2}'s Net Worth:")</span>
-                <span style="color:@Constants.GoodOrBad(Constants.Person2NetWorth)">
-                    @(Pretty(Constants.Person2NetWorth))
-                </span>
-            </h2>
-        </div>
-        <br />
-        <br />
-        <div class="flex-r" style="flex-wrap:wrap;width:95vw;">
-            @if (Balances != null)
-            {
-                @foreach (var bal in Balances)
-                {
-                    <BalanceSlot TheBalance="bal" OnClick="@(() => SetBalance(bal))"
-                                 SetClass="selected-account" IncludeGoals=Goals OnDeleteConfirm=@CloseModal OnEditConfirm=@CloseModal />
-                    <br style="clear:both" />
-                }
-            }
-        </div>
-        <br />
-        <br style="clear:both;" />
-        <br style="clear:both;" />
-        @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
-        {
-            <div class="flex-r">
-                <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
-            </div>
-            <br style="clear:both;" />
-            <br style="clear:both;" />
-        }
-        @if (DataPoints != null && DataPoints.Count > 0)
-        {
-            <button class="spendchart-btn" style="width:100%" @onclick="@ToggleChartBtn">
-                @if (!ShowChart)
-                {
-                    <h2 style="float:left;">Spending Chart&nbsp;<i class="arrow right"></i></h2>
-                }
-                else
-                {
-                    <h2 style="float:left;">Spending Chart&nbsp;&nbsp;<i class="arrow down"></i></h2>
-                }
-            </button>
-            @if (ShowChart)
-            {
-                <!-- Monthly Expenses -->
-                @if (EnvelopeExpenses > 0)
-                {
-                    <div class="flex-r" style="position: relative; top:.3vw; right:1vw; height:4vh; vertical-align:middle;align-items:center;">
-                        <span style='position:relative;top:.3vw;font-size:large;text-align:center;'>Envelopes (Include/Exclude):&nbsp;</span>
-                        <label class="switch">
-                            <input type="checkbox" @bind=HideEnvExp>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                }
-                <Chart DPs=DataPoints BarClicked=FilterDate />
-                <br />
-                <br />
-                <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                                 OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
-            }
-
-            <br />
-            <br />
-            <br />
-        }
-
-        <AddExpense OnAddConfirm="Add" Added="Added" />
-
-        <br />
-
-        <!-- Savings Goals-->
-        <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
-                             ActualStaticAmount=@ActualStatic
-                             ActualIncomeAmount=@ActualIncome
-                             EnvelopeAmount=@EnvelopeExpenses />
-
-        <br style="clear:both" />
-        <br style="clear:both" />
-        @if (Envelopes != null && Envelopes.Count > 0)
-        {
-            <Envelope Name="@GoalTxt" Scale=40 Font_Size=5 OnClick=@ToggleGoals />
-        }
-        <br />
+        <BalanceTray @ref=@GlobalBT OnReportClick=ToggleReports OnChartClick=ToggleChartBtn OnEnvelopeClick=ToggleGoals />
         @if (Goals)
         {
             <div style="display:inline-block;width:100%">
@@ -337,11 +187,37 @@ else
                                   Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
                     }
                 </div>
-                <br />
                 <br style="clear:both" />
                 <br style="clear:both" />
             </div>
         }
+
+        <AddExpense OnAddConfirm="Add" Added="Added" />
+
+        @if (DataPoints != null && DataPoints.Count > 0)
+        {
+            <PopTray Id="mobile-spend" ShowWorth=!ShowChart ShowTxt="Show Spending Chart" HideTxt="Hide Spending Chart" TopButton=true>
+
+                <Chart DPs=DataPoints BarClicked=FilterDate />
+                <br />
+                <br />
+                <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
+                                 OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
+            </PopTray>
+
+        }
+
+        <br />
+
+        <!-- Savings Goals-->
+        <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
+                             ActualStaticAmount=@ActualStatic
+                             ActualIncomeAmount=@ActualIncome
+                             EnvelopeAmount=@EnvelopeExpenses />
+
+        <br style="clear:both" />
+        <br style="clear:both" />
+
         <!-- Dynamic Costs -->
         <div style="margin-left:1vw">
             <table>
@@ -486,11 +362,13 @@ else
 
     private void SetBalance(Balance bal)
     {
-        if (SelectedBalance == bal.Name){
+        if (SelectedBalance == bal.Name)
+        {
             SelectedBalance = "";
             ResetFilters();
         }
-        else{
+        else
+        {
             SelectedBalance = bal.Name;
             ShowChart = true;
             FilterBalance(SelectedBalance);
@@ -575,18 +453,23 @@ else
 
         GoalTxt = Goals ? "GOALS (ON)" : "GOALS";
 
-        /* 
-         * string TutorialSeen = await ReadCookies("TutorialSeen");
-        if (string.IsNullOrEmpty(TutorialSeen))
-            ShowTutorial = true;
-        else
-            ShowTutorial = false;
+        /*
+        * string TutorialSeen = await ReadCookies("TutorialSeen");
+       if (string.IsNullOrEmpty(TutorialSeen))
+           ShowTutorial = true;
+           else
+           ShowTutorial = false;
             */
 
         SetDataPoints();
 
         if (!Constants.Mobile)
+        {
             GlobalBT.OnSlotClick += SetBalance;
+            GlobalBT.OnEnvelopeClick += ToggleGoals;
+            GlobalBT.OnReportClick += ToggleReports;
+            GlobalBT.OnChartClick += ToggleChartBtn;
+        }
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
 
@@ -813,14 +696,11 @@ else
             SelectedBalance = "";
         }
         ShowChart = !ShowChart;
+        StateHasChanged();
     }
-    private async void ToggleGoals()
+    private void ToggleGoals()
     {
         Goals = !Goals;
-        GoalTxt = Goals ? "GOALS (ON)" : "GOALS";
-        await WriteCookieAsync("GoalsOpen", Goals ? "YES" : "NO", 1000);
-        Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList();
-        StateHasChanged();
     }
     private async void ToggleReports()
     {
@@ -832,6 +712,7 @@ else
             DynamicCostItems = new List<DynamicCostItem>(Constants.DynamicCostItems);
             await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         }
+        StateHasChanged();
 
     }
     private async void ToggleStash()
@@ -895,7 +776,7 @@ else
 
         StateHasChanged();
     }
-    
+
     private void EnvelopesUpdated(object sender, List<Data.Envelope> e)
     {
         Envelopes = e.OrderByDescending(ev => ev.TotalAmount / ev.Goal).ToList();
@@ -906,6 +787,13 @@ else
 
     public void Dispose()
     {
+        if (!Constants.Mobile)
+        {
+            GlobalBT.OnSlotClick -= SetBalance;
+            GlobalBT.OnEnvelopeClick -= ToggleGoals;
+            GlobalBT.OnReportClick -= ToggleReports;
+            GlobalBT.OnChartClick -= ToggleChartBtn;
+        }
         Constants.TransactionsChanged -= TransactionsUpdated;
         Constants.EnvelopesChanged -= EnvelopesUpdated;
     }
