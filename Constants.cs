@@ -155,7 +155,8 @@ namespace BetterBudgetWeb
             if (PeopleDecide)
             {
                 await RedrivePeople();
-                catchAll = await CatchAllRunner.Grab();
+                if(Token != "DEMO")
+                    catchAll = await CatchAllRunner.Grab();
 
                 AssignCatches();
 

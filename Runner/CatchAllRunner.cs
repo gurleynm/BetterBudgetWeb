@@ -40,10 +40,19 @@ namespace BetterBudgetWeb.Runner
                 return null;
 
             TokenWrapper TW = JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            DateTime latestDate = TW.catcher.Transactions
+                                  .Max(t => t.DateOfTransaction);
+
+            TimeSpan DaysDiff = DateTime.Now.Subtract(latestDate);
+
+            for(int index = 0; index < TW.catcher.Transactions.Count; index++)
+                TW.catcher.Transactions[index].DateOfTransaction = TW.catcher.Transactions[index].DateOfTransaction.Add(DaysDiff);
 
             Constants.TW = TW;
             Constants.Person1 = TW.Token.Name;
             Constants.Token = TW.Token.Token;
+            Constants.catchAll = new CatchAll(TW.catcher);
+            await Constants.Init(true);
 
             return TW;
         }

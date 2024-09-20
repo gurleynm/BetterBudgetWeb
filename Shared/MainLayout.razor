@@ -439,7 +439,7 @@
         Constants.Token = "DEMO";
         Constants.CUR_USER = "Optimus";
         TokenWrapper tokenWrapper = await CatchAllRunner.GrabDemo();
-        await Constants.Init(true);
+        
         NavMan.NavigateTo("");
 
         Balances = Constants.catchAll.Balances;
