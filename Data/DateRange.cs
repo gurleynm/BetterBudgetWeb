@@ -5,8 +5,8 @@
         public DateRange() { }
         public DateRange(DateRange other)
         {
-            if (UniqueMonthYears != null)
-                UniqueMonthYears = new List<string>(UniqueMonthYears);
+            if (other.UniqueMonthYears != null)
+                UniqueMonthYears = new List<string>(other.UniqueMonthYears);
         }
         public List<string> UniqueMonthYears { get; set; } = new List<string>();
         public bool IsItValidMonthYear(string monthYear)

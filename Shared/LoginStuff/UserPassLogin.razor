@@ -53,6 +53,8 @@
             </div>
         }
         @ChildContent
+        @if (!Hide)
+        {
         <hr />
         <div class="flex-r">
             <span style="color:white">
@@ -60,8 +62,6 @@
                 <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
             </span>
         </div>
-        @if (!Hide)
-        {
             <button style="width:100%;margin-top:1em;background-image:linear-gradient(to left, cyan,indigo)" class="btn btn-primary"
                     @onclick=ExecuteGrabDemo>
                 View Demo

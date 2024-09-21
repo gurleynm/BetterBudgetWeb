@@ -56,6 +56,8 @@
     public string FillColor { get; set; }
     [Parameter]
     public string BackgroundColor { get; set; }
+    [Parameter]
+    public bool Reverse { get; set; }
 
     private string FillColorAdjusted => string.IsNullOrEmpty(FillColor) ? "" : "background-color:" + FillColor;
     private string BackgroundColorAdjusted => string.IsNullOrEmpty(BackgroundColor) ? "" : "background-color:" + BackgroundColor;
@@ -78,11 +80,12 @@
 
             if (MaxValue > 0)
             {
-                BarFillWidth = (100-Math.Round((val / MaxValue) * 100)) + "%";
+
+                SetFillWidth(); 
                 StateHasChanged();
             }
 
-            if(Show)
+            if (Show)
                 Child?.RefreshMe();
         }
     }
@@ -97,7 +100,7 @@
 
             if (maxVal > 0)
             {
-                BarFillWidth = (100 - Math.Round((val / MaxValue) * 100)) + "%";
+                SetFillWidth();
                 StateHasChanged();
             }
         }
@@ -114,6 +117,14 @@
     private void OnClick()
     {
         Show = !Show;
+    }
+
+    private void SetFillWidth()
+    {
+        if (Reverse)
+            BarFillWidth = (100 - Math.Round(((MaxValue - val) / MaxValue) * 100)) + "%";
+        else
+            BarFillWidth = (100 - Math.Round((val / MaxValue) * 100)) + "%";
     }
 
     private void RefreshMe()

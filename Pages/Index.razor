@@ -21,11 +21,11 @@ else
 {
     @if (!Constants.Mobile)
     {
-        <PopTray Id="spend" @bind-ShowWorth=ShowChart 
-                    ShowTxt="Show Spending Chart" 
-                    HideTxt="Hide Spending Chart" 
-                    TopButton=true
-                    BottomButton=false>
+        <PopTray Id="spend" @bind-ShowWorth=ShowChart
+                 ShowTxt="Show Spending Chart"
+                 HideTxt="Hide Spending Chart"
+                 TopButton=true
+                 BottomButton=false>
             <Chart DPs=DataPoints BarClicked=FilterDate />
         </PopTray>
         <br />
@@ -107,7 +107,7 @@ else
                             <AddExpense OnAddConfirm="Add" Added="Added" />
                             <br style="clear:both;" />
                             <!-- Set Monthly Costs Goals-->
-                            <SetMonthlyTable Trans=FilteredTransactions />
+                            <SetMonthlyTable />
                             <br style="clear:both;" />
                             <!-- Ideal Emergency Fund-->
                             <IdealEmergencyFund />
@@ -234,7 +234,7 @@ else
         <br />
 
         <!-- Set Monthly Costs Goals-->
-        <SetMonthlyTable Trans=FilteredTransactions />
+        <SetMonthlyTable />
 
         <br style="clear:both" />
         <br />
@@ -448,11 +448,8 @@ else
 
         SetDataPoints();
 
-        if (!Constants.Mobile)
-        {
-            GlobalBT.OnEnvelopeClick += ToggleGoals;
-            GlobalBT.OnReportClick += ToggleReports;
-        }
+        GlobalBT.OnEnvelopeClick += ToggleGoals;
+        GlobalBT.OnReportClick += ToggleReports;
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
 
@@ -616,10 +613,7 @@ else
     private async void AddConfirm()
     {
         SetDataPoints();
-        if (!Constants.Mobile)
-            GlobalBT.RefreshBalances();
-        else
-            Balances.Sort(Constants.CompareBalance);
+        GlobalBT.RefreshBalances();
 
         Added = true;
         await Task.Delay(2000);
@@ -770,11 +764,8 @@ else
 
     public void Dispose()
     {
-        if (!Constants.Mobile)
-        {
-            GlobalBT.OnEnvelopeClick -= ToggleGoals;
-            GlobalBT.OnReportClick -= ToggleReports;
-        }
+        GlobalBT.OnEnvelopeClick -= ToggleGoals;
+        GlobalBT.OnReportClick -= ToggleReports;
         Constants.TransactionsChanged -= TransactionsUpdated;
         Constants.EnvelopesChanged -= EnvelopesUpdated;
     }

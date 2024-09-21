@@ -35,8 +35,9 @@
     </div>
     <div class="chart-hor" style="margin-bottom:1em">
         <ChartBarHorizontal Value=@ActualIncomeAmount
+                            Reverse=true
                             Label="Income Goal"
-                            MaxValue=ProjectedIncomeAmount
+                            MaxValue=@ProjectedIncomeAmount
                             FillColor="green"
                             BackgroundColor="#c3b4f3"
                             SearchTerm="Income"
