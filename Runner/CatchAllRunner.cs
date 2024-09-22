@@ -22,10 +22,11 @@ namespace BetterBudgetWeb.Runner
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
-            return TW.catcher;
+            CatchAll CA = JsonSerializer.Deserialize<CatchAll>(content, _options);
+
+            return CA;
         }
-        public static async Task<TokenWrapper> GrabDemo()
+        public static async Task<CatchAll> GrabDemo()
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(baseURI);
@@ -39,15 +40,12 @@ namespace BetterBudgetWeb.Runner
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            CatchAll CA = JsonSerializer.Deserialize<CatchAll>(content, _options);
+            Constants.catchAll = CA;
 
-            Constants.TW = TW;
-            Constants.Person1 = TW.Token.Name;
-            Constants.Token = TW.Token.Token;
-            Constants.catchAll = new CatchAll(TW.catcher);
             await Constants.Init(true);
 
-            return TW;
+            return CA;
         }
     }
 }

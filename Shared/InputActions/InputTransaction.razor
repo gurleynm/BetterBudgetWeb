@@ -967,7 +967,6 @@ else
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
-            BalanceRepoCaller brc = new BalanceRepoCaller();
             string TransName;
             
             if (ExpenseType == "Transfer")
@@ -978,18 +977,18 @@ else
                 {
                     if (!string.IsNullOrEmpty(PaidOffPerson2))
                     {
-                        TransName += brc.GetName(PaidOffPerson1) + "," + brc.GetName(PaidOffPerson2);
+                        TransName += BalanceRepo.GetName(PaidOffPerson1) + "," + BalanceRepo.GetName(PaidOffPerson2);
                     }
                     else
-                        TransName += brc.GetName(PaidOffPerson1);
+                        TransName += BalanceRepo.GetName(PaidOffPerson1);
                 }
                 else if (!string.IsNullOrEmpty(PaidOffPerson2))
-                    TransName += brc.GetName(PaidOffPerson2);
+                    TransName += BalanceRepo.GetName(PaidOffPerson2);
             }
             else
                 TransName = TransactionName;
 
-            var nt = new Transaction(TransName, ExpenseType, nam, lam, brc.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2));
+            var nt = new Transaction(TransName, ExpenseType, nam, lam, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2));
             nt.DateOfTransaction = DateTime.Now;
             var tr = await TransactionRepo.AddOrUpdateAsync(nt);
 

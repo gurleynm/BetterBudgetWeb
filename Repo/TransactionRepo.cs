@@ -31,9 +31,9 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
-            Transactions = new List<Transaction>(TW.catcher.Transactions);
+            Transactions = new List<Transaction>(catcher.Transactions);
 
             return Transactions;
         }
@@ -74,12 +74,11 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var tran = catcher.Transactions;
 
-            var tran = TW.catcher.Transactions;
 
-
-            Constants.AssignCatches(TW.catcher);
+            Constants.AssignCatches(catcher);
 
             return tran;
         }
@@ -110,10 +109,10 @@ namespace BetterBudgetWeb.Repo
                 throw new ApplicationException(content);
             }
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
-            var tran = TW.catcher.Transactions;
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var tran = catcher.Transactions;
 
-            Constants.AssignCatches(TW.catcher);
+            Constants.AssignCatches(catcher);
             return tran;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -21,12 +22,20 @@ namespace BetterBudgetWeb.Repo
 
             if(string.IsNullOrEmpty(content))
                 return false;
+            JObject j = (JObject)JsonConvert.DeserializeObject(content);
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            try
+            {
+                string token = j["Token"].ToString();
+                if (string.IsNullOrEmpty(token))
+                    return false;
 
-            Constants.TW = TW;
-            Constants.Person1 = TW.Token.Name;
-            Constants.Token = TW.Token.Token;
+                Constants.Token = token;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -41,12 +50,20 @@ namespace BetterBudgetWeb.Repo
 
             if(string.IsNullOrEmpty(content))
                 return false;
+            JObject j = (JObject)JsonConvert.DeserializeObject(content);
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            try
+            {
+                token = j["Token"].ToString();
+                if (string.IsNullOrEmpty(token))
+                    return false;
 
-            Constants.TW = TW;
-            Constants.Person1 = TW.Token.Name;
-            Constants.Token = TW.Token.Token;
+                Constants.Token = token;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -90,11 +107,10 @@ namespace BetterBudgetWeb.Repo
                 return json["message"].ToString(); ;
             }
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
-            Constants.TW = TW;
-            Constants.Person1 = TW.Token.Name;
-            Constants.Token = TW.Token.Token;
+            Constants.Person1 = CA.Token.Name;
+            Constants.Token = CA.Token.Token;
 
             return "Success";
         }
@@ -124,11 +140,10 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return false;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
-            Constants.TW = TW;
-            Constants.Person1 = TW.Token.Name;
-            Constants.Token = TW.Token.Token;
+            Constants.Person1 = CA.Token.Name;
+            Constants.Token = CA.Token.Token;
 
             return true;
         }

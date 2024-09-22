@@ -32,9 +32,9 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
-            Securities = new List<Security>(TW.catcher.Securities);
+            Securities = new List<Security>(catcher.Securities);
             return Securities;
         }
         public static List<Security> GetSecurities()
@@ -80,10 +80,10 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
-            var secs = TW.catcher.Securities;
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var secs = catcher.Securities;
 
-            Constants.AssignCatches(TW.catcher);
+            Constants.AssignCatches(catcher);
             Securities = secs;
 
             return secs;
@@ -111,10 +111,10 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
-            var secs = TW.catcher.Securities;
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var secs = catcher.Securities;
 
-            Constants.AssignCatches(TW.catcher);
+            Constants.AssignCatches(catcher);
             Securities = secs;
 
             return secs;

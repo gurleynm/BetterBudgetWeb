@@ -111,8 +111,6 @@ namespace BetterBudgetWeb
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Katie";
 
-        public static TokenWrapper TW = new TokenWrapper();
-
         public static string Token = "Nice Try";
 
         public static bool Test = false; // true false
@@ -141,8 +139,8 @@ namespace BetterBudgetWeb
 
         public static async Task RedrivePeople()
         {
-            Person1 = TW.Token.Name;
-            Person2 = TW.Token.Person2;
+            Person1 = catchAll.Token.Name;
+            Person2 = catchAll.Token.Person2;
 
             // Needed for Ideal Emergency Amount
             await MonthViewConstants.Init();
@@ -154,9 +152,10 @@ namespace BetterBudgetWeb
             //BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
             if (PeopleDecide)
             {
-                await RedrivePeople();
                 if(Token != "DEMO")
                     catchAll = await CatchAllRunner.Grab();
+
+                await RedrivePeople();
 
                 AssignCatches();
 

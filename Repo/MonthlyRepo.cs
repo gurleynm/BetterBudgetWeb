@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using BetterBudgetWeb.Shared;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net.Http.Json;
@@ -29,11 +30,11 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
-            Monthlies = TW.catcher.Monthlies;
-            Constants.SetMonthlies(TW.catcher.Monthlies);
-            return TW.catcher.Monthlies;
+            Monthlies = catcher.Monthlies;
+            Constants.SetMonthlies(catcher.Monthlies);
+            return catcher.Monthlies;
         }
         public static List<Monthly> GetMonthlies()
         {
@@ -66,11 +67,11 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
 
-            Monthlies = TW.catcher.Monthlies;
-            Constants.SetMonthlies(TW.catcher.Monthlies);
-            return TW.catcher.Monthlies;
+            Monthlies = catcher.Monthlies;
+            Constants.SetMonthlies(catcher.Monthlies);
+            return catcher.Monthlies;
         }
         public static async Task<List<Monthly>> AddOrUpdateAsync(string name, double person1Amount, double person2Amount, string dyna, string monYear)
         {
@@ -108,11 +109,11 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content);
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
 
-            Monthlies = TW.catcher.Monthlies;
-            Constants.SetMonthlies(TW.catcher.Monthlies);
-            return TW.catcher.Monthlies;
+            Monthlies = catcher.Monthlies;
+            Constants.SetMonthlies(catcher.Monthlies);
+            return catcher.Monthlies;
         }
     }
 }

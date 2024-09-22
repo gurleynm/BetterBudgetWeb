@@ -27,10 +27,10 @@ namespace BetterBudgetWeb.Repo
 
             if (string.IsNullOrEmpty(content))
                 return null;
-            
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
 
-            Snapshots = TW.catcher.Snapshots;
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
+
+            Snapshots = catcher.Snapshots;
             return Snapshots;
         }
     }

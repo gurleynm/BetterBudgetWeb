@@ -440,7 +440,7 @@
         Disabled = true;
         Constants.Token = "DEMO";
         Constants.CUR_USER = "Optimus";
-        TokenWrapper tokenWrapper = await CatchAllRunner.GrabDemo();
+        Constants.catchAll = await CatchAllRunner.GrabDemo();
         
         NavMan.NavigateTo("");
 
@@ -482,6 +482,7 @@
         await sessionStorage.SetItemAsync("token", "");
         bool verified;
 
+        // Token doesn't exists
         if (string.IsNullOrEmpty(token))
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -520,13 +521,13 @@
         }
         else
         {
-            verified = await UserRepo.VerifyUserAsync(token);
-            WeIn = verified;
+            WeIn = await UserRepo.VerifyUserAsync(token);
 
-            if (verified)
+            if (WeIn)
                 Constants.Token = token;
         }
 
+        // Out of token check, now see if we're in
         if (WeIn)
         {
             ErrorMsg = "";

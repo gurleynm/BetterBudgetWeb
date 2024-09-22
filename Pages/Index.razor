@@ -97,8 +97,8 @@ else
                                         <Envelope Name="@env.Name" Scale=11 Font_Size=1.375
                                                   Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)
                                                   Saved=@env.TotalAmount FlipClick="true"
-                                                  Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
-                                                  Person2Account="@(new BalanceRepoCaller().GetName(env.Person2Account))"
+                                                  Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
+                                                  Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
                                                   Person1Amount="@env.Person1Amount"
                                                   Person2Amount="@env.Person2Amount" />
                                     }
@@ -184,8 +184,8 @@ else
                     {
                         <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)
                                   Saved=@env.TotalAmount FlipClick="true"
-                                  Person1Account="@(new BalanceRepoCaller().GetName(env.Person1Account))"
-                                  Person2Account="@(new BalanceRepoCaller().GetName(env.Person2Account))"
+                                  Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
+                                  Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
                                   Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
                     }
                 </div>

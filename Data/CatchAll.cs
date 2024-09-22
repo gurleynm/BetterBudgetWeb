@@ -12,6 +12,7 @@ namespace BetterBudgetWeb.Data
         public List<Snapshot> Snapshots { get; set; }
         public List<Security> Securities { get; set; }
         public DateRange DR { get; set; }
+        public TokenHolder Token { get; set; }
         public CatchAll() { }
         public CatchAll(CatchAll other)
         {

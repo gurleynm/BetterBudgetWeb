@@ -205,15 +205,13 @@ else
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
-            BalanceRepoCaller brc = new BalanceRepoCaller();
-
             if (BalanceType == "Stocks")
                 apr = PaidThroughWork ? 1 : 0;
 
             var Bal = new Balance(BalName, am, BalanceType, apr, Color, TextColor, Person);
             Bal.Id = Id;
 
-            await brc.AddOrUpdateAsync(Bal);
+            await BalanceRepo.AddOrUpdateAsync(Bal);
 
             ErrorColor = "green";
             ErrorMsg = BalName + " balance was updated!";

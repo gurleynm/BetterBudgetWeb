@@ -29,9 +29,9 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            TokenWrapper TW = System.Text.Json.JsonSerializer.Deserialize<TokenWrapper>(content, _options);
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
-            Presets = TW.catcher.Presets;
+            Presets = catcher.Presets;
             Constants.Presets = new List<Preset>(Presets);
 
             return Presets;
@@ -70,10 +70,10 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            var TW = JsonConvert.DeserializeObject<TokenWrapper>(content);
-            Constants.Presets = new List<Preset>(TW.catcher.Presets);
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            Constants.Presets = new List<Preset>(catcher.Presets);
 
-            return TW.catcher.Presets;
+            return catcher.Presets;
         }
         public static async Task<List<Preset>> RemoveAsync(Preset press)
         {
@@ -98,9 +98,9 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(content))
                 return null;
 
-            var TW = JsonConvert.DeserializeObject<TokenWrapper>(content);
-            Constants.Presets = new List<Preset>(TW.catcher.Presets);
-            return TW.catcher.Presets;
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            Constants.Presets = new List<Preset>(catcher.Presets);
+            return catcher.Presets;
         }
     }
 }
