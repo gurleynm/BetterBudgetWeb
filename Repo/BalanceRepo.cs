@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace BetterBudgetWeb.Repo
 {
@@ -45,6 +46,9 @@ namespace BetterBudgetWeb.Repo
         
         public static string GetId(string name)
         {
+            if (string.IsNullOrEmpty(name))
+                return "";
+
             bool FirstLoad = false;
             if (Balances == null)
             {
@@ -66,6 +70,9 @@ namespace BetterBudgetWeb.Repo
         }
         public static string GetName(string id)
         {
+            if (string.IsNullOrEmpty(id))
+                return "";
+
             bool FirstLoad = false;
             if (Balances == null)
             {
