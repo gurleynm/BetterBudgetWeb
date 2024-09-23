@@ -113,7 +113,7 @@ namespace BetterBudgetWeb
 
         public static string Token = "Nice Try";
 
-        public static bool Test = true; // true false
+        public static bool Test = false; // true false
 
         private static bool mobile = true;
         public static bool Mobile
