@@ -31,6 +31,17 @@
     background-repeat: no-repeat;
 }
 
+.add_expense {
+    margin-bottom: 1vh;
+}
+
+table.add_expense > tr {
+    background-color: transparent;
+}
+
+table.add_expense > tr > td {
+    border: none;
+}
 ul {
     list-style: none;
     list-style-type: none;

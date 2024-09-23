@@ -1,29 +1,4 @@
 ﻿@using BetterBudgetWeb.Runner;
-<style>
-    .outer_add {
-        margin: auto;
-        width: 100%;
-        height: fit-content;
-        border: 1px solid #ececec;
-        background-color: #2a2a2a;
-        color: white;
-        border-radius: @BorderRadius;
-        margin-bottom: @(!Mobile ? "1vh" : "3vw");
-    }
-
-    .add_expense {
-        margin-bottom: 1vh;
-    }
-
-    table.add_expense > tr {
-        background-color: transparent;
-    }
-
-        table.add_expense > tr > td {
-            border: none;
-        }
-</style>
-
 
 <div style="position:relative">
     @if (Added)

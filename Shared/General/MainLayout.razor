@@ -57,32 +57,33 @@
         width: 75%;
     }
 
-        /* Style the buttons inside the tab */
-        .tab button {
-            background-color: inherit;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            font-size: 17px;
-            color: @Constants.ColorScheme["Text"];
-        }
-            /* Change background color of buttons on hover */
-            .tab button:hover {
-                background-color: @Constants.ColorScheme["Tab-Hover"];
-                color: black;
-            }
+    /* Style the buttons inside the tab */
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+        color: @Constants.ColorScheme["Text"];
+    }
 
-            .tab button.active:hover {
-                color: @Constants.ColorScheme["Text"];
-            }
+    /* Change background color of buttons on hover */
+    .tab button:hover {
+        background-color: @Constants.ColorScheme["Tab-Hover"];
+        color: black;
+    }
 
-            /* Create an active/current tablink class */
-            .tab button.active {
-                background-color: @Constants.ColorScheme["Tab-Active"];
-            }
+    .tab button.active:hover {
+        color: @Constants.ColorScheme["Text"];
+    }
+
+    /* Create an active/current tablink class */
+    .tab button.active {
+        background-color: @Constants.ColorScheme["Tab-Active"];
+    }
 
     .arrow {
         border: solid @Constants.ColorScheme["Text"];
@@ -124,6 +125,17 @@
         width: 100%;
         height: fit-content;
         border: 1px black solid;
+    }
+
+    .outer_add {
+        margin: auto;
+        width: 100%;
+        height: fit-content;
+        border: 1px solid #ececec;
+        background-color: #2a2a2a;
+        color: white;
+        border-radius: 12px;
+        margin-bottom: @(Constants.Mobile ? "3vw" : "1vh");
     }
 
     .chart-back-hor {

@@ -1,4 +1,5 @@
 ﻿@page "/account"
+@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Shared.LoginStuff
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
@@ -8,7 +9,7 @@
 <h3>Account Page</h3>
 @if (ShowUpdateConfirmation)
 {
-    <div class="flex-r" 
+    <div class="flex-r"
          style="margin:auto 0;
                 width:100%;
                 padding: 1vw;
@@ -24,6 +25,14 @@
 }
 <h4>Your name is: <span>@Constants.CUR_USER</span></h4>
 <h4>The second user's name is: <span>@OtherUser</span></h4>
+
+<div class="flex-r" style="justify-content:space-evenly;margin:1em 0">
+@foreach (var tier in tiers)
+{
+    <TierBlock Level=tier />
+}
+</div>
+
 <button class="btn btn-secondary" @onclick=@(() => {ShowUpdate = true; ErrorMsg = "";})>Update Password</button>
 <button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
 @*
@@ -129,6 +138,17 @@
     private PasswordRules passwordRules;
 
     private string ErrorMsg = "";
+    List<Tier> tiers = new List<Tier>();
+
+    protected override Task OnInitializedAsync()
+    {
+
+        tiers.Add(new Tier("Boring", 3.99, 40, "purple"));
+        tiers.Add(new Tier("Awesome", 4.99, 50, "gold"));
+        tiers.Add(new Tier("God", 5.99, 60, "#E5E4E2"));
+
+        return base.OnInitializedAsync();
+    }
 
     private async void Update(bool accepted)
     {
