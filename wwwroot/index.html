@@ -156,10 +156,12 @@
         }
         function toggleExpand(id) {
             var element = document.getElementById(id);
-            if (!element.style.height || element.style.height == '0px') {
-                element.style.height = Array.prototype.reduce.call(element.childNodes, function (p, c) { return p + (c.scrollHeight || 0); }, 0) + 'px';
-            } else {
-                element.style.height = '0px';
+            if (element) {
+                if (!element.style.height || element.style.height == '0px') {
+                    element.style.height = Array.prototype.reduce.call(element.childNodes, function (p, c) { return p + (c.scrollHeight || 0); }, 0) + 'px';
+                } else {
+                    element.style.height = '0px';
+                }
             }
         }
         function TurnOffScroll() {
@@ -172,7 +174,7 @@
         }
         function isDevice() {
             return IsMobile;
-        }        
+        }
         function drawLineChart(lineList, chartId) {
             var data = new google.visualization.DataTable();
 

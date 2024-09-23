@@ -6,7 +6,7 @@
 
     <br style="clear:both" />
     <div class="flex-c-start" style="width:90vw;height:fit-content;align-items:center;border:solid silver 1px">
-        <h1 style="text-align:center;">Balance Preview:</h1>
+        <h1 style="text-align:center;">Account Preview:</h1>
         <BalanceSlot TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
                                     Value = double.TryParse(Amount, out double v) ? v : 0, BalanceType =  BalanceType})" IsPreview="true" />
         <div class="flex-r" style="justify-content:space-around;">
@@ -16,7 +16,7 @@
             </div>
             <div class="flex-r" style="justify-content:flex-start;padding:1em">
                 <label style="margin-right:1em">Text Color:</label>
-                <select class="custom-select" @bind=TextColor title="Type of Balance is required ">
+                <select class="custom-select" @bind=TextColor title="Type of Account is required ">
                     <option value="white" selected>White</option>
                     <option value="black">Black</option>
                 </select>
@@ -26,8 +26,8 @@
     <br />
     <div class="flex-c" style="position:relative;flex-wrap:wrap;justify-content:space-around;align-items:start">
         <div class="flex-c">
-            <label style="margin-right:1em">Balance Name:</label>
-            <input type="text" placeholder="Balance Name" @bind=BalName @oninput="@(async (ui) => { BalName = (string) ui.Value;})" />
+            <label style="margin-right:1em">Account Name:</label>
+            <input type="text" placeholder="Account Name" @bind=BalName @oninput="@(async (ui) => { BalName = (string) ui.Value;})" />
         </div>
         <div class="flex-c">
             <label style="margin-right:1em">Initial Amount:</label>
@@ -35,8 +35,8 @@
         </div>
         <div class="flex-c" style="padding:1em 0">
             <label style="margin-right:1em">Expense Type:</label>
-            <select class="custom-select" @bind=BalanceType title="Type of Balance is required ">
-                <option value="Select" selected disabled="disabled">(Choose Balance Type)</option>
+            <select class="custom-select" @bind=BalanceType title="Type of Account is required ">
+                <option value="Select" selected disabled="disabled">(Choose Account Type)</option>
                 <option value="Equity">Equity</option>
                 <option value="Loan">Credit Card/Loan</option>
                 <option value="Income">Savings/Checkings/Income</option>
@@ -60,7 +60,7 @@
         }
         <div class="flex-c-start">
             <label style="margin-right:1em">Person:</label>
-            <select class="custom-select" @bind="Person" title="Person's Balance ">
+            <select class="custom-select" @bind="Person" title="Person's Account ">
                 <option value="@Constants.Person1" selected>@Constants.Person1</option>
                 <option value="@Constants.Person2">@Constants.Person2</option>
                 <option value="Joint">Joint</option>
@@ -84,10 +84,10 @@
 else
 {
     <div class="tabcontent flex-c-start" style="flex-wrap:wrap">
-        <div class="flex-r" style="justify-content:space-around">
+        <div class="flex-r" style="justify-content:space-between">
             <div class="flex-c" style="justify-content:space-around">
-                <label>Balance Name:</label>
-                <input type="text" placeholder="Balance Name" @bind=BalName @oninput="@(async (ui) => { BalName = (string) ui.Value;})" />
+                <label>Account Name:</label>
+                <input type="text" placeholder="Account Name" @bind=BalName @oninput="@(async (ui) => { BalName = (string) ui.Value;})" />
             </div>
             <div class="flex-c" style="justify-content:space-around">
                 <label>Initial Amount:</label>
@@ -95,8 +95,8 @@ else
             </div>
             <div class="flex-c-start">
                 <label>Expense Type:</label>
-                <select class="custom-select" @bind=BalanceType title="Type of Balance is required ">
-                    <option value="Select" selected disabled="disabled">(Choose Balance Type)</option>
+                <select class="custom-select" @bind=BalanceType title="Type of Account is required ">
+                    <option value="Select" selected disabled="disabled">(Choose Account Type)</option>
                     <option value="Equity">Equity</option>
                     <option value="Loan">Credit Card/Loan</option>
                     <option value="Income">Savings/Checkings/Income</option>
@@ -104,10 +104,10 @@ else
                 </select>
             </div>
         </div>
-        <div class="flex-r" style="justify-content:space-around">
+        <div class="flex-r" style="justify-content:space-between">
             <div class="flex-c-start">
                 <label>Person:</label>
-                <select class="custom-select" @bind="Person" title="Person's Balance ">
+                <select class="custom-select" @bind="Person" title="Person's Account ">
                     <option value="@Constants.Person1" selected>@Constants.Person1</option>
                     <option value="@Constants.Person2">@Constants.Person2</option>
                     <option value="Joint">Joint</option>
@@ -129,7 +129,7 @@ else
             }
             <div class="flex-c-start">
                 <label>Text Color:</label>
-                <select class="custom-select" @bind=TextColor title="Type of Balance is required ">
+                <select class="custom-select" @bind=TextColor title="Type of Account is required ">
                     <option value="white" selected>White</option>
                     <option value="black">Black</option>
                 </select>
@@ -140,7 +140,7 @@ else
             </div>
         </div>
         <div style="position:absolute; width:18vw;height:80vh;right:1vw;top:15vh;">
-            <h1 style="text-align:center;">Balance Preview:</h1>
+            <h1 style="text-align:center;">Account Preview:</h1>
             <BalanceSlot TheBalance="@(new Balance {Name = BalName, APR = double.TryParse(APR, out double a) ? a : 0, HexColor = Color, TextColor=TextColor,
                                     Value = double.TryParse(Amount, out double v) ? v : 0, BalanceType = BalanceType})" IsPreview="true" />
         </div>
@@ -197,7 +197,7 @@ else
         bool tpAPR = double.TryParse(APR, out double apr);
         var c = Color;
 
-        ErrorMsg += string.IsNullOrEmpty(BalName) ? "Balance Name must be set. " : "";
+        ErrorMsg += string.IsNullOrEmpty(BalName) ? "Account Name must be set. " : "";
         ErrorMsg += string.IsNullOrEmpty(BalanceType) ? "Please select an expense type. " : "";
         ErrorMsg += !tpAmount ? "Amount must be a number. " : "";
         ErrorMsg += !string.IsNullOrEmpty(APR) && !tpAPR ? "APR must be a number. " : "";
@@ -214,7 +214,7 @@ else
             await BalanceRepo.AddOrUpdateAsync(Bal);
 
             ErrorColor = "green";
-            ErrorMsg = BalName + " balance was updated!";
+            ErrorMsg = BalName + " account was updated!";
 
             BalName = string.Empty;
             APR = string.Empty;

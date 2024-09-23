@@ -1,18 +1,5 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
-<style>
-    .food {
-        background-color: deeppink;
-    }
-
-    .gas {
-        background-color: coral;
-    }
-
-    .fun {
-        background-color: green;
-    }
-</style>
 
 <div class="tabcontent">
     <div style="float:left;margin-right:10vw;">
@@ -51,21 +38,6 @@
         </div>
     }
     <br style="clear:both;" />
-    <br />
-    <!--
-    <div style="float:left;margin-right:10vw;">
-        <label>@(Constants.Person1 + " Amount:")</label>
-        <br />
-        <input type="text" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
-    </div>
-    <div>
-        <label>@(Constants.Person2 + " Amount:")</label>
-        <br />
-        <input type="text" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
-    </div>
-    <br style="clear:both;" />
-
-    -->
     <br style="clear:both" />
     <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
     <br />
