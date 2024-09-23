@@ -147,6 +147,7 @@
             }
 
             string UpdateUser = await UserRepo.UpdateUser(Constants.CUR_USER, "UPDATE_USER_" + Constants.CUR_USER,
+                                                                "","",
                                                                 CurrentPassword, NewPassword);
             if (UpdateUser != "Success")
             {

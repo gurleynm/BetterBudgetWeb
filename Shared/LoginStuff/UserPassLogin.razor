@@ -4,39 +4,13 @@
         <div>
             <h2 style="text-align:center;color:white">@($"Welcome!!")</h2>
         </div>
-        @if (!string.IsNullOrEmpty(ErrorMsg))
-        {
-            <p class="income-bad" style="text-align:center">
-                @ErrorMsg
-            </p>
-        }
+        
         @if (CreatingAccount)
         {
-            <div style="display:flex;flex-direction:@(Constants.Mobile ? "column" : "row");justify-content:start; padding:1em">
-                <div class="flex-c">
-                    <label style="color:white">Username</label>
-                    <div class="flex-r">
-                        <input class="better" id="user" placeholder="Username 1" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
-                    </div>
-                    <br />
-                    <label style="color:white">Shared Password</label>
-                    <div class="flex-r">
-                        <PasswordInput Enter="Enter" Placeholder="Shared Password" @bind-Password=@Password />
-                    </div>
-                </div>
-                <div class="flex-c">
-                    <label style="color:white">Username</label>
-                    <div class="flex-r">
-                        <input class="better" id="user" placeholder="Username 2" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
-                    </div>
-                    <br />
-                    <label style="color:white">Confirm Password</label>
-                    <div class="flex-r">
-                        <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword />
-                    </div>
-                </div>
-            </div>
-            <PasswordRules @ref=@passwordRules Password="@Password" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
+            <CreateAccountCarousel @bind-CreatingAccount=@CreatingAccount CheckIn="CheckIn"
+                                   @bind-Username=@Username @bind-Username2=@Username2
+                                   @bind-Email=@Email @bind-Email2=@Email2 @bind-ErrorMsg=@ErrorMsg
+                                   @bind-Password2=@Password2 @bind-Password=@Password />
         }
         else
         {
@@ -52,16 +26,28 @@
                 </div>
             </div>
         }
-        @ChildContent
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p class="income-bad" style="text-align:center">
+                @ErrorMsg
+            </p>
+        }
+        
+        @* Show Submit if ready *@
+        @if (!CreatingAccount)
+        {
+            @ChildContent
+        }
+
         @if (!Hide)
         {
-        <hr />
-        <div class="flex-r">
-            <span style="color:white">
-                @AccountTxt
-                <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
-            </span>
-        </div>
+            <hr />
+            <div class="flex-r">
+                <span style="color:white">
+                    @AccountTxt
+                    <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
+                </span>
+            </div>
             <button style="width:100%;margin-top:1em;background-image:linear-gradient(to left, cyan,indigo)" class="btn btn-primary"
                     @onclick=ExecuteGrabDemo>
                 View Demo
@@ -78,6 +64,39 @@
     [Parameter]
     public EventCallback GrabDemo { get; set; }
 
+    [Parameter]
+    public Action CheckIn { get; set; }
+
+    [Parameter]
+    public string Email
+    {
+        get { return email; }
+        set
+        {
+            if (email == value) return;
+            email = value;
+            EmailChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> EmailChanged { get; set; }
+    
+    [Parameter]
+    public string Email2
+    {
+        get { return email2; }
+        set
+        {
+            if (email2 == value) return;
+            email2 = value;
+            Email2Changed.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> Email2Changed { get; set; }
+    
     [Parameter]
     public string Username
     {
@@ -124,19 +143,19 @@
     public EventCallback<string> PasswordChanged { get; set; }
 
     [Parameter]
-    public string ConfirmPassword
+    public string Password2
     {
-        get { return confirmPassword; }
+        get { return password2; }
         set
         {
-            if (confirmPassword == value) return;
-            confirmPassword = value;
-            ConfirmPasswordChanged.InvokeAsync(value);
+            if (password2 == value) return;
+            password2 = value;
+            Password2Changed.InvokeAsync(value);
         }
     }
 
     [Parameter]
-    public EventCallback<string> ConfirmPasswordChanged { get; set; }
+    public EventCallback<string> Password2Changed { get; set; }
 
     [Parameter]
     public string ErrorMsg
@@ -174,12 +193,12 @@
     [Parameter]
     public bool Hide { get; set; }
 
-    public PasswordRules passwordRules;
-
+    private string email;
+    private string email2;
     private string username;
     private string username2;
     private string password;
-    private string confirmPassword;
+    private string password2;
     private string errorMsg;
     private bool creatingAccount { get; set; }
 

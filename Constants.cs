@@ -14,6 +14,8 @@ namespace BetterBudgetWeb
 {
     public class Constants
     {
+
+        public static bool Test = false; // true false
         // Set null example:
         //      testVar2 = testVar1 ?? testVar2
         //          ^^^^^^^^^^^^^^^^
@@ -92,10 +94,10 @@ namespace BetterBudgetWeb
                 }
             }
         }
-        public static List<DynamicCostItem> DynamicCostItems { get; set; }
-        public static List<SavingsGoal> SavingsGoals { get; set; }
-        public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
-        public static List<ProjectedDatum> ProjectedData { get; set; }
+        public static List<DynamicCostItem> DynamicCostItems { get; set; } = new();
+        public static List<SavingsGoal> SavingsGoals { get; set; } = new();
+        public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; } = new();
+        public static List<ProjectedDatum> ProjectedData { get; set; } = new();
         public static List<Preset> Presets { get; set; } = new List<Preset>();
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Security> Securities { get; set; } = new List<Security>();
@@ -112,8 +114,6 @@ namespace BetterBudgetWeb
         public static string Person2 { get; set; } = "Katie";
 
         public static string Token = "Nice Try";
-
-        public static bool Test = false; // true false
 
         private static bool mobile = true;
         public static bool Mobile

@@ -148,9 +148,12 @@
 
     private void TransactionsUpdated(object sender, List<Transaction> e)
     {
-        Refresh();
-        Donut.DrawCoreChart();
-        StateHasChanged();
+        if (e != null && e.Count > 0)
+        {
+            Refresh();
+            Donut.DrawCoreChart();
+            StateHasChanged();
+        }
     }
 
     public void Dispose()
