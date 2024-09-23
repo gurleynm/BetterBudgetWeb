@@ -113,7 +113,7 @@ namespace BetterBudgetWeb
 
         public static string Token = "Nice Try";
 
-        public static bool Test = false; // true false
+        public static bool Test = true; // true false
 
         private static bool mobile = true;
         public static bool Mobile
@@ -172,7 +172,7 @@ namespace BetterBudgetWeb
             Monthlies = new List<Monthly>(catchAll.Monthlies);
             Envelopes = new List<Envelope>(catchAll.Envelopes);
             Presets = new List<Preset>(catchAll.Presets);
-            Securities = new List<Security>(catchAll.Securities) ?? new List<Security>();
+            Securities = new List<Security>(catchAll.Securities);
             if (DR != null)
             {
                 if (catchAll?.DR?.UniqueMonthYears?.Count > 0)

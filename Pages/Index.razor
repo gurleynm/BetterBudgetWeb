@@ -47,7 +47,7 @@ else
                         <div class="flex-c-start" style="margin-left:1vw">
                             <PopTray Id="char" ShowWorth=ShowChart ShowButton=false>
                                 <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                                                 OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
+                                                 TheBalance="@SelectedBalance" />
                             </PopTray>
 
                             <!-- Dynamic Costs -->
@@ -204,7 +204,7 @@ else
                 <br />
                 <br />
                 <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                                 OnDeleteConfirm=@CloseModal TheBalance="@SelectedBalance" />
+                                 TheBalance="@SelectedBalance" />
             </PopTray>
 
         }
@@ -613,7 +613,7 @@ else
     private async void AddConfirm()
     {
         SetDataPoints();
-        GlobalBT.RefreshBalances();
+        // GlobalBT.RefreshBalances();
 
         Added = true;
         await Task.Delay(2000);

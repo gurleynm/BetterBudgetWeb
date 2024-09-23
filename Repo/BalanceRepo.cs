@@ -94,6 +94,8 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Balance>> AddOrUpdateAsync(Balance bal)
         {
+            if(bal == null)
+                return Constants.Balances;
             if (Constants.Token == "DEMO")
             {
                 var Exists = Constants.Balances.FirstOrDefault(t => t.Id == bal.Id);
@@ -161,6 +163,18 @@ namespace BetterBudgetWeb.Repo
             Constants.Balances = new List<Balance>(Balances);
             Constants.catchAll.Balances = Balances;
             return Balances;
+        }
+        public static Balance GetBalanceFromName(string name, bool IgnoreCase = false)
+        {
+            if (Balances == null)
+                GetBalances();
+
+            name = name.Replace("'", "’");
+
+            if (IgnoreCase)
+                name = name.ToUpper();
+
+            return Balances.FirstOrDefault(b => (IgnoreCase && b.Name.ToUpper() == name) || b.Name == name);
         }
     }
 }
