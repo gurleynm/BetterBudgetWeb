@@ -129,22 +129,26 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="js/stripescript.js"></script>
     <script>
         let IsMobile;
         window.onload = function () {
             google.charts.load('current', { 'packages': ['sankey', 'corechart', 'line'] });
             IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
 
-            if (IsMobile) {
-                LoadImg.style.height = "20vh";
-                LoadImg.style.width = "20vh";
-            }
-            else {
-                LoadImg.style.height = "20vw";
-                LoadImg.style.width = "20vw";
+            const LoadImg = document.getElementById('LoadImg');
+            if (LoadImg) {
+                if (IsMobile) {
+                    LoadImg.style.height = "20vh";
+                    LoadImg.style.width = "20vh";
+                }
+                else {
+                    LoadImg.style.height = "20vw";
+                    LoadImg.style.width = "20vw";
+                }
             }
         };
         window.addEventListener('resize', Resized);
@@ -440,7 +444,6 @@
             }
             return "";
         }
-
     </script>
 </body>
 

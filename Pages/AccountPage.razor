@@ -27,10 +27,7 @@
 <h4>The second user's name is: <span>@OtherUser</span></h4>
 
 <div class="flex-r" style="justify-content:space-evenly;margin:1em 0">
-@foreach (var tier in tiers)
-{
-    <TierBlock Level=tier />
-}
+    <button onclick="window.location='https://billing.stripe.com/p/login/test_6oE9AJfV35xS32U000'">Manage payment</button>
 </div>
 
 <button class="btn btn-secondary" @onclick=@(() => {ShowUpdate = true; ErrorMsg = "";})>Update Password</button>
@@ -140,14 +137,13 @@
     private string ErrorMsg = "";
     List<Tier> tiers = new List<Tier>();
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
 
         tiers.Add(new Tier("Boring", 3.99, 40, "purple"));
         tiers.Add(new Tier("Awesome", 4.99, 50, "gold"));
         tiers.Add(new Tier("God", 5.99, 60, "#E5E4E2"));
-
-        return base.OnInitializedAsync();
+        await StripeRepo.GetProducts();
     }
 
     private async void Update(bool accepted)
