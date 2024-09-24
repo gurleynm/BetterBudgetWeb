@@ -9,12 +9,10 @@
         public TokenHolder(User user)
         {
             Name = user.Name;
-            Person2 = user.Person2;
         }
         public TokenHolder(User user, string token)
         {
             Name = user.Name;
-            Person2 = user.Person2;
             Token = token;
         }
         public TokenHolder(TokenHolder other)

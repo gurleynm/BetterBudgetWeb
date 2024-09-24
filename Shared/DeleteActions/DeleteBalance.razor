@@ -3,10 +3,10 @@
 
     <div class="tabcontent">
         <div style="float:left;margin-right:10vw;">
-            <label>Balance Name:</label>
+        <label>Account Name:</label>
             <br />
             <select @bind="Name">
-                <option value="@string.Empty" selected disabled="disabled">(Choose Balance)</option>
+            <option value="@string.Empty" selected disabled="disabled">(Choose Account)</option>
                 @foreach (var bal in Balances.OrderBy(b => b.Name))
                 {
                     <option value="@bal.Name">@bal.Name</option>
@@ -49,7 +49,7 @@
         ErrorColor = "red";
 
         if (string.IsNullOrEmpty(Name))
-            ErrorMsg += "Please select a balance.\n";
+            ErrorMsg += "Please select an account.\n";
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
@@ -59,7 +59,7 @@
             Constants.Balances = new List<Data.Balance>(Balances);
 
             ErrorColor = "green";
-            ErrorMsg = $"Balance called '{Name}' was deleted!";
+            ErrorMsg = $"Account called '{Name}' was deleted!";
 
             Name = string.Empty;
         }

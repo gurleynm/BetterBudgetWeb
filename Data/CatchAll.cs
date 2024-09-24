@@ -4,15 +4,15 @@ namespace BetterBudgetWeb.Data
 {
     public class CatchAll
     {
-        public List<Transaction> Transactions { get; set; }
-        public List<Balance> Balances { get; set; }
-        public List<Monthly> Monthlies { get; set; }
-        public List<Envelope> Envelopes { get; set; }
-        public List<Preset> Presets { get; set; }
-        public List<Snapshot> Snapshots { get; set; }
-        public List<Security> Securities { get; set; }
-        public DateRange DR { get; set; }
-        public TokenHolder Token { get; set; }
+        public List<Transaction> Transactions { get; set; } = new();
+        public List<Balance> Balances { get; set; } = new();
+        public List<Monthly> Monthlies { get; set; } = new();
+        public List<Envelope> Envelopes { get; set; } = new();
+        public List<Preset> Presets { get; set; } = new();
+        public List<Snapshot> Snapshots { get; set; } = new();
+        public List<Security> Securities { get; set; } = new();
+        public DateRange DR { get; set; } = new();
+        public TokenHolder Token { get; set; } = new();
         public CatchAll() { }
         public CatchAll(CatchAll other)
         {

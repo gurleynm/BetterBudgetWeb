@@ -6,7 +6,7 @@
 
 <h1>Delete</h1>
 <div class="tab" style="@StyleTxt">
-    <button class="tablinks @BalanceClass" @onclick="@ShowBalanceGoal">Balances</button>
+    <button class="tablinks @BalanceClass" @onclick="@ShowBalanceGoal">Account</button>
     @if(Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "DYNAMIC") != null)
     {        
         <button class="tablinks @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Monthly</button>

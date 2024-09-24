@@ -211,7 +211,7 @@
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
-    @if (NavMan.Uri.Contains("policy"))
+    @if (NavMan.Uri.Contains("policy") || NavMan.Uri.Contains("reset"))
     {
         <main>
             <article class="content px-4" style="padding-top:@HeightTopBar">
@@ -227,15 +227,18 @@
         {
             <div style="display:inline-block;width:100vw;height:100vh;">
 
-                <UserPassLogin @ref="userpasslogin" @bind-Username=@username
+                <UserPassLogin @bind-Username=@username
                                @bind-Username2=@username2
                                @bind-Password=@password
-                               @bind-ConfirmPassword=@confirmPassword
+                               @bind-Password2=@password2
+                               @bind-Email=@email
+                               @bind-Email2=@email2
                                @bind-CreatingAccount=@CreatingAccount
                                @bind-ErrorMsg=@ErrorMsg
                                Hide=@Disabled
                                Enter=@((e) => Enter(e))
-                               GrabDemo=GrabDemo>
+                               GrabDemo=GrabDemo
+                               CheckIn=@(async () => await CheckWeIn())>
                     <div class="flex-r" style="margin-top:2vh">
                         @if (!Disabled)
                         {
@@ -255,15 +258,18 @@
         }
         else
         {
-            <UserPassLogin @ref="userpasslogin" @bind-Username=@username
+            <UserPassLogin @bind-Username=@username
                            @bind-Username2=@username2
                            @bind-Password=@password
-                           @bind-ConfirmPassword=@confirmPassword
+                           @bind-Password2=@password2
+                           @bind-Email=@email
+                           @bind-Email2=@email2
                            @bind-CreatingAccount=@CreatingAccount
                            @bind-ErrorMsg=@ErrorMsg
                            Hide=@Disabled
                            Enter=@((e) => Enter(e))
-                           GrabDemo=GrabDemo>
+                           GrabDemo=GrabDemo
+                           CheckIn=@(async () => await CheckWeIn())>
                 <div class="flex-r" style="margin-top:2vh">
                     @if (!Disabled)
                     {
@@ -425,10 +431,12 @@
     private string theView { get; set; }
     private string ErrorMsg { get; set; }
     private bool WeIn { get; set; }
+    private string email { get; set; }
+    private string email2 { get; set; }
     private string username { get; set; }
     private string username2 { get; set; }
     private string password { get; set; }
-    private string confirmPassword { get; set; }
+    private string password2 { get; set; }
     private bool CreatingAccount { get; set; }
     private int pwdAttempts { get; set; }
 
@@ -438,8 +446,6 @@
     private Transaction SelectedTransaction { get; set; }
     private bool ShowDeleteModal { get; set; }
     private bool ShowEditModal { get; set; }
-
-    private UserPassLogin userpasslogin;
 
     private bool ShowLoading { get; set; } = false;
     private bool Disabled { get; set; } = true;
@@ -540,22 +546,16 @@
             if (CreatingAccount)
             {
                 countAttempt = false;
-                bool Passed = userpasslogin.passwordRules.CheckConditions();
-                if (Passed)
+                Disabled = true;
+                StateHasChanged();
+                WeIn = await UserRepo.AddUser(username, username2, email, email2, password, password2);
+                if (!WeIn)
                 {
-                    Disabled = true;
-                    StateHasChanged();
-                    WeIn = await UserRepo.AddUser(username, username2, password);
-                    if (!WeIn)
-                    {
-                        ErrorMsg = "Denied. One of your usernames is already taken.";
-                    }
-                    else
-                        ShowLoading = true;
-                    StateHasChanged();
+                    ErrorMsg = "Denied. One of your usernames is already taken.";
                 }
                 else
-                    WeIn = false;
+                    ShowLoading = true;
+                StateHasChanged();
             }
             else
             {
@@ -659,7 +659,7 @@
         {
             // TransactionRepo sets everything in Constants
             await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
-            if(!Constants.Mobile)
+            if (!Constants.Mobile)
                 GlobalBT.RefreshBalances();
         }
         ShowDeleteModal = false;

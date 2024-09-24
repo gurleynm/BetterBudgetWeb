@@ -1,0 +1,78 @@
+﻿@page "/reset/{ResetToken}"
+@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Shared.LoginStuff
+@inject NavigationManager NavMan
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+
+@if (ValidRes)
+{
+    <div class="flex-c" style="width:100vw;height:80vh;align-items:center;">
+        <div style="display:block;background-color:gray;border-radius:1vw;width:auto;padding:1vw;padding-bottom:2vw">
+            <div class="flex-c" style="align-items:center;">
+                <span style="color:@Constants.ColorScheme["TextOnSilver"]">To update your account, please enter in your current password and your new password below:</span>
+                <br />
+                <br />
+                <table style="color:@Constants.ColorScheme["Text"]">
+                    <tr>
+                        <td style="border:none;color:white">New password:</td>
+                        <td style="border:none">
+                            <PasswordInput Placeholder="New Password" @bind-Password=@NewPassword ShowEye=true />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border:none;color:white">Confirm new password:</td>
+                        <td style="border:none">
+                            <PasswordInput Placeholder="Confirm New Password" @bind-Password=@ConfirmPassword ShowEye=true />
+                        </td>
+                    </tr>
+                </table>
+                <br />
+                <PasswordRules @ref=@passwordRules Password="@NewPassword" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
+                <br />
+                <button class="btn btn-primary" disabled=@Disabled @onclick=Submit
+                        style="background-image:linear-gradient(to right,indigo,cyan)">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div>Invalid reset token defined.</div>
+}
+
+@code {
+    [Parameter]
+    public string ResetToken { get; set; }
+
+    public string NewPassword { get; set; }
+    public string ConfirmPassword { get; set; }
+
+    private PasswordRules passwordRules;
+
+    public bool Disabled { get; set; }
+    public bool ValidRes { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ValidRes = await UserRepo.VerifyResetToken(ResetToken);
+        StateHasChanged();
+    }
+    private async void Submit()
+    {
+        Disabled = true;
+        StateHasChanged();
+
+        bool Passed = passwordRules.CheckConditions();
+        if (Passed)
+        {
+            await UserRepo.ResetPassword(ResetToken, NewPassword);
+            await sessionStorage.SetItemAsync("token", Constants.Token);
+            NavMan.NavigateTo("");
+        }
+
+        Disabled = true;
+        StateHasChanged();
+    }
+}

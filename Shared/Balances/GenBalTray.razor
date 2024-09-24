@@ -1,0 +1,85 @@
+﻿@using BetterBudgetWeb.Data
+@implements IDisposable
+<div class="flex-r" style="width:100%;justify-content:start;cursor:pointer;align-items:center;
+            background-color:@Constants.ColorScheme["ComponentBackground"];padding:.5em"
+     @onclick=@(() => OpenTray = !OpenTray)>
+    <div class="flex-r" style="width:100%;justify-content:start;align-items:center;">
+        <span style="margin-right:1em">@ExpenseType</span>
+        @if (OpenTray)
+        {
+            <span class="oi oi-caret-bottom"></span>
+        }
+        else
+        {
+            <span class="oi oi-caret-right"></span>
+        }
+    </div>
+
+    <div style="align-self:end;color:@Constants.GoodOrBad(BalanceTotal)">@Constants.Pretty(BalanceTotal)</div>
+</div>
+<PopTray Id="@(ExpenseType + "-drop")" @bind-ShowWorth=OpenTray ShowButton=false StartOpen=!Constants.Mobile>
+    <div style="padding-bottom:1em">
+        @foreach (var bal in Balances)
+        {
+            <BalanceSlot TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals ShowPersonInMonthly=Constants.Mobile />
+        }
+    </div>
+</PopTray>
+
+@code {
+    [Parameter]
+    public string ExpenseType { get; set; }
+
+    [CascadingParameter]
+    public bool Goals { get; set; }
+
+    [Parameter]
+    public string SearchTerm { get; set; }
+
+    private string ST => string.IsNullOrWhiteSpace(SearchTerm) ? ExpenseType : SearchTerm;
+
+    private bool OpenTray { get; set; } = !Constants.Mobile; // Looks better on Mobile to start closed
+
+    private IEnumerable<Balance> Balances => Constants.Balances.Where(b => b.BalanceType == ST).OrderByDescending(b => b.Value);
+    private double BalanceTotal => GetAmount();
+
+    protected override Task OnInitializedAsync()
+    {
+        Constants.BalancesChanged += BalancesUpdated;
+        return base.OnInitializedAsync();
+    }
+
+    private double GetAmount()
+    {
+        double amount = 0;
+        foreach (var TheBalance in Balances)
+        {
+            amount += Goals ? TheBalance.GetValueWithGoals() : TheBalance.Value;
+
+            if (TheBalance.BalanceType == "Stocks")
+            {
+                try
+                {
+                    var Securities = Constants.Securities.Where(sec => sec.BalanceFrom.ToUpper() == TheBalance.Id.ToUpper())?.ToList();
+                    amount += Securities == null ? 0 : Securities.Sum(s => s.Value);
+                }
+                catch (Exception e) { }
+            }
+        }
+
+        if (ST == "Loan")
+            amount = amount * -1;
+
+        return amount;
+    }
+
+    private void BalancesUpdated(object sender, List<Balance> e)
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.BalancesChanged -= BalancesUpdated;
+    }
+}

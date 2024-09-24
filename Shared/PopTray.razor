@@ -60,9 +60,18 @@
 
     [Parameter]
     public string HideTxt { get; set; } = "Hide Net Worth";
+    [Parameter]
+    public bool StartOpen { get; set; }
 
-    private bool FirstToggle = true;
     private string WorthTxt => showWorth ? ShowTxt : HideTxt;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && StartOpen)
+        {
+            await JSRuntime.InvokeAsync<object>("toggleExpand", Id);
+        }
+    }
 
     private void ToggleShowWorthBtn()
     {

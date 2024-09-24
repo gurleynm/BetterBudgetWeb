@@ -11,13 +11,13 @@
     <div class="tab">
         @if (NoBalances)
         {
-            <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
+            <button class="tablinks @BalClass" @onclick="@ShowAccount">Account</button>
         }
         else
         {
             <button class="tablinks @TransClass" @onclick="@ShowTransaction">Transaction</button>
-            <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
-            <button class="tablinks @MonthClass" @onclick="@ShowStaticCost">Monthly</button>
+            <button class="tablinks @BalClass" @onclick="@ShowAccount">Account</button>
+            <button class="tablinks @MonthClass" @onclick="@ShowStaticCost">Monthly Charge</button>
             <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
         }
     </div>
@@ -27,13 +27,13 @@ else
     <div class="tab" style="width:fit-content">
         @if (NoBalances)
         {
-            <button class="tablinks" @onclick="@ShowBalance">Balance</button>
+            <button class="tablinks" @onclick="@ShowAccount">Account</button>
         }
         else
         {
             <button class="tablinks" @onclick="@ShowTransaction">Transaction</button>
-            <button class="tablinks" @onclick="@ShowBalance">Balance</button>
-            <button class="tablinks" @onclick="@ShowStaticCost">Monthly</button>
+            <button class="tablinks" @onclick="@ShowAccount">Account</button>
+            <button class="tablinks" @onclick="@ShowStaticCost">Monthly Charge</button>
             <button class="tablinks" @onclick="@ShowEnvelope">Goal Envelope</button>
         }
     </div>
@@ -136,7 +136,7 @@ else if (ShowStatic)
         ShowEnv = false;
         ShowStatic = false;
     }
-    private void ShowBalance()
+    private void ShowAccount()
     {
         ShowBal = !ShowBal;
         ShowEnv = false;

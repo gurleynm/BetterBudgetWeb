@@ -39,10 +39,14 @@
             </div>
         </PopTray>
         <div style="padding-bottom:2vh">
-            @foreach (var bal in Balances)
-            {
-                <BalanceSlot TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals ShowPersonInMonthly=Constants.Mobile />
-            }
+            <div class="flex-c-start">
+                <CascadingValue Value="Goals">
+                    <GenBalTray ExpenseType="Equity" />
+                    <GenBalTray ExpenseType="Income" />
+                    <GenBalTray ExpenseType="Stocks" />
+                    <GenBalTray ExpenseType="Credit Cards/Loans" SearchTerm="Loan" />
+                </CascadingValue>
+            </div>
         </div>
     </div>
 }
@@ -76,7 +80,7 @@
         ShowWorth = !ShowWorth;
     }
 
-    private bool Goals;
+    public bool Goals;
     public void SetGoals(bool goal)
     {
         Goals = goal;
