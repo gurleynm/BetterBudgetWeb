@@ -1,5 +1,5 @@
 ﻿@using BetterBudgetWeb.Data;
-@using BetterBudgetWeb.MainMenuItems
+@using BetterBudgetWeb.MainMenuItems;
 @using BetterBudgetWeb.Repo;
 @using BetterBudgetWeb.Runner;
 @inject NavigationManager NavManager
@@ -40,10 +40,12 @@
         </div>
     </div>
 </div>
-@if (Show)
-{
+<PopTray Id="@("monthly-" + TheBalance.Name.Replace(" ","-"))" ShowWorth=Show ShowButton="false">
+    <div style="height:fit-content;">
     <MonthlySpending ShowPerson=ShowPersonInMonthly OnEditConfirm=@CloseModal TheBalance=@TheBalance.Name RefreshParent="@RefreshMe" />
-}
+    </div>
+</PopTray>
+
 
 
 @code {
@@ -67,6 +69,9 @@
 
     [Parameter]
     public EventCallback<bool> OnEditConfirm { get; set; }
+
+    [Parameter]
+    public string ParentId { get; set; }
 
     private bool ShowTradable => TheBalance.BalanceType == "Stocks";
 
@@ -102,7 +107,14 @@
             Show = !Show && ShowSpending;
             if (OnClick.HasDelegate)
                 await OnClick.InvokeAsync(TheBalance);
+
+            await ResizeParent();
         }
+    }
+    private async Task ResizeParent()
+    {
+        if (!string.IsNullOrEmpty(ParentId))
+            await JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
     }
     private bool ThisBalance(Transaction t)
     {

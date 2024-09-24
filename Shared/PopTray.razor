@@ -8,7 +8,7 @@
         </button>
     </div>
 }
-<div id="@Id" class="pop-up">
+<div id="@Id" class="pop-up" >
     @ChildContent
 </div>
 @if (BottomButton && ShowButton)
@@ -46,6 +46,24 @@
     [Parameter]
     public EventCallback<bool> ShowWorthChanged { get; set; }
 
+    private bool setFit { get; set; } = true;
+    [Parameter]
+    public bool SetFit
+    {
+        get { return setFit; }
+        set
+        {
+            if (setFit == value)
+                return;
+
+            setFit = value;
+            ResizeTray();
+            SetFitChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<bool> SetFitChanged { get; set; }
+
     [Parameter]
     public bool ShowButton { get; set; } = true;
 
@@ -64,6 +82,7 @@
     public bool StartOpen { get; set; }
 
     private string WorthTxt => showWorth ? ShowTxt : HideTxt;
+    private string FitHeight => SetFit ? "height:fit-content" : "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -80,5 +99,10 @@
     private async void ToggleShowWorth(bool invert = true)
     {
         await JSRuntime.InvokeAsync<object>("toggleExpand", Id);
+    }
+
+    private async void ResizeTray()
+    {
+        await JSRuntime.InvokeAsync<object>("resizeTray", Id);
     }
 }

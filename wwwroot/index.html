@@ -168,6 +168,12 @@
                 }
             }
         }
+        function resizeTray(id) {
+            var element = document.getElementById(id);
+            if (element) {
+                element.style.height = 'fit-content';
+            }
+        }
         function TurnOffScroll() {
             document.body.style.overflow = 'hidden';
             return false;
