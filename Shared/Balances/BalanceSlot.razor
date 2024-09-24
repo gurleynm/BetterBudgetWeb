@@ -113,7 +113,7 @@
     }
     private async Task ResizeParent()
     {
-        if (Show && !string.IsNullOrEmpty(ParentId))
+        if (!string.IsNullOrEmpty(ParentId))
             await JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
     }
     private bool ThisBalance(Transaction t)
