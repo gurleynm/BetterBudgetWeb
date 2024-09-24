@@ -150,5 +150,96 @@ namespace BetterBudgetWeb.Repo
 
             return true;
         }
+        public static async Task<bool> SendResetEmail(string email)
+        {
+            if (Constants.Token == "DEMO")
+                return true;
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            string adjustedUrl = Constants.BaseUri + "Password" + $"?email={email}";
+
+            HttpClient _client = new HttpClient();
+
+            var response = await client.GetAsync(adjustedUrl);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            if (string.IsNullOrEmpty(content))
+                return false;
+
+            return content.Contains("Success");
+        }
+        public static async Task<bool> VerifyResetToken(string token)
+        {
+            if (Constants.Token == "DEMO")
+                return true;
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            string adjustedUrl = Constants.BaseUri + "Password/" + $"?resetToken={token}";
+
+            HttpClient _client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Put, adjustedUrl);
+
+            requestMessage.Content = JsonContent.Create("");
+
+            var response = await _client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            if (string.IsNullOrEmpty(content))
+                return false;
+
+            return content.Contains("Success");
+        }
+        public static async Task<bool> ResetPassword(string token, string pass)
+        {
+            if (Constants.Token == "DEMO")
+                return true;
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            string adjustedUrl = Constants.BaseUri + "Password/" + $"?resetToken={token}&newPass={pass}";
+
+            HttpClient _client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
+
+            requestMessage.Content = JsonContent.Create("");
+
+            var response = await _client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            if (string.IsNullOrEmpty(content))
+                return false;
+            try
+            {
+                CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
+
+                Constants.Person1 = CA.Token.Name;
+                Constants.Token = CA.Token.Token;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

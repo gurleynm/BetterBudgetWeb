@@ -199,7 +199,7 @@
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
-    @if (NavMan.Uri.Contains("policy"))
+    @if (NavMan.Uri.Contains("policy") || NavMan.Uri.Contains("reset"))
     {
         <main>
             <article class="content px-4" style="padding-top:@HeightTopBar">

@@ -1,16 +1,32 @@
-﻿
+﻿@using BetterBudgetWeb.Repo
+
 <div class="flex-c" style="width:100vw;height:100vh;align-items:center;">
     <div style="display:block;background-color:gray;border-radius:1vw;width:auto;padding:1vw;padding-bottom:2vw">
         <div>
             <h2 style="text-align:center;color:white">@($"Welcome!!")</h2>
         </div>
-        
+
         @if (CreatingAccount)
         {
             <CreateAccountCarousel @bind-CreatingAccount=@CreatingAccount CheckIn="CheckIn"
                                    @bind-Username=@Username @bind-Username2=@Username2
                                    @bind-Email=@Email @bind-Email2=@Email2 @bind-ErrorMsg=@ErrorMsg
                                    @bind-Password2=@Password2 @bind-Password=@Password />
+        }
+        else if (ForgotPassword)
+        {
+            <div class="flex-c">
+                <label style="color:white">Enter email associated with your account</label>
+                <div class="flex-r">
+                    <input class="better" id="user" placeholder="Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email = (string) ui.Value;})" />
+                </div>
+                <div class="flex-r">
+                    <span style="color:@errLocalColor">@errorMsgLocal</span>
+                </div>
+                <div class="flex-r">
+                    <button class="btn btn-primary" @onclick=SendEmail>Submit</button>
+                </div>
+            </div>
         }
         else
         {
@@ -24,6 +40,9 @@
                 <div class="flex-r">
                     <PasswordInput Enter="Enter" @bind-Password=@Password />
                 </div>
+                <div>
+                    <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => ForgotPassword = !ForgotPassword)>Forgot Password?</a>
+                </div>
             </div>
         }
         @if (!string.IsNullOrEmpty(ErrorMsg))
@@ -32,9 +51,9 @@
                 @ErrorMsg
             </p>
         }
-        
+
         @* Show Submit if ready *@
-        @if (!CreatingAccount)
+        @if (!CreatingAccount && !ForgotPassword)
         {
             @ChildContent
         }
@@ -81,7 +100,7 @@
 
     [Parameter]
     public EventCallback<string> EmailChanged { get; set; }
-    
+
     [Parameter]
     public string Email2
     {
@@ -96,7 +115,7 @@
 
     [Parameter]
     public EventCallback<string> Email2Changed { get; set; }
-    
+
     [Parameter]
     public string Username
     {
@@ -193,6 +212,8 @@
     [Parameter]
     public bool Hide { get; set; }
 
+    public bool ForgotPassword { get; set; }
+
     private string email;
     private string email2;
     private string username;
@@ -200,6 +221,8 @@
     private string password;
     private string password2;
     private string errorMsg;
+    private string errorMsgLocal;
+    private string errLocalColor = "red";
     private bool creatingAccount { get; set; }
 
     private string AccountTxt => CreatingAccount ? "Already have an account?" : "Don't have an account?";
@@ -209,5 +232,50 @@
     {
         Hide = true;
         GrabDemo.InvokeAsync();
+    }
+
+    private async void SendEmail()
+    {
+        errLocalColor = "red";
+        if (!IsValidEmail(Email))
+        {
+            errorMsgLocal = "Invalid email";
+        }
+        else
+        {
+            var EmailSend = await UserRepo.SendResetEmail(Email);
+            if (EmailSend)
+            {
+                errLocalColor = "green";
+                errorMsgLocal = "Email sent.";
+            }
+            else
+            {
+                errorMsgLocal = "Email not found.";
+            }
+            StateHasChanged();
+        }
+    }
+
+    bool IsValidEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+            return false;
+
+        var trimmedEmail = email.Trim();
+
+        if (trimmedEmail.EndsWith("."))
+        {
+            return false;
+        }
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email);
+            return addr.Address == trimmedEmail;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

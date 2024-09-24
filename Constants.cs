@@ -4,11 +4,6 @@ using BetterBudgetWeb.Runner;
 using BetterBudgetWeb.MonthView;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
-using static BetterBudgetWeb.MainMenuItems.AddExpense;
-using System;
 
 namespace BetterBudgetWeb
 {
