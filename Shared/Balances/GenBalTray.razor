@@ -17,11 +17,13 @@
 
     <div style="align-self:end;color:@Constants.GoodOrBad(BalanceTotal)">@Constants.Pretty(BalanceTotal)</div>
 </div>
-<PopTray Id="@(ExpenseType + "-drop")" @bind-ShowWorth=OpenTray ShowButton=false StartOpen=!Constants.Mobile>
+<PopTray Id="@Id" @bind-ShowWorth=OpenTray ShowButton=false
+         StartOpen=!Constants.Mobile>
     <div style="padding-bottom:1em">
         @foreach (var bal in Balances)
         {
-            <BalanceSlot TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals ShowPersonInMonthly=Constants.Mobile />
+            <BalanceSlot TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals
+                         ShowPersonInMonthly=Constants.Mobile ParentId=@Id />
         }
     </div>
 </PopTray>
@@ -35,6 +37,8 @@
 
     [Parameter]
     public string SearchTerm { get; set; }
+
+    private string Id => ExpenseType.Replace("/", "-").Replace(" ", "-") + "-drop";
 
     private string ST => string.IsNullOrWhiteSpace(SearchTerm) ? ExpenseType : SearchTerm;
 
