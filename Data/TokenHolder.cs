@@ -4,6 +4,7 @@
     {
         public string Name { get; set; }
         public string Person2 { get; set; }
+        public string Email { get; set; }
         public string Token { get; set; }
         public TokenHolder() { }
         public TokenHolder(User user)
