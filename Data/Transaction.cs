@@ -93,14 +93,19 @@ namespace BetterBudgetWeb.Data
                    $"{Constants.Person2} Paid Off," +
                    "Date Of Transaction\n";
         }
-        public Flow ToFlow(double totalAmount = -1, string general = "")
+        public Flow ToFlow(double totalAmount = -1, string general = "", double generalTotals = 0)
         {
             double tot = double.Parse(Math.Abs(TotalAmount).ToString("C2").Trim('$').Replace(",", ""));
             string totDollar = Math.Abs(TotalAmount).ToString("C2");
             string addString = totalAmount > 0 ? " (" + totalAmount.ToString("C2") + ")" : "";
 
             if (ExpenseType == "Income")
+            {
+                double d = totalAmount-generalTotals;
+                if (d < 0)
+                    addString = " (" + d.ToString("C2") + ")";
                 return new Flow(Name + " (" + totDollar + ")", "Income" + addString, tot);
+            }
 
             string FlowHeader = "";
 
@@ -120,7 +125,12 @@ namespace BetterBudgetWeb.Data
                     return new Flow(Name + " (" + totDollar + ")", FlowHeader + addString, tot);
                 }
                 else
+                {
+                    double d = generalTotals - totalAmount;
+                    if (d < 0)
+                        addString = " (" + d.ToString("C2") + ")";
                     return new Flow("Income" + addString, FlowHeader + " (" + totDollar + ")", tot);
+                }
             }
 
 
