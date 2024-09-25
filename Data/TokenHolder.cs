@@ -7,6 +7,8 @@
         public string Person2 { get; set; }
         public string Email { get; set; }
         public string Token { get; set; }
+        public string Status { get; set; }
+        public string Tier { get; set; }
         public TokenHolder() { }
         public TokenHolder(User user)
         {
@@ -23,6 +25,8 @@
             Name = other.Name;
             Person2 = other.Person2;
             Token = other.Token;
+            Status = other.Status;
+            Tier = other.Tier;
         }
     }
 }

@@ -35,23 +35,7 @@ namespace BetterBudgetWeb.Repo
             string status = retStr["status"].ToString();
             string tier = retStr["Tier"].ToString();
 
-            switch (tier)
-            {
-                case "BASIC_TIER":
-                    Constants.TIER_LEVEL = Tier.BASIC_TIER;
-                    break;
-
-                case "ADVANCED_TIER":
-                    Constants.TIER_LEVEL = Tier.ADVANCED_TIER;
-                    break;
-
-                case "GOD_TIER":
-                    Constants.TIER_LEVEL = Tier.GOD_TIER;
-                    break;
-                default:
-                    Constants.TIER_LEVEL = Tier.TRIAL;                    
-                    break;
-            }
+            Constants.TIER_LEVEL = Constants.StringToTier(tier);
 
             return tier;
         }

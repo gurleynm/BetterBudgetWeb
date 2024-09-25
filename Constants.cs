@@ -10,7 +10,7 @@ namespace BetterBudgetWeb
     public class Constants
     {
 
-        public static bool Test = false; // true false
+        public static bool Test = true; // true false
         // Set null example:
         //      testVar2 = testVar1 ?? testVar2
         //          ^^^^^^^^^^^^^^^^
@@ -110,6 +110,7 @@ namespace BetterBudgetWeb
 
         public static string Token = "Nice Try";
         public static Tier TIER_LEVEL { get; set; } = Tier.TRIAL;
+        public static string TIER_STATUS { get; set; } = "active";
 
         private static bool mobile = true;
         public static bool Mobile
@@ -156,9 +157,6 @@ namespace BetterBudgetWeb
                 AssignCatches();
 
                 SetMonthlies(Monthlies);
-
-                if (Token != "DEMO")
-                    await SubscriptionRepo.GetSubscriptionAsync();
             }
         }
         public static void AssignCatches(CatchAll ca = null)
@@ -562,6 +560,22 @@ namespace BetterBudgetWeb
             catch
             {
                 return false;
+            }
+        }
+        public static Tier StringToTier(string tier)
+        {
+            switch (tier)
+            {
+                case "BASIC_TIER":
+                    return Tier.BASIC_TIER;
+
+                case "ADVANCED_TIER":
+                    return Tier.ADVANCED_TIER;
+
+                case "GOD_TIER":
+                    return Tier.GOD_TIER;
+                default:
+                    return Tier.TRIAL;
             }
         }
     }

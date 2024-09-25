@@ -23,6 +23,8 @@ namespace BetterBudgetWeb.Runner
                 return null;
 
             CatchAll CA = JsonSerializer.Deserialize<CatchAll>(content, _options);
+            Constants.TIER_STATUS = CA.Token.Status;
+            Constants.TIER_LEVEL = Constants.StringToTier(CA.Token.Tier);
 
             return CA;
         }
