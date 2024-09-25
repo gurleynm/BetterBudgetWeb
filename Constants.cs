@@ -10,7 +10,7 @@ namespace BetterBudgetWeb
     public class Constants
     {
 
-        public static bool Test = true; // true false
+        public static bool Test = false; // true false
         // Set null example:
         //      testVar2 = testVar1 ?? testVar2
         //          ^^^^^^^^^^^^^^^^
