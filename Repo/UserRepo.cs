@@ -12,7 +12,6 @@ namespace BetterBudgetWeb.Repo
 
         private static string baseURI => Constants.BaseUri + "User";
         private static string baseTokenURI => Constants.BaseUri + "User/Token";
-        private static string baseFullUserURI => Constants.BaseUri + "User/FullUser";
         public static async Task<bool> VerifyUserAsync(string user, string pass)
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -68,22 +67,6 @@ namespace BetterBudgetWeb.Repo
             }
 
             return true;
-        }
-        public static async Task<User> GetFullUserAsync()
-        {
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-            var response = await client.GetAsync(baseFullUserURI + "?token=" + Constants.Token);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-                return null;
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            User us = JsonConvert.DeserializeObject<User>(content);
-
-            return us;
         }
         public static async Task<bool> AddUser(string user, string user2, string email, string email2, string pass, string pass2)
         {

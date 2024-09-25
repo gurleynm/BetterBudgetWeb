@@ -6,11 +6,20 @@
 
 <PageTitle>Account</PageTitle>
 
-<h3>Account Page</h3>
-@if (ShowUpdateConfirmation)
+<div class="flex-r" style="justify-content:space-between;align-items:center">
+    <div>
+        <h3>Account Page</h3>
+    </div>
+    <div>
+        <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
+    </div>
+</div>
+@if (Constants.TIER_LEVEL != Tier.DEMO)
 {
-    <div class="flex-r"
-         style="margin:auto 0;
+    @if (ShowUpdateConfirmation)
+    {
+        <div class="flex-r"
+             style="margin:auto 0;
                 width:100%;
                 padding: 1vw;
                 height:100%;
@@ -20,27 +29,37 @@
                 text-align:center;
                 pointer-events:none;
                 z-index:10;">
-        Password successfully updated!
+            Password successfully updated!
+        </div>
+    }
+    <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="width:100%;justify-content:space-evenly">
+        <h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
+        <h4>Your email is: <input type="email" @bind-value=@NewEmail style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
+        <h4>The second user's name is: <span>@OtherUser</span></h4>
     </div>
-}
-<h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
-<h4>The second user's name is: <span>@OtherUser</span></h4>
-<h4>Your email is: <input type="email" @bind-value=@NewEmail /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
-<div class="flex-r" style="justify-content:space-evenly">
-    <button class="btn btn-secondary" @onclick=@(() => { Update(); })>Save Changes</button>
-    <button class="btn btn-secondary" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
-    <button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
-</div>
-
-<div class="flex-r" style="justify-content:space-evenly;margin:1em 0">
-    <button class="btn btn-primary" onclick="window.location='https://billing.stripe.com/p/login/test_6oE9AJfV35xS32U000'">Manage payment</button>
-</div>
-
-<button class="btn btn-secondary" @onclick=@(() => {ShowUpdate = true; ErrorMsg = "";})>Update Password</button>
-<button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
-@*
+    <div class="flex-r" style="justify-content:space-evenly;width:100%">
+        @if (Constants.TIER_LEVEL != Tier.TRIAL)
+        {
+            <button class="btn btn-primary" style="background-color:indigo" @onclick=@(() => { Update(); })>Save Changes</button>
+            <button class="btn btn-primary" style="background-color:indigo" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
+            @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER && false)
+            {
+                <button class="btn btn-primary" style="background-color:indigo" onclick="window.location='https://billing.stripe.com/p/login/test_6oE9AJfV35xS32U000'">Manage Subscription</button>
+            }
+        }
+    </div>
+    @if (Constants.TIER_LEVEL == Data.Tier.TRIAL && false)
+    {
+        <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
+        <stripe-pricing-table pricing-table-id="prctbl_1Q2cxV2L4K66u9tvdCuax7Hb"
+                              publishable-key="pk_test_51Q2DNf2L4K66u9tvGcuQV9KPwvSuJcwF3EVTNtBIQnHoX3VrX21cXVodQsBGiwFSvhVfZ2arUohyahSMBiafS4FU00YdP854MT"
+                              client-reference-id="@Constants.catchAll.Token.Id">
+        </stripe-pricing-table>
+    }
+    @*
 <button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
  *@
+}
 
 @if (ShowUpdatePassword)
 {
@@ -143,7 +162,34 @@
 
     private PasswordRules passwordRules;
 
-    private string ErrorMsg = "";
+    private string ErrorMsgPass = "";
+    private string ErrorMsgUsername = "";
+    private string ErrorMsgEmail = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        NewUsername = Constants.catchAll.Token.Name;
+        NewEmail = Constants.catchAll.Token.Email;
+    }
+
+    private async void Update()
+    {
+        ErrorMsgEmail = "";
+        ErrorMsgUsername = "";
+
+        if (!Constants.IsValidEmail(NewEmail))
+            ErrorMsgEmail = "Invalid email";
+
+        if (NewUsername.Trim().Length < 6)
+            ErrorMsgUsername = "Username must be at least 6 characters";
+
+        if (!string.IsNullOrEmpty(ErrorMsgEmail) || !string.IsNullOrEmpty(ErrorMsgUsername))
+        {
+            StateHasChanged();
+            return;
+        }
+
+        User userInfo = new User { Name = NewUsername, Email = NewEmail };
 
         string UpdateUser = await UserRepo.UpdateUser(userInfo);
         if (UpdateUser != "Success")

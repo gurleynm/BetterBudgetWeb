@@ -109,6 +109,7 @@ namespace BetterBudgetWeb
         public static string Person2 { get; set; } = "Katie";
 
         public static string Token = "Nice Try";
+        public static Tier TIER_LEVEL { get; set; } = Tier.TRIAL;
 
         private static bool mobile = true;
         public static bool Mobile
@@ -155,6 +156,9 @@ namespace BetterBudgetWeb
                 AssignCatches();
 
                 SetMonthlies(Monthlies);
+
+                if (Token != "DEMO")
+                    await SubscriptionRepo.GetSubscriptionAsync();
             }
         }
         public static void AssignCatches(CatchAll ca = null)

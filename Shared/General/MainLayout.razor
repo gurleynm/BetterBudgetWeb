@@ -242,7 +242,7 @@
                     <div class="flex-r" style="margin-top:2vh">
                         @if (!Disabled)
                         {
-                            <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
+                            <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => {CheckWeIn();NavMan.NavigateTo("");})">Submit</button>
                         }
                         else
                         {
@@ -273,7 +273,7 @@
                 <div class="flex-r" style="margin-top:2vh">
                     @if (!Disabled)
                     {
-                        <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => CheckWeIn())">Submit</button>
+                        <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => {CheckWeIn();NavMan.NavigateTo("");})">Submit</button>
                     }
                     else
                     {
@@ -357,11 +357,6 @@
                                 </a>
                             </li>
                         }
-                        <li>
-                            <a class="navbar-brand" href="pay" style="font-family:'Imprint MT Shadow'; text-align:center;">
-                                <span class="oi oi-credit-card"></span> Pay
-                            </a>
-                        </li>
                     </ul>
                     <div style="position: absolute; top:1vw; right:1vw; height:@HeightTopBar; vertical-align:middle">
                         <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">

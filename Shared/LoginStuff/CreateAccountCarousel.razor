@@ -1,24 +1,26 @@
 ﻿@if (Page == 1)
 {
-    <div style="display:flex;flex-direction:@(Constants.Mobile ? "column" : "row");justify-content:start; padding:1em">
-        <div class="flex-c">
-            <label style="color:white">Username</label>
+    <div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:end">
+        <div class="flex-r" style="justify-content:space-evenly">
+            <label style="color:white;margin-right:1em">Username:</label>
             <div class="flex-c">
-                <input class="better" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                <input class="better" placeholder="Username" type="text" @bind-value=Username />
             </div>
-            <br />
-            <label style="color:white">Password</label>
+        </div>
+        <div class="flex-r" style="justify-content:space-evenly">
+            <label style="color:white;margin-right:1em">Email:</label>
+            <div class="flex-r">
+                <input class="better" placeholder="Email" type="email" @bind-value=Email />
+            </div>
+        </div>
+        <div class="flex-r" style="justify-content:space-evenly">
+            <label style="color:white;margin-right:1em">Password:</label>
             <div class="flex-r">
                 <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password />
             </div>
         </div>
-        <div class="flex-c">
-            <label style="color:white">Email</label>
-            <div class="flex-r">
-                <input class="better" placeholder="Email" type="email" @onkeydown="@Enter" @oninput="@(async (ui) => { Email = (string) ui.Value;})" />
-            </div>
-            <br />
-            <label style="color:white">Confirm Password</label>
+        <div class="flex-r" style="justify-content:space-evenly">
+            <label style="color:white;margin-right:1em">Confirm Password:</label>
             <div class="flex-r">
                 <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword1 />
             </div>
@@ -31,34 +33,36 @@
 }
 else if (Page == 2)
 {
-    <div style="display:flex;flex-direction:@(Constants.Mobile ? "column" : "row");justify-content:start; padding:1em">
-        <div class="flex-c">
-            <label style="color:white">Username</label>
+    <div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:end">
+        <div class="flex-r" style="justify-content:space-evenly">
+            <label style="color:white;margin-right:1em">Username:</label>
             <div class="flex-c">
-                <input class="better" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username2 = (string) ui.Value;})" />
+                <input class="better" placeholder="Username" type="text" @bind-value=Username2 />
             </div>
-            <br />
-            <label style="color:white">Password</label>
+        </div>
+        <div class="flex-r" style="justify-content:space-evenly">
+            <label style="color:white;margin-right:1em">Email:</label>
+            <div class="flex-r">
+                <input class="better" placeholder="Email" type="email" @bind-value=Email2 />
+            </div>
+        </div>
+        <div class="flex-r" style="justify-content:space-evenly">
+            <label style="color:white;margin-right:1em">Password:</label>
             <div class="flex-r">
                 <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password2 />
             </div>
         </div>
-        <div class="flex-c">
-            <label style="color:white">Email</label>
-            <div class="flex-r">
-                <input class="better" placeholder="Email" type="email" @onkeydown="@Enter" @oninput="@(async (ui) => { Email2 = (string) ui.Value;})" />
-            </div>
-            <br />
-            <label style="color:white">Confirm Password</label>
+        <div class="flex-r" style="justify-content:space-evenly">
+            <label style="color:white;margin-right:1em">Confirm Password:</label>
             <div class="flex-r">
                 <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword2 />
             </div>
         </div>
     </div>
-    <PasswordRules @ref=@passwordRules2 Password="@Password" ConfirmedPassword="@ConfirmPassword1" ConfirmedRequired="true" />
+    <PasswordRules @ref=@passwordRules2 Password="@Password2" ConfirmedPassword="@ConfirmPassword2" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:space-between;padding-top:1em">
-        <button class="btn btn-primary" @onclick="@(() => Page--)" style="background-color:indigo;color:white">Previous</button>
-        <button class="btn btn-primary" @onclick="ExecuteCheckIn" style="background-color:cyan;color:black">Submit</button>
+        <button class="btn btn-primary" @onclick="Prev" style="background-color:indigo;color:white">Previous</button>
+        <button class="btn btn-primary" @onclick="Next" style="background-color:cyan;color:black">Submit</button>
     </div>
 }
 
@@ -240,38 +244,66 @@ else if (Page == 2)
     public PasswordRules passwordRules1;
     public PasswordRules passwordRules2;
 
+    private void Prev()
+    {
+        ErrorMsg = "";
+
+        if (Page > 1)
+        {
+            Page--;
+            StateHasChanged();
+        }
+    }
+
     private void Next()
     {
         ErrorMsg = "";
         bool Passed = false;
         if (Page == 1)
-            Passed = Validate(Username, email, passwordRules1);
+        {
+            Username = Username.Trim();
+            Email = Email.Trim();
+            Passed = Validate(Username, Email, passwordRules1);
+        }
         else if (Page == 2)
-            Passed = Validate(Username2, email2, passwordRules2);
+        {
+            Username2 = Username2.Trim();
+            Email2 = Email2.Trim();
+            if (Username == Username2)
+            {
+                ErrorMsg = "Usernames must be different";
+                return;
+            }
+            if (Email == Email2)
+            {
+                ErrorMsg = "Emails must be different";
+                return;
+            }
+            Passed = Validate(Username2, Email2, passwordRules2);
+        }
 
         if (Passed)
-            Page++;
+        {
+            if (Page < 2)
+                Page++;
+            else
+                CheckIn();
+        }
     }
 
     bool Validate(string user, string email, PasswordRules pr)
     {
         bool ValidEmail = Constants.IsValidEmail(email);
-        bool ValidUsername = user.Trim().Length < 8;
+        bool ValidUsername = user.Trim().Length >= 6;
         bool PassRules = pr.CheckConditions();
 
         if (!ValidEmail)
             ErrorMsg = "Invalid email";
         if (!ValidUsername)
-            ErrorMsg = "Username must be at least 8 characters";
+            ErrorMsg = "Username must be at least 6 characters";
 
         return PassRules && ValidEmail && ValidUsername;
     }
-
-    private void ExecuteCheckIn()
-    {
-        CheckIn();
-    }
-
 
     private int page = 1;
     private string email;
