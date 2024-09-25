@@ -872,7 +872,8 @@ else
         foreach(var smc in Constants.StaticMonthlyCosts)
         {
             if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "Static Cost") == 0)
-                Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
+                if (!smc.Name.Contains("(EXAMPLE DATA)"))
+                    Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
         }
 
         Presets.Sort();

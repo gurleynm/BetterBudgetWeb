@@ -208,12 +208,6 @@ namespace BetterBudgetWeb
             {
                 StaticMonthlyCosts.Add(new StaticMonthlyCost("Rent\n(EXAMPLE DATA)", 820, 800));
                 StaticMonthlyCosts.Add(new StaticMonthlyCost("Car\n(EXAMPLE DATA)", 399.03, 0));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Food\n(EXAMPLE DATA)", 600, 200));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Entertainment\n(EXAMPLE DATA)", 300, 300));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Phone\n(EXAMPLE DATA)", 66, 65));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Gas\n(EXAMPLE DATA)", 20, 180));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Car Insurance\n(EXAMPLE DATA)", 80, 93));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Electric\n(EXAMPLE DATA)", 100, 0));
                 StaticMonthlyCosts.Add(new StaticMonthlyCost("Internet\n(EXAMPLE DATA)", 70, 0));
                 StaticMonthlyCosts.Add(new StaticMonthlyCost("Subs \n(EXAMPLE DATA)", 78, 0));
             }

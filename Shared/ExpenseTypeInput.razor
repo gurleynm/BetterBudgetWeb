@@ -114,7 +114,8 @@ else
         ExpenseTypes.Add("-- Dynamic Costs --");
 
         foreach (var d in TempDCI)
-            ExpenseTypes.Add(d);
+            if(!d.Contains("(EXAMPLE DATA)"))
+                ExpenseTypes.Add(d);
 
         ExpenseTypes.Add("-- Envelopes --");
         foreach (var d in TempEnv)
