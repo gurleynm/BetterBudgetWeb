@@ -104,7 +104,7 @@ namespace BetterBudgetWeb
         public static string[] NotExpenses = new string[] { "Income", "Debt", "Equity", "Transfer" };
 
         public static string BaseUri = "";
-        public static string CUR_USER { get; set; }
+        public static string CUR_USER_NAME { get; set; }
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Katie";
 
@@ -544,6 +544,27 @@ namespace BetterBudgetWeb
         public static string GoodOrBad(double money)
         {
             return money <= 0 ? "red" : "forestgreen";
+        }
+        public static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrEmpty(email))
+                return false;
+
+            var trimmedEmail = email.Trim();
+
+            if (trimmedEmail.EndsWith("."))
+            {
+                return false;
+            }
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == trimmedEmail;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -23,22 +23,28 @@
         Password successfully updated!
     </div>
 }
-<h4>Your name is: <span>@Constants.CUR_USER</span></h4>
+<h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
 <h4>The second user's name is: <span>@OtherUser</span></h4>
+<h4>Your email is: <input type="email" @bind-value=@NewEmail /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
+<div class="flex-r" style="justify-content:space-evenly">
+    <button class="btn btn-secondary" @onclick=@(() => { Update(); })>Save Changes</button>
+    <button class="btn btn-secondary" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
+    <button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
+</div>
 
 <div class="flex-r" style="justify-content:space-evenly;margin:1em 0">
-    <button onclick="window.location='https://billing.stripe.com/p/login/test_6oE9AJfV35xS32U000'">Manage payment</button>
+    <button class="btn btn-primary" onclick="window.location='https://billing.stripe.com/p/login/test_6oE9AJfV35xS32U000'">Manage payment</button>
 </div>
 
 <button class="btn btn-secondary" @onclick=@(() => {ShowUpdate = true; ErrorMsg = "";})>Update Password</button>
 <button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
 @*
-<button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsg = "";})>Delete Account</button>
+<button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
  *@
 
-@if (ShowUpdate)
+@if (ShowUpdatePassword)
 {
-    <Confirmation OnClose="Update" LeftBtnTxt="Cancel" LeftBtnColor="btn-secondary" RightBtnTxt="Update" RightBtnColor="btn-primary"
+    <Confirmation OnClose="UpdatePassword" LeftBtnTxt="Cancel" LeftBtnColor="btn-secondary" RightBtnTxt="Update" RightBtnColor="btn-primary"
                   @bind-Disabled=@UpdateDisabled>
         <div>
             <span style="color:red"><strong>WARNING: All of your data will be deleted. This action cannot be reversed!</strong></span>
@@ -72,7 +78,7 @@
             <br />
             <PasswordRules @ref=@passwordRules Password="@NewPassword" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
             <br />
-            <span style="color:red">@ErrorMsg</span>
+            <span style="color:red">@ErrorMsgPass</span>
         </div>
     </Confirmation>
 }
@@ -89,7 +95,7 @@
                 <tr>
                     <td>Your name:</td>
                     <td>
-                        <input id="delUser1" type="text" @bind-value=User1 placeholder=@Constants.CUR_USER />
+                        <input id="delUser1" type="text" @bind-value=User1 placeholder=@Constants.CUR_USER_NAME />
                     </td>
                 </tr>
                 <tr>
@@ -106,7 +112,7 @@
                 </tr>
             </table>
             <br />
-            <span style="color:red">@ErrorMsg</span>
+            <span style="color:red">@ErrorMsgPass</span>
         </div>
     </Confirmation>
 }
@@ -116,11 +122,11 @@
     [CascadingParameter]
     public EventCallback LogOff { get; set; }
 
-    private string OtherUser => Constants.CUR_USER == Constants.Person1 ? Constants.Person2 : Constants.Person1;
+    private string OtherUser => Constants.CUR_USER_NAME == Constants.Person1 ? Constants.Person2 : Constants.Person1;
 
     private bool UpdateDisabled;
     private bool DeleteDisabled;
-    private bool ShowUpdate;
+    private bool ShowUpdatePassword;
     private bool ShowDelete;
     private bool ShowUpdateConfirmation;
 
@@ -132,47 +138,62 @@
     private string NewPassword = "";
     private string ConfirmPassword = "";
 
+    private string NewUsername = "";
+    private string NewEmail = "";
+
     private PasswordRules passwordRules;
 
     private string ErrorMsg = "";
-    List<Tier> tiers = new List<Tier>();
 
-    protected override async Task OnInitializedAsync()
-    {
+        string UpdateUser = await UserRepo.UpdateUser(userInfo);
+        if (UpdateUser != "Success")
+        {
+            ErrorMsgEmail = UpdateUser;
+            UpdateDisabled = false;
+        }
+        else
+        {
+            ShowUpdatePassword = false;
+            StateHasChanged();
+            ShowUpdateConfirmation = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            ShowUpdateConfirmation = false;
+        }
 
-        tiers.Add(new Tier("Boring", 3.99, 40, "purple"));
-        tiers.Add(new Tier("Awesome", 4.99, 50, "gold"));
-        tiers.Add(new Tier("God", 5.99, 60, "#E5E4E2"));
-        await StripeRepo.GetProducts();
+        UpdateDisabled = false;
+        StateHasChanged();
     }
 
-    private async void Update(bool accepted)
+    private async void UpdatePassword(bool accepted)
     {
         if (accepted)
         {
             bool Passed = passwordRules.CheckConditions();
 
-            ErrorMsg = "";
+            ErrorMsgPass = "";
             if (string.IsNullOrEmpty(CurrentPassword))
-                ErrorMsg = "You must enter your current password.";
+                ErrorMsgPass = "You must enter your current password.";
 
-            if (!string.IsNullOrEmpty(ErrorMsg) || !Passed)
+            if (!string.IsNullOrEmpty(ErrorMsgPass) || !Passed)
             {
                 UpdateDisabled = false;
                 return;
             }
 
-            string UpdateUser = await UserRepo.UpdateUser(Constants.CUR_USER, "UPDATE_USER_" + Constants.CUR_USER,
-                                                                "","",
-                                                                CurrentPassword, NewPassword);
+            User userInfo = new User(NewUsername, NewEmail, NewPassword);
+            userInfo.Id = Constants.CUR_USER_NAME;
+            userInfo.Token = CurrentPassword;
+
+            string UpdateUser = await UserRepo.UpdateUser(userInfo);
             if (UpdateUser != "Success")
             {
-                ErrorMsg = UpdateUser;
+                ErrorMsgPass = UpdateUser;
                 UpdateDisabled = false;
             }
             else
             {
-                ShowUpdate = false;
+                ShowUpdatePassword = false;
                 StateHasChanged();
                 ShowUpdateConfirmation = true;
                 StateHasChanged();
@@ -181,7 +202,7 @@
             }
         }
         else
-            ShowUpdate = false;
+            ShowUpdatePassword = false;
 
         UpdateDisabled = false;
         StateHasChanged();
@@ -191,16 +212,16 @@
     {
         if (accepted)
         {
-            ErrorMsg = "";
+            ErrorMsgPass = "";
 
             if (User1 != Constants.Person1)
-                ErrorMsg = "Name is incorrect.";
+                ErrorMsgPass = "Name is incorrect.";
             else if (User2 != Constants.Person2)
-                ErrorMsg = "Second name is incorrect.";
+                ErrorMsgPass = "Second name is incorrect.";
             else if (string.IsNullOrEmpty(Password))
-                ErrorMsg = "Password must be entered";
+                ErrorMsgPass = "Password must be entered";
 
-            if (!string.IsNullOrEmpty(ErrorMsg))
+            if (!string.IsNullOrEmpty(ErrorMsgPass))
             {
                 DeleteDisabled = false;
                 return;
@@ -209,7 +230,7 @@
             bool DelUser = await UserRepo.DeleteUser(User1, User2, Password);
             if (!DelUser)
             {
-                ErrorMsg = "Incorrect password.";
+                ErrorMsgPass = "Incorrect password.";
                 DeleteDisabled = false;
             }
             else

@@ -11,6 +11,8 @@ namespace BetterBudgetWeb.Repo
         private static HttpClient client = new HttpClient();
 
         private static string baseURI => Constants.BaseUri + "User";
+        private static string baseTokenURI => Constants.BaseUri + "User/Token";
+        private static string baseFullUserURI => Constants.BaseUri + "User/FullUser";
         public static async Task<bool> VerifyUserAsync(string user, string pass)
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -43,7 +45,7 @@ namespace BetterBudgetWeb.Repo
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             
-            var response = await client.GetAsync(baseURI + "?user=" + token + "&pass=CHECK_AS_TOKEN");
+            var response = await client.GetAsync(baseTokenURI + "?token=" + token);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
                 return false;
@@ -67,29 +69,73 @@ namespace BetterBudgetWeb.Repo
 
             return true;
         }
+        public static async Task<User> GetFullUserAsync()
+        {
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            var response = await client.GetAsync(baseFullUserURI + "?token=" + Constants.Token);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            User us = JsonConvert.DeserializeObject<User>(content);
+
+            return us;
+        }
         public static async Task<bool> AddUser(string user, string user2, string email, string email2, string pass, string pass2)
         {
             if (Constants.Token == "DEMO")
                 return true;
 
-            /* NEEDS UPDATING */
-            return (await UpdateUser(user, user2, email, email2, pass, pass2)) == "Success";
-        }
-        public static async Task<string> UpdateUser(string user, string user2, string email, string email2, string pass, string newPass)
-        {
-            if (Constants.Token == "DEMO")
-                return "Success";
-
-            if (string.IsNullOrEmpty(email)) email = "~";
-            if (string.IsNullOrEmpty(email2)) email2 = "~";
+            User[] Users = new User[] { new User(user,email,pass),
+                                        new User(user2,email2,pass2) };
 
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = baseURI + $"?user={user}&user2={user2}&email={email}&email2={email2}&pass={pass}&newPass={newPass}";
+            string adjustedUrl = baseURI;
 
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
 
-            requestMessage.Content = JsonContent.Create("");
+            requestMessage.Content = JsonContent.Create(Users);
+
+            var response = await _client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            if (string.IsNullOrEmpty(content))
+                return false;
+
+            if (content.Contains("message"))
+                return false;
+
+            CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
+
+            Constants.Person1 = CA.Token.Name;
+            Constants.Token = CA.Token.Token;
+
+            return true;
+        }
+        public static async Task<string> UpdateUser(User UpdatedUser)
+        {
+            if (Constants.Token == "DEMO")
+                return "Success";
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            string adjustedUrl = baseURI + $"?token={Constants.Token}";
+
+            HttpClient _client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Put, adjustedUrl);
+
+            requestMessage.Content = JsonContent.Create(UpdatedUser);
 
             var response = await _client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
