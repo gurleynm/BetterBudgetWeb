@@ -2,7 +2,7 @@
 @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Shared.LoginStuff
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager NavMan
 
 <PageTitle>Account</PageTitle>
 
@@ -10,7 +10,8 @@
     <div>
         <h3>Account Page</h3>
     </div>
-    <div>
+    <div class="flex-r">
+        <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em"  @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
         <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
     </div>
 </div>
@@ -37,18 +38,14 @@
         <h4>Your email is: <input type="email" @bind-value=@NewEmail style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
         <h4>The second user's name is: <span>@OtherUser</span></h4>
     </div>
-    <div class="flex-r" style="justify-content:space-evenly;width:100%">
-        @if (Constants.TIER_LEVEL != Tier.TRIAL)
-        {
+    <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
             <button class="btn btn-primary" style="background-color:indigo" @onclick=@(() => { Update(); })>Save Changes</button>
-            <button class="btn btn-primary" style="background-color:indigo" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
-            @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER && false)
+            @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER)
             {
-                <button class="btn btn-primary" style="background-color:indigo" onclick="window.location='https://billing.stripe.com/p/login/test_6oE9AJfV35xS32U000'">Manage Subscription</button>
+                <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
             }
-        }
     </div>
-    @if (Constants.TIER_LEVEL == Data.Tier.TRIAL && false)
+    @if (ShowPricingTable)
     {
         <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
         <stripe-pricing-table pricing-table-id="prctbl_1Q2cxV2L4K66u9tvdCuax7Hb"
@@ -165,6 +162,8 @@
     private string ErrorMsgPass = "";
     private string ErrorMsgUsername = "";
     private string ErrorMsgEmail = "";
+
+    private bool ShowPricingTable;
 
     protected override async Task OnInitializedAsync()
     {
@@ -290,5 +289,13 @@
 
         DeleteDisabled = false;
         StateHasChanged();
+    }
+
+    private void ManageSubscription()
+    {
+        if (Constants.TIER_LEVEL == Data.Tier.TRIAL)
+            ShowPricingTable = !ShowPricingTable;
+        else
+            NavMan.NavigateTo("https://billing.stripe.com/p/login/test_6oE9AJfV35xS32U000");
     }
 }
