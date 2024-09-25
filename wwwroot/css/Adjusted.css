@@ -37,6 +37,7 @@
 
 table.add_expense > tr {
     background-color: transparent;
+    border: none;
 }
 
 table.add_expense > tr > td {

@@ -17,7 +17,7 @@
             <table class="add_expense">
                 @if (!Mobile)
                 {
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="1">
                             <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw;color:silver" />
                         </td>
@@ -25,7 +25,7 @@
                             <InputText placeholder="Enter Name" @bind-Value="NewTrans.Name" style="color:white" />
                         </td>
                     </tr>
-                    <tr style="border:none">
+                    <tr>
                         <td>
                             <span style="border:solid white 1px;padding-left:1em">
                                 $<input type="number" style="width:5em;border:none;color:@TextColor" @bind=@NewTrans.TopAmount>
@@ -58,7 +58,7 @@
                     </tr>
                     @if (ShowSecond)
                     {
-                        <tr style="border:none">
+                        <tr>
                             <td>
                                 <span style="border:solid white 1px;padding-left:1em">
                                     $<input type="number" style="width:5em;" @bind=@NewTrans.BottomAmount>
@@ -90,12 +90,12 @@
                             </td>
                         </tr>
                     }
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="3">
                             <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
                         </td>
                     </tr>
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="3" style="padding:1vw">
                             @if (ShowSecond)
                             {
@@ -107,10 +107,10 @@
                             }
                         </td>
                     </tr>
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="3" style="color:white;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
                     </tr>
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="3">
                             <button class="btn btn-primary" disabled=@Disabled @onclick="Add">Add</button>
                         </td>
@@ -118,14 +118,14 @@
                 }
                 else
                 {
-                    <tr style="border:none">
+                    <tr>
                         <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-evenly">
                             <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw;color:silver" />
 
                             <InputText style="width:30vw;color:white" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
                         </td>
                     </tr>
-                    <tr style="border:none">
+                    <tr>
                         <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-around;align-items:center;">
                             <span>
                                 $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
@@ -157,7 +157,7 @@
                     </tr>
                     @if (ShowSecond)
                     {
-                        <tr style="border:none">
+                        <tr>
                             <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-around;align-items:center;">
                                 <span>
                                     $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
@@ -188,12 +188,12 @@
                             </td>
                         </tr>
                     }
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="3" style="font-size:3vw;padding:1vw;">
                             <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
                         </td>
                     </tr>
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="3" style="padding:1vw">
                             @if (ShowSecond)
                             {
@@ -205,10 +205,10 @@
                             }
                         </td>
                     </tr>
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="3" style="font-size:3vw;color:white;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
                     </tr>
-                    <tr style="border:none">
+                    <tr>
                         <td colspan="3">
                             <button class="btn btn-primary" disabled=@Disabled @onclick="Add">Add</button>
                         </td>
