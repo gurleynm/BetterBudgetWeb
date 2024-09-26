@@ -1,57 +1,54 @@
 ﻿@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <div class="navbar navbar-dark sticky" style="padding:0;background-color:indigo;z-index:1">
-    <div class="container-fluid">
+    <div class="flex-r" style="width:100%;padding:1em;justify-content:space-between">
         <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">
-            <strong>@("Welcome " + Constants.CUR_USER_NAME + "!")</strong>
+            <strong>Couple's Better Budget</strong>
         </a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 
-    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="width:100%">
-        <nav class="flex-column">
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="width:100%;min-height:100vh;overflow:auto">
+        <nav class="flex-column" style="justify-content:space-around">
+            <div class="nav-item px-1">
+                <NavLink class="nav-link" href="home" Match="NavLinkMatch.All" style="padding:2em;font-size:large">
+                    <span class="oi oi-home"aria-hidden="true"></span><span>&nbsp;Home</span>
                 </NavLink>
             </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="input">
+            <div class="nav-item px-1">
+                <NavLink class="nav-link" href="input" style="padding:2em;font-size:large">
                     <span class="oi oi-plus" aria-hidden="true"></span> Input
                 </NavLink>
             </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="delete">
+            <div class="nav-item px-1">
+                <NavLink class="nav-link" href="delete" style="padding:2em;font-size:large">
                     <span class="oi oi-minus" aria-hidden="true"></span> Delete
                 </NavLink>
             </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="update">
+            <div class="nav-item px-1">
+                <NavLink class="nav-link" href="update" style="padding:2em;font-size:large">
                     <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
                 </NavLink>
             </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="portfolio">
+            <div class="nav-item px-1">
+                <NavLink class="nav-link" href="portfolio" style="padding:2em;font-size:large">
                     <span class="oi oi-dollar" aria-hidden="true"></span> Portfolio
                 </NavLink>
             </div>
-            @if (true)
-            {
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="chart">
+                <div class="nav-item px-1">
+                    <NavLink class="nav-link" href="chart" style="padding:2em;font-size:large">
                     <span class="oi oi-bar-chart" aria-hidden="true"></span> Chart
                 </NavLink>
             </div>
-            }
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="forecast">
+            <div class="nav-item px-1">
+                <NavLink class="nav-link" href="forecast" style="padding:2em;font-size:large">
                     <span class="oi oi-sun"></span> Forecast
                 </NavLink>
             </div>
-            <div class="nav-item px-3">
-                <NavLink class="nav-link" href="Account">
+            <div class="nav-item px-1">
+                <NavLink class="nav-link" href="Account" style="padding:2em;font-size:large">
                     <span class="oi oi-person"></span> Manage Account
                 </NavLink>
             </div>

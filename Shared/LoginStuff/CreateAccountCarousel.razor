@@ -1,68 +1,18 @@
 ﻿@if (Page == 1)
 {
-    <div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:end">
-        <div class="flex-r" style="justify-content:space-evenly">
-            <label style="color:white;margin-right:1em">Username:</label>
-            <div class="flex-c">
-                <input class="better" placeholder="Username" type="text" @bind-value=Username />
-            </div>
-        </div>
-        <div class="flex-r" style="justify-content:space-evenly">
-            <label style="color:white;margin-right:1em">Email:</label>
-            <div class="flex-r">
-                <input class="better" placeholder="Email" type="email" @bind-value=Email />
-            </div>
-        </div>
-        <div class="flex-r" style="justify-content:space-evenly">
-            <label style="color:white;margin-right:1em">Password:</label>
-            <div class="flex-r">
-                <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password />
-            </div>
-        </div>
-        <div class="flex-r" style="justify-content:space-evenly">
-            <label style="color:white;margin-right:1em">Confirm Password:</label>
-            <div class="flex-r">
-                <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword1 />
-            </div>
-        </div>
-    </div>
+    <MiniPage @bind-Username=Username @bind-Email=Email @bind-Password=Password @bind-ConfirmPassword=ConfirmPassword1 />
     <PasswordRules @ref=@passwordRules1 Password="@Password" ConfirmedPassword="@ConfirmPassword1" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:end;padding-top:1em">
-        <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick="Next">Next</button>
+        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'Imprint MT Shadow';color:black;background-color:cyan" @onclick="Next">Next</button>
     </div>
 }
 else if (Page == 2)
 {
-    <div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:end">
-        <div class="flex-r" style="justify-content:space-evenly">
-            <label style="color:white;margin-right:1em">Username:</label>
-            <div class="flex-c">
-                <input class="better" placeholder="Username" type="text" @bind-value=Username2 />
-            </div>
-        </div>
-        <div class="flex-r" style="justify-content:space-evenly">
-            <label style="color:white;margin-right:1em">Email:</label>
-            <div class="flex-r">
-                <input class="better" placeholder="Email" type="email" @bind-value=Email2 />
-            </div>
-        </div>
-        <div class="flex-r" style="justify-content:space-evenly">
-            <label style="color:white;margin-right:1em">Password:</label>
-            <div class="flex-r">
-                <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password2 />
-            </div>
-        </div>
-        <div class="flex-r" style="justify-content:space-evenly">
-            <label style="color:white;margin-right:1em">Confirm Password:</label>
-            <div class="flex-r">
-                <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword2 />
-            </div>
-        </div>
-    </div>
+    <div style="position:relative;top:1em;left:1em"><a @onclick="Prev" style="color:white;cursor:pointer"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to first user</a></div>
+    <MiniPage @bind-Username=Username2 @bind-Email=Email2 @bind-Password=Password2 @bind-ConfirmPassword=ConfirmPassword2 />
     <PasswordRules @ref=@passwordRules2 Password="@Password2" ConfirmedPassword="@ConfirmPassword2" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:space-between;padding-top:1em">
-        <button class="btn btn-primary" @onclick="Prev" style="background-color:indigo;color:white">Previous</button>
-        <button class="btn btn-primary" @onclick="Next" style="background-color:cyan;color:black">Submit</button>
+        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'Imprint MT Shadow';color:black;background-color:cyan" @onclick="Next">Start 45-Day Trial</button>
     </div>
 }
 
@@ -261,14 +211,32 @@ else if (Page == 2)
         bool Passed = false;
         if (Page == 1)
         {
-            Username = Username.Trim();
-            Email = Email.Trim();
+            if (string.IsNullOrEmpty(Username))
+            {
+                ErrorMsg = "Username must be set";
+                return;
+            }
+            if (string.IsNullOrEmpty(Email))
+            {
+                ErrorMsg = "Email must be set";
+                return;
+            }
+
             Passed = Validate(Username, Email, passwordRules1);
         }
         else if (Page == 2)
         {
-            Username2 = Username2.Trim();
-            Email2 = Email2.Trim();
+            if (string.IsNullOrEmpty(Username2))
+            {
+                ErrorMsg = "Username must be set";
+                return;
+            }
+            if (string.IsNullOrEmpty(Email2))
+            {
+                ErrorMsg = "Email must be set";
+                return;
+            }
+
             if (Username == Username2)
             {
                 ErrorMsg = "Usernames must be different";

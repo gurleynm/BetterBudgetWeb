@@ -1,4 +1,5 @@
 ﻿@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.Pages
 @using BetterBudgetWeb.Repo;
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Shared.Balances
@@ -57,33 +58,33 @@
         width: 75%;
     }
 
-    /* Style the buttons inside the tab */
-    .tab button {
-        background-color: inherit;
-        float: left;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        padding: 14px 16px;
-        transition: 0.3s;
-        font-size: 17px;
-        color: @Constants.ColorScheme["Text"];
-    }
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+            color: @Constants.ColorScheme["Text"];
+        }
 
-    /* Change background color of buttons on hover */
-    .tab button:hover {
-        background-color: @Constants.ColorScheme["Tab-Hover"];
-        color: black;
-    }
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: @Constants.ColorScheme["Tab-Hover"];
+                color: black;
+            }
 
-    .tab button.active:hover {
-        color: @Constants.ColorScheme["Text"];
-    }
+            .tab button.active:hover {
+                color: @Constants.ColorScheme["Text"];
+            }
 
-    /* Create an active/current tablink class */
-    .tab button.active {
-        background-color: @Constants.ColorScheme["Tab-Active"];
-    }
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: @Constants.ColorScheme["Tab-Active"];
+            }
 
     .arrow {
         border: solid @Constants.ColorScheme["Text"];
@@ -211,81 +212,56 @@
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
-    @if (NavMan.Uri.Contains("policy") || NavMan.Uri.Contains("reset"))
+    @if (NavMan.Uri.Contains("policy") || NavMan.Uri.Contains("reset") || NavMan.Uri.Contains("sign"))
     {
+        @*NavMan.BaseUri == NavMan.Uri*@
         <main>
-            <article class="content px-4" style="padding-top:@HeightTopBar">
+            <article class="content px-4">
                 @Body
             </article>
         </main>
     }
-    else if (!WeIn)
+    else if (NavMan.BaseUri == NavMan.Uri)
     {
-        <PageTitle>Enter Password</PageTitle>
-
-        @if (mobile)
-        {
-            <div style="display:inline-block;width:100vw;height:100vh;">
-
-                <UserPassLogin @bind-Username=@username
-                               @bind-Username2=@username2
-                               @bind-Password=@password
-                               @bind-Password2=@password2
-                               @bind-Email=@email
-                               @bind-Email2=@email2
-                               @bind-CreatingAccount=@CreatingAccount
-                               @bind-ErrorMsg=@ErrorMsg
-                               Hide=@Disabled
-                               Enter=@((e) => Enter(e))
-                               GrabDemo=GrabDemo
-                               CheckIn=@(async () => await CheckWeIn())>
-                    <div class="flex-r" style="margin-top:2vh">
-                        @if (!Disabled)
-                        {
-                            <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => {CheckWeIn();NavMan.NavigateTo("");})">Submit</button>
-                        }
-                        else
-                        {
-                            <div class="flex-r" style="justify-content:space-around">
-                                <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
-                                <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
-                                <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
-                            </div>
-                        }
+        <LandingPage />
+    }
+    else if (!Constants.WeIn)
+    {
+        <Login />
+    }
+    else if (Constants.TIER_STATUS == "expired")
+    {
+        <main>
+            <article>
+                <div class="flex-c-start">
+                    <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
+                    <h2 style="font-family:'Imprint MT Shadow';text-align:center">Like what you see? Consider subscribing!</h2>
+                    <h3 style="font-family:'Imprint MT Shadow';text-align:center">Your trial has ended, but we'll keep your budget for an additional 10 days while you decide.</h3>
+                    <div class="flex-r" style="margin:1em 0">
+                        <button class="btn btn-primary" style="color:black;background-color:cyan">Cancel Account</button>
                     </div>
-                </UserPassLogin>
-            </div>
-        }
-        else
-        {
-            <UserPassLogin @bind-Username=@username
-                           @bind-Username2=@username2
-                           @bind-Password=@password
-                           @bind-Password2=@password2
-                           @bind-Email=@email
-                           @bind-Email2=@email2
-                           @bind-CreatingAccount=@CreatingAccount
-                           @bind-ErrorMsg=@ErrorMsg
-                           Hide=@Disabled
-                           Enter=@((e) => Enter(e))
-                           GrabDemo=GrabDemo
-                           CheckIn=@(async () => await CheckWeIn())>
-                <div class="flex-r" style="margin-top:2vh">
-                    @if (!Disabled)
-                    {
-                        <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => {CheckWeIn();NavMan.NavigateTo("");})">Submit</button>
-                    }
-                    else
-                    {
-                        <div class="flex-r" style="justify-content:space-around">
-                            <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
-                            <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
-                            <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
-                        </div>
-                    }
+                    <PaymentPlans />
                 </div>
-            </UserPassLogin>
-        }
+            </article>
+        </main>
+    }
+    else if (Constants.TIER_STATUS == "canceled")
+    {
+        <main>
+            <article>
+                <div class="flex-c-start" style="padding:1em">
+                    <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
+                    <h2 style="text-align:center;font-family:'Imprint MT Shadow'">
+                        This login appears to be associated with an account that's been canceled. This is your last chance to keep your current budget.
+                        Please, create or delete your account below:
+                    </h2>
+                    <div class="flex-r" style="margin:1em 0">
+                        <button class="btn btn-primary" style="color:black;background-color:cyan">Cancel Account</button>
+                    </div>
+                    <PaymentPlans />
+                </div>
+            </article>
+        </main>
     }
     else
     {
@@ -295,20 +271,18 @@
                 <NavMenu />
             </div>
         }
-        <main>
+        <main style="margin-bottom:1em">
             @if (!mobile)
             {
-                <div class="table sticky">
-                    <div style="position: absolute; top:1vw; left:1vw; height:@HeightTopBar; vertical-align:middle">
+                <div id="main-bar" class="flex-r" style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;align-items:center;z-index:1;padding:0 1em">
+                    <div>
                         <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">
                             <strong>@("Welcome " + Constants.CUR_USER_NAME + "!")</strong>
                         </a>
                     </div>
-
-                    <ul class="ps-3 navbar-dark" style="text-align: center;height:@HeightTopBar; list-style:none; padding-top:1vh;background-color:indigo;vertical-align:middle">
-
+                    <ul class="ps-3 navbar-dark flex-r" style="text-align: center;height:fit-content; list-style:none; background-color:transparent;align-items:center">
                         <li>
-                            <a class="navbar-brand" href="" style="font-family:'Imprint MT Shadow'; text-align:center;">
+                            <a class="navbar-brand" href="home" style="font-family:'Imprint MT Shadow'; text-align:center;">
                                 <span class="oi oi-lightbulb"></span> Home
                             </a>
                         </li>
@@ -358,15 +332,15 @@
                             </li>
                         }
                     </ul>
-                    <div style="position: absolute; top:1vw; right:1vw; height:@HeightTopBar; vertical-align:middle">
+                    <div>
                         <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">
                             <span class="oi oi-person"></span>
                             <strong>@("Manage Account")</strong>
                         </a>
                     </div>
                 </div>
-                <div style="position: fixed; top:@HeightTopBar; left:0; width:@(WidthLeftBar);height:90vh">
-                    <div style="z-index:1;width: @WidthLeftBar; height:inherit;margin-right:2vw; overflow: auto; position: relative;border: solid gray 1px;padding:0">
+                <div style="position: fixed; margin-top:@HeightTopBar; top:0; bottom:0; left:0;height:auto; width:fit-content;overflow-y:auto;border: solid gray 1px;">
+                    <div style="z-index:1;width: @WidthLeftBar; height:inherit; overflow: auto; position: relative;padding:0">
                         <CascadingValue Value=RunModal>
                             <CascadingValue Value=this>
                                 <BalanceTray @ref=@GlobalBT />
@@ -407,8 +381,8 @@
                 </CascadingValue>
             </article>
         </main>
-        <Footer />
     }
+    <Footer />
 </div>
 
 @code {
@@ -421,7 +395,7 @@
     public BalanceTray GlobalBT { get; set; } = new BalanceTray();
 
     private double heightTopBar = 8;
-    private string HeightTopBar => heightTopBar + "vh";
+    private string HeightTopBar => heightTopBar + "px";
     private double widthLeftBar = 20;
     private string WidthLeftBar => widthLeftBar + "em";
     private double widthLeftBarPlus => widthLeftBar * 1.1;
@@ -429,16 +403,6 @@
     private string PaddingLeft => Constants.Mobile ? "" : "padding-left:" + WidthLeftBarPlus + " !important;";
 
     private string theView { get; set; }
-    private string ErrorMsg { get; set; }
-    private bool WeIn { get; set; }
-    private string email { get; set; }
-    private string email2 { get; set; }
-    private string username { get; set; }
-    private string username2 { get; set; }
-    private string password { get; set; }
-    private string password2 { get; set; }
-    private bool CreatingAccount { get; set; }
-    private int pwdAttempts { get; set; }
 
     private List<Balance> Balances = new List<Balance>();
 
@@ -447,8 +411,6 @@
     private bool ShowDeleteModal { get; set; }
     private bool ShowEditModal { get; set; }
 
-    private bool ShowLoading { get; set; } = false;
-    private bool Disabled { get; set; } = true;
 
     private bool ShowDelete => Constants.Balances != null && Constants.Balances.Count > 0;
     private bool ShowUpdate => Constants.Balances != null && Constants.Balances.Count > 0;
@@ -458,13 +420,20 @@
 
     public string ModalType { get; set; }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        return base.OnAfterRenderAsync(firstRender);
+        double startH = heightTopBar;
+        var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", "main-bar");
+        if (holder == "0")
+            heightTopBar = 78;
+        else{
+            heightTopBar = Convert.ToDouble(holder);
+            if (heightTopBar != startH)
+                StateHasChanged();
+        }
     }
     protected override async Task OnInitializedAsync()
     {
-        ErrorMsg = "";
         try
         {
             Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
@@ -475,57 +444,11 @@
         }
         theView = Constants.Mobile ? "mobile-view" : "desktop-view";
 
-        string BeenToggled = await ReadCookies("DarkModePreference");
-
         var token = await sessionStorage.GetItemAsync<string>("token");
         if (!string.IsNullOrEmpty(token))
-        {
-            ShowLoading = true;
             StateHasChanged();
-        }
 
         await CheckWeIn(false);
-    }
-
-    private async void GrabDemo()
-    {
-        Disabled = true;
-        Constants.Token = "DEMO";
-        Constants.CUR_USER_NAME = "Optimus";
-        Constants.catchAll = await CatchAllRunner.GrabDemo();
-
-        NavMan.NavigateTo("");
-
-        Balances = Constants.catchAll.Balances;
-        Balances.Sort(Constants.CompareBalance);
-        WeIn = true;
-        StateHasChanged();
-    }
-
-    protected async Task<string> ReadCookies(string CookieName)
-    {
-        string response;
-        try
-        {
-            response = await jsRuntime.InvokeAsync<string>("ReadCookie", CookieName);
-        }
-        catch (Exception e)
-        {
-            response = null;
-        }
-
-        return response;
-    }
-
-    public async Task WriteCookieAsync(string name, string value, double days)
-    {
-        var test = await jsRuntime.InvokeAsync<object>("WriteCookie", name, value, days);
-    }
-
-    private async void Enter(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-            CheckWeIn();
     }
 
     public async Task<bool> CheckWeIn(bool countAttempt = true)
@@ -534,83 +457,34 @@
         await sessionStorage.SetItemAsync("token", "");
         bool verified;
 
-        // Token doesn't exists
-        if (string.IsNullOrEmpty(token))
+        if (!string.IsNullOrEmpty(token))
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            {
-                Disabled = false;
-                return false;
-            }
+            Constants.WeIn = await UserRepo.VerifyUserAsync(token);
 
-            if (CreatingAccount)
-            {
-                countAttempt = false;
-                Disabled = true;
-                StateHasChanged();
-                WeIn = await UserRepo.AddUser(username, username2, email, email2, password, password2);
-                if (!WeIn)
-                {
-                    ErrorMsg = "Denied. One of your usernames is already taken.";
-                }
-                else
-                    ShowLoading = true;
-                StateHasChanged();
-            }
-            else
-            {
-                Disabled = true;
-                ShowLoading = true;
-                StateHasChanged();
-                WeIn = await UserRepo.VerifyUserAsync(username, password);
-            }
-        }
-        else
-        {
-            WeIn = await UserRepo.VerifyUserAsync(token);
-
-            if (WeIn)
+            if (Constants.WeIn)
                 Constants.Token = token;
         }
 
         // Out of token check, now see if we're in
-        if (WeIn)
+        if (Constants.WeIn)
         {
-            ErrorMsg = "";
-            await sessionStorage.SetItemAsync("token", Constants.Token);
-
-            if (string.IsNullOrEmpty(username))
-                Constants.CUR_USER_NAME = await sessionStorage.GetItemAsync<string>("CUR_USER_NAME");
-            else
-                Constants.CUR_USER_NAME = username;
-
-            await sessionStorage.SetItemAsync("CUR_USER_NAME", Constants.CUR_USER_NAME);
-
-
             await Constants.Init(true);
 
             Balances = Constants.catchAll.Balances;
             Balances.Sort(Constants.CompareBalance);
         }
-        else if (countAttempt)
-        {
-            pwdAttempts++;
-            ErrorMsg = "Incorrect Password. Attempts: " + pwdAttempts;
-        }
 
-        Disabled = false;
-        ShowLoading = false;
         StateHasChanged();
 
-        return WeIn;
+        return Constants.WeIn;
     }
     private async Task SignOut()
     {
-        WeIn = false;
-        Disabled = false;
+        Constants.WeIn = false;
         Constants.Token = "";
         await sessionStorage.SetItemAsync("token", Constants.Token);
         await sessionStorage.SetItemAsync("CUR_USER_NAME", "");
+        NavMan.NavigateTo("");
         StateHasChanged();
     }
 

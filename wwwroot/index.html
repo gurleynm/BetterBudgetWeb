@@ -450,6 +450,15 @@
             }
             return "";
         }
+        function ElementHeight(id) {
+            var elm = document.getElementById(id);
+            if (elm) {
+                var head = document.getElementById(id).getBoundingClientRect();
+                return head.height.toString();
+            }
+
+            return "0";
+        }
     </script>
 </body>
 

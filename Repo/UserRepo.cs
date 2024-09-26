@@ -146,13 +146,13 @@ namespace BetterBudgetWeb.Repo
 
             return "Success";
         }
-        public static async Task<bool> DeleteUser(string user, string user2, string pass)
+        public static async Task<bool> DeleteUser(string user, string user2, string pass,string pass2)
         {
             if (Constants.Token == "DEMO")
                 return true;
 
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = baseURI + $"?user={user}&user2={user2}&pass={pass}";
+            string adjustedUrl = baseURI + $"?user={user}&user2={user2}&pass={pass}&pass2={pass2}";
 
             HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, adjustedUrl);
@@ -170,6 +170,9 @@ namespace BetterBudgetWeb.Repo
                 return false;
 
             if (string.IsNullOrEmpty(content))
+                return false;
+
+            if (content.Contains("message"))
                 return false;
 
             CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);

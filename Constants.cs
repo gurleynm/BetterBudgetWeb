@@ -11,6 +11,21 @@ namespace BetterBudgetWeb
     {
 
         public static bool Test = false; // true false
+        public static EventHandler<bool> WeInChanged = (sender, value) => { };
+
+        private static bool weIn;
+        public static bool WeIn
+        {
+            get => weIn;
+            set
+            {
+                if (weIn != value)
+                {
+                    weIn = value;
+                    WeInChanged?.Invoke(typeof(Constants), weIn);
+                }
+            }
+        }
         // Set null example:
         //      testVar2 = testVar1 ?? testVar2
         //          ^^^^^^^^^^^^^^^^
@@ -574,8 +589,10 @@ namespace BetterBudgetWeb
 
                 case "GOD_TIER":
                     return Tier.GOD_TIER;
-                default:
+                case "TRIAL":
                     return Tier.TRIAL;
+                default:
+                    return Tier.NONE;
             }
         }
     }

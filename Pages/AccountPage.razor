@@ -8,10 +8,13 @@
 
 <div class="flex-r" style="justify-content:space-between;align-items:center">
     <div>
-        <h3>Account Page</h3>
+        <h3 style="font-family:'Imprint MT Shadow'">Account Page</h3>
     </div>
     <div class="flex-r">
-        <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em"  @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
+        @if (Constants.TIER_LEVEL != Tier.DEMO)
+        {
+            <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
+        }
         <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
     </div>
 </div>
@@ -39,23 +42,25 @@
         <h4>The second user's name is: <span>@OtherUser</span></h4>
     </div>
     <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
-            <button class="btn btn-primary" style="background-color:indigo" @onclick=@(() => { Update(); })>Save Changes</button>
-            @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER)
-            {
-                <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
-            }
+        <button class="btn btn-primary" style="background-color:indigo" @onclick=@(() => { Update(); })>Save Changes</button>
+        @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER)
+        {
+            <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
+        }
     </div>
-    @if (ShowPricingTable && false)
+    @if (ShowPricingTable)
     {
-        <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-        <stripe-pricing-table pricing-table-id="prctbl_1Q2cxV2L4K66u9tvdCuax7Hb"
-                              publishable-key="pk_test_51Q2DNf2L4K66u9tvGcuQV9KPwvSuJcwF3EVTNtBIQnHoX3VrX21cXVodQsBGiwFSvhVfZ2arUohyahSMBiafS4FU00YdP854MT"
-                              client-reference-id="@Constants.catchAll.Token.Id">
-        </stripe-pricing-table>
+        <PaymentPlans />
     }
-    @*
-<button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
- *@
+    else
+    {
+        <button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
+    }
+
+}
+else
+{
+    <div style="font-family:'Imprint MT Shadow';font-size:large">This the demo page. Normally, this would contain info about your account and subscription.</div>
 }
 
 @if (ShowUpdatePassword)
@@ -126,6 +131,12 @@
                         <input id="delPass" type="password" @bind-value=Password placeholder="password" />
                     </td>
                 </tr>
+                <tr>
+                    <td>Their Password:</td>
+                    <td>
+                        <input id="delPass" type="password" @bind-value=Password2 placeholder="thier password" />
+                    </td>
+                </tr>
             </table>
             <br />
             <span style="color:red">@ErrorMsgPass</span>
@@ -149,6 +160,7 @@
     private string User1 = "";
     private string User2 = "";
     private string Password = "";
+    private string Password2 = "";
 
     private string CurrentPassword = "";
     private string NewPassword = "";
@@ -265,6 +277,8 @@
                 ErrorMsgPass = "Second name is incorrect.";
             else if (string.IsNullOrEmpty(Password))
                 ErrorMsgPass = "Password must be entered";
+            else if (string.IsNullOrEmpty(Password2))
+                ErrorMsgPass = "Their password must be entered";
 
             if (!string.IsNullOrEmpty(ErrorMsgPass))
             {
@@ -272,7 +286,7 @@
                 return;
             }
 
-            bool DelUser = await UserRepo.DeleteUser(User1, User2, Password);
+            bool DelUser = await UserRepo.DeleteUser(User1, User2, Password, Password2);
             if (!DelUser)
             {
                 ErrorMsgPass = "Incorrect password.";
