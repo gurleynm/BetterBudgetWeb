@@ -1,64 +1,18 @@
 ﻿@if (Page == 1)
 {
-    <div style="display:flex;flex-direction:@(Constants.Mobile ? "column" : "row");justify-content:start; padding:1em">
-        <div class="flex-c">
-            <label style="color:white">Username</label>
-            <div class="flex-c">
-                <input class="better" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
-            </div>
-            <br />
-            <label style="color:white">Password</label>
-            <div class="flex-r">
-                <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password />
-            </div>
-        </div>
-        <div class="flex-c">
-            <label style="color:white">Email</label>
-            <div class="flex-r">
-                <input class="better" placeholder="Email" type="email" @onkeydown="@Enter" @oninput="@(async (ui) => { Email = (string) ui.Value;})" />
-            </div>
-            <br />
-            <label style="color:white">Confirm Password</label>
-            <div class="flex-r">
-                <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword1 />
-            </div>
-        </div>
-    </div>
+    <MiniPage @bind-Username=Username @bind-Email=Email @bind-Password=Password @bind-ConfirmPassword=ConfirmPassword1 />
     <PasswordRules @ref=@passwordRules1 Password="@Password" ConfirmedPassword="@ConfirmPassword1" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:end;padding-top:1em">
-        <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick="Next">Next</button>
+        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Next</button>
     </div>
 }
 else if (Page == 2)
 {
-    <div style="display:flex;flex-direction:@(Constants.Mobile ? "column" : "row");justify-content:start; padding:1em">
-        <div class="flex-c">
-            <label style="color:white">Username</label>
-            <div class="flex-c">
-                <input class="better" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username2 = (string) ui.Value;})" />
-            </div>
-            <br />
-            <label style="color:white">Password</label>
-            <div class="flex-r">
-                <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password2 />
-            </div>
-        </div>
-        <div class="flex-c">
-            <label style="color:white">Email</label>
-            <div class="flex-r">
-                <input class="better" placeholder="Email" type="email" @onkeydown="@Enter" @oninput="@(async (ui) => { Email2 = (string) ui.Value;})" />
-            </div>
-            <br />
-            <label style="color:white">Confirm Password</label>
-            <div class="flex-r">
-                <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword2 />
-            </div>
-        </div>
-    </div>
-    <PasswordRules @ref=@passwordRules2 Password="@Password" ConfirmedPassword="@ConfirmPassword1" ConfirmedRequired="true" />
+    <div style="position:relative;top:1em;left:1em"><a @onclick="Prev" style="color:white;cursor:pointer"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to first user</a></div>
+    <MiniPage @bind-Username=Username2 @bind-Email=Email2 @bind-Password=Password2 @bind-ConfirmPassword=ConfirmPassword2 />
+    <PasswordRules @ref=@passwordRules2 Password="@Password2" ConfirmedPassword="@ConfirmPassword2" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:space-between;padding-top:1em">
-        <button class="btn btn-primary" @onclick="@(() => Page--)" style="background-color:indigo;color:white">Previous</button>
-        <button class="btn btn-primary" @onclick="ExecuteCheckIn" style="background-color:cyan;color:black">Submit</button>
+        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Start 45-Day Trial</button>
     </div>
 }
 
@@ -240,38 +194,84 @@ else if (Page == 2)
     public PasswordRules passwordRules1;
     public PasswordRules passwordRules2;
 
+    private void Prev()
+    {
+        ErrorMsg = "";
+
+        if (Page > 1)
+        {
+            Page--;
+            StateHasChanged();
+        }
+    }
+
     private void Next()
     {
         ErrorMsg = "";
         bool Passed = false;
         if (Page == 1)
-            Passed = Validate(Username, email, passwordRules1);
+        {
+            if (string.IsNullOrEmpty(Username))
+            {
+                ErrorMsg = "Username must be set";
+                return;
+            }
+            if (string.IsNullOrEmpty(Email))
+            {
+                ErrorMsg = "Email must be set";
+                return;
+            }
+
+            Passed = Validate(Username, Email, passwordRules1);
+        }
         else if (Page == 2)
-            Passed = Validate(Username2, email2, passwordRules2);
+        {
+            if (string.IsNullOrEmpty(Username2))
+            {
+                ErrorMsg = "Username must be set";
+                return;
+            }
+            if (string.IsNullOrEmpty(Email2))
+            {
+                ErrorMsg = "Email must be set";
+                return;
+            }
+
+            if (Username == Username2)
+            {
+                ErrorMsg = "Usernames must be different";
+                return;
+            }
+            if (Email == Email2)
+            {
+                ErrorMsg = "Emails must be different";
+                return;
+            }
+            Passed = Validate(Username2, Email2, passwordRules2);
+        }
 
         if (Passed)
-            Page++;
+        {
+            if (Page < 2)
+                Page++;
+            else
+                CheckIn();
+        }
     }
 
     bool Validate(string user, string email, PasswordRules pr)
     {
         bool ValidEmail = Constants.IsValidEmail(email);
-        bool ValidUsername = user.Trim().Length < 8;
+        bool ValidUsername = user.Trim().Length >= 6;
         bool PassRules = pr.CheckConditions();
 
         if (!ValidEmail)
             ErrorMsg = "Invalid email";
         if (!ValidUsername)
-            ErrorMsg = "Username must be at least 8 characters";
+            ErrorMsg = "Username must be at least 6 characters";
 
         return PassRules && ValidEmail && ValidUsername;
     }
-
-    private void ExecuteCheckIn()
-    {
-        CheckIn();
-    }
-
 
     private int page = 1;
     private string email;

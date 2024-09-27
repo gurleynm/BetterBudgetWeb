@@ -6,43 +6,43 @@
     <div style="width:100%; float:left;">
         <table class="toggle-table">
             <tr>
-                <th colspan="4" style="font-size:3vw;background-color:green;color:white"><i>Set Monthly Costs</i></th>
+                <th colspan="4" style="background-color:green;color:white"><i>Set Monthly Costs</i></th>
             </tr>
             <tr>
-                <td></td>
-                <td style="font-size:3vw;">@Constants.Person1</td>
-                <td style="font-size:3vw;">@Constants.Person2</td>
-                <td style="font-size:3vw;">Total</td>
+                <td><span style="text-decoration:line-through;color:forestgreen">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> = Paid</td>
+                <td>@Constants.Person1</td>
+                <td>@Constants.Person2</td>
+                <td>Total</td>
             </tr>
             @foreach (var smc in Constants.StaticMonthlyCosts)
             {
                 @if (Determine(smc))
                 {
-                    <tr style="font-size:3vw;text-decoration:line-through;color:forestgreen">
-                        <td style="font-size:3vw;padding:.5vw 1vw;">@smc.Name</td>
-                        <td style="font-size:3vw;">@("$" + smc.Person1Amount)</td>
-                        <td style="font-size:3vw;">@("$" + smc.Person2Amount)</td>
-                        <td style="font-size:3vw;">@("$" + smc.TotalAmount)</td>
+                    <tr style="text-decoration:line-through;color:forestgreen">
+                        <td style="padding:.5vw 1vw;">@smc.Name</td>
+                        <td>@("$" + smc.Person1Amount)</td>
+                        <td>@("$" + smc.Person2Amount)</td>
+                        <td>@("$" + smc.TotalAmount)</td>
                     </tr>
                 }
                 else
                 {
                     <tr>
-                        <td style="font-size:3vw;padding:.5vw 1vw;">@smc.Name</td>
-                        <td style="font-size:3vw;">@("$" + smc.Person1Amount)</td>
-                        <td style="font-size:3vw;">@("$" + smc.Person2Amount)</td>
-                        <td style="font-size:3vw;">@("$" + smc.TotalAmount)</td>
+                        <td style="padding:.5vw 1vw;">@smc.Name</td>
+                        <td>@("$" + smc.Person1Amount)</td>
+                        <td>@("$" + smc.Person2Amount)</td>
+                        <td>@("$" + smc.TotalAmount)</td>
                     </tr>
                 }
             }
             <tr>
-                <td style="font-size:3vw;" colspan="4">=</td>
+                <td colspan="4">=</td>
             </tr>
             <tr>
-                <td style="font-size:3vw;"><strong>Total</strong></td>
-                <td style="font-size:3vw;padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(Constants.StaticMonthlyCosts.Sum(na => na.Person1Amount))</td>
-                <td style="font-size:3vw;padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(Constants.StaticMonthlyCosts.Sum(la => la.Person2Amount))</td>
-                <td style="font-size:3vw;padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(Constants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount))</td>
+                <td><strong>Total</strong></td>
+                <td style="padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(Constants.StaticMonthlyCosts.Sum(na => na.Person1Amount))</td>
+                <td style="padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(Constants.StaticMonthlyCosts.Sum(la => la.Person2Amount))</td>
+                <td style="padding-right:.5vw; padding-left:.5vw;">@Constants.Pretty(Constants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount))</td>
             </tr>
         </table>
     </div>
@@ -55,7 +55,7 @@ else
                 <th colspan="4" style="background-color:green;color:white"><i>Set Monthly Costs</i></th>
             </tr>
             <tr>
-                <td></td>
+                <td><span style="text-decoration:line-through;color:forestgreen">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> = Paid</td>
                 <td>@Constants.Person1</td>
                 <td>@Constants.Person2</td>
                 <td>Total</td>

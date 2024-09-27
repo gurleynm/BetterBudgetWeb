@@ -96,6 +96,9 @@
             transition: height 0.3s ease;
             overflow: hidden;
         }
+        div.google-visualization-tooltip {
+            display: none
+        }
     </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -115,7 +118,7 @@
     <div id="app">
         <div style="background-color: #111827; height: 100vh; display: inline-block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw;">
             <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:10vh 50vw;transform: translate(-50%, 0%);">
-                <img id="LoadImg" alt="Logo loading image" src="images/BetterBudgetLogo.png" style="height:20vw;width:20vw" />
+                <img id="LoadImg" alt="Logo loading image" src="images/RoundLogo.png" style="height:20vw;width:20vw" />
             </div>
             <br />
             <div style="color:silver;font-size:5vw;display:flex;justify-content:center;width:100%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
@@ -129,22 +132,26 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="js/stripescript.js"></script>
     <script>
         let IsMobile;
         window.onload = function () {
             google.charts.load('current', { 'packages': ['sankey', 'corechart', 'line'] });
             IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
 
-            if (IsMobile) {
-                LoadImg.style.height = "20vh";
-                LoadImg.style.width = "20vh";
-            }
-            else {
-                LoadImg.style.height = "20vw";
-                LoadImg.style.width = "20vw";
+            const LoadImg = document.getElementById('LoadImg');
+            if (LoadImg) {
+                if (IsMobile) {
+                    LoadImg.style.height = "20vh";
+                    LoadImg.style.width = "20vh";
+                }
+                else {
+                    LoadImg.style.height = "20vw";
+                    LoadImg.style.width = "20vw";
+                }
             }
         };
         window.addEventListener('resize', Resized);
@@ -306,8 +313,8 @@
                             fontSize: FontSize
                         }
                     }
-                }
-                //tooltip: { isHtml: true }
+                },
+                tooltip: { isHtml: true }
             };
 
             // Instantiates and draws our chart, passing in some options.
@@ -446,7 +453,15 @@
             }
             return "";
         }
+        function ElementHeight(id) {
+            var elm = document.getElementById(id);
+            if (elm) {
+                var head = document.getElementById(id).getBoundingClientRect();
+                return head.height.toString();
+            }
 
+            return "0";
+        }
     </script>
 </body>
 

@@ -1,0 +1,194 @@
+﻿@page "/sign/{direction}"
+
+@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.Shared.LoginStuff
+@inject IJSRuntime jsRuntime
+@inject NavigationManager NavMan
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+<PageTitle>Enter Password</PageTitle>
+
+<div style="position:absolute;top:1em;left:1em"><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px"/> Back to main page</a></div>
+@if (mobile)
+{
+    <div style="display:inline-block;width:100vw;height:100vh;">
+
+        <UserPassLogin @bind-Username=@username
+                       @bind-Username2=@username2
+                       @bind-Password=@password
+                       @bind-Password2=@password2
+                       @bind-Email=@email
+                       @bind-Email2=@email2
+                       @bind-CreatingAccount=@CreatingAccount
+                       @bind-ErrorMsg=@ErrorMsg
+                       Hide=@Disabled
+                       Enter=@((e) => Enter(e))
+                       CheckIn=@(async () => await CheckWeIn())>
+            <div class="flex-r" style="margin-top:2vh">
+                @if (!Disabled)
+                {
+                    <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="@(() => CheckWeIn())">Login</button>
+                }
+                else
+                {
+                    <div class="flex-r" style="justify-content:space-around">
+                        <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
+                        <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
+                        <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
+                    </div>
+                }
+            </div>
+        </UserPassLogin>
+    </div>
+}
+else
+{
+    <UserPassLogin @bind-Username=@username
+                   @bind-Username2=@username2
+                   @bind-Password=@password
+                   @bind-Password2=@password2
+                   @bind-Email=@email
+                   @bind-Email2=@email2
+                   @bind-CreatingAccount=@CreatingAccount
+                   @bind-ErrorMsg=@ErrorMsg
+                   Hide=@Disabled
+                   Enter=@((e) => Enter(e))
+                   CheckIn=@(async () => await CheckWeIn())>
+        <div class="flex-r" style="margin-top:2vh">
+            @if (!Disabled)
+            {
+                <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="@(() => CheckWeIn())">Login</button>
+            }
+            else
+            {
+                <div class="flex-r" style="justify-content:space-around">
+                    <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
+                    <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
+                    <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
+                </div>
+            }
+        </div>
+    </UserPassLogin>
+}
+
+@code {
+    private bool mobile => Constants.Mobile;
+
+    private string ErrorMsg { get; set; }
+    private string email { get; set; }
+    private string email2 { get; set; }
+    private string username { get; set; }
+    private string username2 { get; set; }
+    private string password { get; set; }
+    private string password2 { get; set; }
+    private bool CreatingAccount { get; set; }
+    private int pwdAttempts { get; set; }
+
+    private bool Disabled { get; set; } = true;
+
+    [Parameter]
+    public string direction { get; set; } = "in";
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        ErrorMsg = "";
+        try
+        {
+            Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
+        }
+        catch (Exception e)
+        {
+            Constants.Mobile = false;
+        }
+
+        var token = await sessionStorage.GetItemAsync<string>("token");
+        if (!string.IsNullOrEmpty(token))
+            StateHasChanged();
+
+        CreatingAccount = direction == "up";
+
+        await CheckWeIn(false);
+    }
+
+    private async void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+            CheckWeIn();
+    }
+
+    public async Task<bool> CheckWeIn(bool countAttempt = true)
+    {
+        var token = await sessionStorage.GetItemAsync<string>("token");
+        await sessionStorage.SetItemAsync("token", "");
+        bool verified;
+
+        // Token doesn't exists
+        if (string.IsNullOrEmpty(token))
+        {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                Disabled = false;
+                return false;
+            }
+
+            if (CreatingAccount)
+            {
+                countAttempt = false;
+                Disabled = true;
+                StateHasChanged();
+                Constants.WeIn = await UserRepo.AddUser(username, username2, email, email2, password, password2);
+
+                if (!Constants.WeIn)
+                    ErrorMsg = "Denied. One of your usernames is already taken.";
+
+                StateHasChanged();
+            }
+            else
+            {
+                Disabled = true;
+                StateHasChanged();
+                Constants.WeIn = await UserRepo.VerifyUserAsync(username, password);
+            }
+        }
+        else
+        {
+            Constants.WeIn = await UserRepo.VerifyUserAsync(token);
+
+            if (Constants.WeIn)
+                Constants.Token = token;
+        }
+
+        // Out of token check, now see if we're in
+        if (Constants.WeIn)
+        {
+            ErrorMsg = "";
+            await sessionStorage.SetItemAsync("token", Constants.Token);
+
+            if (string.IsNullOrEmpty(username))
+                Constants.CUR_USER_NAME = await sessionStorage.GetItemAsync<string>("CUR_USER_NAME");
+            else
+                Constants.CUR_USER_NAME = username;
+
+            await sessionStorage.SetItemAsync("CUR_USER_NAME", Constants.CUR_USER_NAME);
+
+
+            await Constants.Init(true);
+            NavMan.NavigateTo("home");
+        }
+        else if (countAttempt)
+        {
+            pwdAttempts++;
+            ErrorMsg = "Incorrect Password. Attempts: " + pwdAttempts;
+        }
+
+        Disabled = false;
+        StateHasChanged();
+
+        return Constants.WeIn;
+    }
+}

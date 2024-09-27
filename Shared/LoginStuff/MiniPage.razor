@@ -1,0 +1,92 @@
+﻿<div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:start">
+    <div class="flex-c" style="justify-content:space-evenly">
+        <label style="color:white;margin-right:1em">Username:</label>
+        <div class="flex-c">
+            <input class="better" placeholder="Username" type="text" @bind-value=Username />
+        </div>
+    </div>
+    <div class="flex-c" style="justify-content:space-evenly">
+        <label style="color:white;margin-right:1em">Email:</label>
+        <div class="flex-r">
+            <input class="better" placeholder="Email" type="email" @bind-value=Email />
+        </div>
+    </div>
+    <div class="flex-c" style="justify-content:space-evenly">
+        <label style="color:white;margin-right:1em">Password:</label>
+        <div class="flex-r">
+            <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password ShowEye=true />
+        </div>
+    </div>
+    <div class="flex-c" style="justify-content:space-evenly">
+        <label style="color:white;margin-right:1em">Confirm Password:</label>
+        <div class="flex-r">
+            <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword ShowEye=true />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Action<KeyboardEventArgs> Enter { get; set; }
+
+    [Parameter]
+    public string Username
+    {
+        get { return username; }
+        set
+        {
+            if (username == value) return;
+            username = value;
+            UsernameChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<string> UsernameChanged { get; set; }
+
+    [Parameter]
+    public string Email
+    {
+        get { return email; }
+        set
+        {
+            if (email == value) return;
+            email = value;
+            EmailChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<string> EmailChanged { get; set; }
+
+    [Parameter]
+    public string Password
+    {
+        get { return password; }
+        set
+        {
+            if (password == value) return;
+            password = value;
+            PasswordChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<string> PasswordChanged { get; set; }
+
+    [Parameter]
+    public string ConfirmPassword
+    {
+        get { return confirmPassword; }
+        set
+        {
+            if (confirmPassword == value) return;
+            confirmPassword = value;
+            ConfirmPasswordChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<string> ConfirmPasswordChanged { get; set; }
+
+    private string username;
+    private string email;
+    private string password;
+    private string confirmPassword;
+}

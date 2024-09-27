@@ -76,7 +76,7 @@
     <div style="@(Constants.Mobile ? "" : "align-self:end")">
         @if (Levels != null && Levels.Count > 0)
         {
-            <div class="flex-r">
+            <div class="flex-r" style="margin:1em">
                 <button class="btn btn-primary" @onclick=DrawChart>Enter</button>
             </div>
         }
@@ -140,9 +140,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        SelectedMonth = "All";
-        SelectedYear = DateTime.Now.Year.ToString();
         Constants.Transactions = await TransactionRepo.GetTransactionsAsync("ALL");
+        DateTime latestDate = Constants.Transactions.Max(t => t.DateOfTransaction);
+
+        SelectedMonth = latestDate.ToString("MMMM");
+        SelectedYear = latestDate.Year.ToString();
         DrawChart();
     }
 
@@ -344,10 +346,10 @@
             double maxTotals = Math.Max(incomeTotals, generalTotals);
 
             foreach (var key in DictIncome.Keys)
-                TheFlows.Add(DictIncome[key].ToFlow(maxTotals));
+                TheFlows.Add(DictIncome[key].ToFlow(incomeTotals,"",generalTotals));
 
             foreach (var key in GeneralTransactions.Keys)
-                TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL"));
+                TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL",incomeTotals));
 
             TotalIn = incomeTotals + RefundSum;
             TotalOut = generalTotals;

@@ -69,7 +69,7 @@ else
         {
             await UserRepo.ResetPassword(ResetToken, NewPassword);
             await sessionStorage.SetItemAsync("token", Constants.Token);
-            NavMan.NavigateTo("");
+            NavMan.NavigateTo("home");
         }
 
         Disabled = true;

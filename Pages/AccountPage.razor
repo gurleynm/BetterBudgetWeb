@@ -2,15 +2,28 @@
 @using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Shared.LoginStuff
-@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager NavMan
 
 <PageTitle>Account</PageTitle>
 
-<h3>Account Page</h3>
-@if (ShowUpdateConfirmation)
+<div class="flex-r" style="justify-content:space-between;align-items:center">
+    <div>
+        <h3 style="font-family:'CBB Default'">Account Page</h3>
+    </div>
+    <div class="flex-r">
+        @if (Constants.TIER_LEVEL != Tier.DEMO)
+        {
+            <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
+        }
+        <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
+    </div>
+</div>
+@if (Constants.TIER_LEVEL != Tier.DEMO)
 {
-    <div class="flex-r"
-         style="margin:auto 0;
+    @if (ShowUpdateConfirmation)
+    {
+        <div class="flex-r"
+             style="margin:auto 0;
                 width:100%;
                 padding: 1vw;
                 height:100%;
@@ -20,20 +33,35 @@
                 text-align:center;
                 pointer-events:none;
                 z-index:10;">
-        Password successfully updated!
+            Password successfully updated!
+        </div>
+    }
+    <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="width:100%;justify-content:space-evenly">
+        <h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
+        <h4>Your email is: <input type="email" @bind-value=@NewEmail style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
+        <h4>The second user's name is: <span>@OtherUser</span></h4>
     </div>
+    <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
+        <button class="btn btn-primary" style="background-color:indigo" @onclick=@(() => { Update(); })>Save Changes</button>
+        @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER)
+        {
+            <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
+        }
+    </div>
+    @if (ShowPricingTable)
+    {
+        <PaymentPlans />
+    }
+    else
+    {
+        <button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
+    }
+
 }
-<h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
-<h4>The second user's name is: <span>@OtherUser</span></h4>
-<h4>Your email is: <input type="email" @bind-value=@NewEmail /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
-<div class="flex-r" style="justify-content:space-evenly">
-    <button class="btn btn-secondary" @onclick=@(() => { Update(); })>Save Changes</button>
-    <button class="btn btn-secondary" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
-    <button class="btn btn-primary" @onclick=LogOff>Sign Out</button>
-</div>
-@*
-<button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
- *@
+else
+{
+    <div style="font-family:'CBB Default';font-size:large">This the demo page. Normally, this would contain info about your account and subscription.</div>
+}
 
 @if (ShowUpdatePassword)
 {
@@ -75,40 +103,7 @@
         </div>
     </Confirmation>
 }
-@if (ShowDelete)
-{
-    <Confirmation OnClose="Delete" LeftBtnTxt="Cancel" LeftBtnColor="btn-secondary" RightBtnColor="btn-danger"
-                  @bind-Disabled=@DeleteDisabled>
-        <div>
-            <span><strong>WARNING: All of your data will be deleted. This action cannot be reversed!</strong></span>
-            <br />
-            <br />
-            <span>To delete your account, please enter in your name, the other user's name, and your password below:</span>
-            <table>
-                <tr>
-                    <td>Your name:</td>
-                    <td>
-                        <input id="delUser1" type="text" @bind-value=User1 placeholder=@Constants.CUR_USER_NAME />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Their name:</td>
-                    <td>
-                        <input id="delUser2" type="text" @bind-value=User2 placeholder=@OtherUser />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Password:</td>
-                    <td>
-                        <input id="delPass" type="password" @bind-value=Password placeholder="password" />
-                    </td>
-                </tr>
-            </table>
-            <br />
-            <span style="color:red">@ErrorMsgPass</span>
-        </div>
-    </Confirmation>
-}
+<DeleteAccountModal @bind-ShowDelete=ShowDelete />
 
 
 @code {
@@ -118,7 +113,6 @@
     private string OtherUser => Constants.CUR_USER_NAME == Constants.Person1 ? Constants.Person2 : Constants.Person1;
 
     private bool UpdateDisabled;
-    private bool DeleteDisabled;
     private bool ShowUpdatePassword;
     private bool ShowDelete;
     private bool ShowUpdateConfirmation;
@@ -126,6 +120,7 @@
     private string User1 = "";
     private string User2 = "";
     private string Password = "";
+    private string Password2 = "";
 
     private string CurrentPassword = "";
     private string NewPassword = "";
@@ -139,6 +134,8 @@
     private string ErrorMsgPass = "";
     private string ErrorMsgUsername = "";
     private string ErrorMsgEmail = "";
+
+    private bool ShowPricingTable;
 
     protected override async Task OnInitializedAsync()
     {
@@ -154,8 +151,8 @@
         if (!Constants.IsValidEmail(NewEmail))
             ErrorMsgEmail = "Invalid email";
 
-        if (NewUsername.Trim().Length < 8)
-            ErrorMsgUsername = "Username must be at least 8 characters";
+        if (NewUsername.Trim().Length < 6)
+            ErrorMsgUsername = "Username must be at least 6 characters";
 
         if (!string.IsNullOrEmpty(ErrorMsgEmail) || !string.IsNullOrEmpty(ErrorMsgUsername))
         {
@@ -228,41 +225,11 @@
         StateHasChanged();
     }
 
-    private async void Delete(bool accepted)
+    private void ManageSubscription()
     {
-        if (accepted)
-        {
-            ErrorMsgPass = "";
-
-            if (User1 != Constants.Person1)
-                ErrorMsgPass = "Name is incorrect.";
-            else if (User2 != Constants.Person2)
-                ErrorMsgPass = "Second name is incorrect.";
-            else if (string.IsNullOrEmpty(Password))
-                ErrorMsgPass = "Password must be entered";
-
-            if (!string.IsNullOrEmpty(ErrorMsgPass))
-            {
-                DeleteDisabled = false;
-                return;
-            }
-
-            bool DelUser = await UserRepo.DeleteUser(User1, User2, Password);
-            if (!DelUser)
-            {
-                ErrorMsgPass = "Incorrect password.";
-                DeleteDisabled = false;
-            }
-            else
-            {
-                ShowDelete = false;
-                await LogOff.InvokeAsync();
-            }
-        }
+        if (Constants.TIER_LEVEL == Data.Tier.TRIAL)
+            ShowPricingTable = !ShowPricingTable;
         else
-            ShowDelete = false;
-
-        DeleteDisabled = false;
-        StateHasChanged();
+            NavMan.NavigateTo("https://billing.stripe.com/p/login/test_6oE9AJfV35xS32U000");
     }
 }

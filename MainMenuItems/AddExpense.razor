@@ -1,29 +1,4 @@
 ﻿@using BetterBudgetWeb.Runner;
-<style>
-    .outer_add {
-        margin: auto;
-        width: 100%;
-        height: fit-content;
-        border: 1px solid #ececec;
-        background-color: #2a2a2a;
-        color: white;
-        border-radius: @BorderRadius;
-        margin-bottom: @(!Mobile ? "1vh" : "3vw");
-    }
-
-    .add_expense {
-        margin-bottom: 1vh;
-    }
-
-    table.add_expense > tr {
-        background-color: transparent;
-    }
-
-        table.add_expense > tr > td {
-            border: none;
-        }
-</style>
-
 
 <div style="position:relative">
     @if (Added)
@@ -57,7 +32,7 @@
                             </span>
                         </td>
                         <td>
-                            <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
+                            <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
                         </td>
                         <td style="width:9vw">
                             @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith))
@@ -72,12 +47,8 @@
                                 }
                                 else
                                 {
-                                    <div style="color:white">@NewTrans.TopWhoPaid</div>
+                                    <div style="color:white">@(NewTrans.TopWhoPaid + " Paid")</div>
                                 }
-                            }
-                            else
-                            {
-                                <div style="color:@TextColor"> Who Paid?</div>
                             }
                         </td>
                     </tr>
@@ -90,7 +61,7 @@
                                 </span>
                             </td>
                             <td>
-                                <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.BottomPaidWith" />
+                                <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
                             </td>
                             <td style="width:9vw">
                                 @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith))
@@ -105,12 +76,8 @@
                                     }
                                     else
                                     {
-                                        <div style="color:white">@NewTrans.BottomWhoPaid</div>
+                                        <div style="color:white">@(NewTrans.BottomWhoPaid + " Paid")</div>
                                     }
-                                }
-                                else
-                                {
-                                    <div style="color:@TextColor">Who Paid?</div>
                                 }
                             </td>
                         </tr>
@@ -144,26 +111,26 @@
                 else
                 {
                     <tr>
-                        <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-evenly">
+                        <td class="flex-r" style="padding:1vw;justify-content:space-evenly">
                             <InputDate @bind-Value="NewTrans.DateOfTransaction" style="margin-left:1vw;color:silver" />
 
                             <InputText style="width:30vw;color:white" placeholder="Enter Name" @bind-Value="NewTrans.Name" />
                         </td>
                     </tr>
                     <tr>
-                        <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-around;align-items:center;">
+                        <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
                             <span>
                                 $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
                                     border:none;border-bottom:solid white 1px;text-align:center;" @bind=@NewTrans.TopAmount>
                             </span>
 
-                            <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.TopPaidWith" />
+                            <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
 
                             @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith))
                             {
                                 @if (string.IsNullOrEmpty(NewTrans.TopWhoPaid))
                                 {
-                                    <select class="custom-select" style="font-size:3vw;color:white" @bind="@NewTrans.TopWhoPaid">
+                                    <select class="custom-select" style="color:white" @bind="@NewTrans.TopWhoPaid">
                                         <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                         <option>@Constants.Person1</option>
                                         <option>@Constants.Person2</option>
@@ -171,31 +138,27 @@
                                 }
                                 else
                                 {
-                                    <div style="color:white">@NewTrans.TopWhoPaid</div>
+                                    <div style="color:white">@(NewTrans.TopWhoPaid+ " Paid")</div>
                                 }
-                            }
-                            else
-                            {
-                                <div style="color:@TextColor"> Who Paid?</div>
                             }
                         </td>
                     </tr>
                     @if (ShowSecond)
                     {
                         <tr>
-                            <td class="flex-r" style="font-size:3vw;padding:1vw;justify-content:space-around;align-items:center;">
+                            <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
                                 <span>
                                     $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
                                     border:none;border-bottom:solid white 1px;text-align:center;" @bind=@NewTrans.BottomAmount>
                                 </span>
 
-                                <PaymentInput @bind-NewExpense="@NewTrans.ExpenseType" @bind-PaidWith="@NewTrans.BottomPaidWith" />
+                                <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
 
                                 @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith))
                                 {
                                     @if (string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
                                     {
-                                        <select class="custom-select" style="font-size:3vw;color:white" @bind="@NewTrans.BottomWhoPaid">
+                                        <select class="custom-select" style="color:white" @bind="@NewTrans.BottomWhoPaid">
                                             <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                             <option>@Constants.Person1</option>
                                             <option>@Constants.Person2</option>
@@ -203,18 +166,14 @@
                                     }
                                     else
                                     {
-                                        <div style="color:white">@NewTrans.BottomWhoPaid</div>
+                                        <div style="color:white">@(NewTrans.BottomWhoPaid+ " Paid")</div>
                                     }
-                                }
-                                else
-                                {
-                                    <div style="color:@TextColor">Who Paid?</div>
                                 }
                             </td>
                         </tr>
                     }
                     <tr>
-                        <td colspan="3" style="font-size:3vw;padding:1vw;">
+                        <td colspan="3" style="padding:1vw;">
                             <ExpenseTypeInput @bind-NewExpense=@NewTrans.ExpenseType />
                         </td>
                     </tr>
@@ -231,7 +190,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="font-size:3vw;color:white;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
+                        <td colspan="3" style="color:white;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
                     </tr>
                     <tr>
                         <td colspan="3">

@@ -76,11 +76,11 @@
                 <br />
                 @if (ExpenseType == "Transfer")
                 {
-                    <input type="text" disabled placeholder="Name of Transaction" value="Transfer" />
+                    <input type="text" disabled placeholder="Name" value="Transfer" />
                 }
                 else
                 {
-                    <input type="text" placeholder="Name of Transaction" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
+                    <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
                 }
             </div>
             <br />
@@ -410,11 +410,11 @@ else
             <br />
             @if (ExpenseType == "Transfer")
             {
-                <input type="text" disabled placeholder="Name of Transaction" value="Transfer" />
+                <input type="text" disabled placeholder="Name" value="Transfer" />
             }
             else
             {
-                <input type="text" placeholder="Name of Transaction" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
+                <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
             }
         </div>
         <div style="float:left; margin-right:12vw;">
@@ -872,7 +872,8 @@ else
         foreach(var smc in Constants.StaticMonthlyCosts)
         {
             if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "Static Cost") == 0)
-                Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
+                if (!smc.Name.Contains("(EXAMPLE DATA)"))
+                    Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
         }
 
         Presets.Sort();

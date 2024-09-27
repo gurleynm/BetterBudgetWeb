@@ -1,9 +1,10 @@
 ﻿@using BetterBudgetWeb.Repo
+@inject NavigationManager NavMan
 
 <div class="flex-c" style="width:100vw;height:100vh;align-items:center;">
-    <div style="display:block;background-color:gray;border-radius:1vw;width:auto;padding:1vw;padding-bottom:2vw">
+    <div style="display:block;background-color:gray;border-radius:1vw;width:auto;padding:1em;padding-bottom:2vw">
         <div>
-            <h2 style="text-align:center;color:white">@($"Welcome!!")</h2>
+            <h2 style="text-align:center;color:white;font-family:'CBB Default';">@($"Welcome")</h2>
         </div>
 
         @if (CreatingAccount)
@@ -32,13 +33,13 @@
         {
             <div class="flex-c">
                 <label style="color:white">Username</label>
-                <div class="flex-r">
+                <div class="flex-r" style="justify-content:start">
                     <input class="better" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
                 </div>
                 <br />
                 <label style="color:white">Password</label>
-                <div class="flex-r">
-                    <PasswordInput Enter="Enter" @bind-Password=@Password />
+                <div class="flex-r" style="justify-content:start">
+                    <PasswordInput Enter="Enter" @bind-Password=@Password ShowEye="true"/>
                 </div>
                 <div>
                     <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => ForgotPassword = !ForgotPassword)>Forgot Password?</a>
@@ -47,7 +48,7 @@
         }
         @if (!string.IsNullOrEmpty(ErrorMsg))
         {
-            <p class="income-bad" style="text-align:center">
+            <p style="text-align:center;color:black">
                 @ErrorMsg
             </p>
         }
@@ -67,21 +68,13 @@
                     <a style="text-decoration:underline;color:blue;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
                 </span>
             </div>
-            <button style="width:100%;margin-top:1em;background-image:linear-gradient(to left, cyan,indigo)" class="btn btn-primary"
-                    @onclick=ExecuteGrabDemo>
-                View Demo
-            </button>
         }
     </div>
-    <Footer />
 </div>
 
 @code {
     [Parameter]
     public RenderFragment ChildContent { get; set; }
-
-    [Parameter]
-    public EventCallback GrabDemo { get; set; }
 
     [Parameter]
     public Action CheckIn { get; set; }
@@ -199,6 +192,12 @@
         {
             if (creatingAccount == value) return;
             creatingAccount = value;
+
+            if (value)
+                NavMan.NavigateTo("sign/up");
+            else
+                NavMan.NavigateTo("sign/in");
+
             CreatingAccountChanged.InvokeAsync(value);
         }
     }
@@ -227,12 +226,6 @@
 
     private string AccountTxt => CreatingAccount ? "Already have an account?" : "Don't have an account?";
     private string SignTxt => CreatingAccount ? "Sign In" : "Sign Up";
-
-    private void ExecuteGrabDemo()
-    {
-        Hide = true;
-        GrabDemo.InvokeAsync();
-    }
 
     private async void SendEmail()
     {
