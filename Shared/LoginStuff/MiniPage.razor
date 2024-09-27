@@ -1,31 +1,33 @@
 ﻿<div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:start">
-    <div class="flex-c" style="justify-content:space-evenly">
+    <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
         <label style="color:white;margin-right:1em">Username:</label>
         <div class="flex-c">
             <input class="better" placeholder="Username" type="text" @bind-value=Username />
         </div>
     </div>
-    <div class="flex-c" style="justify-content:space-evenly">
+    <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
         <label style="color:white;margin-right:1em">Email:</label>
         <div class="flex-r">
             <input class="better" placeholder="Email" type="email" @bind-value=Email />
         </div>
     </div>
-    <div class="flex-c" style="justify-content:space-evenly">
+    <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
         <label style="color:white;margin-right:1em">Password:</label>
         <div class="flex-r">
-            <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password ShowEye=true />
+            <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password ShowAny=false @bind-ShowPass=@ShowEyeIntermediate />
         </div>
     </div>
     <div class="flex-c" style="justify-content:space-evenly">
         <label style="color:white;margin-right:1em">Confirm Password:</label>
         <div class="flex-r">
-            <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword ShowEye=true />
+            <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword ShowEye=false @bind-ShowPass=@ShowEyeIntermediate />
         </div>
     </div>
 </div>
 
 @code {
+    private bool ShowEyeIntermediate { get; set; }
+
     [Parameter]
     public Action<KeyboardEventArgs> Enter { get; set; }
 
