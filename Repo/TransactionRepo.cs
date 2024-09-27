@@ -63,28 +63,7 @@ namespace BetterBudgetWeb.Repo
                     string IncomePlausible = "Income Equity";
                     int IncomeMultiplier = IncomePlausible.Contains(trans.ExpenseType) ? 1 : -1;
 
-                    if (trans.ExpenseType == "Envelope")
-                    {
-                        Envelope Person1PWEnv = Constants.Envelopes.FirstOrDefault(b => b.Name == trans.PaidWithPerson1);
-                        Envelope Person2PWEnv = Constants.Envelopes.FirstOrDefault(b => b.Name == trans.PaidWithPerson2);
-
-                        if (Person1PWEnv != null)
-                        {
-                            Person1PWBalance = Constants.Balances.FirstOrDefault(b => b.Id == Person1PWEnv.Person1Account);
-                            Person1PWEnv.Person1Amount -= trans.Person1Amount;
-                            Person1PWEnv.Goal -= Person1PWEnv.UpdateGoal == 1 ? trans.Person1Amount : 0;
-                            await EnvelopeRepo.AddOrUpdateAsync(Person1PWEnv);
-                        }
-
-                        if (Person2PWEnv != null)
-                        {
-                            Person2PWBalance = Constants.Balances.FirstOrDefault(b => b.Id == Person2PWEnv.Person2Account);
-                            Person2PWEnv.Person2Amount -= trans.Person2Amount;
-                            Person2PWEnv.Goal -= Person2PWEnv.UpdateGoal == 1 ? trans.Person2Amount : 0;
-                            await EnvelopeRepo.AddOrUpdateAsync(Person2PWEnv);
-                        }
-                    }
-                    else if (Constants.Envelopes.Select(e => e.Name).Contains(trans.ExpenseType))
+                    if (Constants.Envelopes.Select(e => e.Name).Contains(trans.ExpenseType))
                     {
                         Envelope NewExpEnv = Constants.Envelopes.FirstOrDefault(b => b.Name == trans.ExpenseType);
 
