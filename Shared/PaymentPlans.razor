@@ -1,9 +1,10 @@
 ﻿<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-<stripe-pricing-table pricing-table-id="prctbl_1Q2cxV2L4K66u9tvdCuax7Hb"
-                      publishable-key="pk_test_51Q2DNf2L4K66u9tvGcuQV9KPwvSuJcwF3EVTNtBIQnHoX3VrX21cXVodQsBGiwFSvhVfZ2arUohyahSMBiafS4FU00YdP854MT"
+<stripe-pricing-table pricing-table-id="@private_table_id"
+                      publishable-key="@pub_key"
                       client-reference-id="@Constants.catchAll.Token.Id">
 </stripe-pricing-table>
 
 @code {
-
+    private string private_table_id => Constants.StripeTest ? "prctbl_1Q2cxV2L4K66u9tvdCuax7Hb" : "prctbl_1Q3mJO2L4K66u9tvqO60pKZf";
+    private string pub_key => Constants.StripeTest ? "pk_test_51Q2DNf2L4K66u9tvGcuQV9KPwvSuJcwF3EVTNtBIQnHoX3VrX21cXVodQsBGiwFSvhVfZ2arUohyahSMBiafS4FU00YdP854MT" : "pk_live_51Q2DNf2L4K66u9tvbL1k0RCr1ANZKE2RIoHXS2Ob5v2cmsv9ZOLX09YgeYWv97vq1nMjHLTGOrGfNAlFcTxHQVnJ00VAthxA0G";
 }
