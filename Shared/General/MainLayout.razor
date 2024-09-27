@@ -8,6 +8,7 @@
 @inject IJSRuntime jsRuntime
 @inject NavigationManager NavMan
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@implements IDisposable
 
 <style>
     body {
@@ -283,7 +284,7 @@
             {
                 <div id="main-bar" class="flex-r" style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;align-items:center;z-index:1;padding:0 1em">
                     <div>
-                        <a href="account" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
+                        <a href="home" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
                             <strong>@("Welcome " + Constants.CUR_USER_NAME + "!")</strong>
                         </a>
                     </div>
@@ -444,6 +445,7 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        Constants.BalancesChanged += BalancesUpdated;
         try
         {
             Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
@@ -549,5 +551,13 @@
         ShowDeleteModal = false;
         await jsRuntime.InvokeAsync<bool>("TurnOnScroll");
         StateHasChanged();
+    }
+    private void BalancesUpdated(object sender, List<Balance> e)
+    {
+        StateHasChanged();
+    }
+    public void Dispose()
+    {
+        Constants.BalancesChanged -= BalancesUpdated;
     }
 }

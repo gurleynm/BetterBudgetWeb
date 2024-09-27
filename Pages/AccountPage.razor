@@ -37,17 +37,21 @@
         </div>
     }
     <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="width:100%;justify-content:space-evenly">
-        <h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
+        <div class="flex-c">
+            <h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
+            <h4>The second user's name is: <span>@OtherUser</span></h4>
+        </div>
         <h4>Your email is: <input type="email" @bind-value=@NewEmail style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
-        <h4>The second user's name is: <span>@OtherUser</span></h4>
+        <div class="flex-c-start">
+            <button class="btn btn-primary" style="background-color:indigo" disabled=@ShowChangedDisabled @onclick=@(() => { Update(); })>Save Changes</button>
+        </div>
     </div>
-    <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
-        <button class="btn btn-primary" style="background-color:indigo" @onclick=@(() => { Update(); })>Save Changes</button>
-        @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER)
-        {
+    @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER)
+    {
+        <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
             <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
-        }
-    </div>
+        </div>
+    }
     @if (ShowPricingTable)
     {
         <PaymentPlans />
@@ -110,6 +114,8 @@ else
     [CascadingParameter]
     public EventCallback LogOff { get; set; }
 
+    private bool ShowChangedDisabled => NewUsername == OG_Username && NewEmail == OG_Email;
+
     private string OtherUser => Constants.CUR_USER_NAME == Constants.Person1 ? Constants.Person2 : Constants.Person1;
 
     private bool UpdateDisabled;
@@ -128,6 +134,9 @@ else
 
     private string NewUsername = "";
     private string NewEmail = "";
+    
+    private string OG_Username = "";
+    private string OG_Email = "";
 
     private PasswordRules passwordRules;
 
@@ -139,6 +148,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        OG_Username = Constants.catchAll.Token.Name;
+        OG_Email = Constants.catchAll.Token.Email;
         NewUsername = Constants.catchAll.Token.Name;
         NewEmail = Constants.catchAll.Token.Email;
     }

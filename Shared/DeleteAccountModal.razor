@@ -117,7 +117,7 @@
                 return;
             }
 
-            bool DelUser = false;//await UserRepo.DeleteUser(User1, User2, Password, Password2);
+            bool DelUser = await UserRepo.DeleteUser(User1, User2, Password, Password2);
             await Task.Delay(2000);
             if (!DelUser)
             {

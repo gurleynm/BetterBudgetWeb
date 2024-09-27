@@ -21,13 +21,16 @@ else
 {
     @if (!Constants.Mobile)
     {
-        <PopTray Id="spend" @bind-ShowWorth=ShowChart
-                 ShowTxt="Show Spending Chart"
-                 HideTxt="Hide Spending Chart"
-                 TopButton=true
-                 BottomButton=false>
-            <Chart DPs=DataPoints BarClicked=FilterDate />
-        </PopTray>
+        @if (DataPoints != null && DataPoints.Count > 0)
+        {
+            <PopTray Id="spend" @bind-ShowWorth=ShowChart
+                     ShowTxt="Show Spending Chart"
+                     HideTxt="Hide Spending Chart"
+                     TopButton=true
+                     BottomButton=false>
+                <Chart DPs=DataPoints BarClicked=FilterDate />
+            </PopTray>
+        }
         <br />
 
         <div class="flex-r" style="flex-wrap:nowrap;justify-content:space-between">

@@ -4,6 +4,7 @@
 @using BetterBudgetWeb.Runner;
 @inject NavigationManager NavManager
 @inject IJSRuntime JSRuntime
+@implements IDisposable
 
 <div class="flex-r @SetClass" @onmouseover="MouseOver" @onmouseout="MouseOut" style="flex-wrap:wrap;justify-content:space-between;
                                 padding:0; margin: 0;cursor:@(IsPreview ? "auto" :"pointer");
@@ -84,6 +85,12 @@
     public bool ShowPerson { get; set; }
     public double Amount => GetAmount();
     private bool Show { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Constants.BalancesChanged += BalancesUpdated;
+        return base.OnInitializedAsync();
+    }
 
     private string ColorClass()
     {
@@ -193,5 +200,13 @@
     void MouseOut(MouseEventArgs e)
     {
         ShowPerson = false;
+    }
+    private void BalancesUpdated(object sender, List<Balance> e)
+    {
+        ResizeParent();
+    }
+    public void Dispose()
+    {
+        Constants.BalancesChanged -= BalancesUpdated;
     }
 }
