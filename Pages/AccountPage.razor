@@ -9,7 +9,7 @@
 <div class="flex-r" style="justify-content:space-between;align-items:center">
     <div class="flex-r" style="align-items:baseline">
         <h3 style="font-family:'CBB Default';margin-right:1em">Account Page</h3>
-        @if (!Constants.Mobile)
+        @if (!Constants.Mobile && Constants.TIER_LEVEL != Tier.DEMO)
         {
             <div class="flex-c-start">
                 <button class="btn btn-primary" style="background-color:indigo" disabled=@ShowChangedDisabled @onclick=@(() => { Update(); })>Save Changes</button>
@@ -17,14 +17,14 @@
         }
     </div>
     <div class="flex-r">
-        @if (Constants.TIER_LEVEL > Tier.DEMO)
+        @if (Constants.TIER_LEVEL != Tier.DEMO)
         {
             <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
         }
         <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
     </div>
 </div>
-@if (Constants.TIER_LEVEL > Tier.DEMO)
+@if (Constants.TIER_LEVEL != Tier.DEMO)
 {
     @if (ShowUpdateConfirmation)
     {

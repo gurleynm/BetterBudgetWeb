@@ -3,8 +3,8 @@
     public enum Tier
     {
         NONE,
-        DEMO,
         BASIC_TIER,
+        DEMO,
         TRIAL,
         ADVANCED_TIER,
         GOD_TIER

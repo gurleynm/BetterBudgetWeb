@@ -126,6 +126,7 @@ namespace BetterBudgetWeb
         public static string Token = "Nice Try";
         public static Tier TIER_LEVEL { get; set; } = Tier.TRIAL;
         public static string TIER_STATUS { get; set; } = "active";
+        public static bool TryingItOut => TIER_LEVEL == Tier.TRIAL || TIER_LEVEL == Tier.DEMO;
 
         private static bool mobile = true;
         public static bool Mobile
