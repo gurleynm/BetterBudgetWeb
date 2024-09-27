@@ -595,5 +595,14 @@ namespace BetterBudgetWeb
                     return Tier.NONE;
             }
         }
+
+        public static string Options(bool test, string option1, string option2)
+        {
+            return test ? option1 : option2;
+        }
+        public static string TestMobile(string option1, string option2)
+        {
+            return Mobile ? option1 : option2;
+        }
     }
 }

@@ -8,57 +8,60 @@
 <div style="height:100%">
     <div id="land-top" class="flex-r"
          style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;padding:1em;align-items:center;z-index:1">
-        <div>
-            <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">
-                <strong>Couple's Better Budget</strong>
-            </a>
-        </div>
+        @if (!Constants.Mobile)
+        {
+            <div>
+                <a href="" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
+                    <strong>Couple's Better Budget</strong>
+                </a>
+            </div>
 
-        @if (!Constants.Mobile && false)
-        {
-            <div style="height:100%">
-                <div class="flex-c" style="height:100%">
-                    @if (!LoadingDemo)
-                    {
-                        <button style="background-color:transparent;padding:1em;font-family:'Imprint MT Shadow';"
-                                class="btn-grad"
-                                @onclick=GrabDemo>
-                            View Demo
-                        </button>
-                    }
-                    else
-                    {
-                        <div style="font-size:large;color:white;font-family:'Imprint MT Shadow'">Loading Demo...</div>
-                    }
+            <div class="flex-c" style="height:50%;">
+                @if (!LoadingDemo)
+                {
+                    <button style="background-color:transparent;font-family:'CBB Default';"
+                            class="btn-grad"
+                            @onclick=GrabDemo>
+                        View Demo
+                    </button>
+                }
+                else
+                {
+                    <div style="font-size:large;color:white;font-family:'CBB Default'">Loading Demo...</div>
+                }
+            </div>
+            @if (!LoadingDemo)
+            {
+                <div class="flex-r" style="align-items:center">
+                    <a href="sign/in" style="font-family:'CBB Default';margin-right:1em;font-size:large;color:white">Log in</a>
+                    <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
                 </div>
-            </div>
+            }
         }
-        @if (!LoadingDemo)
+        else
         {
-            <div class="flex-r" style="align-items:center">
-                <a href="sign/in" style="font-family:'Imprint MT Shadow';margin-right:1em;font-size:large;color:white">Log in</a>
-                <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'Imprint MT Shadow';color:black;background-color:cyan">Start 45-Day Trial</button>
-            </div>
+            <a href="sign/in" style="font-family:'CBB Default';margin-right:1em;font-size:large;color:white">Log in</a>
+            <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
         }
     </div>
     <div class="flex-r" style="height:fit-content;margin-top:@HeightTopBar;">
         @if (!Constants.Mobile)
         {
             <div class="slide-right flex-c" style="height:100%">
-                <h1 style="font-size:8em;font-family:'Imprint MT Shadow';">Helping you reach your goals together</h1>
+                <h1 style="font-size:8em;font-family:'CBB Default';">Helping you reach your goals together</h1>
             </div>
         }
-        <div class="flex-c" style="height:100%;padding-top:1em">
+        <div class="flex-c-start slide-up" style="height:100%;padding:1em;width:@(Constants.Mobile ? "100%" : "50%")">
             <div class="flex-r">
-                <img src="/images/RoundLogo.png" style="width:75%;" />
+                <img src="/images/RoundLogo.png" style="width:50%;" />
             </div>
             <div class="flex-c-start" style="align-items:center">
-                <span style="font-family:'Imprint MT Shadow';font-size:xx-large;text-align:center">Start your commitment-free trial today</span>
+                <span style="font-family:'CBB Default';font-size:xx-large;text-align:center">Start your commitment-free trial today</span>
                 @if (Constants.Mobile)
                 {
                     @if (!LoadingDemo)
                     {
-                        <button style="background-color:transparent;padding:1em;font-family:'Imprint MT Shadow';"
+                        <button style="background-color:transparent;padding:1em;font-family:'CBB Default';"
                                 class="btn-grad"
                                 @onclick=GrabDemo>
                             View Demo
@@ -66,12 +69,12 @@
                     }
                     else
                     {
-                        <div style="font-size:large;color:white;font-family:'Imprint MT Shadow'">Loading Demo...</div>
+                        <div style="font-size:large;color:white;font-family:'CBB Default'">Loading Demo...</div>
                     }
                 }
                 else
                 {
-                    <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'Imprint MT Shadow';color:black;background-color:cyan">Start 45-Day Trial</button>
+                    <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
                 }
             </div>
         </div>

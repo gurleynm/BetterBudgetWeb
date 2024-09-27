@@ -1,4 +1,8 @@
-﻿.sticky {
+﻿@font-face {
+    font-family: 'CBB Default';
+    src: url('../fonts/IMPRISHA.TTF') format('truetype'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}  
+.sticky {
     position: fixed;
     top: 0;
     width: 100%;
@@ -26,7 +30,6 @@
     background-attachment: fixed;
     background-size: cover;
     height: 100vh;
-    overflow-y: auto;
     overflow-x: hidden;
     background-repeat: no-repeat;
 }
@@ -90,7 +93,7 @@ ul > li.dropdown {
         display: block;
         text-align: left;
         background-color: purple;
-        font-family: 'Imprint MT Shadow';
+        font-family: 'CBB Default';
     }
 
         .dropdown-content a:hover {
@@ -241,8 +244,21 @@ option {
     color: black;
 }
 
-report-table > td {
-    padding: 0 2vw;
+td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+td a, td input, td img {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.borderless-table > tr > td {
+    border: none;
+    text-align: center;
+    vertical-align: middle;
+    margin:0;
 }
 
 .flex-r {
@@ -325,14 +341,14 @@ report-table > td {
 
 .btn-grad {
     background-image: linear-gradient(to right, #5C258D 0%, #4389A2 51%, #5C258D 100%);
-    margin: 10px;
-    padding: 15px 45px;
+    margin: 5px;
+    padding: 8px 22px;
     text-align: center;
     text-transform: uppercase;
     transition: 0.5s;
     background-size: 200% auto;
     color: white;
-    box-shadow: 0 0 20px #eee;
+    box-shadow: 0 0 10px #eee;
     border-radius: 10px;
     display: block;
     height: fit-content;
@@ -350,14 +366,53 @@ report-table > td {
     margin-left: 10em;
 }
 
-.slide-right h1 {
-    animation: slide-right 2s forwards;
+.slide-right * {
+    animation: slide-hor 2s forwards;
     transform: translateX(-100%);
 }
 
-@keyframes slide-right {
+.slide-left {
+    width: 50%;
+    overflow: hidden;
+    margin-right: 10em;
+}
+
+.slide-left * {
+    animation: slide-hor 2s forwards;
+    transform: translateX(100%);
+}
+
+.slide-up {
+    width: 50%;
+    overflow: hidden;
+    margin-bottom: 10em;
+}
+
+.slide-up * {
+    animation: slide-vert 2s forwards;
+    transform: translateY(100%);
+}
+
+.slide-down {
+    width: 50%;
+    overflow: hidden;
+    margin-top: 10em;
+}
+
+.slide-down * {
+    animation: slide-vert 2s forwards;
+    transform: translateY(-100%);
+}
+
+@keyframes slide-hor {
     to {
         transform: translateX(0);
+    }
+}
+
+@keyframes slide-vert {
+    to {
+        transform: translateY(0);
     }
 }
 

@@ -5,22 +5,30 @@
     <div style="width:100%; margin-right:2vw;">
         <table class="toggle-table">
             <tr>
-                <th colspan="2" style="font-size:3vw;background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
+                <th colspan="3" style="font-size:3vw;background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
             </tr>
             <tr>
-                <td style="font-size:3vw;padding:.5vw 0;">@Constants.Person1</td>
-                <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson1) + " - " + Constants.Pretty(SixMonthsPerson1))</td>
+                <th></th>
+                <th>3-months of Expenses</th>
+                <th>6-months of Expenses</th>
             </tr>
             <tr>
-                <td style="font-size:3vw;padding:.5vw 0;">@Constants.Person2</td>
-                <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson2))</td>
+                <td style="padding:.5vw 0;">@Constants.Person1</td>
+                <td>@Constants.Pretty(ThreeMonthsPerson1)</td>
+                <td>@Constants.Pretty(SixMonthsPerson1)</td>
             </tr>
             <tr>
-                <td style="font-size:3vw;" colspan="2">=</td>
+                <td style="padding:.5vw 0;">@Constants.Person2</td>
+                <td>@Constants.Pretty(ThreeMonthsPerson2)</td>
+                <td>@Constants.Pretty(SixMonthsPerson2)</td>
             </tr>
             <tr>
-                <td style="font-size:3vw;"><strong>Total</strong></td>
-                <td style="font-size:3vw;">@(Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2))</td>
+                <td colspan="3">=</td>
+            </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td>@Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2)</td>
+                <td>@Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2)</td>
             </tr>
         </table>
     </div>
@@ -30,22 +38,30 @@ else
     <div style="width:100%;">
         <table class="toggle-table">
             <tr>
-                <th colspan="2" style="background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
+                <th colspan="3" style="background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
             </tr>
             <tr>
-                <td style="padding:.5vw 0;">@Constants.Person1</td>
-                <td>@(Constants.Pretty(ThreeMonthsPerson1) + " - " + Constants.Pretty(SixMonthsPerson1))</td>
+                <th></th>
+                <th>3-months of Expenses</th>
+                <th>6-months of Expenses</th>
             </tr>
             <tr>
-                <td style="padding:.5vw 0;">@Constants.Person2</td>
-                <td>@(Constants.Pretty(ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson2))</td>
+                <td style="padding:.5vw;">@Constants.Person1</td>
+                <td>@Constants.Pretty(ThreeMonthsPerson1)</td>
+                <td>@Constants.Pretty(SixMonthsPerson1)</td>
             </tr>
             <tr>
-                <td colspan="2">=</td>
+                <td style="padding:.5vw;">@Constants.Person2</td>
+                <td>@Constants.Pretty(ThreeMonthsPerson2)</td>
+                <td>@Constants.Pretty(SixMonthsPerson2)</td>
+            </tr>
+            <tr>
+                <td colspan="3">=</td>
             </tr>
             <tr>
                 <td><strong>Total</strong></td>
-                <td>@(Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2) + " - " + Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2))</td>
+                <td>@Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2)</td>
+                <td>@Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2)</td>
             </tr>
         </table>
     </div>

@@ -3,25 +3,12 @@
 @if (!Mobile)
 {
     <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="PaidWith" title="Pick a payment type ">
-        @if (Envelopes != null && Envelopes.Count > 0 && NewExpense == "Envelope")
+        @if (Balances != null)
         {
-            <option selected value="@string.Empty" disabled>@Envelope1Header</option>
-            @foreach (var pay in Envelopes)
+            <option selected value="@string.Empty" disabled>@Balance1Header</option>
+            @foreach (var pay in Balances)
             {
-                <option value="@pay.Name">@pay.Name</option>
-            }
-
-        }
-        else
-        {
-            @if (Balances != null)
-            {
-                <option selected value="@string.Empty" disabled>@Balance1Header</option>
-                @foreach (var pay in Balances)
-                {
-                    <option style="background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
-                }
-
+                <option style="background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
             }
 
         }
@@ -30,23 +17,12 @@
 else
 {
     <select class="custom-select" style="font-size:3vw;width:30vw;margin:1vh 0 1vh 0;color:white" @bind="PaidWith" title="Pick a payment type ">
-        @if (Envelopes != null && Envelopes.Count > 0 && NewExpense == "Envelope")
+        @if (Balances != null)
         {
-            <option selected value="@string.Empty" disabled>@Envelope1Header</option>
-            @foreach (var pay in Envelopes)
+            <option selected value="@string.Empty" disabled>@Balance1Header</option>
+            @foreach (var pay in Balances)
             {
-                <option style="font-size:3vw;" value="@pay.Name">@pay.Name</option>
-            }
-        }
-        else
-        {
-            @if (Balances != null)
-            {
-                <option selected value="@string.Empty" disabled>@Balance1Header</option>
-                @foreach (var pay in Balances)
-                {
-                    <option style="font-size:3vw;background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
-                }
+                <option style="font-size:3vw;background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
             }
         }
     </select>
@@ -57,19 +33,6 @@ else
 
     [Parameter]
     public string Person { get; set; } = "";
-
-    private string newExpense = "";
-    [Parameter]
-    public string NewExpense 
-    {
-        get { return newExpense; }
-        set
-        {
-            newExpense = value;
-        }
-    }
-    [Parameter]
-    public EventCallback<string> NewExpenseChanged { get; set; }
 
     private string paidWith;
 
@@ -103,7 +66,7 @@ else
 
         var Person1Balances = Constants.Balances.Where(b => ValidPaymentBalance(b, Constants.Person1)).OrderBy(ba => ba.Name).ToList();
         var Person2Balances = Constants.Balances.Where(b => ValidPaymentBalance(b, Constants.Person2)).OrderBy(ba => ba.Name).ToList();
-        
+
         int maxP1B = Person1Balances.Count == 0 ? 0 : Person1Balances.OrderByDescending(s => s.Name.Length).FirstOrDefault().Name.Length;
         int maxP1E = Person1Envelopes.Count > 0 ? Person1Envelopes.OrderByDescending(s => s.Name.Length).FirstOrDefault().Name.Length : 0;
         int maxP1 = Math.Max(maxP1B, maxP1E);
@@ -126,7 +89,7 @@ else
             Balance2Header = "Payment ".PadRight(maxP2, '-');
         }
 
-        if(Person == Constants.Person1)
+        if (Person == Constants.Person1)
         {
             Balances = new List<Balance>(Person1Balances);
             Envelopes = new List<Data.Envelope>(Person1Envelopes);
@@ -149,7 +112,7 @@ else
     {
         return (b.Person == person || b.Person.ToUpper() == "JOINT");
     }
-    
+
     private bool ValidPaymentBalance(Balance b)
     {
         return true;

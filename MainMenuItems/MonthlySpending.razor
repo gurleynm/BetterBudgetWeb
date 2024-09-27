@@ -8,7 +8,7 @@
 
 <table style="width:100%;margin-bottom:1vh">
     <tr style="height:3vw">
-        <th style="background-color: @Constants.ColorScheme["TableOdd"];padding:0 1vw;font-size: @(Constants.Mobile ? "3vw;" : "1vw");" colspan="100%">
+        <th style="background-color: @Constants.ColorScheme["TableOdd"];padding:0 1vw;" colspan="100%">
             <span>@Title</span>
             @if (!string.IsNullOrEmpty(TheBalance))
             {
@@ -31,7 +31,7 @@
                 </tr>
             }
             <tr style="border:1px black solid;background-color: @Constants.ColorScheme["TableOdd"];">
-                <td class="flex-r" style="justify-content:start;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                <td class="flex-r" style="justify-content:start;border:none">
                     <div class="flex-c" style="justify-content:space-between;align-items:start;padding:1em">
                         <div style="color:white;text-align:start">
                             @transaction.Name
@@ -43,46 +43,46 @@
                 </td>
                 @if (transaction.Person1Amount == transaction.TotalAmount)
                 {
-                    <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                    <td style="height:100%;border:none">
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
                     </td>
                     @if (ShowPerson)
                     {
-                        <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                        <td style="height:100%;border:none">
                             <div>@(Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
                         </td>
                     }
                 }
                 else if (transaction.Person2Amount == transaction.TotalAmount)
                 {
-                    <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                    <td style="height:100%;border:none">
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
                     </td>
                     @if (ShowPerson)
                     {
-                        <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                        <td style="height:100%;border:none">
                             <div>@(Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
                         </td>
                     }
                 }
                 else
                 {
-                    <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                    <td style="height:100%;border:none">
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
                         <br />
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
                     </td>
                     @if (ShowPerson)
                     {
-                        <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
+                        <td style="height:100%;border:none">
                             <div>@(Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
                             <br />
                             <div>@(Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
                         </td>
                     }
                 }
-                <td style="height:100%;font-size: @(Constants.Mobile ? "3vw;" : "1vw");border:none">
-                    <div class="flex-r" style="font-size: @(Constants.Mobile ? "3vw;" : "1vw");">
+                <td style="height:100%;border:none">
+                    <div class="flex-r" style="">
                         @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                         {
                             <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>

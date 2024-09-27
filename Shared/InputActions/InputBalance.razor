@@ -48,7 +48,7 @@
         {
             <div class="flex-c">
                 <label style="margin-right:1em">APR:</label>
-                <input type="number" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
+                <input type="number" placeholder="APR (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
             </div>
         }
         else
@@ -118,7 +118,7 @@ else
             {
                 <div class="flex-c" style="justify-content:space-around">
                     <label>APR:</label>
-                    <input type="number" placeholder="APR Percentage (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
+                    <input type="number" placeholder="APR (optional)" @bind=APR @oninput="@(async (ui) => { APR = (string) ui.Value;})" />
                 </div>
             }
             else

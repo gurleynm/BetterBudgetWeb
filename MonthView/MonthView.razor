@@ -70,37 +70,37 @@ else
     <div style="width:100%;">
         <table class="toggle-table">
             <tr>
-                <th colspan="2" style="background-color:magenta;font-size:3vw;color:white"><i>Dynamic Monthly Costs</i></th>
+                <th colspan="2" style="background-color:magenta;color:white"><i>Dynamic Monthly Costs</i></th>
             </tr>
             <tr>
-                <th style="font-size:3vw;">Expense</th>
-                <th style="font-size:3vw;">Total Budget Amount</th>
+                <th>Expense</th>
+                <th>Total Budget Amount</th>
             </tr>
             @foreach (var dci in MonthViewConstants.DynamicCostItems)
             {
                 @if (dci.Name.Contains("EXAMPLE DATA"))
                 {
                     <tr>
-                        <td style="font-size:3vw;padding:.5vw 1vw;"><i>@dci.Name</i></td>
-                        <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
+                        <td style="padding:.5vw 1vw;"><i>@dci.Name</i></td>
+                        <td>@Pretty(dci.Amount)</td>
                     </tr>
                 }
                 else
                 {
                     <tr>
-                        <td style="font-size:3vw;padding:.5vw 1vw;">
+                        <td style="padding:.5vw 1vw;">
                             <span style="align-self:start">@dci.Name</span>
                         </td>
-                        <td style="font-size:3vw;">@Pretty(dci.Amount)</td>
+                        <td>@Pretty(dci.Amount)</td>
                     </tr>
                 }
             }
             <tr>
-                <td style="font-size:3vw;" colspan="2">=</td>
+                <td colspan="2">=</td>
             </tr>
             <tr>
-                <td style="font-size:3vw;"><strong>Total</strong></td>
-                <td style="font-size:3vw;">@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+                <td><strong>Total</strong></td>
+                <td>@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.Amount))</td>
             </tr>
         </table>
     </div>

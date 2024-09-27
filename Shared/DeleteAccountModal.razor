@@ -1,0 +1,138 @@
+﻿@using BetterBudgetWeb.Repo
+@if (ShowDelete)
+{
+    <Confirmation OnClose="Delete" LeftBtnTxt="Cancel" LeftBtnColor="btn-secondary" RightBtnColor="btn-danger"
+                  @bind-Disabled=@DeleteDisabled>
+        <div>
+            <span>We hate to see you go, but we know things change!</span>
+            <br />
+            <br />
+            <span><strong>WARNING: All of your data will be deleted. This action cannot be reversed!</strong></span>
+            <br />
+            <br />
+            <span>To delete your account, please enter in your name, the other user's name, and your passwords below:</span>
+            <table class="borderless-table" style="color:white;">
+                <tr>
+                    <td>Your name:</td>
+                    <td>
+                        <input id="delUser1" type="text" @bind-value=User1 placeholder=@Constants.CUR_USER_NAME />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Their name:</td>
+                    <td>
+                        <input id="delUser2" type="text" @bind-value=User2 placeholder=@OtherUser />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Password:</td>
+                    <td>
+                        <input id="delPass" type="password" @bind-value=Password placeholder="Password" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Their Password:</td>
+                    <td>
+                        <input id="delPass" type="password" @bind-value=Password2 placeholder="Thier password" />
+                    </td>
+                </tr>
+            </table>
+            <br />
+            <span style="color:red">@ErrorMsgPass</span>
+        </div>
+    </Confirmation>
+}
+
+@code {
+
+    [CascadingParameter]
+    public EventCallback LogOff { get; set; }
+
+    private string OtherUser => Constants.CUR_USER_NAME == Constants.Person1 ? Constants.Person2 : Constants.Person1;
+
+    [Parameter]
+    public bool ShowDelete
+    {
+        get
+        {
+            return showDelete;
+        }
+        set
+        {
+            if (showDelete == value)
+                return;
+            showDelete = value;
+            ShowDeleteChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<bool> ShowDeleteChanged { get; set; }
+
+    public bool DeleteDisabled
+    {
+        get
+        {
+            return deleteDisabled;
+        }
+        set
+        {
+            if (deleteDisabled == value)
+                return;
+            deleteDisabled = value;
+        }
+    }
+
+    private bool showDelete;
+    private bool deleteDisabled;
+
+    private string User1 = "";
+    private string User2 = "";
+    private string Password = "";
+    private string Password2 = "";
+
+    private string ErrorMsgPass = "";
+    private string ErrorMsgUsername = "";
+    private string ErrorMsgEmail = "";
+
+    private async void Delete(bool accepted)
+    {
+        DeleteDisabled = true;
+        StateHasChanged();
+        if (accepted)
+        {
+            ErrorMsgPass = "";
+
+            if (User1 != Constants.Person1)
+                ErrorMsgPass = "Name is incorrect.";
+            else if (User2 != Constants.Person2)
+                ErrorMsgPass = "Second name is incorrect.";
+            else if (string.IsNullOrEmpty(Password))
+                ErrorMsgPass = "Password must be entered";
+            else if (string.IsNullOrEmpty(Password2))
+                ErrorMsgPass = "Their password must be entered";
+
+            if (!string.IsNullOrEmpty(ErrorMsgPass))
+            {
+                DeleteDisabled = false;
+                return;
+            }
+
+            bool DelUser = false;//await UserRepo.DeleteUser(User1, User2, Password, Password2);
+            await Task.Delay(2000);
+            if (!DelUser)
+            {
+                ErrorMsgPass = "Password(s) are incorrect.";
+            }
+            else
+            {
+                ShowDelete = false;
+                await LogOff.InvokeAsync();
+            }
+        }
+        else
+            ShowDelete = false;
+
+        DeleteDisabled = false;
+        StateHasChanged();
+    }
+}

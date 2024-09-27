@@ -96,6 +96,9 @@
             transition: height 0.3s ease;
             overflow: hidden;
         }
+        div.google-visualization-tooltip {
+            display: none
+        }
     </style>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -115,7 +118,7 @@
     <div id="app">
         <div style="background-color: #111827; height: 100vh; display: inline-block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100vw;">
             <div style="display:flex;justify-content:center;width:15%;flex-wrap:wrap;margin:10vh 50vw;transform: translate(-50%, 0%);">
-                <img id="LoadImg" alt="Logo loading image" src="images/BetterBudgetLogo.png" style="height:20vw;width:20vw" />
+                <img id="LoadImg" alt="Logo loading image" src="images/RoundLogo.png" style="height:20vw;width:20vw" />
             </div>
             <br />
             <div style="color:silver;font-size:5vw;display:flex;justify-content:center;width:100%;flex-wrap:wrap;margin:1vh 50vw;transform: translate(-50%, 0%);">
@@ -310,8 +313,8 @@
                             fontSize: FontSize
                         }
                     }
-                }
-                //tooltip: { isHtml: true }
+                },
+                tooltip: { isHtml: true }
             };
 
             // Instantiates and draws our chart, passing in some options.

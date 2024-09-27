@@ -19,7 +19,7 @@
                 <td style="border:none;padding-left:1em">
                     <input type="number" placeholder="Income"
                            style="width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
-                                    border:none;border-bottom:solid white 1px;text-align:center;"
+                                    border:solid white 1px;text-align:center;"
                            @bind=ProjectedIncomeAmountStr />
                 </td>
                 <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ProjectedDynamicAmount + ProjectedStaticAmount))">@Constants.Pretty(ProjectedDynamicAmount + ProjectedStaticAmount)</span></td>

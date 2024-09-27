@@ -26,7 +26,7 @@
 
     td, th {
         border: 1px solid #000000;
-        font-size: @(Constants.Mobile ? "3vw;" : "1vw");
+        font-size: @Constants.TestMobile("3vw;", "1vw");
         text-align: center;
     }
 
@@ -35,7 +35,7 @@
         font-size: 1vw;
         width: 100%;
         overflow: hidden;
-        border-radius: @(Constants.Mobile ? "5vw;" : "1vw;");
+        border-radius: @Constants.TestMobile("5vw;","1vw");
     }
 
     .income-good {
@@ -136,7 +136,7 @@
         background-color: #2a2a2a;
         color: white;
         border-radius: 12px;
-        margin-bottom: @(Constants.Mobile ? "3vw" : "1vh");
+        margin-bottom: @Constants.TestMobile("3vw;", "1vh");
     }
 
     .chart-back-hor {
@@ -176,7 +176,7 @@
         float: left;
         height: fit-content;
         font-weight: bold;
-        font-size: @(Constants.Mobile ? "3vw;" : "1vw");
+        font-size: @Constants.TestMobile("3vw;", "1vw");
         color: @Constants.ColorScheme["Text"];
         margin: 1vh;
         vertical-align: central;
@@ -201,13 +201,20 @@
     input {
         padding: 0;
         margin: 0;
-        margin-bottom: 1vh;
         background-color: transparent;
         color: white;
         border: none;
         border: solid white 1px;
         text-align: center;
         color: @Constants.ColorScheme["Text"];
+    }
+
+    td, option, input, label, select {
+        font-size: @Constants.TestMobile("3vw;","1em");
+    }
+
+    span {
+        font-size: inherit;
     }
 </style>
 
@@ -235,11 +242,12 @@
             <article>
                 <div class="flex-c-start">
                     <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
-                    <h2 style="font-family:'Imprint MT Shadow';text-align:center">Like what you see? Consider subscribing!</h2>
-                    <h3 style="font-family:'Imprint MT Shadow';text-align:center">Your trial has ended, but we'll keep your budget for an additional 10 days while you decide.</h3>
+                    <h2 style="font-family:'CBB Default';text-align:center">Like what you see? Consider subscribing!</h2>
+                    <h3 style="font-family:'CBB Default';text-align:center">Your trial has ended, but we'll keep your budget for an additional 10 days while you decide.</h3>
                     <div class="flex-r" style="margin:1em 0">
-                        <button class="btn btn-primary" style="color:black;background-color:cyan">Cancel Account</button>
+                        <button class="btn btn-primary" style="color:white;background-color:indigo" @onclick=@(() => AccountDelete = true)>Cancel Account</button>
                     </div>
+                    <DeleteAccountModal @bind-ShowDelete=AccountDelete />
                     <PaymentPlans />
                 </div>
             </article>
@@ -251,13 +259,14 @@
             <article>
                 <div class="flex-c-start" style="padding:1em">
                     <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
-                    <h2 style="text-align:center;font-family:'Imprint MT Shadow'">
+                    <h2 style="text-align:center;font-family:'CBB Default'">
                         This login appears to be associated with an account that's been canceled. This is your last chance to keep your current budget.
                         Please, create or delete your account below:
                     </h2>
                     <div class="flex-r" style="margin:1em 0">
-                        <button class="btn btn-primary" style="color:black;background-color:cyan">Cancel Account</button>
+                        <button class="btn btn-primary" style="color:white;background-color:indigo" @onclick=@(() => AccountDelete = true)>Cancel Account</button>
                     </div>
+                    <DeleteAccountModal @bind-ShowDelete=AccountDelete />
                     <PaymentPlans />
                 </div>
             </article>
@@ -267,34 +276,32 @@
     {
         @if (mobile)
         {
-            <div class="sidebar sticky" style="height:fit-content">
                 <NavMenu />
-            </div>
         }
         <main style="margin-bottom:1em">
             @if (!mobile)
             {
                 <div id="main-bar" class="flex-r" style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;align-items:center;z-index:1;padding:0 1em">
                     <div>
-                        <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">
+                        <a href="account" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
                             <strong>@("Welcome " + Constants.CUR_USER_NAME + "!")</strong>
                         </a>
                     </div>
                     <ul class="ps-3 navbar-dark flex-r" style="text-align: center;height:fit-content; list-style:none; background-color:transparent;align-items:center">
                         <li>
-                            <a class="navbar-brand" href="home" style="font-family:'Imprint MT Shadow'; text-align:center;">
+                            <a class="navbar-brand" href="home" style="font-family:'CBB Default'; text-align:center;">
                                 <span class="oi oi-lightbulb"></span> Home
                             </a>
                         </li>
                         <li>
-                            <a class="navbar-brand" href="input" style="font-family:'Imprint MT Shadow'; text-align:center;">
+                            <a class="navbar-brand" href="input" style="font-family:'CBB Default'; text-align:center;">
                                 <span class="oi oi-plus" aria-hidden="true"></span> Input
                             </a>
                         </li>
                         @if (ShowDelete)
                         {
                             <li>
-                                <a class="navbar-brand" href="delete" style="font-family:'Imprint MT Shadow'; text-align:center;">
+                                <a class="navbar-brand" href="delete" style="font-family:'CBB Default'; text-align:center;">
                                     <span class="oi oi-minus" aria-hidden="true"></span> Delete
                                 </a>
                             </li>
@@ -302,7 +309,7 @@
                         @if (ShowUpdate)
                         {
                             <li>
-                                <a class="navbar-brand" href="update" style="font-family:'Imprint MT Shadow'; text-align:center;">
+                                <a class="navbar-brand" href="update" style="font-family:'CBB Default'; text-align:center;">
                                     <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
                                 </a>
                             </li>
@@ -310,7 +317,7 @@
                         @if (ShowPortfolio)
                         {
                             <li>
-                                <a class="navbar-brand" href="portfolio" style="font-family:'Imprint MT Shadow'; text-align:center;">
+                                <a class="navbar-brand" href="portfolio" style="font-family:'CBB Default'; text-align:center;">
                                     <span class="oi oi-dollar"></span> Portfolio
                                 </a>
                             </li>
@@ -318,7 +325,7 @@
                         @if (ShowChart)
                         {
                             <li>
-                                <a class="navbar-brand" href="chart" style="font-family:'Imprint MT Shadow'; text-align:center;">
+                                <a class="navbar-brand" href="chart" style="font-family:'CBB Default'; text-align:center;">
                                     <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Chart
                                 </a>
                             </li>
@@ -326,14 +333,14 @@
                         @if (ShowForecast)
                         {
                             <li>
-                                <a class="navbar-brand" href="forecast" style="font-family:'Imprint MT Shadow'; text-align:center;">
+                                <a class="navbar-brand" href="forecast" style="font-family:'CBB Default'; text-align:center;">
                                     <span class="oi oi-sun"></span> Forecast
                                 </a>
                             </li>
                         }
                     </ul>
                     <div>
-                        <a href="account" style="font-size:large;font-family:'Imprint MT Shadow'; text-align:center; float:left;color:white;">
+                        <a href="account" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
                             <span class="oi oi-person"></span>
                             <strong>@("Manage Account")</strong>
                         </a>
@@ -350,7 +357,7 @@
                 </div>
             }
 
-            <article class="content px-4" style="padding-top:@HeightTopBar;@PaddingLeft">
+            <article class="content px-4" style="margin-top:@HeightTopBar;@PaddingLeft">
                 <CascadingValue Value=LogOff>
                     <CascadingValue Value=RunModal>
                         <CascadingValue Value=this>
@@ -388,6 +395,8 @@
 @code {
     private bool mobile => Constants.Mobile;
 
+    private bool AccountDelete { get; set; }
+
     private string LogTitle = "Logging in";
     EventCallback LogOff => EventCallback.Factory.Create(this, SignOut);
     EventCallback<Transaction> RunModal => EventCallback.Factory.Create(this, (Transaction t) => ToggleModal(t));
@@ -422,8 +431,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        string id = Constants.Mobile ? "mobile-nav-bar" : "main-bar";
         double startH = heightTopBar;
-        var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", "main-bar");
+        var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
         if (holder == "0")
             heightTopBar = 78;
         else{

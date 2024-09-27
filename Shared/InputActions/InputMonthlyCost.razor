@@ -33,7 +33,7 @@
     <div>
         <label>Monthly Name:</label>
         <br />
-        <input type="text" placeholder="Name of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
+        <input type="text" placeholder="Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
     </div>
     <br />
     @if (Dyna == "DYNAMIC")
@@ -101,7 +101,7 @@ else
         <div style="float:left; margin-right:10vw;">
             <label>Monthly Name:</label>
             <br />
-            <input type="text" placeholder="Name of Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
+            <input type="text" placeholder="Monthly Expense" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
         </div>
         <br style="clear:both;" />
         <br />

@@ -3,7 +3,7 @@
     <MiniPage @bind-Username=Username @bind-Email=Email @bind-Password=Password @bind-ConfirmPassword=ConfirmPassword1 />
     <PasswordRules @ref=@passwordRules1 Password="@Password" ConfirmedPassword="@ConfirmPassword1" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:end;padding-top:1em">
-        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'Imprint MT Shadow';color:black;background-color:cyan" @onclick="Next">Next</button>
+        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Next</button>
     </div>
 }
 else if (Page == 2)
@@ -12,7 +12,7 @@ else if (Page == 2)
     <MiniPage @bind-Username=Username2 @bind-Email=Email2 @bind-Password=Password2 @bind-ConfirmPassword=ConfirmPassword2 />
     <PasswordRules @ref=@passwordRules2 Password="@Password2" ConfirmedPassword="@ConfirmPassword2" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:space-between;padding-top:1em">
-        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'Imprint MT Shadow';color:black;background-color:cyan" @onclick="Next">Start 45-Day Trial</button>
+        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Start 45-Day Trial</button>
     </div>
 }
 

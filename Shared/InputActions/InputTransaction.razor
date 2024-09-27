@@ -76,11 +76,11 @@
                 <br />
                 @if (ExpenseType == "Transfer")
                 {
-                    <input type="text" disabled placeholder="Name of Transaction" value="Transfer" />
+                    <input type="text" disabled placeholder="Name" value="Transfer" />
                 }
                 else
                 {
-                    <input type="text" placeholder="Name of Transaction" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
+                    <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
                 }
             </div>
             <br />
@@ -410,11 +410,11 @@ else
             <br />
             @if (ExpenseType == "Transfer")
             {
-                <input type="text" disabled placeholder="Name of Transaction" value="Transfer" />
+                <input type="text" disabled placeholder="Name" value="Transfer" />
             }
             else
             {
-                <input type="text" placeholder="Name of Transaction" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
+                <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
             }
         </div>
         <div style="float:left; margin-right:12vw;">

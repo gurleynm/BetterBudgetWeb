@@ -1,6 +1,14 @@
 ﻿<div class="text-color flex-c" style="background-color:transparent;width:100%;">
     <div class="chart-bar-hor__label flex-r" style="justify-content:start;border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
-        <span class="text-color">@Label</span>
+        <span class="text-color" style="padding-right:1em">@Label </span>
+        @if (Show)
+        {
+            <span class="oi oi-caret-bottom"></span>
+        }
+        else
+        {
+            <span class="oi oi-caret-right"></span>
+        }
     </div>
     <div class="chart-bar-hor__inner flex-r" style="@BackgroundColorAdjusted;justify-content:start;cursor:pointer" @onclick=OnClick>
         @if (Negative)

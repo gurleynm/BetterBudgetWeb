@@ -28,18 +28,18 @@ else
     }
     else
     {
-        <select class="custom-select" style="font-size:3vw;margin:1vh 0 1vh 0;width:20vw;color:white" @bind="NewExpense" title="Pick an Expense Type ">
-            <option style="font-size:3vw;" value="@string.Empty" selected disabled="disabled">Expense</option>
+        <select class="custom-select" style="margin:1vh 0 1vh 0;width:20vw;color:white" @bind="NewExpense" title="Pick an Expense Type ">
+            <option value="@string.Empty" selected disabled="disabled">Expense</option>
             @foreach (var et in ExpenseTypes)
             {
                 @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
                || et.Contains("-- Others --"))
                 {
-                    <option style="font-size:3vw;" disabled value="@et">@et</option>
+                    <option disabled value="@et">@et</option>
                 }
                 else
                 {
-                    <option style="font-size:3vw;" value="@et">@et</option>
+                    <option value="@et">@et</option>
                 }
             }
         </select>
@@ -90,9 +90,6 @@ else
             TempDCI.Add(dci.Name.Replace(FilterIndicatorTxt, ""));
 
         TempDCI.Sort();
-
-        if (Person1Envelopes.Count > 0 || Person2Envelopes.Count > 0)
-            TempOth.Add("Envelope");
 
         if (Balances.Count(bal => bal.BalanceType == "Equity") > 0)
             TempOth.Add("Equity");

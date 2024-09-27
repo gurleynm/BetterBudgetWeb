@@ -124,43 +124,43 @@ else
 {
     <table class="toggle-table" style="margin-left:1vw;">
         <tr>
-            <th colspan="4" style="font-size:3vw;background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
+            <th colspan="4" style="background-color:magenta;color:white;"><i>Dynamic Monthly Costs</i></th>
         </tr>
         <tr>
-            <th style="font-size:3vw;padding:5px">Expense</th>
-            <th style="font-size:3vw;padding:5px">Total Budget Amount</th>
-            <th style="font-size:3vw;padding:5px">Spent</th>
-            <th style="font-size:3vw;padding:5px">Difference</th>
+            <th style="padding:5px">Expense</th>
+            <th style="padding:5px">Total Budget Amount</th>
+            <th style="padding:5px">Spent</th>
+            <th style="padding:5px">Difference</th>
         </tr>
         @foreach (var sfd in SFDs)
         {
             @if (sfd.Name.Contains("EXAMPLE DATA"))
             {
                 <tr>
-                    <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
-                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
-                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
-                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
+                    <td style="padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
+                    <td style="padding:5px">@Pretty(sfd.Projected)</td>
+                    <td style="padding:5px">@Pretty(sfd.Actual)</td>
+                    <td style="padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
                 </tr>
             }
             else
             {
                 <tr>
-                    <td style="font-size:3vw;padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
-                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Projected)</td>
-                    <td style="font-size:3vw;padding:5px">@Pretty(sfd.Actual)</td>
-                    <td class="@TranColor(sfd.Projected - sfd.Actual)" style="font-size:3vw;padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
+                    <td style="padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
+                    <td style="padding:5px">@Pretty(sfd.Projected)</td>
+                    <td style="padding:5px">@Pretty(sfd.Actual)</td>
+                    <td class="@TranColor(sfd.Projected - sfd.Actual)" style="padding:5px">@Pretty(sfd.Projected - sfd.Actual)</td>
                 </tr>
             }
         }
         <tr>
-            <td colspan="4" style="font-size:3vw;padding:5px">=</td>
+            <td colspan="4" style="padding:5px">=</td>
         </tr>
         <tr>
-            <td style="font-size:3vw;padding:5px"><strong>Total</strong></td>
-            <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected))</td>
-            <td style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Actual))</td>
-            <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))" style="font-size:3vw;padding:5px">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
+            <td style="padding:5px"><strong>Total</strong></td>
+            <td style="padding:5px">@Pretty(SFDs.Sum(d => d.Projected))</td>
+            <td style="padding:5px">@Pretty(SFDs.Sum(d => d.Actual))</td>
+            <td class="@TranColor(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))" style="padding:5px">@Pretty(SFDs.Sum(d => d.Projected) - SFDs.Sum(d => d.Actual))</td>
         </tr>
     </table>
 }
