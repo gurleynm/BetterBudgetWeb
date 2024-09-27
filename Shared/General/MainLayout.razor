@@ -36,7 +36,7 @@
         font-size: 1vw;
         width: 100%;
         overflow: hidden;
-        border-radius: @Constants.TestMobile("5vw;","1vw");
+        border-radius: @Constants.TestMobile("5vw;", "1vw");
     }
 
     .income-good {
@@ -211,7 +211,7 @@
     }
 
     td, option, input, label, select {
-        font-size: @Constants.TestMobile("3vw;","1em");
+        font-size: @Constants.TestMobile("3vw;", "1em");
     }
 
     span {
@@ -277,7 +277,7 @@
     {
         @if (mobile)
         {
-                <NavMenu />
+            <NavMenu />
         }
         <main style="margin-bottom:1em">
             @if (!mobile)
@@ -432,15 +432,24 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        string id = Constants.Mobile ? "mobile-nav-bar" : "main-bar";
-        double startH = heightTopBar;
-        var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
-        if (holder == "0")
-            heightTopBar = 78;
-        else{
-            heightTopBar = Convert.ToDouble(holder);
-            if (heightTopBar != startH)
-                StateHasChanged();
+        try
+        {
+            string id = Constants.Mobile ? "mobile-nav-bar" : "main-bar";
+            double startH = heightTopBar;
+            var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
+            if (holder == "0")
+                heightTopBar = 78;
+            else
+            {
+                heightTopBar = Convert.ToDouble(holder);
+                if (heightTopBar != startH)
+                    StateHasChanged();
+            }
+        }
+        catch (Exception e)
+        {
+            if (firstRender)
+                NavMan.NavigateTo("home", true);
         }
     }
     protected override async Task OnInitializedAsync()
