@@ -1,0 +1,1 @@
+﻿const CACHE_VERSION = 2.0;
