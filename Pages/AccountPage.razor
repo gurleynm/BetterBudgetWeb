@@ -7,18 +7,24 @@
 <PageTitle>Account</PageTitle>
 
 <div class="flex-r" style="justify-content:space-between;align-items:center">
-    <div>
-        <h3 style="font-family:'CBB Default'">Account Page</h3>
+    <div class="flex-r" style="align-items:baseline">
+        <h3 style="font-family:'CBB Default';margin-right:1em">Account Page</h3>
+        @if (!Constants.Mobile)
+        {
+            <div class="flex-c-start">
+                <button class="btn btn-primary" style="background-color:indigo" disabled=@ShowChangedDisabled @onclick=@(() => { Update(); })>Save Changes</button>
+            </div>
+        }
     </div>
     <div class="flex-r">
-        @if (Constants.TIER_LEVEL != Tier.DEMO)
+        @if (Constants.TIER_LEVEL > Tier.DEMO)
         {
             <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
         }
         <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
     </div>
 </div>
-@if (Constants.TIER_LEVEL != Tier.DEMO)
+@if (Constants.TIER_LEVEL > Tier.DEMO)
 {
     @if (ShowUpdateConfirmation)
     {
@@ -33,20 +39,21 @@
                 text-align:center;
                 pointer-events:none;
                 z-index:10;">
-            Password successfully updated!
+            Update successful!
         </div>
     }
-    <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="width:100%;justify-content:space-evenly">
-        <div class="flex-c">
-            <h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
-            <h4>The second user's name is: <span>@OtherUser</span></h4>
-        </div>
+    <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="width:100%;justify-content:space-between">
+        <h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
         <h4>Your email is: <input type="email" @bind-value=@NewEmail style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
-        <div class="flex-c-start">
+        <h4>The second user's name is: <span>@OtherUser</span></h4>
+    </div>
+    @if (Constants.Mobile)
+    {
+        <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
             <button class="btn btn-primary" style="background-color:indigo" disabled=@ShowChangedDisabled @onclick=@(() => { Update(); })>Save Changes</button>
         </div>
-    </div>
-    @if (Constants.TIER_LEVEL != Data.Tier.GOD_TIER)
+    }
+    @if (Constants.TIER_LEVEL < Data.Tier.GOD_TIER)
     {
         <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
             <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
@@ -134,7 +141,7 @@ else
 
     private string NewUsername = "";
     private string NewEmail = "";
-    
+
     private string OG_Username = "";
     private string OG_Email = "";
 
