@@ -135,6 +135,7 @@ namespace BetterBudgetWeb
 
         public static string BaseUri = "";
         public static string CUR_USER_NAME { get; set; }
+        public static string CUR_USER_EMAIL { get; set; }
         public static string Person1 { get; set; } = "David";
         public static string Person2 { get; set; } = "Katie";
 
