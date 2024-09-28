@@ -284,8 +284,6 @@ else
 
     private List<Transaction> Transactions;
     private List<Transaction> FilteredTransactions;
-    private List<Balance> Balances;
-    private List<Security> Securities;
     private List<DynamicCostItem> DynamicCostItems;
 
     private string SelectedBalance = "";
@@ -348,7 +346,7 @@ else
         }
     }
 
-    private List<Transaction> MonthlyTransactions = new List<Transaction>();
+    private List<Transaction> MonthlyTransactions =>Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
     private double ActualStatic => MonthlyTransactions.Where(ft => ft.ExpenseType == "Static Cost").Sum(ft => ft.TotalAmount);
     private double ActualIncome => MonthlyTransactions.Where(ft => ft.ExpenseType == "Income").Sum(ft => ft.TotalAmount);
     private double ActualDynamic => DynamicCostItems.Sum(dci => dci.Amount) - DynamicCostItems.Sum(dci => dci.Left);
@@ -359,8 +357,8 @@ else
     private double EnvelopeExpenses => FilteredTransactions.Where(ft => ft.ExpenseType == "Envelope").Sum(ft => ft.TotalAmount)
                                         + FilteredTransactions.Where(ft => IsAnEnvelope(ft)).Sum(ft => ft.TotalAmount);
 
-    private List<Balance> BalancesP1 => Balances.Where(b => b.Person == Constants.Person1 | b.Person.ToUpper() == "JOINT").ToList();
-    private List<Balance> BalancesP2 => Balances.Where(b => b.Person == Constants.Person2 | b.Person.ToUpper() == "JOINT").ToList();
+    private List<Balance> BalancesP1 => Constants.Balances.Where(b => b.Person == Constants.Person1 | b.Person.ToUpper() == "JOINT").ToList();
+    private List<Balance> BalancesP2 => Constants.Balances.Where(b => b.Person == Constants.Person2 | b.Person.ToUpper() == "JOINT").ToList();
     private List<string> ETs => FillEts();
 
     private bool Disabled;
@@ -423,14 +421,11 @@ else
     {
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
 
-        Balances = Constants.catchAll.Balances;
         Transactions = Constants.catchAll.Transactions;
         FilteredTransactions = new List<Transaction>(Transactions);
 
         FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
-        MonthlyTransactions = new List<Transaction>(FilteredTransactions);
         ErrorMsg = string.Empty;
-        Balances.Sort(Constants.CompareBalance);
 
         Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList();
 
@@ -633,8 +628,6 @@ else
         {
             Transactions = Constants.Transactions;
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
-            Balances = Constants.Balances;
-            Balances.Sort(Constants.CompareBalance);
         }
 
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
@@ -737,7 +730,6 @@ else
             Transactions = await TransactionRepo.AddOrUpdateAsync(nt);
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
 
-            Balances = Constants.Balances;
             Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList(); ;
 
             AddConfirm();
@@ -752,7 +744,6 @@ else
         Transactions = new List<Transaction>(e);
 
         FilteredTransactions = e.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
-        MonthlyTransactions = new List<Transaction>(FilteredTransactions);
 
         StateHasChanged();
     }
