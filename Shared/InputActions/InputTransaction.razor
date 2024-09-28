@@ -835,8 +835,8 @@ else
     public string Hex { get; set; }
     [Parameter]
     public string TextColor { get; set; }
-
-    public List<Preset> Presets { get; set; }
+    
+    private List<Preset> Presets => Constants.Presets;
     public List<Preset> PresetsForDel { get; set; }
 
     public bool Mobile => Constants.Mobile;
@@ -866,8 +866,7 @@ else
 
     protected override Task OnInitializedAsync()
     {
-        Presets = new List<Preset>(Constants.Presets);
-        PresetsForDel = new List<Preset>(Constants.Presets);
+        PresetsForDel = new List<Preset>(Presets);
 
         foreach(var smc in Constants.StaticMonthlyCosts)
         {
@@ -881,9 +880,6 @@ else
 
         List<string> dcis = new List<string>();
         List<string> others = new List<string>();
-        var c = Constants.Balances;
-        var b = Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType != "Loan").OrderBy(p1b => p1b.Name).ToList(); ;
-
 
         foreach (var dci in Constants.DynamicCostItems)
             dcis.Add(dci.Name);
@@ -927,7 +923,7 @@ else
         Preset exists = Presets.FirstOrDefault(p => p.Id == SelectedPreset);
 
         if (exists != null){
-            Presets = await PresetRepo.RemoveAsync(exists);
+            await PresetRepo.RemoveAsync(exists);
             PresetsForDel = new List<Preset>(Presets);
         }
 
@@ -1023,7 +1019,7 @@ else
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
-            Presets = await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2), Hex, TextColor));
+            await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2), Hex, TextColor));
             PresetsForDel = new List<Preset>(Presets);
 
             Presets.Sort();

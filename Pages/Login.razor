@@ -9,7 +9,7 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 <PageTitle>Enter Password</PageTitle>
 
-<div style="position:absolute;top:1em;left:1em"><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px"/> Back to main page</a></div>
+<div style="position:absolute;top:1em;left:1em"><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
 @if (mobile)
 {
     <div style="display:inline-block;width:100vw;height:100vh;">
@@ -170,15 +170,18 @@ else
             await sessionStorage.SetItemAsync("token", Constants.Token);
 
             if (string.IsNullOrEmpty(username))
+            {
                 Constants.CUR_USER_NAME = await sessionStorage.GetItemAsync<string>("CUR_USER_NAME");
+                await Constants.Init(true);
+            }
             else
+            {
                 Constants.CUR_USER_NAME = username;
+                await sessionStorage.SetItemAsync("CUR_USER_NAME", Constants.CUR_USER_NAME);
+                await Constants.Init(true);
+                NavMan.NavigateTo("home");
+            }
 
-            await sessionStorage.SetItemAsync("CUR_USER_NAME", Constants.CUR_USER_NAME);
-
-
-            await Constants.Init(true);
-            NavMan.NavigateTo("home");
         }
         else if (countAttempt)
         {

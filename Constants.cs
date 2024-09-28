@@ -105,7 +105,21 @@ namespace BetterBudgetWeb
                 }
             }
         }
-        public static List<DynamicCostItem> DynamicCostItems { get; set; } = new();
+        public static EventHandler<List<DynamicCostItem>> DynamicCostItemsChanged = (sender, value) => { };
+
+        private static List<DynamicCostItem> dynamicCostItems = new List<DynamicCostItem>();
+        public static List<DynamicCostItem> DynamicCostItems
+        {
+            get => dynamicCostItems;
+            set
+            {
+                if (dynamicCostItems != value)
+                {
+                    dynamicCostItems = value;
+                    DynamicCostItemsChanged?.Invoke(typeof(Constants), dynamicCostItems);
+                }
+            }
+        }
         public static List<SavingsGoal> SavingsGoals { get; set; } = new();
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; } = new();
         public static List<ProjectedDatum> ProjectedData { get; set; } = new();
@@ -172,8 +186,6 @@ namespace BetterBudgetWeb
                 await RedrivePeople();
 
                 AssignCatches();
-
-                SetMonthlies(Monthlies);
             }
         }
         public static void AssignCatches(CatchAll ca = null)
@@ -182,10 +194,11 @@ namespace BetterBudgetWeb
                 catchAll = new CatchAll(ca);
 
             Transactions = new List<Transaction>(catchAll.Transactions);
-            Balances = new List<Balance>(catchAll.Balances);
-            Monthlies = new List<Monthly>(catchAll.Monthlies);
-            Envelopes = new List<Envelope>(catchAll.Envelopes);
             Presets = new List<Preset>(catchAll.Presets);
+            Monthlies = new List<Monthly>(catchAll.Monthlies);
+            SetMonthlies(Monthlies);
+            Balances = new List<Balance>(catchAll.Balances);
+            Envelopes = new List<Envelope>(catchAll.Envelopes);
             Securities = new List<Security>(catchAll.Securities);
             if (DR != null)
             {
