@@ -72,6 +72,9 @@
 else
 {
     <div style="font-family:'CBB Default';font-size:large">This the demo page. Normally, this would contain info about your account and subscription.</div>
+    <div class="flex-r" style="width:100%">
+        <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
+    </div>
 }
 
 @if (ShowUpdatePassword)
