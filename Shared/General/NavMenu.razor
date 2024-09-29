@@ -1,4 +1,5 @@
-﻿@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+﻿@using BetterBudgetWeb.Data
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <div id="mobile-nav-bar" class="navbar-dark" style="position:fixed;top:0;padding:0;background-color:indigo;width:100%;z-index:1">
     <div class="flex-r" style="width:100%;padding:1em;justify-content:space-between">
@@ -14,7 +15,7 @@
         <nav class="flex-column" style="justify-content:start">
             <div class="nav-item px-1">
                 <NavLink class="nav-link" href="home" Match="NavLinkMatch.All" style="font-size:large">
-                    <span class="oi oi-home"aria-hidden="true"></span><span>&nbsp;Home</span>
+                    <span class="oi oi-home" aria-hidden="true"></span><span>&nbsp;Home</span>
                 </NavLink>
             </div>
             <div class="nav-item px-1">
@@ -32,21 +33,27 @@
                     <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
                 </NavLink>
             </div>
-            <div class="nav-item px-1">
-                <NavLink class="nav-link" href="portfolio" style="font-size:large">
-                    <span class="oi oi-dollar" aria-hidden="true"></span> Portfolio
-                </NavLink>
-            </div>
+            @if (Constants.TIER_LEVEL > Tier.BASIC_TIER)
+            {
                 <div class="nav-item px-1">
-                    <NavLink class="nav-link" href="chart" style="font-size:large">
+                    <NavLink class="nav-link" href="portfolio" style="font-size:large">
+                        <span class="oi oi-dollar" aria-hidden="true"></span> Portfolio
+                    </NavLink>
+                </div>
+            }
+            <div class="nav-item px-1">
+                <NavLink class="nav-link" href="chart" style="font-size:large">
                     <span class="oi oi-bar-chart" aria-hidden="true"></span> Chart
                 </NavLink>
             </div>
-            <div class="nav-item px-1">
-                <NavLink class="nav-link" href="forecast" style="font-size:large">
-                    <span class="oi oi-sun"></span> Forecast
-                </NavLink>
-            </div>
+            @if (Constants.TIER_LEVEL > Tier.BASIC_TIER)
+            {
+                <div class="nav-item px-1">
+                    <NavLink class="nav-link" href="forecast" style="font-size:large">
+                        <span class="oi oi-sun"></span> Forecast
+                    </NavLink>
+                </div>
+            }
             <div class="nav-item px-1">
                 <NavLink class="nav-link" href="Account" style="font-size:large">
                     <span class="oi oi-person"></span> Manage Account

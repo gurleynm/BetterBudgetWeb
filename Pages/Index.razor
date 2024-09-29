@@ -117,32 +117,35 @@ else
                         </div>
                     </div>
                     <br />
-                    <div style="float:right; margin-bottom:1vh;margin-right:1vw;">
-                        <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
-                            <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                            <option value="All">All</option>
-                            @foreach (var dt in FoundMonths)
+                    @if (Constants.TIER_LEVEL > Tier.BASIC_TIER)
+                    {
+                        <div style="float:right; margin-bottom:1vh;margin-right:1vw;">
+                            <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
+                                <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                                <option value="All">All</option>
+                                @foreach (var dt in FoundMonths)
+                                {
+                                    <option value="@dt">@dt</option>
+                                }
+                            </select>
+                            <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
+                                <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                                <option value="All">All</option>
+                                @foreach (var dt in FoundYears)
+                                {
+                                    <option value="@dt">@dt</option>
+                                }
+                            </select>
+                            @if (ValidChoice)
                             {
-                                <option value="@dt">@dt</option>
+                                <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
                             }
-                        </select>
-                        <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
-                            <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                            <option value="All">All</option>
-                            @foreach (var dt in FoundYears)
+                            else
                             {
-                                <option value="@dt">@dt</option>
+                                <label style="color:red">No values for this combination.</label>
                             }
-                        </select>
-                        @if (ValidChoice)
-                        {
-                            <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
-                        }
-                        else
-                        {
-                            <label style="color:red">No values for this combination.</label>
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
 
             </div>
@@ -346,7 +349,7 @@ else
         }
     }
 
-    private List<Transaction> MonthlyTransactions =>Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+    private List<Transaction> MonthlyTransactions => Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
     private double ActualStatic => MonthlyTransactions.Where(ft => ft.ExpenseType == "Static Cost").Sum(ft => ft.TotalAmount);
     private double ActualIncome => MonthlyTransactions.Where(ft => ft.ExpenseType == "Income").Sum(ft => ft.TotalAmount);
     private double ActualDynamic => DynamicCostItems.Sum(dci => dci.Amount) - DynamicCostItems.Sum(dci => dci.Left);

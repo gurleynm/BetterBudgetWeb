@@ -20,7 +20,7 @@
 @if (Mobile)
 {
     <div style="width:fit-content">
-        @if (Presets != null && Presets.Count > 0)
+        @if (Presets != null && Presets.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER)
         {
             <br style="clear:both" />
             <div style="width:90vw;height:fit-content;right:1vw;top:15vh;">
@@ -709,7 +709,7 @@ else
         </div>
         <br style="clear:both;" />
 
-        @if (Presets != null && Presets.Count > 0)
+        @if (Presets != null && Presets.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER)
         {
             <div style="position:absolute; width:20vw;height:80vh;right:1vw;top:15vh;">
                 <h1 style="text-align:center">Presets:</h1>
@@ -755,7 +755,7 @@ else
                     </div>
                 </div>
 
-                @if (PresetsForDel != null)
+                @if (PresetsForDel != null && Constants.TIER_LEVEL > Tier.BASIC_TIER)
                 {
                     <div style="position:absolute;bottom:1vw;left:1vh;">
                         <span>Delete Preset:</span>
