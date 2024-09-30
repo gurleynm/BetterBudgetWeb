@@ -203,7 +203,8 @@
     }
     private void BalancesUpdated(object sender, List<Balance> e)
     {
-        ResizeParent();
+        if (Show)
+            ResizeParent();
     }
     public void Dispose()
     {
