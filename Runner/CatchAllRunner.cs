@@ -34,7 +34,7 @@ namespace BetterBudgetWeb.Runner
         }
         public static async Task<CatchAll> GrabDemo()
         {
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "DEMO");
 
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(baseURI);
@@ -51,6 +51,8 @@ namespace BetterBudgetWeb.Runner
             CatchAll CA = JsonSerializer.Deserialize<CatchAll>(content, _options);
             Constants.catchAll = CA;
             Constants.TIER_LEVEL = Tier.DEMO;
+            Constants.Token = "DEMO";
+            Constants.CUR_USER_NAME = "Optimus";
 
             await Constants.Init(true);
 

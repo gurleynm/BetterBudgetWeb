@@ -22,7 +22,8 @@ namespace BetterBudgetWeb.Repo
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-            var response = await client.GetAsync(baseURI + "&duration=" + start);
+            string url = baseURI + "?duration=" + start;
+            var response = await client.GetAsync(url);
             var content = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)

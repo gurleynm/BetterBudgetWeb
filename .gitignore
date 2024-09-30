@@ -14,3 +14,4 @@ Properties/PublishProfiles/BetterBudget - Web Deploy.pubxml.user
 *.user
 BetterBudgetWeb.csproj.user
 BetterBudgetWeb.csproj.user
+HiddenEnv.cs

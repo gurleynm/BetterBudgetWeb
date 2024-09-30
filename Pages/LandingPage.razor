@@ -86,6 +86,7 @@
     private string HeightTopBar => heightTopBar + "px";
 
     private bool LoadingDemo { get; set; }
+    private Task GrabDemoTask;
 
     protected override async Task OnInitializedAsync()
     {
@@ -104,6 +105,8 @@
         {
             Constants.Mobile = false;
         }
+
+        GrabDemoTask = CatchAllRunner.GrabDemo();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -114,14 +117,10 @@
     private async void GrabDemo()
     {
         LoadingDemo = true;
-        Constants.Token = "DEMO";
-        Constants.CUR_USER_NAME = "Optimus";
-        Constants.catchAll = await CatchAllRunner.GrabDemo();
+        await GrabDemoTask;
         Constants.WeIn = true;
 
         NavMan.NavigateTo("home");
-
-        Constants.WeIn = true;
         StateHasChanged();
     }
 }
