@@ -5,6 +5,7 @@
 @using BetterBudgetWeb.Shared.InputActions
 @using BetterBudgetWeb.Shared.DeleteActions
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavMan
 
 <PageTitle>Portfolio</PageTitle>
 
@@ -346,6 +347,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        if (Constants.TIER_LEVEL <= Tier.BASIC_TIER)
+            NavMan.NavigateTo("home");
+
         Securities = SecurityRepo.GetSecurities();
         InvestmentAccounts = Constants.Balances.Where(bal => bal.BalanceType.ToUpper() == "STOCKS").ToList();
 
