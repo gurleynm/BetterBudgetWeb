@@ -67,6 +67,21 @@
     public string SetClass { get; set; }
     [Parameter]
     public bool ShowPersonInMonthly { get; set; } = true;
+    [Parameter]
+    public bool ParentOpen { 
+        get { return parentOpen; }
+        set
+        {
+            if (parentOpen == value)
+                return;
+            parentOpen = value;
+
+            ParentOpenChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<bool> ParentOpenChanged { get; set; }
+    private bool parentOpen { get; set; }
 
     [Parameter]
     public EventCallback<bool> OnDeleteConfirm { get; set; }
@@ -203,7 +218,7 @@
     }
     private void BalancesUpdated(object sender, List<Balance> e)
     {
-        if (Show)
+        if (ParentOpen)
             ResizeParent();
     }
     public void Dispose()

@@ -1,6 +1,7 @@
 ﻿using BetterBudgetWeb.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -8,14 +9,13 @@ namespace BetterBudgetWeb.Repo
 {
     public class UserRepo
     {
-        private static HttpClient client = new HttpClient();
-
         private static string baseURI => Constants.BaseUri + "User";
         private static string baseTokenURI => Constants.BaseUri + "User/Token";
         public static async Task<bool> VerifyUserAsync(string user, string pass)
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            
+
+            HttpClient client = new HttpClient();
             var response = await client.GetAsync(baseURI + "?user=" + user + "&pass=" + pass);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
@@ -42,9 +42,11 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<bool> VerifyUserAsync(string token)
         {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             
-            var response = await client.GetAsync(baseTokenURI + "?token=" + token);
+            var response = await client.GetAsync(baseTokenURI);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
                 return false;
@@ -79,12 +81,13 @@ namespace BetterBudgetWeb.Repo
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = baseURI;
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
 
             requestMessage.Content = JsonContent.Create(Users);
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
@@ -115,12 +118,13 @@ namespace BetterBudgetWeb.Repo
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = baseURI + $"?token={Constants.Token}";
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Put, adjustedUrl);
 
             requestMessage.Content = JsonContent.Create(UpdatedUser);
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
@@ -151,15 +155,16 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return true;
 
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = baseURI + $"?user={user}&user2={user2}&pass={pass}&pass2={pass2}";
 
-            HttpClient _client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, adjustedUrl);
 
             requestMessage.Content = JsonContent.Create("");
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
@@ -190,7 +195,7 @@ namespace BetterBudgetWeb.Repo
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = Constants.BaseUri + "Password" + $"?email={email}";
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
 
             var response = await client.GetAsync(adjustedUrl);
             var content = await response.Content.ReadAsStringAsync();
@@ -215,12 +220,13 @@ namespace BetterBudgetWeb.Repo
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = Constants.BaseUri + "Password/" + $"?resetToken={token}";
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
+
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Put, adjustedUrl);
 
             requestMessage.Content = JsonContent.Create("");
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
@@ -243,12 +249,12 @@ namespace BetterBudgetWeb.Repo
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             string adjustedUrl = Constants.BaseUri + "Password/" + $"?resetToken={token}&newPass={pass}";
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
 
             requestMessage.Content = JsonContent.Create("");
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {

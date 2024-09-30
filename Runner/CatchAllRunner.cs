@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace BetterBudgetWeb.Runner
@@ -7,9 +8,11 @@ namespace BetterBudgetWeb.Runner
     {
         private static HttpClient client = new HttpClient();
 
-        private static string baseURI => Constants.BaseUri + "CatchAll?token=" + Constants.Token;
+        private static string baseURI => Constants.BaseUri + "CatchAll";
         public static async Task<CatchAll> Grab()
         {
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
+
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(baseURI);
             var content = await response.Content.ReadAsStringAsync();
@@ -31,6 +34,8 @@ namespace BetterBudgetWeb.Runner
         }
         public static async Task<CatchAll> GrabDemo()
         {
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
+
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(baseURI);
             var content = await response.Content.ReadAsStringAsync();

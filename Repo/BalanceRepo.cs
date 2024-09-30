@@ -2,6 +2,7 @@
 using BetterBudgetWeb.Shared;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Xml.Linq;
@@ -10,16 +11,16 @@ namespace BetterBudgetWeb.Repo
 {
     public class BalanceRepo
     {
-        private static HttpClient client = new HttpClient();
-
-        private static string baseURI => Constants.BaseUri + "Balance?token=" + Constants.Token;
+        private static string baseURI => Constants.BaseUri + "Balance";
         public static List<Balance> Balances { get; set; }
         public static async Task<List<Balance>> GetBalancesAsync()
         {
             if(Constants.Token == "DEMO")
                 return Constants.Balances;
 
+            HttpClient client = new HttpClient();
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             var response = await client.GetAsync(baseURI);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
@@ -114,12 +115,13 @@ namespace BetterBudgetWeb.Repo
 
             bal.Name = bal.Name.Trim();
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
 
             requestMessage.Content = JsonContent.Create(bal);
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
@@ -143,12 +145,13 @@ namespace BetterBudgetWeb.Repo
                 Constants.Balances = new List<Balance>(Constants.catchAll.Balances);
                 return Constants.Balances;
             }
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
 
             requestMessage.Content = JsonContent.Create(bal);
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {

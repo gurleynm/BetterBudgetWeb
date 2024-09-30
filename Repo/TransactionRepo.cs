@@ -2,6 +2,7 @@
 using BetterBudgetWeb.Runner;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Xml.Linq;
@@ -10,15 +11,15 @@ namespace BetterBudgetWeb.Repo
 {
     public class TransactionRepo
     {
-        private static HttpClient client = new HttpClient();
-
-        private static string baseURI => Constants.BaseUri + "Transaction?token=" + Constants.Token;
+        private static string baseURI => Constants.BaseUri + "Transaction";
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public static async Task<List<Transaction>> GetTransactionsAsync(string start = "3")
         {
             if (Constants.Token == "DEMO")
                 return Constants.Transactions;
 
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
             var response = await client.GetAsync(baseURI + "&duration=" + start);
@@ -132,12 +133,13 @@ namespace BetterBudgetWeb.Repo
 
             trans.Name = trans.Name.Trim();
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
 
             requestMessage.Content = JsonContent.Create(trans);
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
@@ -169,14 +171,15 @@ namespace BetterBudgetWeb.Repo
                 return Constants.Transactions;
             }
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
 
             var trans = Transactions.FirstOrDefault(t => t.Id == id);
 
             requestMessage.Content = JsonContent.Create(trans);
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {

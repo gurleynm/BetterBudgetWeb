@@ -23,7 +23,7 @@
         @foreach (var bal in Balances)
         {
             <BalanceSlot TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals
-                         ShowPersonInMonthly=Constants.Mobile ParentId=@Id />
+                         ShowPersonInMonthly=Constants.Mobile ParentId=@Id @bind-ParentOpen=OpenTray/>
         }
     </div>
 </PopTray>

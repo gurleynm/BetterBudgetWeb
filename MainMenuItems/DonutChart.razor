@@ -41,6 +41,9 @@
 
     public async void DrawCoreChart()
     {
+        if (Expenses.Count == 0)
+            return;
+
         var json = System.Text.Json.JsonSerializer.Serialize(Expenses.ToArray());
         await JSRuntime.InvokeAsync<object>("drawCoreChart", json, ChartId);
     }

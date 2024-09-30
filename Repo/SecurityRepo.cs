@@ -3,6 +3,7 @@ using Blazored.SessionStorage.StorageOptions;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -10,9 +11,7 @@ namespace BetterBudgetWeb.Repo
 {
     public class SecurityRepo
     {
-        private static HttpClient client = new HttpClient();
-
-        private static string baseURI => Constants.BaseUri + "Security?token=" + Constants.Token + "&ticker={0}&SecType={1}";
+        private static string baseURI => Constants.BaseUri + "Security?ticker={0}&SecType={1}";
         public static string delURI => baseURI.Substring(0, baseURI.IndexOf("?")) + "?token=" + Constants.Token;
         public static List<Security> Securities { get; set; } = new List<Security>();
         public static async Task<List<Security>> GetSecuritiesAsync()
@@ -20,6 +19,8 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return Constants.Securities;
 
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(string.Format(baseURI, "BLACKAPPELA", "STOCK"));
             var content = await response.Content.ReadAsStringAsync();
@@ -65,12 +66,13 @@ namespace BetterBudgetWeb.Repo
                 return Constants.Securities;
             }
 
-            HttpClient _client = new HttpClient();
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, delURI);
 
             requestMessage.Content = JsonContent.Create(small);
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {
@@ -96,12 +98,14 @@ namespace BetterBudgetWeb.Repo
                 Constants.Securities = new List<Security>(Constants.catchAll.Securities);
                 return Constants.Securities;
             }
-            HttpClient _client = new HttpClient();
+
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
             HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, delURI);
 
             requestMessage.Content = JsonContent.Create(small);
 
-            var response = await _client.SendAsync(requestMessage);
+            var response = await client.SendAsync(requestMessage);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
             {

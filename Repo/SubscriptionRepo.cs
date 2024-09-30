@@ -3,13 +3,12 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Net.Http.Headers;
 
 namespace BetterBudgetWeb.Repo
 {
     public class SubscriptionRepo
     {
-        private static HttpClient client = new HttpClient();
-
         private static string baseURI => Constants.BaseUri + "Subscription?userid=" + Constants.catchAll.Token.Id;
         public static async Task<string> GetSubscriptionAsync()
         {
@@ -18,6 +17,8 @@ namespace BetterBudgetWeb.Repo
                 Constants.TIER_LEVEL = Tier.GOD_TIER;
                 return "GOD_TIER";
             }
+
+            HttpClient client = new HttpClient();
 
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(baseURI);
