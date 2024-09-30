@@ -63,8 +63,7 @@ else
                 <div style="display:inline-block;width:50%;">
                     <div class="flex-r" style="padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
                         <div style="width:100%">
-                            @if (Goals)
-                            {
+                            <PopTray Id="goal-envs-index" ShowTxt="Show Goals" HideTxt="Hide Goals" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
                                 <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                                 <br style="clear:both" />
                                 <br style="clear:both" />
@@ -94,7 +93,8 @@ else
                                     </div>
                                 </div>
                                 <br />
-                                <div class="flex-r" style="font-size:3vw;flex-wrap:wrap;">
+
+                                <div class="flex-r" style="font-size:3vw;flex-wrap:wrap;padding-bottom:2em">
                                     @foreach (var env in Envelopes)
                                     {
                                         <Envelope Name="@env.Name" Scale=11 Font_Size=1.375
@@ -106,7 +106,7 @@ else
                                                   Person2Amount="@env.Person2Amount" />
                                     }
                                 </div>
-                            }
+                            </PopTray>
                             <AddExpense OnAddConfirm="Add" Added="Added" />
                             <br style="clear:both;" />
                             <!-- Set Monthly Costs Goals-->
@@ -153,9 +153,9 @@ else
     }
     else
     {
-        <BalanceTray @ref=@GlobalBT OnReportClick=ToggleReports OnEnvelopeClick=ToggleGoals />
-        @if (Goals)
-        {
+        <BalanceTray @ref=@GlobalBT OnReportClick=ToggleReports />
+
+        <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Goals" HideTxt="Hide Goals" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
             <div style="display:inline-block;width:100%">
                 <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                 <br style="clear:both" />
@@ -198,7 +198,7 @@ else
                 <br style="clear:both" />
                 <br style="clear:both" />
             </div>
-        }
+        </PopTray>
 
         <AddExpense OnAddConfirm="Add" Added="Added" />
 
@@ -320,7 +320,7 @@ else
 
     private string ErrorMsg = string.Empty;
 
-    private bool ShowChart = true;
+    private bool ShowChart;
 
     private bool ShowTutorial;
 
@@ -418,8 +418,6 @@ else
 
     private List<Data.Envelope> Envelopes { get; set; }
 
-    string GoalTxt = "GOALS";
-
     protected override async Task OnInitializedAsync()
     {
         await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
@@ -434,11 +432,6 @@ else
 
         DynamicCostItems = new List<DynamicCostItem>(Constants.DynamicCostItems);
 
-
-        Goals = false;
-
-        GoalTxt = Goals ? "GOALS (ON)" : "GOALS";
-
         /*
         * string TutorialSeen = await ReadCookies("TutorialSeen");
        if (string.IsNullOrEmpty(TutorialSeen))
@@ -449,7 +442,6 @@ else
 
         SetDataPoints();
 
-        GlobalBT.OnEnvelopeClick += ToggleGoals;
         GlobalBT.OnReportClick += ToggleReports;
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
@@ -674,10 +666,6 @@ else
         ShowChart = !ShowChart;
         StateHasChanged();
     }
-    private void ToggleGoals()
-    {
-        Goals = !Goals;
-    }
     private async void ToggleReports()
     {
         ViewReports = !ViewReports;
@@ -761,7 +749,6 @@ else
 
     public void Dispose()
     {
-        GlobalBT.OnEnvelopeClick -= ToggleGoals;
         GlobalBT.OnReportClick -= ToggleReports;
         Constants.TransactionsChanged -= TransactionsUpdated;
         Constants.EnvelopesChanged -= EnvelopesUpdated;

@@ -24,12 +24,6 @@
                     </h3>
                 </div>
 
-                @if (Constants.Envelopes != null && Constants.Envelopes.Count > 0)
-                {
-                    <div class="flex-c" style="padding-top:1em;align-items:center">
-                        <Envelope Name="@GoalTxt" Scale=@(Constants.Mobile?40:8) Font_Size=@(Constants.Mobile?5:1) OnClick=@ToggleGoals />
-                    </div>
-                }
                 @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
                 {
                     <div class="flex-c" style="padding-top:1em">
@@ -64,7 +58,6 @@
     private bool FirstToggle = true;
     private bool ShowWorth = true;
     private string WorthTxt => ShowWorth ? "Show Worth" : "Hide Worth";
-    private string GoalTxt = "SHOW GOALS";
 
     protected override Task OnInitializedAsync()
     {
@@ -85,16 +78,6 @@
     {
         Goals = goal;
         StateHasChanged();
-    }
-
-    private void ToggleGoals()
-    {
-        Goals = !Goals;
-        GoalTxt = Goals ? "HIDE GOALS" : "SHOW GOALS";
-
-        Constants.Envelopes = new List<Data.Envelope>(Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal));
-        if (OnEnvelopeClick != null)
-            OnEnvelopeClick();
     }
 
     private void ToggleReports()

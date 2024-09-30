@@ -1,7 +1,7 @@
 ﻿@inject IJSRuntime JSRuntime
 @if (TopButton && ShowButton)
 {
-    <div class="flex-c" style="margin:1em 0">
+    <div class="flex-c" style="margin:@Margin">
         <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)"
                 @onclick=@(() => ToggleShowWorthBtn())>
             @WorthTxt
@@ -13,7 +13,7 @@
 </div>
 @if (BottomButton && ShowButton)
 {
-    <div class="flex-c" style="margin:1em 0">
+    <div class="flex-c" style="margin:@Margin">
         <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)"
                 @onclick=@(() => ToggleShowWorthBtn())>
             @WorthTxt
@@ -28,7 +28,7 @@
     [Parameter]
     public string Id { get; set; }
 
-    private bool showWorth { get; set; } = true;
+    private bool showWorth { get; set; }
     [Parameter]
     public bool ShowWorth
     {
@@ -78,10 +78,14 @@
 
     [Parameter]
     public string HideTxt { get; set; } = "Hide Net Worth";
+
     [Parameter]
     public bool StartOpen { get; set; }
 
-    private string WorthTxt => showWorth ? ShowTxt : HideTxt;
+    [Parameter]
+    public string Margin { get; set; } = "1em 0";
+
+    private string WorthTxt => !showWorth ? ShowTxt : HideTxt;
     private string FitHeight => SetFit ? "height:fit-content" : "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
