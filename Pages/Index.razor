@@ -63,7 +63,7 @@ else
                 <div style="display:inline-block;width:50%;">
                     <div class="flex-r" style="padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
                         <div style="width:100%">
-                            <PopTray Id="goal-envs-index" ShowTxt="Show Goals" HideTxt="Hide Goals" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
+                            <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
                                 <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                                 <br style="clear:both" />
                                 <br style="clear:both" />
@@ -155,7 +155,7 @@ else
     {
         <BalanceTray @ref=@GlobalBT OnReportClick=ToggleReports />
 
-        <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Goals" HideTxt="Hide Goals" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
+        <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
             <div style="display:inline-block;width:100%">
                 <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                 <br style="clear:both" />

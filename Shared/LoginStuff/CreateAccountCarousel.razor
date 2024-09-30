@@ -1,6 +1,6 @@
 ﻿@if (Page == 1)
 {
-    <MiniPage @bind-Username=Username @bind-Email=Email @bind-Password=Password @bind-ConfirmPassword=ConfirmPassword1 />
+    <MiniPage @ref=Page1 @bind-Username=Username @bind-Email=Email @bind-Password=Password @bind-ConfirmPassword=ConfirmPassword1 />
     <PasswordRules @ref=@passwordRules1 Password="@Password" ConfirmedPassword="@ConfirmPassword1" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:end;padding-top:1em">
         <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Next</button>
@@ -9,7 +9,7 @@
 else if (Page == 2)
 {
     <div style="position:relative;top:1em;left:1em"><a @onclick="Prev" style="color:white;cursor:pointer"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to first user</a></div>
-    <MiniPage @bind-Username=Username2 @bind-Email=Email2 @bind-Password=Password2 @bind-ConfirmPassword=ConfirmPassword2 />
+    <MiniPage @ref=Page1 @bind-Username=Username2 @bind-Email=Email2 @bind-Password=Password2 @bind-ConfirmPassword=ConfirmPassword2 />
     <PasswordRules @ref=@passwordRules2 Password="@Password2" ConfirmedPassword="@ConfirmPassword2" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:space-between;padding-top:1em">
         <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Start 45-Day Trial</button>
@@ -191,8 +191,14 @@ else if (Page == 2)
     [Parameter]
     public bool Hide { get; set; }
 
+    public bool Pass1 { get; set; }
+    public bool Pass2 { get; set; }
+
     public PasswordRules passwordRules1;
     public PasswordRules passwordRules2;
+
+    MiniPage Page1;
+    MiniPage Page2;
 
     private void Prev()
     {
@@ -211,32 +217,10 @@ else if (Page == 2)
         bool Passed = false;
         if (Page == 1)
         {
-            if (string.IsNullOrEmpty(Username))
-            {
-                ErrorMsg = "Username must be set";
-                return;
-            }
-            if (string.IsNullOrEmpty(Email))
-            {
-                ErrorMsg = "Email must be set";
-                return;
-            }
-
-            Passed = Validate(Username, Email, passwordRules1);
+            Passed = Validate(Page1, passwordRules1);
         }
         else if (Page == 2)
         {
-            if (string.IsNullOrEmpty(Username2))
-            {
-                ErrorMsg = "Username must be set";
-                return;
-            }
-            if (string.IsNullOrEmpty(Email2))
-            {
-                ErrorMsg = "Email must be set";
-                return;
-            }
-
             if (Username == Username2)
             {
                 ErrorMsg = "Usernames must be different";
@@ -247,7 +231,7 @@ else if (Page == 2)
                 ErrorMsg = "Emails must be different";
                 return;
             }
-            Passed = Validate(Username2, Email2, passwordRules2);
+            Passed = Validate(Page2, passwordRules2);
         }
 
         if (Passed)
@@ -259,18 +243,13 @@ else if (Page == 2)
         }
     }
 
-    bool Validate(string user, string email, PasswordRules pr)
+    bool Validate(MiniPage mp, PasswordRules pr)
     {
-        bool ValidEmail = Constants.IsValidEmail(email);
-        bool ValidUsername = user.Trim().Length >= 6;
         bool PassRules = pr.CheckConditions();
+        if(PassRules)
+            PassRules = mp.CheckConditions();
 
-        if (!ValidEmail)
-            ErrorMsg = "Invalid email";
-        if (!ValidUsername)
-            ErrorMsg = "Username must be at least 6 characters";
-
-        return PassRules && ValidEmail && ValidUsername;
+        return PassRules;
     }
 
     private int page = 1;

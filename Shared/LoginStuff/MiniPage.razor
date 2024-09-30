@@ -3,12 +3,20 @@
         <label style="color:white;margin-right:1em">Username:</label>
         <div class="flex-c">
             <input class="better" placeholder="Username" type="text" @bind-value=Username />
+            @if (!string.IsNullOrEmpty(ErrUser))
+            {
+                <span style="color:red">@ErrUser</span>
+            }
         </div>
     </div>
     <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
         <label style="color:white;margin-right:1em">Email:</label>
-        <div class="flex-r">
+        <div class="flex-c">
             <input class="better" placeholder="Email" type="email" @bind-value=Email />
+            @if (!string.IsNullOrEmpty(ErrEmail))
+            {
+                <span style="color:red">@ErrEmail</span>
+            }
         </div>
     </div>
     <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
@@ -40,6 +48,14 @@
             if (username == value) return;
             username = value;
             UsernameChanged.InvokeAsync(value);
+
+            ErrUser = "";
+            string tmpUser = username.Replace("-", "").Replace("_", "").Replace("_", ".");
+            bool HasSpecChars = tmpUser.Any(c => !char.IsLetterOrDigit(c));
+            if (username.Length < 6)
+                ErrUser = "Username must be at least 6 characters";
+            else if (HasSpecChars)
+                ErrUser = "Username cannot contain special characters.";            
         }
     }
     [Parameter]
@@ -54,6 +70,10 @@
             if (email == value) return;
             email = value;
             EmailChanged.InvokeAsync(value);
+
+            ErrEmail = "";
+            if (!Constants.IsValidEmail(email))
+                ErrEmail = "Invalid email"; 
         }
     }
     [Parameter]
@@ -91,4 +111,19 @@
     private string email;
     private string password;
     private string confirmPassword;
+    private bool passValidation;
+
+    private string ErrUser = "";
+    private string ErrEmail = "";
+
+    public bool CheckConditions()
+    {
+        if(string.IsNullOrEmpty(Username))
+            ErrUser = "Username must be set";
+
+        if(string.IsNullOrEmpty(Username))
+            ErrEmail = "Email must be set";
+
+        return string.IsNullOrEmpty(ErrUser) && string.IsNullOrEmpty(ErrEmail);
+    }
 }
