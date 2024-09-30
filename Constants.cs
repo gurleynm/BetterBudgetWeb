@@ -212,9 +212,9 @@ namespace BetterBudgetWeb
             Presets = new List<Preset>(catchAll.Presets);
             Monthlies = new List<Monthly>(catchAll.Monthlies);
             SetMonthlies(Monthlies);
-            Balances = new List<Balance>(catchAll.Balances);
             Envelopes = new List<Envelope>(catchAll.Envelopes);
             Securities = new List<Security>(catchAll.Securities);
+            Balances = new List<Balance>(catchAll.Balances);
             if (DR != null)
             {
                 if (catchAll?.DR?.UniqueMonthYears?.Count > 0)

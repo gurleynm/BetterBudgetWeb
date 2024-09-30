@@ -28,7 +28,7 @@
             <tr style="background-color:transparent">
                 <td style="border:none">Actual:</td>
                 <td style="border:none;color:@Constants.GoodOrBad(ActualIncomeAmount)"><span>@Constants.Pretty(ActualIncomeAmount)</span></td>
-                <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ActualDynamicAmount + ActualStaticAmount))">@Constants.Pretty(ActualDynamicAmount + ActualStaticAmount)</span></td>
+                <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ActualDynamicAmount + ActualStaticAmount + EnvelopeAmount))">@Constants.Pretty(ActualDynamicAmount + ActualStaticAmount + EnvelopeAmount)</span></td>
                 <td style="border:none"><span style="color:@Constants.GoodOrBad(ActualNetAmount)">@Constants.Pretty(ActualNetAmount)</span></td>
             </tr>
         </table>
@@ -117,6 +117,7 @@
 
         var dcis = Constants.DynamicCostItems;
         var dciNames = Constants.DynamicCostItems.Select(d => d.Name);
+        var envNames = Constants.Envelopes.Select(e => e.Name);
         var smcs = Constants.StaticMonthlyCosts;
 
         ProjectedDynamicAmount = dcis.Sum(dci => dci.Amount);
@@ -142,6 +143,10 @@
         var statics = Transactions.Where(tr => tr.ExpenseType == "Static Cost");
         foreach (var stat in statics)
             Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
+
+        var envs = Transactions.Where(tr => envNames.Contains(tr.ExpenseType));
+        foreach(var e in envs)
+            Expenses.Add(new ExpenseAmount(e.Name, e.TotalAmount));
 
         StateHasChanged();
     }
