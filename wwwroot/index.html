@@ -96,6 +96,7 @@
             transition: height 0.3s ease;
             overflow: hidden;
         }
+
         div.google-visualization-tooltip {
             display: none
         }
@@ -169,6 +170,12 @@
             IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
             if (CurMobile != IsMobile)
                 window.location.reload();
+        }
+        window.ScrollTo = (id) => {
+            var elm = document.getElementById(id);
+            if (elm) {
+                elm.scrollIntoView({ behavior: 'smooth' });
+            }
         }
         function toggleExpand(id) {
             var element = document.getElementById(id);

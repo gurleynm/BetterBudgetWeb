@@ -1,0 +1,38 @@
+﻿@using BetterBudgetWeb.Data
+@implements IDisposable
+
+@if (LocalET != null && LocalET.Count > 0)
+{
+    <div class="flex-r" style="justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
+        <h4>@(ExpenseType + ":")</h4>
+        @foreach (var pre in LocalET)
+        {
+            <div>
+                <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick="@(() => Preset(@pre))">@pre.Name</button>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string ExpenseType { get; set; }
+    [Parameter]
+    public Action<Preset> Preset { get; set; }
+
+    private List<Preset> LocalET => Constants.Presets.Where(p => p.ExpenseType == ExpenseType)?.ToList();
+
+    protected override Task OnInitializedAsync()
+    {
+        Constants.PresetsChanged += PresetsUpdated;
+        return base.OnInitializedAsync();
+    }
+    private void PresetsUpdated(object sender, List<Preset> p)
+    {
+        StateHasChanged();
+    }
+    public void Dispose()
+    {
+        Constants.PresetsChanged -= PresetsUpdated;
+    }
+}

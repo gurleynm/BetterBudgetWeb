@@ -120,10 +120,24 @@ namespace BetterBudgetWeb
                 }
             }
         }
+        public static EventHandler<List<Preset>> PresetsChanged = (sender, value) => { };
+
+        private static List<Preset> presets = new List<Preset>();
+        public static List<Preset> Presets
+        {
+            get => presets;
+            set
+            {
+                if (presets != value)
+                {
+                    presets = value;
+                    PresetsChanged?.Invoke(typeof(Constants), presets);
+                }
+            }
+        }
         public static List<SavingsGoal> SavingsGoals { get; set; } = new();
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; } = new();
         public static List<ProjectedDatum> ProjectedData { get; set; } = new();
-        public static List<Preset> Presets { get; set; } = new List<Preset>();
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Security> Securities { get; set; } = new List<Security>();
         public static CatchAll catchAll { get; set; } = new CatchAll();
@@ -370,7 +384,7 @@ namespace BetterBudgetWeb
                 values[5] = pres.Person2Amount.ToString();
                 values[6] = pres.PaidOffPerson1 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson1);
                 values[7] = pres.PaidOffPerson2 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson2);
-                values[8] = pres.TextColor.ToString();
+                values[8] = pres.TextColor.ToString() == "#FFFFFF" ? "white" : "black";
                 values[9] = pres.HexColor.ToString();
             }
 

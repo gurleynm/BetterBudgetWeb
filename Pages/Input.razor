@@ -167,7 +167,7 @@ else if (ShowStatic)
         }
     }
 
-    private void Preset(Preset pre)
+    private async void Preset(Preset pre)
     {
         // 0 - Trans Name
         // 1 - ExpenseType
@@ -201,6 +201,7 @@ else if (ShowStatic)
             TextColor = vals[8];
             HexColor = vals[9];
         }
+        await JSRuntime.InvokeAsync<string>("ScrollTo", "tran-name");
         StateHasChanged();
     }
 }
