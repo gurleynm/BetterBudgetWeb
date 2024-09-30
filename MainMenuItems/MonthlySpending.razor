@@ -175,7 +175,6 @@
     {
         MainLayout.ModalType = "E";
         await RunModal.InvokeAsync(trans);
-        await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
         StateHasChanged();
     }
     private List<Transaction> GetTransactions()

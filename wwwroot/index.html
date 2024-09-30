@@ -171,7 +171,7 @@
             if (CurMobile != IsMobile)
                 window.location.reload();
         }
-        window.ScrollTo = (id) => {
+        function ScrollTo(id) {
             var elm = document.getElementById(id);
             if (elm) {
                 elm.scrollIntoView({ behavior: 'smooth' });

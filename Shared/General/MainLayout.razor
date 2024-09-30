@@ -553,8 +553,9 @@
         SelectedTransaction = new Transaction(t);
         ShowDeleteModal = !ShowDeleteModal;
 
-        if (!ShowDeleteModal)
+        if (ShowDeleteModal)
             await jsRuntime.InvokeAsync<bool>("TurnOffScroll");
+
         StateHasChanged();
     }
 
@@ -563,8 +564,9 @@
         SelectedTransaction = new Transaction(t);
         ShowEditModal = !ShowEditModal;
 
-        if (!ShowEditModal)
+        if (ShowEditModal)
             await jsRuntime.InvokeAsync<bool>("TurnOffScroll");
+
         StateHasChanged();
     }
 

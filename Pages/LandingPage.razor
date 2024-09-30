@@ -117,10 +117,12 @@
     private async void GrabDemo()
     {
         LoadingDemo = true;
+        await Task.Delay(10);
         await GrabDemoTask;
         Constants.WeIn = true;
 
         NavMan.NavigateTo("home");
+
         StateHasChanged();
     }
 }
