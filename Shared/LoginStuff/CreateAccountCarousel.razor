@@ -172,6 +172,8 @@ else if (Page == 2)
             if (errorMsg == value) return;
             errorMsg = value;
             ErrorMsgChanged.InvokeAsync(value);
+            if (!string.IsNullOrEmpty(value))
+                Disabled = false;
         }
     }
 
