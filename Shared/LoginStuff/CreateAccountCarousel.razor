@@ -11,9 +11,20 @@ else if (Page == 2)
     <div style="position:relative;top:1em;left:1em"><a @onclick="Prev" style="color:white;cursor:pointer"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to first user</a></div>
     <MiniPage @ref=Page2 @bind-Username=Username2 @bind-Email=Email2 @bind-Password=Password2 @bind-ConfirmPassword=ConfirmPassword2 />
     <PasswordRules @ref=@passwordRules2 Password="@Password2" ConfirmedPassword="@ConfirmPassword2" ConfirmedRequired="true" />
-    <div class="flex-r" style="justify-content:space-between;padding-top:1em">
-        <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Start 45-Day Trial</button>
-    </div>
+    @if (!Disabled)
+    {
+        <div class="flex-r" style="justify-content:space-between;padding-top:1em">
+            <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Start 45-Day Trial</button>
+        </div>
+    }
+    else
+    {
+        <div class="flex-r" style="justify-content:space-around">
+            <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
+            <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
+            <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
+        </div>
+    }
 }
 
 @code {
@@ -211,7 +222,7 @@ else if (Page == 2)
         }
     }
 
-    private void Next()
+    private async void Next()
     {
         ErrorMsg = "";
         bool Passed = false;
@@ -238,8 +249,12 @@ else if (Page == 2)
         {
             if (Page < 2)
                 Page++;
-            else
+            else{
+                Disabled = true;
+                StateHasChanged();
+                await Task.Delay(10);
                 CheckIn();
+            }
         }
     }
 
@@ -263,4 +278,6 @@ else if (Page == 2)
     private string confirmPassword2;
     private string errorMsg;
     private bool creatingAccount { get; set; }
+
+    private bool Disabled { get; set; }
 }
