@@ -9,7 +9,7 @@
 else if (Page == 2)
 {
     <div style="position:relative;top:1em;left:1em"><a @onclick="Prev" style="color:white;cursor:pointer"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to first user</a></div>
-    <MiniPage @ref=Page1 @bind-Username=Username2 @bind-Email=Email2 @bind-Password=Password2 @bind-ConfirmPassword=ConfirmPassword2 />
+    <MiniPage @ref=Page2 @bind-Username=Username2 @bind-Email=Email2 @bind-Password=Password2 @bind-ConfirmPassword=ConfirmPassword2 />
     <PasswordRules @ref=@passwordRules2 Password="@Password2" ConfirmedPassword="@ConfirmPassword2" ConfirmedRequired="true" />
     <div class="flex-r" style="justify-content:space-between;padding-top:1em">
         <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Next">Start 45-Day Trial</button>
