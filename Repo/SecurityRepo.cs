@@ -12,7 +12,7 @@ namespace BetterBudgetWeb.Repo
     public class SecurityRepo
     {
         private static string baseURI => Constants.BaseUri + "Security?ticker={0}&SecType={1}";
-        public static string delURI => baseURI.Substring(0, baseURI.IndexOf("?")) + "?token=" + Constants.Token;
+        public static string otherURI => Constants.BaseUri + "Security";
         public static List<Security> Securities { get; set; } = new List<Security>();
         public static async Task<List<Security>> GetSecuritiesAsync()
         {
@@ -68,7 +68,7 @@ namespace BetterBudgetWeb.Repo
 
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, delURI);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, otherURI);
 
             requestMessage.Content = JsonContent.Create(small);
 
@@ -84,8 +84,8 @@ namespace BetterBudgetWeb.Repo
 
             CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
             var secs = catcher.Securities;
+            Constants.Securities = new List<Security>(secs);
 
-            Constants.AssignCatches(catcher);
             Securities = secs;
 
             return secs;
@@ -101,7 +101,7 @@ namespace BetterBudgetWeb.Repo
 
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, delURI);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, otherURI);
 
             requestMessage.Content = JsonContent.Create(small);
 
@@ -116,9 +116,10 @@ namespace BetterBudgetWeb.Repo
                 return null;
 
             CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var secs = catcher.Securities;
 
-            Constants.AssignCatches(catcher);
+            var secs = catcher.Securities;
+            Constants.Securities = new List<Security>(secs);
+
             Securities = secs;
 
             return secs;
