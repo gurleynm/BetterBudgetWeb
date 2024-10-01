@@ -105,8 +105,6 @@
         {
             Constants.Mobile = false;
         }
-
-        GrabDemoTask = CatchAllRunner.GrabDemo();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -118,7 +116,7 @@
     {
         LoadingDemo = true;
         await Task.Delay(10);
-        await GrabDemoTask;
+        await CatchAllRunner.GrabDemo();
         Constants.WeIn = true;
 
         NavMan.NavigateTo("home");
