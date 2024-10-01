@@ -49,8 +49,10 @@ else
 
                         <div class="flex-c-start" style="margin-left:1vw">
                             <PopTray Id="char" ShowWorth=ShowChart ShowButton=false>
+                                <div style="margin-bottom:2em">
                                 <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
                                                  TheBalance="@SelectedBalance" />
+                                </div>
                             </PopTray>
 
                             <!-- Dynamic Costs -->
@@ -211,6 +213,7 @@ else
                 <br />
                 <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
                                  TheBalance="@SelectedBalance" />
+                
             </PopTray>
 
         }

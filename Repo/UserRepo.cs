@@ -1,6 +1,7 @@
 ﻿using BetterBudgetWeb.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Drawing;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -9,8 +10,38 @@ namespace BetterBudgetWeb.Repo
 {
     public class UserRepo
     {
+        private static string baseChkURI => Constants.BaseUri + "User/CheckEmailUser";
         private static string baseURI => Constants.BaseUri + "User";
         private static string baseTokenURI => Constants.BaseUri + "User/Token";
+        public static async Task<string> CheckUserEmail(string username, string email)
+        {
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            HttpClient client = new HttpClient();
+            var response = await client.GetAsync(baseChkURI + "?user=" + username + "&email=" + email);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                return "404";
+
+            if (string.IsNullOrEmpty(content))
+                return "404";
+
+            JObject j = (JObject)JsonConvert.DeserializeObject(content);
+
+            try
+            {
+                string msg = j["message"].ToString();
+                if (msg == "Success.")
+                    return "";
+
+                return j["Taken"].ToString();
+            }
+            catch (Exception e)
+            {
+                return "404";
+            }
+        }
+
         public static async Task<bool> VerifyUserAsync(string user, string pass)
         {
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };

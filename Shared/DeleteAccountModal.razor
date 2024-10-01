@@ -1,4 +1,5 @@
 ﻿@using BetterBudgetWeb.Repo
+@using BetterBudgetWeb.Shared.LoginStuff
 @if (ShowDelete)
 {
     <Confirmation OnClose="Delete" LeftBtnTxt="Cancel" LeftBtnColor="btn-secondary" RightBtnColor="btn-danger"
@@ -11,32 +12,36 @@
             <br />
             <br />
             <span>To delete your account, please enter in your name, the other user's name, and your passwords below:</span>
-            <table class="borderless-table" style="color:white;">
-                <tr>
-                    <td>Your name:</td>
-                    <td>
-                        <input id="delUser1" type="text" @bind-value=User1 placeholder=@Constants.CUR_USER_NAME />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Their name:</td>
-                    <td>
-                        <input id="delUser2" type="text" @bind-value=User2 placeholder=@OtherUser />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Password:</td>
-                    <td>
-                        <input id="delPass" type="password" @bind-value=Password placeholder="Password" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Their Password:</td>
-                    <td>
-                        <input id="delPass" type="password" @bind-value=Password2 placeholder="Thier password" />
-                    </td>
-                </tr>
-            </table>
+            <br />
+            <br />
+            <div class="flex-r">
+                <table class="borderless-table" style="color:white;">
+                    <tr>
+                        <td>Your name:</td>
+                        <td class="flex-r" style="justify-content:start">
+                            <input id="delUser1" type="text" @bind-value=User1 placeholder=@Constants.CUR_USER_NAME />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Their name:</td>
+                        <td class="flex-r" style="justify-content:start">
+                            <input id="delUser2" type="text" @bind-value=User2 placeholder=@OtherUser />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td>
+                            <PasswordInput @bind-Password=@Password ShowEye="true" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Their Password:</td>
+                        <td>
+                            <PasswordInput @bind-Password=@Password2 ShowEye="true" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <br />
             <span style="color:red">@ErrorMsgPass</span>
         </div>

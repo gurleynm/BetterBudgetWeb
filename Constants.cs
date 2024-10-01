@@ -626,9 +626,9 @@ namespace BetterBudgetWeb
             }
         }
 
-        public static string Options(bool test, string option1, string option2)
+        public static string Options(bool test, string yes, string no)
         {
-            return test ? option1 : option2;
+            return test ? yes : no;
         }
         public static string TestMobile(string option1, string option2)
         {

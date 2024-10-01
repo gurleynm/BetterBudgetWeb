@@ -1,4 +1,5 @@
-﻿<div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:start">
+﻿@using BetterBudgetWeb.Repo
+<div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:start">
     <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
         <label style="color:white;margin-right:1em">Username:</label>
         <div class="flex-c">
@@ -55,7 +56,7 @@
             if (username.Length < 6)
                 ErrUser = "Username must be at least 6 characters";
             else if (HasSpecChars)
-                ErrUser = "Username cannot contain special characters.";            
+                ErrUser = "Username cannot contain special characters.";
         }
     }
     [Parameter]
@@ -73,7 +74,7 @@
 
             ErrEmail = "";
             if (!Constants.IsValidEmail(email))
-                ErrEmail = "Invalid email"; 
+                ErrEmail = "Invalid email";
         }
     }
     [Parameter]
@@ -116,13 +117,25 @@
     private string ErrUser = "";
     private string ErrEmail = "";
 
-    public bool CheckConditions()
+    public async Task<bool> CheckConditions()
     {
-        if(string.IsNullOrEmpty(Username))
+        if (string.IsNullOrEmpty(Username))
             ErrUser = "Username must be set";
 
-        if(string.IsNullOrEmpty(Username))
+        if (string.IsNullOrEmpty(Username))
             ErrEmail = "Email must be set";
+
+        string chk = await UserRepo.CheckUserEmail(username, email);
+        if (!string.IsNullOrEmpty(chk))
+        {
+            if (chk == "404")
+                ErrUser = "Error accessing API. Please refresh and attempt again";
+            else if (chk == "Username")
+                ErrUser = "Username already taken.";
+            else if (chk == "Email")
+                ErrEmail = "Email already taken.";
+                StateHasChanged();
+        }
 
         return string.IsNullOrEmpty(ErrUser) && string.IsNullOrEmpty(ErrEmail);
     }

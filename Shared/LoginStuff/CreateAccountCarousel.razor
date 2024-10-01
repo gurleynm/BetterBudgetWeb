@@ -202,13 +202,27 @@ else if (Page == 2)
     public Action CheckIn { get; set; }
 
     [Parameter]
-    public bool Hide { get; set; }
+    public bool Hide
+    {
+        get { return hide; }
+        set
+        {
+            if (hide == value)
+                return;
+            hide = value;
+            HideChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> HideChanged { get; set; }
 
     public bool Pass1 { get; set; }
     public bool Pass2 { get; set; }
 
     public PasswordRules passwordRules1;
     public PasswordRules passwordRules2;
+    public bool hide;
 
     MiniPage Page1;
     MiniPage Page2;
@@ -230,7 +244,7 @@ else if (Page == 2)
         bool Passed = false;
         if (Page == 1)
         {
-            Passed = Validate(Page1, passwordRules1);
+            Passed = await Validate(Page1, passwordRules1);
         }
         else if (Page == 2)
         {
@@ -244,15 +258,20 @@ else if (Page == 2)
                 ErrorMsg = "Emails must be different";
                 return;
             }
-            Passed = Validate(Page2, passwordRules2);
+            Passed = await Validate(Page2, passwordRules2);
         }
 
         if (Passed)
         {
             if (Page < 2)
+            {
                 Page++;
-            else{
+                StateHasChanged();
+            }
+            else
+            {
                 Disabled = true;
+                Hide = true;
                 StateHasChanged();
                 await Task.Delay(10);
                 CheckIn();
@@ -260,11 +279,11 @@ else if (Page == 2)
         }
     }
 
-    bool Validate(MiniPage mp, PasswordRules pr)
+    async Task<bool> Validate(MiniPage mp, PasswordRules pr)
     {
         bool PassRules = pr.CheckConditions();
-        if(PassRules)
-            PassRules = mp.CheckConditions();
+        if (PassRules)
+            PassRules = await mp.CheckConditions();
 
         return PassRules;
     }
