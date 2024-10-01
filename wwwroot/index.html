@@ -334,7 +334,8 @@
             };
 
             // Instantiates and draws our chart, passing in some options.
-            var chart = new google.visualization.Sankey(document.getElementById('sankey_basic'));
+            var sank = document.getElementById('sankey_basic');
+            var chart = new google.visualization.Sankey(sank);
             chart.draw(data, options);
         }
         function CSVToArray(strData, strDelimiter) {

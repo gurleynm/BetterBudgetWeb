@@ -185,7 +185,7 @@
         if (string.IsNullOrEmpty(SelectedLevel))
             return;
 
-        //await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
+        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         List<Flow> objs = GetFlows(SelectedMonth, SelectedYear);
 
         var json = System.Text.Json.JsonSerializer.Serialize(objs);
