@@ -181,7 +181,7 @@
             var element = document.getElementById(id);
             if (element) {
                 if (!element.style.height || element.style.height == '0px') {
-                    element.style.height = (Array.prototype.reduce.call(element.childNodes, function (p, c) { return p + (c.scrollHeight || 0); }, 0) +10) + 'px';
+                    element.style.height = (Array.prototype.reduce.call(element.childNodes, function (p, c) { return p + (c.scrollHeight || 0); }, 0) + 10) + 'px';
                 } else {
                     element.style.height = '0px';
                 }
@@ -335,8 +335,10 @@
 
             // Instantiates and draws our chart, passing in some options.
             var sank = document.getElementById('sankey_basic');
-            var chart = new google.visualization.Sankey(sank);
-            chart.draw(data, options);
+            if (sank) {
+                var chart = new google.visualization.Sankey(sank);
+                chart.draw(data, options);
+            }
         }
         function CSVToArray(strData, strDelimiter) {
             // Check to see if the delimiter is defined. If not,
