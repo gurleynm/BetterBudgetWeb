@@ -6,6 +6,7 @@
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Shared.Balances
+@using BetterBudgetWeb.Shared.General
 @using BetterBudgetWeb.Shared.Tutorial
 @using System.Collections.Specialized
 @using static BetterBudgetWeb.MainMenuItems.AddExpense
@@ -279,6 +280,9 @@ else
     [CascadingParameter]
     public BalanceTray GlobalBT { get; set; }
 
+    [CascadingParameter]
+    public MainLayout MainLayout { get; set; }
+
     private bool Added { get; set; }
 
     private DateTime StartDate => DateTime.Now;
@@ -423,7 +427,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+        MainLayout.ToggleOverflow("auto");
 
         Transactions = Constants.catchAll.Transactions;
         FilteredTransactions = new List<Transaction>(Transactions);
@@ -548,12 +552,18 @@ else
                 MonthAmount = HideEnvExp & IsAnEnvelope(tr) ? 0 : tr.TotalAmount * -1;
 
             bool lastSwitch = false; // true if there is only 1 transaction for this date, and it's the last one
+            DataPoint newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
+            newDP.Negative = newDP.Value < 0;
+            newDP.Value = Math.Abs(newDP.Value);
+
+            if (newDP.Value != 0)
+                DataPoints.Add(newDP);
 
             for (int index = 1; index < FilteredTransactions.Count; index++)
             {
                 if (FilteredTransactions[index].DateOfTransaction.ToShortDateString() != PreviousDate.ToShortDateString())
                 {
-                    var newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
+                    newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
                     newDP.Negative = newDP.Value < 0;
                     newDP.Value = Math.Abs(newDP.Value);
 
@@ -580,7 +590,7 @@ else
 
                     if (index == FilteredTransactions.Count - 1)
                     {
-                        var newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
+                        newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
                         newDP.Negative = newDP.Value < 0;
                         newDP.Value = Math.Abs(newDP.Value);
 
@@ -593,7 +603,7 @@ else
             if (lastSwitch)
             {
                 int last = FilteredTransactions.Count - 1;
-                var newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
+                newDP = new DataPoint(PreviousDate.Day.ToString(), MonthAmount);
                 newDP.Negative = newDP.Value < 0;
                 newDP.Value = Math.Abs(newDP.Value);
 
@@ -628,7 +638,7 @@ else
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
         }
 
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+        MainLayout.ToggleOverflow("auto");
     }
     private async void CloseTutModal(bool DontShowAgain)
     {
@@ -636,7 +646,7 @@ else
             await WriteCookieAsync("TutorialSeen", "YES", 1000);
 
         ShowTutorial = false;
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+        MainLayout.ToggleOverflow("auto");
     }
     protected async Task<string> ReadCookies(string CookieName)
     {
@@ -673,11 +683,11 @@ else
     {
         ViewReports = !ViewReports;
         if (ViewReports)
-            await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
+            MainLayout.ToggleOverflow("hidden");
         else
         {
             DynamicCostItems = new List<DynamicCostItem>(Constants.DynamicCostItems);
-            await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+            MainLayout.ToggleOverflow("auto");
         }
         StateHasChanged();
 
@@ -686,17 +696,17 @@ else
     {
         StashCashBool = !StashCashBool;
         if (StashCashBool)
-            await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
+            MainLayout.ToggleOverflow("hidden");
         else
-            await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+            MainLayout.ToggleOverflow("auto");
     }
     private async void ToggleCash()
     {
         CashOutBool = !CashOutBool;
         if (CashOutBool)
-            await JSRuntime.InvokeAsync<bool>("TurnOffScroll");
+            MainLayout.ToggleOverflow("hidden");
         else
-            await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+            MainLayout.ToggleOverflow("auto");
     }
     async Task DownloadCSV()
     {

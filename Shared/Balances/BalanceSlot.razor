@@ -151,7 +151,6 @@
 
     private async void CloseModal(bool accepted)
     {
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         if (accepted)
         {
             await OnEditConfirm.InvokeAsync(accepted);
@@ -161,7 +160,6 @@
 
     private async void Delete(bool accepted)
     {
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         if (accepted)
         {
             await OnDeleteConfirm.InvokeAsync(accepted);

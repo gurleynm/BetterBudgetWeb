@@ -169,7 +169,7 @@
             await RefreshParent.InvokeAsync();
             StateHasChanged();
         }
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
+        MainLayout.ToggleOverflow("auto");
     }
     private async void OpenModal(Transaction trans)
     {

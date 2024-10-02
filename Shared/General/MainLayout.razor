@@ -17,6 +17,10 @@
         color: @Constants.ColorScheme["Text"];
     }
 
+    #full-body {
+        overflow-y: @Overflow;
+    }
+
     .toggle-table > tr:nth-child(even) {
         background-color: @Constants.ColorScheme["TableEven"];
         color: @Constants.ColorScheme["Text"];
@@ -456,6 +460,7 @@
     private bool ShowForecast => Constants.Monthlies != null && Constants.Monthlies.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER;
 
     public string ModalType { get; set; }
+    private string Overflow = "auto";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -536,6 +541,17 @@
         StateHasChanged();
     }
 
+    public void ToggleOverflow(string over = "")
+    {
+        if (!string.IsNullOrEmpty(over))
+        {
+            Overflow = over;
+            StateHasChanged();
+        }
+        else
+            Overflow = Overflow == "auto" ? "hidden" : "auto";
+    }
+
     // Modal methods
     public async void ToggleModal(Transaction t)
     {
@@ -555,7 +571,9 @@
         ShowDeleteModal = !ShowDeleteModal;
 
         if (ShowDeleteModal)
-            await jsRuntime.InvokeAsync<bool>("TurnOffScroll");
+            Overflow = "hidden";
+        else
+            Overflow = "auto";
 
         StateHasChanged();
     }
@@ -565,16 +583,14 @@
         SelectedTransaction = new Transaction(t);
         ShowEditModal = !ShowEditModal;
 
-        if (ShowEditModal)
-            await jsRuntime.InvokeAsync<bool>("TurnOffScroll");
-
+        ToggleOverflow();
         StateHasChanged();
     }
 
     private async void CloseEditModal(bool accepted)
     {
         ShowEditModal = !ShowEditModal;
-        await jsRuntime.InvokeAsync<bool>("TurnOnScroll");
+        ToggleOverflow();
     }
 
     private async void Delete(bool accepted)
@@ -587,7 +603,7 @@
                 GlobalBT.RefreshBalances();
         }
         ShowDeleteModal = false;
-        await jsRuntime.InvokeAsync<bool>("TurnOnScroll");
+        ToggleOverflow();
         StateHasChanged();
     }
     private void BalancesUpdated(object sender, List<Balance> e)

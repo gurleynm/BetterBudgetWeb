@@ -90,11 +90,6 @@ else if (ShowSavings && false)
 
     private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
-    }
-
     private void ShowBalanceGoal()
     {
         ShowBalance = !ShowBalance;

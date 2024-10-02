@@ -177,7 +177,6 @@ else if (ShowEnv)
 
     protected override async Task OnInitializedAsync()
     {
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
         SelectedBalance = "";
         SelectedEnv = "";
         Constants.BalancesChanged += BalancesUpdated;

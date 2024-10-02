@@ -369,7 +369,6 @@ else
 
         AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
         RefreshTime = DateTime.Now.ToString();
-        await JSRuntime.InvokeAsync<bool>("TurnOnScroll");
     }
 
     private void ShowBuyTab()
