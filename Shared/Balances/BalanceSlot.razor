@@ -43,9 +43,9 @@
 </div>
 @if (!IsPreview)
 {
-    <PopTray Id="@("monthly-" + TheBalance.Name.Replace(" ","-"))" ShowWorth=Show ShowButton="false">
+    <PopTray Id="@Id" ShowWorth=Show ShowButton="false">
         <div style="height:fit-content;">
-            <MonthlySpending ShowPerson=ShowPersonInMonthly OnEditConfirm=@CloseModal TheBalance=@TheBalance.Name RefreshParent="@RefreshMe" />
+            <MonthlySpending ShowPerson=ShowPersonInMonthly OnEditConfirm=@CloseModal TheBalance=@TheBalance.Name />
         </div>
     </PopTray>
 }
@@ -68,7 +68,8 @@
     [Parameter]
     public bool ShowPersonInMonthly { get; set; } = true;
     [Parameter]
-    public bool ParentOpen { 
+    public bool ParentOpen
+    {
         get { return parentOpen; }
         set
         {
@@ -92,6 +93,8 @@
     [Parameter]
     public string ParentId { get; set; }
 
+    private string Id => "monthly-" + TheBalance.Name.Replace(" ", "-");
+
     private bool ShowTradable => TheBalance.BalanceType == "Stocks";
 
     private List<Transaction> FilteredTransactions => Constants.catchAll.Transactions.Where(t =>
@@ -99,7 +102,10 @@
 
     public bool ShowPerson { get; set; }
     public double Amount => GetAmount();
-    private bool Show { get; set; }
+    private bool Show { 
+        get; 
+        set; 
+    }
 
     protected override Task OnInitializedAsync()
     {
@@ -199,13 +205,6 @@
         return returnStr;
     }
 
-    private void RefreshMe()
-    {
-        var curbal = Constants.Balances.FirstOrDefault(dci => dci.Name == TheBalance.Name);
-        if (curbal != null)
-            TheBalance = new Balance(curbal);
-    }
-
     void MouseOver(MouseEventArgs e)
     {
         ShowPerson = true;
@@ -214,10 +213,10 @@
     {
         ShowPerson = false;
     }
-    private void BalancesUpdated(object sender, List<Balance> e)
+    private async void BalancesUpdated(object sender, List<Balance> e)
     {
-        if (ParentOpen)
-            ResizeParent();
+        Show = false;
+        StateHasChanged();
     }
     public void Dispose()
     {

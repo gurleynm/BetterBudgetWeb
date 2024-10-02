@@ -1,5 +1,7 @@
 ﻿@using BetterBudgetWeb.Data
+@inject IJSRuntime JSRuntime
 @implements IDisposable
+
 <div class="flex-r" style="width:100%;justify-content:start;cursor:pointer;align-items:center;
             background-color:@Constants.ColorScheme["ComponentBackground"];padding:.5em"
      @onclick=@(() => OpenTray = !OpenTray)>
@@ -44,12 +46,13 @@
 
     private bool OpenTray { get; set; } = !Constants.Mobile; // Looks better on Mobile to start closed
 
-    private IEnumerable<Balance> Balances => Constants.Balances.Where(b => b.BalanceType == ST).OrderByDescending(b => b.Value);
+    private IEnumerable<Balance> Balances;
     private double BalanceTotal => GetAmount();
 
     protected override Task OnInitializedAsync()
     {
         Constants.BalancesChanged += BalancesUpdated;
+        Balances = Constants.Balances.Where(b => b.BalanceType == ST).OrderByDescending(b => b.Value);
         return base.OnInitializedAsync();
     }
 
@@ -77,8 +80,13 @@
         return amount;
     }
 
-    private void BalancesUpdated(object sender, List<Balance> e)
+    private async void BalancesUpdated(object sender, List<Balance> e)
     {
+        var TempBalances = Constants.Balances.Where(b => b.BalanceType == ST).OrderByDescending(b => b.Value);
+        if (TempBalances.Count() != Balances.Count() && OpenTray)
+            await JSRuntime.InvokeAsync<string>("resizeTray", Id);
+
+        Balances = TempBalances;
         StateHasChanged();
     }
 
