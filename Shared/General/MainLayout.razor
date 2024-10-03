@@ -62,7 +62,7 @@
         overflow: hidden;
         border: 1px solid #ccc;
         background-color: @Constants.ColorScheme["Tab-Back"];
-        width: 75%;
+        width: 100%;
     }
 
         /* Style the buttons inside the tab */
@@ -326,8 +326,10 @@
                                 @if (ShowPortfolio)
                                 {
                                     <li>
-                                        <a class="navbar-brand" href="portfolio" style="font-family:'CBB Default'; text-align:center;">
-                                            <span class="oi oi-dollar"></span> Portfolio
+                                        <a class="navbar-brand @Constants.Options(Constants.TryingItOut,"componentWrapper","")" href="portfolio" style="font-family:'CBB Default'; text-align:center;">
+                                            <AdvancedWrapper Bottom="true" Top="false" Class="">
+                                                <span class="oi oi-dollar"></span> Portfolio
+                                            </AdvancedWrapper>
                                         </a>
                                     </li>
                                 }
@@ -342,8 +344,10 @@
                                 @if (ShowForecast)
                                 {
                                     <li>
-                                        <a class="navbar-brand" href="forecast" style="font-family:'CBB Default'; text-align:center;">
-                                            <span class="oi oi-sun"></span> Forecast
+                                        <a class="navbar-brand @Constants.Options(Constants.TryingItOut,"componentWrapper","")" href="forecast" style="font-family:'CBB Default'; text-align:center;">
+                                            <AdvancedWrapper Bottom="true" Top="false" Class="">
+                                                <span class="oi oi-sun"></span> Forecast
+                                            </AdvancedWrapper>
                                         </a>
                                     </li>
                                 }
@@ -450,7 +454,6 @@
     private Transaction SelectedTransaction { get; set; }
     private bool ShowDeleteModal { get; set; }
     private bool ShowEditModal { get; set; }
-
 
     private bool ShowDelete => Constants.Balances != null && Constants.Balances.Count > 0;
     private bool ShowUpdate => Constants.Balances != null && Constants.Balances.Count > 0;

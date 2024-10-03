@@ -1,0 +1,39 @@
+﻿@using BetterBudgetWeb.Data
+@if (Constants.TryingItOut)
+{
+    <div class="@Class">
+        @if (Top)
+        {
+            @if (Left)
+            {
+                <div class="header-left">Advanced</div>
+            }
+            else
+            {
+                <div class="header" style="font-size:3vw">Advanced</div>
+            }
+        }
+        @ChildContent
+        @if (Bottom)
+        {
+            <div class="header-bottom">Advanced</div>
+        }
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public bool Top { get; set; } = true;
+    [Parameter]
+    public bool Bottom { get; set; }
+    [Parameter]
+    public bool Left { get; set; }
+    [Parameter]
+    public string Class { get; set; } = "componentWrapper";
+}
