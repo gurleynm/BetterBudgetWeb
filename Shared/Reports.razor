@@ -288,6 +288,9 @@ else
     {
         Transactions = await TransactionRepo.GetTransactionsAsync("ALL");
 
+        if (Constants.TIER_LEVEL == Tier.DEMO)
+            SnapshotRepo.SetDemoSnap();
+
         var MonthYears = IndexRunner.GetMonthsAndYears(Transactions);
         if (MonthYears.Count > 0)
         {
