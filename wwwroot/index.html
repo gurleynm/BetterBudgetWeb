@@ -198,6 +198,7 @@
         }
         function drawLineChart(lineList, chartId) {
             var data = new google.visualization.DataTable();
+            lineList = JSON.parse(lineList);
 
             const holder = [];
             var temp = [];
@@ -209,7 +210,7 @@
 
                 temp.push(obj['Month']);
                 temp.push(obj['Amount']);
-                temp.push(obj['Certainty']);
+                temp.push(obj['certainty']);
                 holder.push(temp);
             }
 
@@ -219,14 +220,51 @@
             data.addRows(
                 holder
             );
+            var dataView = new google.visualization.DataView(data);
+            dataView.setColumns([
+                // reference existing columns by index
+                0, 1, 2,
+                // add function for line color
+                {
+                    calc: function (data, row) {
+                        var colorDown = '#00FF00';
+                        var colorUp = '#FF0000';
+
+                        if ((row === 0) && (data.getValue(row, 1) < data.getValue(row + 1, 1))) {
+                            return colorDown;
+                        } else if ((row > 0) && (data.getValue(row - 1, 1) < data.getValue(row, 1))) {
+                            return colorDown;
+                        }
+                        return colorUp;
+                    },
+                    type: 'string',
+                    role: 'style'
+                }
+            ]);
+
             //data.addRows([
             //    ['April', 1000, true],
             //    ['May', 1170, true],
             //    ['June', 660, true],
             //    ['July', 1030, false]
             //]);
-            var chartLineWithDash = new google.visualization.LineChart(document.getElementById(chartId));
-            chartLineWithDash.draw(data);
+
+            var options = {
+                backgroundColor: 'transparent',
+                borderRadius:'50%',
+                legend: {position:'none'},
+                hAxis: {
+                    title: null,
+                    textStyle: {
+                        color: '#FFFFFF'
+                    }
+                }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById(chartId));
+            chart.draw(dataView, options);
+            //var chartLineWithDash = new google.visualization.LineChart(document.getElementById(chartId));
+            //chartLineWithDash.draw(data,options);
         }
         function drawCoreChart(coreList, chartId) {
             var data = new google.visualization.DataTable();

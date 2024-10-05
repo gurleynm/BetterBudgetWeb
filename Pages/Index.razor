@@ -9,6 +9,7 @@
 @using BetterBudgetWeb.Shared.General
 @using BetterBudgetWeb.Shared.Tutorial
 @using System.Collections.Specialized
+@using static BetterBudgetWeb.Shared.LineChart
 @using static BetterBudgetWeb.MainMenuItems.AddExpense
 @inject IJSRuntime JSRuntime
 @implements IDisposable
@@ -66,6 +67,7 @@ else
                 <div style="display:inline-block;width:50%;">
                     <div class="flex-r" style="padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
                         <div style="width:100%">
+                            <LineChart Plots="Plots" ChartId="chart_div" />
                             <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
                                 <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                                 <br style="clear:both" />
@@ -423,6 +425,7 @@ else
     }
 
     private List<Data.Envelope> Envelopes { get; set; }
+    private List<LinePlot> Plots { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -448,6 +451,19 @@ else
             */
 
         SetDataPoints();
+        Plots.Clear();
+
+        Snapshot snapshot;
+        var Snapshots = Constants.catchAll.Snapshots.ToList();
+        int SnapCnt = Snapshots.Count;
+
+        Plots.Add(new LinePlot(DateTime.Now.ToString("MMMM"), Constants.TotalNetWorth, true));
+        for (int index = SnapCnt - 1; index > SnapCnt - 6; index--)
+        {
+            snapshot = Snapshots[index];
+            Plots.Add(new LinePlot(snapshot.Month, snapshot.Person1NetWorth + snapshot.Person2NetWorth, true));
+        }
+        Plots.Reverse();
 
         GlobalBT.OnReportClick += ToggleReports;
         Constants.TransactionsChanged += TransactionsUpdated;

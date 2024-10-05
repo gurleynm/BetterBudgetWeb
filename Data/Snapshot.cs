@@ -15,6 +15,8 @@
         public double Person1AmountActual { get; set; }
         public double Person2AmountActual { get; set; }
         public string DynamicJSON { get; set; }
+        public double Person1NetWorth { get; set; }
+        public double Person2NetWorth { get; set; }
 
         public Snapshot() { }
 
@@ -33,6 +35,8 @@
             Person2AmountActual = other.Person2AmountActual;
             Person1AmountActual = other.Person1AmountActual;
             DynamicJSON = other.DynamicJSON;
+            Person1NetWorth = other.Person1NetWorth;
+            Person2NetWorth = other.Person2NetWorth;
         }
     }
 }
