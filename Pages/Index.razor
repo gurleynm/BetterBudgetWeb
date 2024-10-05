@@ -556,7 +556,7 @@ else
             newDP.Negative = newDP.Value < 0;
             newDP.Value = Math.Abs(newDP.Value);
 
-            if (newDP.Value != 0)
+            if (newDP.Value != 0 && FilteredTransactions.Count == 1)
                 DataPoints.Add(newDP);
 
             for (int index = 1; index < FilteredTransactions.Count; index++)
