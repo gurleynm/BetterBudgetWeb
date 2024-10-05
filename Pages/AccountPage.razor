@@ -19,13 +19,19 @@
             </div>
         }
     </div>
-    <div class="flex-r" style="@Constants.TestMobile("justify-content:space-between;width:100%margin-bottom:1em","")">
-        @if (Constants.TIER_LEVEL != Tier.DEMO)
-        {
+    @if (Constants.TIER_LEVEL != Tier.DEMO)
+    {
+        <div class="flex-r" style="@Constants.TestMobile("justify-content:space-between;width:100%;margin-bottom:1em","")">
             <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
-        }
-        <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
-    </div>
+            <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
+        </div>
+    }
+    else
+    {
+        <div class="flex-r" style="justify-content:end;">
+            <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
+        </div>
+    }
 </div>
 @if (Constants.TIER_LEVEL != Tier.DEMO)
 {
