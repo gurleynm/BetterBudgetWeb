@@ -53,7 +53,7 @@ namespace BetterBudgetWeb.Runner
             Constants.catchAll = CA;
             Constants.TIER_LEVEL = Tier.DEMO;
             Constants.Token = "DEMO";
-            Constants.CUR_USER_NAME = "Optimus";
+            Constants.CUR_USER_NAME = "Jack";
 
             await Constants.Init(true);
 
