@@ -347,6 +347,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Constants.CurPage = "Portfolio";
         if (Constants.TIER_LEVEL <= Tier.BASIC_TIER)
             NavMan.NavigateTo("home");
 

@@ -277,6 +277,10 @@
             chart.draw(data, options);
         }
         function drawChart(sankList) {
+            var sank = document.getElementById('sankey_basic');
+            if (!sank) {
+                return false;
+            }
             var data = new google.visualization.DataTable();
             sankList = JSON.parse(sankList);
 
@@ -326,11 +330,9 @@
             };
 
             // Instantiates and draws our chart, passing in some options.
-            var sank = document.getElementById('sankey_basic');
-            if (sank) {
-                var chart = new google.visualization.Sankey(sank);
-                chart.draw(data, options);
-            }
+            var chart = new google.visualization.Sankey(sank);
+            chart.draw(data, options);
+            return true;
         }
         function CSVToArray(strData, strDelimiter) {
             // Check to see if the delimiter is defined. If not,

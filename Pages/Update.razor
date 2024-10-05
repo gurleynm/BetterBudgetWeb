@@ -7,7 +7,10 @@
 
 <PageTitle>Update</PageTitle>
 
-<h1 style="font-family:'CBB Default'">Update</h1>
+@if (!Constants.Mobile)
+{
+    <h1 style="font-family:'CBB Default'">Update</h1>
+}
 
 <div class="tab">
     <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
@@ -177,6 +180,7 @@ else if (ShowEnv)
 
     protected override async Task OnInitializedAsync()
     {
+        Constants.CurPage = "Update";
         SelectedBalance = "";
         SelectedEnv = "";
         Constants.BalancesChanged += BalancesUpdated;

@@ -1,92 +1,77 @@
-﻿@page "/"
-@using BetterBudgetWeb.Data
+﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.Shared.General
+@using BetterBudgetWeb.Shared.PricingStuff
 @inject NavigationManager NavMan
 @inject IJSRuntime jsRuntime
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
-<div style="height:100%">
-    <div id="land-top" class="flex-r"
-         style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;padding:1em;align-items:center;z-index:1">
-        @if (!Constants.Mobile)
-        {
-            <div>
-                <a href="" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
-                    <strong>Couple's Better Budget</strong>
-                </a>
+<div style="height:fit-content">
+    @if (!Constants.Mobile)
+    {
+        <div id="land-top" class="flex-r"
+             style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;padding:0 1em;align-items:center;z-index:1">
+            <div class="flex-r" style="align-items:center;width:fit-content;justify-content:start;padding:2px 0;">
+                <img src="images/RoundLogo.png" style="width:6.5vw;padding:2px 1vw;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("")) />
+                @if (!Constants.Mobile)
+                {
+                    <div class="flex-c" style="height:50%;">
+                        @if (!LoadingDemo)
+                        {
+                            <button style="background-color:transparent;font-family:'CBB Default';"
+                                    class="btn-grad"
+                                    @onclick=GetDemo>
+                                View Demo
+                            </button>
+                        }
+                        else
+                        {
+                            <div class="slide-right" style="width:100%">
+                                <div style="font-size:large;color:white;font-family:'CBB Default';padding:1em">Loading Demo...</div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
 
-            <div class="flex-c" style="height:50%;">
-                @if (!LoadingDemo)
-                {
-                    <button style="background-color:transparent;font-family:'CBB Default';"
-                            class="btn-grad"
-                            @onclick=GrabDemo>
-                        View Demo
-                    </button>
-                }
-                else
-                {
-                    <div style="font-size:large;color:white;font-family:'CBB Default'">Loading Demo...</div>
-                }
-            </div>
-            @if (!LoadingDemo)
+            @if (!LoadingDemo && !Constants.Mobile)
             {
+                <div class="ps-3 navbar-dark flex-r">
+                    <a class="navbar-brand navbtn" href="pricing" style="font-family:'CBB Default'; text-align:center;cursor:pointer">
+                        <span aria-hidden="true"></span> Pricing
+                    </a>
+                    <a class="navbar-brand navbtn" href="FAQs" style="font-family:'CBB Default'; text-align:center;cursor:pointer">
+                        <span aria-hidden="true"></span> FAQs
+                    </a>
+                </div>
                 <div class="flex-r" style="align-items:center">
                     <a href="sign/in" style="font-family:'CBB Default';margin-right:1em;font-size:large;color:white">Log in</a>
                     <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
                 </div>
             }
-        }
-        else
-        {
-            <a href="sign/in" style="font-family:'CBB Default';margin-right:1em;font-size:large;color:white">Log in</a>
-            <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
-        }
-    </div>
-    <div class="flex-r" style="height:fit-content;margin-top:@HeightTopBar;">
-        @if (!Constants.Mobile)
-        {
-            <div class="slide-right flex-c" style="height:100%">
-                <h1 style="font-size:8em;font-family:'CBB Default';">Helping you reach your goals together</h1>
-            </div>
-        }
-        <div class="flex-c-start slide-up" style="height:100%;padding:1em;width:@(Constants.Mobile ? "100%" : "50%")">
-            <div class="flex-r">
-                <img src="/images/RoundLogo.png" style="width:50%;" />
-            </div>
-            <div class="flex-c-start" style="align-items:center">
-                <span style="font-family:'CBB Default';font-size:xx-large;text-align:center">Start your commitment-free trial today</span>
-                @if (Constants.Mobile)
-                {
-                    @if (!LoadingDemo)
-                    {
-                        <button style="background-color:transparent;padding:1em;font-family:'CBB Default';"
-                                class="btn-grad"
-                                @onclick=GrabDemo>
-                            View Demo
-                        </button>
-                    }
-                    else
-                    {
-                        <div style="font-size:large;color:white;font-family:'CBB Default'">Loading Demo...</div>
-                    }
-                }
-                else
-                {
-                    <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
-                }
-            </div>
         </div>
+    }
+    else
+    {
+        <LandingNavMenu />
+    }
+    <div class="flex-r" style="height:fit-content;flex-wrap:wrap;margin-top:@(Constants.TestMobile(HeightTopBar,HeightTopBar));">
+        <CascadingValue Value="GrabDemo">
+            @ChildContent
+        </CascadingValue>
     </div>
 </div>
 
 @code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    EventCallback GrabDemo => EventCallback.Factory.Create(this, GetDemo);
+
     private double heightTopBar = 8;
     private string HeightTopBar => heightTopBar + "px";
 
     private bool LoadingDemo { get; set; }
-    private Task GrabDemoTask;
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,7 +97,7 @@
         heightTopBar = Convert.ToDouble(await jsRuntime.InvokeAsync<string>("ElementHeight", "land-top"));
     }
 
-    private async void GrabDemo()
+    private async void GetDemo()
     {
         LoadingDemo = true;
         await Task.Delay(10);

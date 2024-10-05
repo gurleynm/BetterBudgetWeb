@@ -158,7 +158,7 @@ namespace BetterBudgetWeb
         public static string TIER_STATUS { get; set; } = "active";
         public static bool TryingItOut => TIER_LEVEL == Tier.TRIAL || TIER_LEVEL == Tier.DEMO;
 
-        private static bool mobile = true;
+        private static bool mobile = false;
         public static bool Mobile
         {
             get { return mobile; }
@@ -173,6 +173,21 @@ namespace BetterBudgetWeb
         public static double Person1NetWorth => IndexRunner.CalculateNetWorth(Person1, Balances);
         public static double Person2NetWorth => IndexRunner.CalculateNetWorth(Person2, Balances);
         public static double TotalNetWorth => Person1NetWorth + Person2NetWorth;
+        public static EventHandler<string> CurPageChanged = (sender, value) => { };
+
+        private static string curPage;
+        public static string CurPage
+        {
+            get => curPage;
+            set
+            {
+                if (curPage != value)
+                {
+                    curPage = value;
+                    CurPageChanged?.Invoke(typeof(Constants), curPage);
+                }
+            }
+        }
         public EventCallback<double> Person2NetWorthChanged { get; set; }
         public static EventCallback<bool> MobileChanged { get; set; }
 

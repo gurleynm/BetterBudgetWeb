@@ -1,11 +1,13 @@
 ﻿@using BetterBudgetWeb.Data
+@using System.Globalization
+@inject NavigationManager NavMan
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@implements IDisposable
 
 <div id="mobile-nav-bar" class="navbar-dark" style="position:fixed;top:0;padding:0;background-color:indigo;width:100%;z-index:1">
-    <div class="flex-r" style="width:100%;padding:1em;justify-content:space-between">
-        <a href="home" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
-            <strong>Couple's Better Budget</strong>
-        </a>
+    <div class="flex-r" style="width:100%;padding:0 1em;justify-content:space-between;align-items:center">
+        <img src="images/RoundLogo.png" style="width:6.5vh;width:6.5vh;padding:0;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("home")) />
+        <h2 class="flex-c" style="font-family:'CBB Default'">@Constants.CurPage</h2>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -69,14 +71,37 @@
 
 @code {
     private bool collapseNavMenu = true;
+    private string ThePageTitle => ToTitleCae(NavMan.Uri.Replace(NavMan.BaseUri, ""));
+    private string ThePageTitle2 => NavMan.Uri;
 
     [CascadingParameter]
     public EventCallback LogOff { get; set; }
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    protected override Task OnInitializedAsync()
+    {
+        Constants.CurPageChanged += CurPageUpdated;
+        return base.OnInitializedAsync();
+    }
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+    private string ToTitleCae(string txt)
+    {
+        TextInfo txtInfo = new CultureInfo("en-us", false).TextInfo;
+        return txtInfo.ToTitleCase(txt);
+    }
+
+    private void CurPageUpdated(object sender, string cp)
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.CurPageChanged -= CurPageUpdated;
     }
 }

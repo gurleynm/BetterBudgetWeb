@@ -205,7 +205,7 @@
         color: @Constants.ColorScheme["Text"];
     }
 
-    input {
+    input, textarea {
         padding: 0;
         margin: 0;
         background-color: transparent;
@@ -216,7 +216,7 @@
         color: @Constants.ColorScheme["Text"];
     }
 
-    td, option, input, label, select {
+    td, option, input, label, select, textarea {
         font-size: @Constants.TestMobile("3vw;", "1em");
     }
 
@@ -228,7 +228,7 @@
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
     <CustomErrorBoundary @ref=errBnd>
         <ChildContent>
-            @if (NavMan.Uri.Contains("policy") || NavMan.Uri.Contains("reset") || NavMan.Uri.Contains("sign"))
+            @if (CheckWhitelist())
             {
                 @*NavMan.BaseUri == NavMan.Uri*@
                 <main>
@@ -237,9 +237,11 @@
                     </article>
                 </main>
             }
-            else if (NavMan.BaseUri == NavMan.Uri)
+            else if (CheckLandList())
             {
-                <LandingPage />
+                <LandingPage>
+                    @Body
+                </LandingPage>
             }
             else if (!Constants.WeIn)
             {
@@ -250,7 +252,7 @@
                 <main>
                     <article>
                         <div class="flex-c-start">
-                            <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
+                            <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-left:10px;padding-top:1em" /> Back to main page</a></div>
                             <h2 style="font-family:'CBB Default';text-align:center">Like what you see? Consider subscribing!</h2>
                             <h3 style="font-family:'CBB Default';text-align:center">Your trial has ended, but we'll keep your budget for an additional 10 days while you decide.</h3>
                             <div class="flex-r" style="margin:1em 0">
@@ -267,7 +269,7 @@
                 <main>
                     <article>
                         <div class="flex-c-start" style="padding:1em">
-                            <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
+                            <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-left:10px;padding-top:1em" /> Back to main page</a></div>
                             <h2 style="text-align:center;font-family:'CBB Default'">
                                 This login appears to be associated with an account that's been canceled. This is your last chance to keep your current budget.
                                 Please, create or delete your account below:
@@ -291,67 +293,68 @@
                     @if (!mobile)
                     {
                         <div id="main-bar" class="flex-r" style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;align-items:center;z-index:1;padding:0 1em">
-                            <div>
-                                <a href="home" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
+                            <div class="flex-r" style="justify-content:start;align-items:center">
+                                <img src="images/RoundLogo.png" style="width:6.5vw;padding:2px 1vw;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("home")) />
+                                <a href="home" style="font-size:large;font-family:'CBB Default'; text-align:center;color:white;">
                                     <strong>@("Welcome " + Constants.CUR_USER_NAME + "!")</strong>
                                 </a>
                             </div>
-                            <ul class="ps-3 navbar-dark flex-r" style="text-align: center;height:fit-content; list-style:none; background-color:transparent;align-items:center">
-                                <li>
-                                    <a class="navbar-brand" href="home" style="font-family:'CBB Default'; text-align:center;">
+                            <div class="ps-3 navbar-dark flex-r" style="text-align: center;height:fit-content; list-style:none; background-color:transparent;align-items:center">
+                                <div>
+                                    <a class="navbtn navbar-brand" href="home" style="font-family:'CBB Default'; text-align:center;">
                                         <span class="oi oi-lightbulb"></span> Home
                                     </a>
-                                </li>
-                                <li>
-                                    <a class="navbar-brand" href="input" style="font-family:'CBB Default'; text-align:center;">
+                                </div>
+                                <div>
+                                    <a class="navbtn navbar-brand" href="input" style="font-family:'CBB Default'; text-align:center;">
                                         <span class="oi oi-plus" aria-hidden="true"></span> Input
                                     </a>
-                                </li>
+                                </div>
                                 @if (ShowDelete)
                                 {
-                                    <li>
-                                        <a class="navbar-brand" href="delete" style="font-family:'CBB Default'; text-align:center;">
+                                    <div>
+                                        <a class="navbtn navbar-brand" href="delete" style="font-family:'CBB Default'; text-align:center;">
                                             <span class="oi oi-minus" aria-hidden="true"></span> Delete
                                         </a>
-                                    </li>
+                                    </div>
                                 }
                                 @if (ShowUpdate)
                                 {
-                                    <li>
-                                        <a class="navbar-brand" href="update" style="font-family:'CBB Default'; text-align:center;">
+                                    <div>
+                                        <a class="navbtn navbar-brand" href="update" style="font-family:'CBB Default'; text-align:center;">
                                             <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
                                         </a>
-                                    </li>
+                                    </div>
                                 }
                                 @if (ShowPortfolio)
                                 {
-                                    <li>
-                                        <a class="navbar-brand @Constants.Options(Constants.TryingItOut,"componentWrapper","")" href="portfolio" style="font-family:'CBB Default'; text-align:center;">
+                                    <div>
+                                        <a class="navbtn navbar-brand @Constants.Options(Constants.TryingItOut,"componentWrapper","")" href="portfolio" style="font-family:'CBB Default'; text-align:center;">
                                             <AdvancedWrapper Bottom="true" Top="false" Class="">
                                                 <span class="oi oi-dollar"></span> Portfolio
                                             </AdvancedWrapper>
                                         </a>
-                                    </li>
+                                    </div>
                                 }
                                 @if (ShowChart)
                                 {
-                                    <li>
-                                        <a class="navbar-brand" href="chart" style="font-family:'CBB Default'; text-align:center;">
+                                    <div>
+                                        <a class="navbtn navbar-brand" href="chart" style="font-family:'CBB Default'; text-align:center;">
                                             <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Chart
                                         </a>
-                                    </li>
+                                    </div>
                                 }
                                 @if (ShowForecast)
                                 {
-                                    <li>
-                                        <a class="navbar-brand @Constants.Options(Constants.TryingItOut,"componentWrapper","")" href="forecast" style="font-family:'CBB Default'; text-align:center;">
+                                    <div>
+                                        <a class="navbtn navbar-brand @Constants.Options(Constants.TryingItOut,"componentWrapper","")" href="forecast" style="font-family:'CBB Default'; text-align:center;">
                                             <AdvancedWrapper Bottom="true" Top="false" Class="">
                                                 <span class="oi oi-sun"></span> Forecast
                                             </AdvancedWrapper>
                                         </a>
-                                    </li>
+                                    </div>
                                 }
-                            </ul>
+                            </div>
                             <div>
                                 <a href="account" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
                                     <span class="oi oi-person"></span>
@@ -609,6 +612,36 @@
         ToggleOverflow();
         StateHasChanged();
     }
+
+    private bool CheckWhitelist()
+    {
+        string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
+        curUrl = curUrl.Split("/")[0];
+        string[] whitelisted = new string[] { "policy", "reset", "sign", "contact-us" };
+        foreach(string white in whitelisted)
+        {
+            if (curUrl == white)
+                return true;
+        }
+        return false;
+    }
+
+    private bool CheckLandList()
+    {
+        if (NavMan.BaseUri == NavMan.Uri)
+            return true;
+        string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
+
+        curUrl = curUrl.Split("/")[0];
+        string[] whitelisted = new string[] {  "pricing", "FAQs", "contact-us" };
+        foreach(string white in whitelisted)
+        {
+            if (curUrl == white)
+                return true;
+        }
+        return false;
+    }
+
     private void BalancesUpdated(object sender, List<Balance> e)
     {
         StateHasChanged();

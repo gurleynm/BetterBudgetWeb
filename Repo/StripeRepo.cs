@@ -23,6 +23,13 @@ namespace BetterBudgetWeb.Repo
             
             return products;
         }
+        public static async Task<StripeList<Price>> GetPrices()
+        { 
+            var service = new PriceService();
+            StripeList<Price> prices = await service.ListAsync();
+            
+            return prices;
+        }
 
         public static async Task<string> CheckoutUrl()
         {

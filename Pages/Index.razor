@@ -120,37 +120,34 @@ else
                         </div>
                     </div>
                     <br />
-                    @if (Constants.TIER_LEVEL > Tier.BASIC_TIER)
-                    {
-                        <AdvancedWrapper Bottom="false" Left="true" Class="@Constants.Options(Constants.TryingItOut,"componentWrapper","flex-r-100")">
-                            <div style="margin-right:1vw;">
-                                <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
-                                    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                                    <option value="All">All</option>
-                                    @foreach (var dt in FoundMonths)
-                                    {
-                                        <option value="@dt">@dt</option>
-                                    }
-                                </select>
-                                <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
-                                    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                                    <option value="All">All</option>
-                                    @foreach (var dt in FoundYears)
-                                    {
-                                        <option value="@dt">@dt</option>
-                                    }
-                                </select>
-                                @if (ValidChoice)
+                    <div class="flex-r-100" style="height:fit-content">
+                        <div>
+                            <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
+                                <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                                <option value="All">All</option>
+                                @foreach (var dt in FoundMonths)
                                 {
-                                    <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
+                                    <option value="@dt">@dt</option>
                                 }
-                                else
+                            </select>
+                            <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
+                                <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                                <option value="All">All</option>
+                                @foreach (var dt in FoundYears)
                                 {
-                                    <label style="color:red">No values for this combination.</label>
+                                    <option value="@dt">@dt</option>
                                 }
-                            </div>
-                        </AdvancedWrapper>
-                    }
+                            </select>
+                            @if (ValidChoice)
+                            {
+                                <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
+                            }
+                            else
+                            {
+                                <label style="color:red">No values for this combination.</label>
+                            }
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -429,6 +426,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        Constants.CurPage = "Home";
         MainLayout.ToggleOverflow("auto");
 
         Transactions = Constants.catchAll.Transactions;

@@ -1,0 +1,12 @@
+﻿<div class="flex-c-start" style="align-items:center;margin:2em 0">
+    <hr style="width:100%;color:silver"/>
+    <h2 style="margin:1em 0;font-family: 'CBB Default';color:silver;text-align:center"><strong>@Question</strong></h2>
+    <h3 style="margin:0;font-family: 'CBB Default';color:silver;text-align:center">@Answer</h3>
+</div>
+
+@code {
+    [Parameter]
+    public string Question { get; set; }
+    [Parameter]
+    public string Answer { get; set; }
+}

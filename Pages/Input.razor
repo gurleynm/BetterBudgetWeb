@@ -5,7 +5,10 @@
 
 <PageTitle>Input</PageTitle>
 
-<h1 style="font-family:'CBB Default'">Input</h1>
+@if (!Constants.Mobile)
+{
+    <h1 style="font-family:'CBB Default'">Input</h1>
+}
 @if (!Constants.Mobile)
 {
     <div class="tab">
@@ -121,6 +124,7 @@ else if (ShowStatic)
 
     protected override async Task OnInitializedAsync()
     {
+        Constants.CurPage = "Input";
         if (NoBalances)
         {
             ShowTrans = false;

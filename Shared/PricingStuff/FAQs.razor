@@ -1,0 +1,42 @@
+﻿@page "/FAQs"
+
+<PageTitle>FAQs</PageTitle>
+
+<div class="flex-r-100">
+    <div class="flex-c-start" style="align-items:center;width:@Constants.TestMobile("90%","80%");">
+        <h1 class="flex-r-100" style="font-family: 'CBB Default';color:cyan;text-align:center">Frequently asked questions</h1>
+        @foreach (var qa in QandAs)
+        {
+            <QA Question=@qa.Item1 Answer=@qa.Item2></QA>
+        }
+    </div>
+</div>
+
+@code {
+    private List<(string, string)> QandAs = new List<(string, string)>();
+    protected override async Task OnInitializedAsync()
+    {
+        QandAs.Clear();
+
+        QandAs.Add((
+            "Do you sell my information?",
+            "No! The reason we charge a subscription is so we can offer this service without compromising your data. We do not sell or send your information to third-party companies."
+        ));
+        QandAs.Add((
+            "What's the purpose?",
+            "Are you in a relationship where one of you REALLY loves tracking finances, but the other one doesn't? This is an easy, constructive way to build a budget together and help you reach your common goals!"
+        ));
+        QandAs.Add((
+            "How is budgeting with Couple's Better Budget different than other sites?",
+            "Our #1 goal is to offer a user-friendly means for partners to track their money as together. Our team members are all active users, so we do everything we can to deliver the highest quality possible. We strive to offer you powerful features for a low-cost."
+        ));
+        QandAs.Add((
+            "Other sites let you link accounts, why don't you?",
+            "Believe it or not, this is deliberate! We believe that a set-and-forget mindest to transaction tracking results in poor budgeting. Explicit recording means that you have to SEE the expeneses change your account balances and saving goals. You truly get to take full control of your budget when you engage with it everyday."
+        ));
+        QandAs.Add((
+            "I have an idea for an improvement, how can I reach out?",
+            "We love feedback! Like any healthy couple, we are open to criticisms. Please, reach out to our support email at couplesbetterbudget@gmail.com to share your thoughts with us."
+        ));
+    }
+}

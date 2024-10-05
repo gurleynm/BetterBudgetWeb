@@ -47,33 +47,12 @@ table.add_expense > tr {
         border: none;
     }
 
-ul {
-    list-style: none;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
+div.navi > div a:hover, .dropdown:hover .dropbtn {
+    background-color: purple;
 }
 
-    ul > li {
-        display: inline-block;
-    }
-
-ul > li a, .dropbtn {
-    display: inline-block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-
-    ul > li a:hover, .dropdown:hover .dropbtn {
-        background-color: purple;
-    }
-
-ul > li.dropdown {
-    display: inline-block;
+.navbtn:hover {
+    background-color: purple;
 }
 
 .dropdown-content {
@@ -467,4 +446,19 @@ td a, td input, td img {
     background: gold;
     border-radius: 10px;
     padding: 2px 10px;
+}
+
+.sel-span {
+    padding: .5em;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    cursor:pointer;
+}
+
+.unsel-span {
+    padding: .5em;
+    background-color: transparent;
+    color: white;
+    cursor: pointer;
 }

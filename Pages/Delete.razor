@@ -4,7 +4,10 @@
 
 <PageTitle>Delete</PageTitle>
 
-<h1 style="font-family:'CBB Default'">Delete</h1>
+@if (!Constants.Mobile)
+{
+    <h1 style="font-family:'CBB Default'">Delete</h1>
+}
 <div class="tab">
     <button class="tablinks @BalanceClass" @onclick="@ShowBalanceGoal">Account</button>
     @if(Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "DYNAMIC") != null)
@@ -37,10 +40,6 @@ else if (ShowStatic)
 else if (ShowEnvelope)
 {
     <DeleteEnvelope />
-}
-else if (ShowSavings && false)
-{
-    <DeleteSavings />
 }
 
 
@@ -80,15 +79,19 @@ else if (ShowSavings && false)
     private bool ShowDynamic { get; set; }
     private bool ShowStatic { get; set; }
     private bool ShowEnvelope { get; set; }
-    private bool ShowSavings { get; set; }
 
     private string BalanceClass => ShowBalance && !Constants.Mobile ? "active" : "";
     private string DynamicClass => ShowDynamic && !Constants.Mobile ? "active" : "";
     private string StaticClass => ShowStatic && !Constants.Mobile ? "active" : "";
     private string EnvelopesClass => ShowEnvelope && !Constants.Mobile ? "active" : "";
-    private string SavingsClass => ShowSavings && !Constants.Mobile ? "active" : "";
 
     private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
+
+    protected override Task OnInitializedAsync()
+    {
+        Constants.CurPage = "Delete";
+        return base.OnInitializedAsync();
+    }
 
     private void ShowBalanceGoal()
     {
@@ -96,7 +99,6 @@ else if (ShowSavings && false)
         ShowDynamic = false;
         ShowStatic = false;
         ShowEnvelope = false;
-        ShowSavings = false;
     }
     private void ShowDynamicGoal()
     {
@@ -104,7 +106,6 @@ else if (ShowSavings && false)
         ShowBalance = false;
         ShowStatic = false;
         ShowEnvelope = false;
-        ShowSavings = false;
     }
     private void ShowStaticGoal()
     {
@@ -112,22 +113,12 @@ else if (ShowSavings && false)
         ShowBalance = false;
         ShowDynamic = false;
         ShowEnvelope = false;
-        ShowSavings = false;
-    }
-    private void ShowSavingsGoal()
-    {
-        ShowSavings = !ShowSavings;
-        ShowBalance = false;
-        ShowDynamic = false;
-        ShowEnvelope = false;
-        ShowStatic = false;
     }
     private void ShowEnvelopes()
     {
         ShowEnvelope = !ShowEnvelope;
         ShowBalance = false;
         ShowDynamic = false;
-        ShowSavings = false;
         ShowStatic = false;
     }
 

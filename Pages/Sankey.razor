@@ -142,11 +142,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Constants.CurPage = "Chart";
         Constants.Transactions = await TransactionRepo.GetTransactionsAsync("ALL");
         DateTime latestDate = Constants.Transactions.Max(t => t.DateOfTransaction);
 
         SelectedMonth = latestDate.ToString("MMMM");
         SelectedYear = latestDate.Year.ToString();
+        SelectedLevel = "All";
         DrawChart();
     }
 
@@ -185,10 +187,17 @@
         if (string.IsNullOrEmpty(SelectedLevel))
             return;
 
-        List<Flow> objs = GetFlows(SelectedMonth, SelectedYear);
 
-        var json = System.Text.Json.JsonSerializer.Serialize(objs);
-        await JSRuntime.InvokeAsync<object>("drawChart", json);
+        List<Flow> objs = GetFlows(SelectedMonth, SelectedYear);
+        bool drawn = false;
+        int Tried = 0;
+
+        while (!drawn && Tried < 2)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(objs);
+            drawn = await JSRuntime.InvokeAsync<bool>("drawChart", json);
+            Tried++;
+        }
     }
 
     private List<Flow> GetFlows(string Month, string Year)

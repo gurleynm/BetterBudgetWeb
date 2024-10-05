@@ -1,0 +1,71 @@
+﻿@page "/pricing"
+
+@using BetterBudgetWeb.Repo
+@using Stripe
+@inject NavigationManager NavMan
+
+<PageTitle>Pricing</PageTitle>
+
+<div class="flex-c-start" style="height:fit-content">
+    <h1 class="flex-r-100" style="font-family: 'CBB Default';color:cyan">Pricing</h1>
+    <div class="flex-c" style="align-items:center">
+        <div class="flex-c-start" style="border:solid gray 2px;border-radius:10px">
+            <div class="flex-r-100">
+                <h3 style="padding:1em">What's included in a subscription?</h3>
+            </div>
+            @if (Products != null)
+            {
+                <div class="flex-r" style="padding:.5em">
+                    <span class="@Constants.Options(ShowMonthly,"sel-span","unsel-span")" @onclick=ToggleMonthly>Monthly</span>
+                    <span class="@Constants.Options(ShowMonthly,"unsel-span","sel-span")" @onclick=ToggleMonthly>Yearly</span>
+                </div>
+                <div class="flex-c-start" style="justify-content:space-evenly">
+                    @foreach (var prod in Products)
+                    {
+                        <TierListing TheProduct=prod Prices="ProductPrices[prod.Id]" Monthly="ShowMonthly" />
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="flex-r" style="justify-content:space-around;margin:1em">
+                    <span style="font-size:large;margin:0 1em" class="oi oi-media-record first-dot"></span>
+                    <span style="font-size:large;margin:0 1em" class="oi oi-media-record second-dot"></span>
+                    <span style="font-size:large;margin:0 1em" class="oi oi-media-record third-dot"></span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool ShowMonthly { get; set; } = true;
+    private IEnumerable<Product> Products;
+    private StripeList<Price> Prices;
+    private Dictionary<string, IEnumerable<Price>> ProductPrices;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Products = await StripeRepo.GetProducts();
+        Prices = await StripeRepo.GetPrices();
+
+        ProductPrices = new Dictionary<string, IEnumerable<Price>>();
+
+        foreach (var prod in Products)
+        {
+            ProductPrices[prod.Id] = Prices.Where(p => p.ProductId == prod.Id);
+
+            var price = ProductPrices[prod.Id].FirstOrDefault(p => p.Recurring.Interval == "month");
+            if (price == null)
+                continue;
+            prod.DefaultPrice = price;
+        }
+        Products = Products.OrderBy(p => p.DefaultPrice.UnitAmount);
+    }
+
+    private void ToggleMonthly()
+    {
+        ShowMonthly = !ShowMonthly;
+        StateHasChanged();
+    }
+}

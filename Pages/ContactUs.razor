@@ -1,0 +1,35 @@
+﻿@page "/contact-us"
+
+<PageTitle>Contact Us</PageTitle>
+<div style="position:relative;top:1em;left:1em"><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
+
+<h2 style="font-family:'CBB Default';text-align:center;padding-top:1em">Do you have a question or comment? Please send us an email: couplesbetterbudget@gmail.com</h2>
+
+@if (false)
+{
+    <div class="flex-c" style="width:100vw;height:100%;align-items:center;padding-top:10%">
+        <h1 style="font-family:'CBB Default'">Let us know what's on your mind</h1>
+        <div class="flex-c">
+            <label style="color:white">Name</label>
+            <div class="flex-r" style="justify-content:start">
+                <input class="better" placeholder="Name" type="text" @oninput="@(async (ui) => { Name = (string) ui.Value;})" />
+            </div>
+            <br />
+            <label style="color:white">Email</label>
+            <div class="flex-r" style="justify-content:start">
+                <input class="better" placeholder="Email" type="email" @oninput="@(async (ui) => { Email = (string) ui.Value;})" />
+            </div>
+            <br />
+            <label style="color:white">Message</label>
+            <div class="flex-r" style="justify-content:start">
+                <textarea class="better" placeholder="Message" style="height:20vh" @oninput="@(async (ui) => { Text = (string) ui.Value;})" />
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string Name { get; set; }
+    private string Email { get; set; }
+    private string Text { get; set; }
+}
