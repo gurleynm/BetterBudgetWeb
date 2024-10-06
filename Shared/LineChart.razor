@@ -1,19 +1,42 @@
 ﻿@inject IJSRuntime JSRuntime
-<div id="@ChartId"></div>
+@if (Showing)
+{
+    <div style="display:flex;flex-direction:row;justify-content:center;align-content:center;
+                background-color:#384152;border-radius:5px;padding:0;margin:@Margin">
+        <div id="@ChartId" style="height:100%;width:100%;"></div>
+    </div>
+}
 
 @code {
     [Parameter]
     public string ChartId { get; set; } //'chart_div'
+    [Parameter]
+    public List<LinePlot> Plots { get; set; } //'chart_div'
+    [Parameter]
+    public string Margin { get; set; } = "0 0 1em 0";
+    public bool Showing => Plots != null && Plots.Count > 1;
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender) DrawLineChart();
+        if (firstRender && Showing) DrawLineChart();
         base.OnAfterRender(firstRender);
     }
 
     public async void DrawLineChart()
     {
-        var json = System.Text.Json.JsonSerializer.Serialize(new string[2]);
+        var json = System.Text.Json.JsonSerializer.Serialize(Plots.ToArray());
         await JSRuntime.InvokeAsync<object>("drawLineChart", json, ChartId);
+    }
+    public class LinePlot
+    {
+        public string Month { get; set; }
+        public double Amount { get; set; }
+        public bool certainty { get; set; }
+        public LinePlot(string month, double amount, bool cert = true)
+        {
+            Month = month;
+            Amount = amount;
+            certainty = cert;
+        }
     }
 }

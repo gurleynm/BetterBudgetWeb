@@ -9,6 +9,7 @@
 @using BetterBudgetWeb.Shared.General
 @using BetterBudgetWeb.Shared.Tutorial
 @using System.Collections.Specialized
+@using static BetterBudgetWeb.Shared.LineChart
 @using static BetterBudgetWeb.MainMenuItems.AddExpense
 @inject IJSRuntime JSRuntime
 @implements IDisposable
@@ -36,8 +37,8 @@ else
 
         <div class="flex-r" style="flex-wrap:nowrap;justify-content:space-between">
             <div class="flex-r" style="justify-content:start;">
-
                 <div style="width:100%;float:left; margin-right:1vw; margin-bottom:2vh;display:inline-block;">
+                    <LineChart Plots="Plots" ChartId="chart_div" />
                     <div class="flex-r" style="margin-bottom:2vh;">
                         <div>
                             <!-- Savings Goals-->
@@ -423,6 +424,7 @@ else
     }
 
     private List<Data.Envelope> Envelopes { get; set; }
+    private List<LinePlot> Plots { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -448,6 +450,7 @@ else
             */
 
         SetDataPoints();
+        Plots = IndexRunner.GeneratePlots();
 
         GlobalBT.OnReportClick += ToggleReports;
         Constants.TransactionsChanged += TransactionsUpdated;
