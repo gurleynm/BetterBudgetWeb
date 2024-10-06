@@ -441,7 +441,7 @@
 
     public BalanceTray GlobalBT { get; set; } = new BalanceTray();
 
-    private double heightTopBar = 8;
+    private double heightTopBar = 0;
     private string HeightTopBar => heightTopBar + "px";
     private double widthLeftBar = 20;
     private string WidthLeftBar => widthLeftBar + "em";
@@ -467,27 +467,30 @@
 
     public string ModalType { get; set; }
     private string Overflow = "auto";
+    ValueTask<bool> DeviceCheck { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         try
         {
-            string id = Constants.Mobile ? "mobile-nav-bar" : "main-bar";
-            double startH = heightTopBar;
-            var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
-            if (holder == "0")
-                heightTopBar = 78;
-            else
+            if (heightTopBar <= 0)
             {
-                heightTopBar = Convert.ToDouble(holder);
-                if (heightTopBar != startH)
-                    StateHasChanged();
+                string id = await DeviceCheck ? "mobile-nav-bar" : "main-bar";
+                double startH = heightTopBar;
+                var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
+                if (holder == "0")
+                    heightTopBar = -1;
+                else
+                {
+                    heightTopBar = Convert.ToDouble(holder);
+                    if (heightTopBar != startH)
+                        StateHasChanged();
+                }
             }
         }
         catch (Exception e)
         {
-            // if (firstRender)
-            //     NavMan.NavigateTo("home", true);
+
         }
     }
     protected override async Task OnInitializedAsync()
@@ -495,7 +498,8 @@
         Constants.BalancesChanged += BalancesUpdated;
         try
         {
-            Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
+            DeviceCheck = jsRuntime.InvokeAsync<bool>("isDevice");
+            Constants.Mobile = await DeviceCheck;
         }
         catch (Exception e)
         {
