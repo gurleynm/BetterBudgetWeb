@@ -37,8 +37,8 @@ else
 
         <div class="flex-r" style="flex-wrap:nowrap;justify-content:space-between">
             <div class="flex-r" style="justify-content:start;">
-
                 <div style="width:100%;float:left; margin-right:1vw; margin-bottom:2vh;display:inline-block;">
+                <LineChart Plots="Plots" ChartId="chart_div" />
                     <div class="flex-r" style="margin-bottom:2vh;">
                         <div>
                             <!-- Savings Goals-->
@@ -67,7 +67,6 @@ else
                 <div style="display:inline-block;width:50%;">
                     <div class="flex-r" style="padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
                         <div style="width:100%">
-                            <LineChart Plots="Plots" ChartId="chart_div" />
                             <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
                                 <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                                 <br style="clear:both" />
@@ -454,10 +453,20 @@ else
         Plots.Clear();
 
         Snapshot snapshot;
-        var Snapshots = Constants.catchAll.Snapshots.ToList();
+        var Snapshots = new List<Snapshot>(Constants.catchAll.Snapshots);
         int SnapCnt = Snapshots.Count;
 
-        Plots.Add(new LinePlot(DateTime.Now.ToString("MMMM"), Constants.TotalNetWorth, true));
+        if(Constants.TIER_LEVEL == Tier.DEMO)
+            Plots.Add(new LinePlot(DateTime.Now.ToString("MMMM"), Constants.TotalNetWorth, true));
+        else
+        {
+            var exists = Snapshots.FirstOrDefault(s => s.Month + " " + s.Year == Constants.MonthYear());
+            if (exists != null) {
+                exists.Person1NetWorth = Constants.Person1NetWorth;
+                exists.Person2NetWorth = Constants.Person2NetWorth;
+            }
+        }
+
         for (int index = SnapCnt - 1; index > SnapCnt - 6; index--)
         {
             snapshot = Snapshots[index];

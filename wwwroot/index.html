@@ -250,15 +250,31 @@
             //]);
 
             var options = {
+                title: 'Net Worth (6 Month View)',
+                titleTextStyle: {
+                    color: '#FFFFFF'
+                },
                 backgroundColor: 'transparent',
                 borderRadius:'50%',
                 legend: {position:'none'},
                 hAxis: {
-                    title: null,
+                    title: 'Month',
+                    titleTextStyle: {
+                        color: '#FFFFFF'
+                    },
                     textStyle: {
                         color: '#FFFFFF'
                     }
-                }
+                },
+                vAxis: {
+                    title: null,
+                    format: 'currency',
+                    textStyle: {
+                        color: '#FFFFFF'
+                    }
+                },
+                pointSize: 10,
+                pointShape: { type: 'triangle' }
             };
 
             var chart = new google.visualization.LineChart(document.getElementById(chartId));
