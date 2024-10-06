@@ -1,8 +1,11 @@
 ﻿@inject IJSRuntime JSRuntime
-<div style="display:flex;flex-direction:row;justify-content:center;align-content:center;
+@if (Showing)
+{
+    <div style="display:flex;flex-direction:row;justify-content:center;align-content:center;
                 background-color:#384152;border-radius:5px;padding:0;margin:@Margin">
-    <div id="@ChartId" style="height:100%;width:100%"></div>
-</div>
+        <div id="@ChartId" style="height:100%;width:100%;"></div>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -11,10 +14,11 @@
     public List<LinePlot> Plots { get; set; } //'chart_div'
     [Parameter]
     public string Margin { get; set; } = "0 0 1em 0";
+    public bool Showing => Plots != null && Plots.Count > 1;
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender) DrawLineChart();
+        if (firstRender && Showing) DrawLineChart();
         base.OnAfterRender(firstRender);
     }
 

@@ -32,10 +32,7 @@
                         <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
                     </div>
                 }
-                @if (Plots != null && Plots.Count > 0)
-                {
-                    <LineChart Plots="Plots" ChartId="chart_div" Margin="1em 0 0 0" />
-                }
+                <LineChart Plots="Plots" ChartId="chart_div" Margin="1em 0 0 0" />
             </div>
         </PopTray>
         <div style="padding-bottom:2vh">
