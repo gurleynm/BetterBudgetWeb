@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 <div style="display:flex;flex-direction:row;justify-content:center;align-content:center;
-                background-color:#384152;border-radius:5px;padding:0;margin-bottom:1em">
+                background-color:#384152;border-radius:5px;padding:0;margin:@Margin">
     <div id="@ChartId" style="height:100%;width:100%"></div>
 </div>
 
@@ -9,6 +9,8 @@
     public string ChartId { get; set; } //'chart_div'
     [Parameter]
     public List<LinePlot> Plots { get; set; } //'chart_div'
+    [Parameter]
+    public string Margin { get; set; } = "0 0 1em 0";
 
     protected override void OnAfterRender(bool firstRender)
     {

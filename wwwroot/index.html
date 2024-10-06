@@ -250,19 +250,18 @@
             //]);
 
             var options = {
-                title: 'Net Worth (6 Month View)',
+                title: 'Net Worth (' + lineList.length +'-Month View)',
                 titleTextStyle: {
-                    color: '#FFFFFF'
+                    color: '#FFFFFF',
+                    fontName: 'Imprint MT Shadow'
                 },
                 backgroundColor: 'transparent',
-                borderRadius:'50%',
-                legend: {position:'none'},
+                borderRadius: '50%',
+                legend: { position: 'none' },
                 hAxis: {
-                    title: 'Month',
-                    titleTextStyle: {
-                        color: '#FFFFFF'
-                    },
+                    title: null,
                     textStyle: {
+                        fontName: 'Imprint MT Shadow',
                         color: '#FFFFFF'
                     }
                 },
@@ -270,6 +269,7 @@
                     title: null,
                     format: 'currency',
                     textStyle: {
+                        fontName: 'Imprint MT Shadow',
                         color: '#FFFFFF'
                     }
                 },
