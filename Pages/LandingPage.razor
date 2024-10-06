@@ -68,14 +68,14 @@
 
     EventCallback GrabDemo => EventCallback.Factory.Create(this, GetDemo);
 
-    private double heightTopBar = 8;
+    private double heightTopBar = 0;
     private string HeightTopBar => heightTopBar + "px";
 
     private bool LoadingDemo { get; set; }
+    ValueTask<bool> DeviceCheck { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await sessionStorage.SetItemAsync("token", "");
         Constants.Token = "";
         Constants.CUR_USER_NAME = "";
         Constants.TIER_LEVEL = Tier.TRIAL;
@@ -84,17 +84,39 @@
         Constants.WeIn = false;
         try
         {
-            Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
+            DeviceCheck = jsRuntime.InvokeAsync<bool>("isDevice");
+            Constants.Mobile = await DeviceCheck;
         }
         catch (Exception e)
         {
             Constants.Mobile = false;
         }
+        await sessionStorage.SetItemAsync("token", "");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        heightTopBar = Convert.ToDouble(await jsRuntime.InvokeAsync<string>("ElementHeight", "land-top"));
+        try
+        {
+            if (heightTopBar <= 0)
+            {
+                string id = await DeviceCheck ? "land-top-mobile" : "land-top";
+                double startH = heightTopBar;
+                var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
+                if (holder == "0")
+                    heightTopBar = -1;
+                else
+                {
+                    heightTopBar = Convert.ToDouble(holder);
+                    if (heightTopBar != startH)
+                        StateHasChanged();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
     }
 
     private async void GetDemo()
