@@ -82,16 +82,8 @@
         Constants.TIER_STATUS = "active";
         Constants.catchAll = new CatchAll();
         Constants.WeIn = false;
-        try
-        {
-            DeviceCheck = jsRuntime.InvokeAsync<bool>("isDevice");
-            Constants.Mobile = await DeviceCheck;
-        }
-        catch (Exception e)
-        {
-            Constants.Mobile = false;
-        }
-        await sessionStorage.SetItemAsync("token", "");
+
+        sessionStorage.SetItemAsync("token", "");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -100,7 +92,7 @@
         {
             if (heightTopBar <= 0)
             {
-                string id = await DeviceCheck ? "land-top-mobile" : "land-top";
+                string id = await jsRuntime.InvokeAsync<bool>("isDevice") ? "land-top-mobile" : "land-top";
                 double startH = heightTopBar;
                 var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
                 if (holder == "0")
