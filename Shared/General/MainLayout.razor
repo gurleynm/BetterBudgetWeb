@@ -398,6 +398,13 @@
 
                                             </EditorModalDialog>
                                         }
+                                        else if (ViewReports)
+                                        {
+                                            <Reports Title="@(string.Format("{0} (By: {1})","Stubname", "Deez Nuts"))"
+                                                     Text="Story" OnClose=@ToggleReports>
+
+                                            </Reports>
+                                        }
                                     </CascadingValue>
                                 </CascadingValue>
                             </CascadingValue>
@@ -457,6 +464,7 @@
     private Transaction SelectedTransaction { get; set; }
     private bool ShowDeleteModal { get; set; }
     private bool ShowEditModal { get; set; }
+    private bool ViewReports { get; set; }
 
     private bool ShowDelete => Constants.Balances != null && Constants.Balances.Count > 0;
     private bool ShowUpdate => Constants.Balances != null && Constants.Balances.Count > 0;
@@ -569,11 +577,15 @@
             case "D":
                 ToggleDelete(t);
                 break;
+            case "R":
+                ToggleReports();
+                break;
             default:
                 ToggleEdit(t);
                 break;
         }
     }
+
     public async void ToggleDelete(Transaction t)
     {
         SelectedTransaction = new Transaction(t);
@@ -596,6 +608,19 @@
         StateHasChanged();
     }
 
+    private async void ToggleReports(bool accepted = false)
+    {
+        ViewReports = !ViewReports;
+        if (ViewReports)
+            ToggleOverflow("hidden");
+        else
+        {
+            Constants.DynamicCostItems = new List<DynamicCostItem>(Constants.DynamicCostItems);
+            ToggleOverflow("auto");
+        }
+        StateHasChanged();
+
+    }
     private async void CloseEditModal(bool accepted)
     {
         ShowEditModal = !ShowEditModal;
@@ -621,7 +646,7 @@
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
         curUrl = curUrl.Split("/")[0];
         string[] whitelisted = new string[] { "policy", "reset", "sign", "contact-us" };
-        foreach(string white in whitelisted)
+        foreach (string white in whitelisted)
         {
             if (curUrl == white)
                 return true;
@@ -636,8 +661,8 @@
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
 
         curUrl = curUrl.Split("/")[0];
-        string[] whitelisted = new string[] {  "pricing", "FAQs", "contact-us" };
-        foreach(string white in whitelisted)
+        string[] whitelisted = new string[] { "pricing", "FAQs", "contact-us" };
+        foreach (string white in whitelisted)
         {
             if (curUrl == white)
                 return true;

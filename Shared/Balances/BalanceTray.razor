@@ -1,5 +1,6 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Runner
+@using BetterBudgetWeb.Shared.General
 @using static BetterBudgetWeb.Shared.LineChart
 @implements IDisposable
 
@@ -55,8 +56,12 @@
     public Action<Balance> OnSlotClick { get; set; }
     [Parameter]
     public Action OnEnvelopeClick { get; set; }
-    [Parameter]
-    public Action OnReportClick { get; set; }
+    [CascadingParameter]
+    public MainLayout MainLayout { get; set; }
+    [CascadingParameter]
+    public EventCallback<Transaction> RunModal { get; set; }
+
+    public bool ViewReports { get; set; }
 
     private bool FirstToggle = true;
     private bool ShowWorth = true;
@@ -73,6 +78,13 @@
         return base.OnInitializedAsync();
     }
 
+    private async void ToggleReports()
+    {
+        MainLayout.ModalType = "R";
+        await RunModal.InvokeAsync(new Transaction());
+
+    }
+
     private void ToggleShowWorth()
     {
         if (FirstToggle)
@@ -87,11 +99,6 @@
         StateHasChanged();
     }
 
-    private void ToggleReports()
-    {
-        if (OnReportClick != null)
-            OnReportClick();
-    }
     public void RefreshBalances()
     {
         Balances = Constants.catchAll.Balances;
