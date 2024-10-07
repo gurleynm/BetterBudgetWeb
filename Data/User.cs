@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace BetterBudgetWeb.Data
+﻿namespace BetterBudgetWeb.Data
 {
     public class User
     {
@@ -10,7 +8,8 @@ namespace BetterBudgetWeb.Data
         public string Passkey { get; set; } = "";
         public string Token { get; set; } = "";
         public User() { }
-        public User(string name, string email, string pass) {
+        public User(string name, string email, string pass)
+        {
             Name = name;
             Email = email;
             Passkey = pass;

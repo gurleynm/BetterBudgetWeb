@@ -1,12 +1,5 @@
-﻿using BetterBudgetWeb.Data;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Stripe;
+﻿using Stripe;
 using Stripe.Checkout;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
-using static System.Net.WebRequestMethods;
 
 namespace BetterBudgetWeb.Repo
 {
@@ -20,14 +13,14 @@ namespace BetterBudgetWeb.Repo
             var options = new ProductListOptions { Limit = 3 };
             var service = new ProductService();
             StripeList<Product> products = await service.ListAsync(options);
-            
+
             return products;
         }
         public static async Task<StripeList<Price>> GetPrices()
-        { 
+        {
             var service = new PriceService();
             StripeList<Price> prices = await service.ListAsync();
-            
+
             return prices;
         }
 

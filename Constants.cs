@@ -1,7 +1,7 @@
 ﻿using BetterBudgetWeb.Data;
+using BetterBudgetWeb.MonthView;
 using BetterBudgetWeb.Repo;
 using BetterBudgetWeb.Runner;
-using BetterBudgetWeb.MonthView;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
 
@@ -223,7 +223,7 @@ namespace BetterBudgetWeb
             //BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
             if (PeopleDecide)
             {
-                if(Token != "DEMO")
+                if (Token != "DEMO")
                     catchAll = await CatchAllRunner.Grab();
 
                 await RedrivePeople();

@@ -1,5 +1,5 @@
 ﻿namespace BetterBudgetWeb.Data
-{    
+{
     public enum Tier
     {
         NONE,

@@ -1,7 +1,4 @@
-﻿using BetterBudgetWeb.Repo;
-using System.Transactions;
-
-namespace BetterBudgetWeb.Data
+﻿namespace BetterBudgetWeb.Data
 {
     public class DynamicCostItem
     {

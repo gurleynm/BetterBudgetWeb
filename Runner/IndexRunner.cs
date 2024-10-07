@@ -1,8 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
-using BetterBudgetWeb.Repo;
 using static BetterBudgetWeb.MainMenuItems.AddExpense;
-using static BetterBudgetWeb.Shared.LineChart;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace BetterBudgetWeb.Runner
 {
@@ -311,10 +308,14 @@ namespace BetterBudgetWeb.Runner
 
             DateTime CurMonthYear = DateTime.Now;
             DateTime PrevMonthYear = DateTime.Now;
-            if (Constants.TIER_LEVEL == Tier.DEMO) {
-                Snapshots.Add(new Snapshot { Month = DateTime.Now.ToString("MMMM"),
+            if (Constants.TIER_LEVEL == Tier.DEMO)
+            {
+                Snapshots.Add(new Snapshot
+                {
+                    Month = DateTime.Now.ToString("MMMM"),
                     Person1NetWorth = Constants.Person1NetWorth,
-                    Person2NetWorth = Constants.Person2NetWorth });
+                    Person2NetWorth = Constants.Person2NetWorth
+                });
                 SnapCnt++;
             }
             else
@@ -335,16 +336,16 @@ namespace BetterBudgetWeb.Runner
                 CurMonthYear = new DateTime(snapshot.Year, Constants.Months.IndexOf(snapshot.Month), 1);
                 int Months = ((PrevMonthYear.Year - CurMonthYear.Year) * 12) + PrevMonthYear.Month - CurMonthYear.Month;
                 //if (Months >= 0)
-                    while (Months > 0)
-                    {
-                        MonthIndex--;
-                        if (MonthIndex == -1)
-                            MonthIndex = 11;
-                        Months--;
-                        Plots.Add(new LinePlot(Constants.Months[MonthIndex], snapshot.Person1NetWorth + snapshot.Person2NetWorth, true));
+                while (Months > 0)
+                {
+                    MonthIndex--;
+                    if (MonthIndex == -1)
+                        MonthIndex = 11;
+                    Months--;
+                    Plots.Add(new LinePlot(Constants.Months[MonthIndex], snapshot.Person1NetWorth + snapshot.Person2NetWorth, true));
                     if (Plots.Count == 6)
                         break;
-                    }
+                }
                 //else
                 //    Plots.Add(new LinePlot(snapshot.Month, snapshot.Person1NetWorth + snapshot.Person2NetWorth, true));
 

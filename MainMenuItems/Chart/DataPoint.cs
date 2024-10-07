@@ -10,10 +10,10 @@
         {
             Label = label;
             bool tp = double.TryParse(value, out double v);
-            if(tp)
+            if (tp)
                 Value = v;
         }
-        
+
         public DataPoint(string label, double value)
         {
             Label = label;

@@ -1,9 +1,4 @@
 ﻿using BetterBudgetWeb.Data;
-using BetterBudgetWeb.Repo;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using static BetterBudgetWeb.Shared.Reports;
-using System.Diagnostics;
 
 namespace BetterBudgetWeb.Runner
 {
@@ -150,7 +145,7 @@ namespace BetterBudgetWeb.Runner
 
             return sum;
         }
-        
+
         public static double SumForStaticAll(List<Transaction> Trans, int person = 0)
         {
             double sum = 0;
@@ -178,7 +173,7 @@ namespace BetterBudgetWeb.Runner
 
             return SumForDynamicAll(Trans, person) + SumForStaticAll(Trans, person);
         }
-        
+
         public static double GetAllExpense(List<Transaction> Trans, int person = 0)
         {
             double sum = 0;

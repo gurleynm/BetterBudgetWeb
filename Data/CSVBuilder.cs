@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace BetterBudgetWeb.Data
+﻿namespace BetterBudgetWeb.Data
 {
     public class CSVBuilder
     {
@@ -25,7 +23,7 @@ namespace BetterBudgetWeb.Data
                 // All Years
                 var SelectedMonth = SelectedDownload.Split(' ')[0];
 
-                DesiredTransactions = Transactions.Where(t => 
+                DesiredTransactions = Transactions.Where(t =>
                                             t.MonthYear().Split(' ')[0] == SelectedMonth).OrderByDescending(t => t.DateOfTransaction).ToList();
                 previous = DesiredTransactions[0];
                 fileString = Transaction.ToString(previous.MonthYear(), true);
@@ -100,9 +98,9 @@ namespace BetterBudgetWeb.Data
         public static string BuildSankey(List<Transaction> Transactions, string SelectedDownload)
         {
             List<Transaction> DesiredTransactions = new List<Transaction>();
-            Dictionary<string,Transaction> DesiredTransactionsDict = new Dictionary<string, Transaction>();
-            Dictionary<string,Transaction> DictIncome = new Dictionary<string, Transaction>();
-            
+            Dictionary<string, Transaction> DesiredTransactionsDict = new Dictionary<string, Transaction>();
+            Dictionary<string, Transaction> DictIncome = new Dictionary<string, Transaction>();
+
             string fileString = "";
 
             if (SelectedDownload != "All")
@@ -117,10 +115,10 @@ namespace BetterBudgetWeb.Data
             {
                 if (IgnoreThese.Contains(transact.ExpenseType))
                     continue;
-                
+
                 TKey = transact.Name;
 
-                if(transact.ExpenseType == "Income")
+                if (transact.ExpenseType == "Income")
                 {
                     if (DictIncome.ContainsKey(TKey))
                     {
@@ -188,10 +186,10 @@ namespace BetterBudgetWeb.Data
                 }
             }
 
-            foreach(var key in DictIncome.Keys)
+            foreach (var key in DictIncome.Keys)
                 fileString += DictIncome[key].ToString("Sankey");
-            
-            foreach(var key in GeneralTransactions.Keys)
+
+            foreach (var key in GeneralTransactions.Keys)
                 fileString += GeneralTransactions[key].ToString("Sankey", "GENERAL");
 
             return fileString;

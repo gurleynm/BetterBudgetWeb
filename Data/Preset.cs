@@ -25,11 +25,11 @@ namespace BetterBudgetWeb.Data
             Person2Amount = smc.Person2Amount;
         }
         public Preset() { }
-        public Preset(StaticMonthlyCost smc) 
+        public Preset(StaticMonthlyCost smc)
         {
             SetSMC(smc);
         }
-        public Preset(StaticMonthlyCost smc,string hex, string text) 
+        public Preset(StaticMonthlyCost smc, string hex, string text)
         {
             HexColor = hex;
             TextColor = text;

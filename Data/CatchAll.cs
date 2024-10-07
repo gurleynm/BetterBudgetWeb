@@ -1,6 +1,4 @@
-﻿using BetterBudgetWeb.Repo;
-
-namespace BetterBudgetWeb.Data
+﻿namespace BetterBudgetWeb.Data
 {
     public class CatchAll
     {

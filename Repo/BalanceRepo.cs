@@ -1,11 +1,7 @@
 ﻿using BetterBudgetWeb.Data;
-using BetterBudgetWeb.Shared;
-using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Xml.Linq;
 
 namespace BetterBudgetWeb.Repo
 {
@@ -15,7 +11,7 @@ namespace BetterBudgetWeb.Repo
         public static List<Balance> Balances { get; set; }
         public static async Task<List<Balance>> GetBalancesAsync()
         {
-            if(Constants.Token == "DEMO")
+            if (Constants.Token == "DEMO")
                 return Constants.Balances;
 
             HttpClient client = new HttpClient();
@@ -44,7 +40,7 @@ namespace BetterBudgetWeb.Repo
             Task.Run(async () => await GetBalancesAsync());
             return Balances;
         }
-        
+
         public static string GetId(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -54,7 +50,7 @@ namespace BetterBudgetWeb.Repo
             if (Balances == null)
             {
                 Balances = GetBalances();
-                if(Balances == null) return null;
+                if (Balances == null) return null;
 
                 FirstLoad = false;
             }
@@ -95,7 +91,7 @@ namespace BetterBudgetWeb.Repo
         }
         public static async Task<List<Balance>> AddOrUpdateAsync(Balance bal)
         {
-            if(bal == null)
+            if (bal == null)
                 return Constants.Balances;
             if (Constants.Token == "DEMO")
             {
@@ -108,7 +104,7 @@ namespace BetterBudgetWeb.Repo
                     Constants.catchAll.Balances.Remove(Exists);
                     Constants.catchAll.Balances.Add(bal);
                 }
-                
+
                 Constants.Balances = new List<Balance>(Constants.catchAll.Balances);
                 return Constants.Balances;
             }

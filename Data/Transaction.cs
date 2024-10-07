@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace BetterBudgetWeb.Data
+﻿namespace BetterBudgetWeb.Data
 {
     public class Transaction
     {
@@ -101,7 +99,7 @@ namespace BetterBudgetWeb.Data
 
             if (ExpenseType == "Income")
             {
-                double d = totalAmount-generalTotals;
+                double d = totalAmount - generalTotals;
                 if (d < 0)
                     addString = " (" + d.ToString("C2") + ")";
                 return new Flow(Name + " (" + totDollar + ")", "Income" + addString, tot);
@@ -165,10 +163,10 @@ namespace BetterBudgetWeb.Data
         }
         public string ToString(string version, string general = "")
         {
-            if(ExpenseType == "Income")
-                return string.Join(",",Name, "[" + TotalAmount.ToString("C2").Trim('$').Replace(",","") + "]","Income") + "\n";
-            
-            if(!string.IsNullOrEmpty(general))
+            if (ExpenseType == "Income")
+                return string.Join(",", Name, "[" + TotalAmount.ToString("C2").Trim('$').Replace(",", "") + "]", "Income") + "\n";
+
+            if (!string.IsNullOrEmpty(general))
                 return string.Join(",", "Income", "[" + TotalAmount.ToString("C2").Trim('$').Replace(",", "") + "]", ExpenseType) + "\n";
 
             return string.Join(",", ExpenseType, "[" + TotalAmount.ToString("C2").Trim('$').Replace(",", "") + "]", Name) + "\n";

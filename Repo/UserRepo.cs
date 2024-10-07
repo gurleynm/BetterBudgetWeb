@@ -1,7 +1,6 @@
 ﻿using BetterBudgetWeb.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Drawing;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -52,7 +51,7 @@ namespace BetterBudgetWeb.Repo
             if (!response.IsSuccessStatusCode)
                 return false;
 
-            if(string.IsNullOrEmpty(content))
+            if (string.IsNullOrEmpty(content))
                 return false;
             JObject j = (JObject)JsonConvert.DeserializeObject(content);
 
@@ -76,13 +75,13 @@ namespace BetterBudgetWeb.Repo
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            
+
             var response = await client.GetAsync(baseTokenURI);
             var content = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
                 return false;
 
-            if(string.IsNullOrEmpty(content))
+            if (string.IsNullOrEmpty(content))
                 return false;
             JObject j = (JObject)JsonConvert.DeserializeObject(content);
 
@@ -181,7 +180,7 @@ namespace BetterBudgetWeb.Repo
 
             return "Success";
         }
-        public static async Task<bool> DeleteUser(string user, string user2, string pass,string pass2)
+        public static async Task<bool> DeleteUser(string user, string user2, string pass, string pass2)
         {
             if (Constants.Token == "DEMO")
                 return true;

@@ -6,11 +6,11 @@
         public string Name { get; set; } = "Savings";
         public string Person { get; set; } = "Person1";
         private double val = 0;
-        public double Value 
+        public double Value
         {
             get
             {
-                return Math.Round(val,2);
+                return Math.Round(val, 2);
                 //if (APR == 0)
                 //    return Math.Round(val,2);
                 //else
@@ -110,7 +110,7 @@
                 var Securities = Constants.Securities.Where(sec => sec.BalanceFrom.ToUpper() == Id.ToUpper()).ToList();
                 amount += Securities.Sum(s => s.Value);
             }
-            
+
             return amount;
         }
     }

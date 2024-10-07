@@ -2,7 +2,7 @@
 {
     public class Envelope
     {
-        public string Id { get; set; } =  Guid.NewGuid().ToString();
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         public string Name { get; set; }
 
@@ -17,9 +17,9 @@
         public string Person1Account { get; set; }
 
         public string Person2Account { get; set; }
-        
+
         public int UpdateGoal { get; set; }
-        
+
         public Envelope() { }
 
         public Envelope(string Id)

@@ -1,5 +1,4 @@
 ﻿using BetterBudgetWeb.Data;
-using BetterBudgetWeb.Repo;
 
 namespace BetterBudgetWeb.MonthView
 {
@@ -186,7 +185,7 @@ namespace BetterBudgetWeb.MonthView
         private static double GetTotalExpenses(string person = "")
         {
             double total = 0;
-            foreach(var smc in StaticMonthlyCosts)
+            foreach (var smc in StaticMonthlyCosts)
             {
                 if (person == Constants.Person1)
                     total += smc.Person1Amount;
@@ -195,8 +194,8 @@ namespace BetterBudgetWeb.MonthView
                 else
                     total += smc.TotalAmount;
             }
-            
-            foreach(var dci in DynamicCostItems)
+
+            foreach (var dci in DynamicCostItems)
             {
                 if (person == Constants.Person1)
                     total += dci.Person1Amount;
@@ -205,7 +204,7 @@ namespace BetterBudgetWeb.MonthView
                 else
                     total += dci.Amount;
             }
-            
+
             return total;
         }
     }

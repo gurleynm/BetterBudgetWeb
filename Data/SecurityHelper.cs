@@ -10,7 +10,7 @@ namespace BetterBudgetWeb.Data
             switch (type)
             {
                 case "Crypto":
-                    return CryptoHelper(response); 
+                    return CryptoHelper(response);
 
                 case "ETF":
                     return ETFHelper(response);
@@ -47,7 +47,7 @@ namespace BetterBudgetWeb.Data
                 lastSalePrice = primaryData["lastSalePrice"].ToString();
             }
             catch (Exception e)
-            {                
+            {
                 return -1;
             }
 
