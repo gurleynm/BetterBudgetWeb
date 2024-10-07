@@ -71,7 +71,7 @@
     protected override Task OnInitializedAsync()
     {
         @if (Constants.Mobile)
-            Plots = IndexRunner.GeneratePlots();
+            Plots = new List<LinePlot>(Constants.Plots);
 
         Constants.BalancesChanged += BalancesUpdated;
         RefreshBalances();

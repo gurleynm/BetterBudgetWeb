@@ -442,8 +442,8 @@ else
             */
 
         SetDataPoints();
-        Plots = IndexRunner.GeneratePlots();
 
+        Plots = new List<LinePlot>(Constants.Plots);
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
 

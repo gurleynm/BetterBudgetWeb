@@ -11,6 +11,9 @@
 @if (!Constants.Mobile)
 {
     <div class="flex-r" style="flex-wrap:wrap;justify-content:space-evenly;margin-bottom:2vh">
+        @* <div class="flex-r-100" style="height:50%;">
+            <LineChart Plots=Plots ChartId="chart_div" />
+        </div> *@
         <div class="flex-c">
             <!-- Monthly Goal Tracking -->
             <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
@@ -175,6 +178,8 @@ else
     [Parameter]
     public EventCallback<double> Person2OverflowChanged { get; set; }
 
+    private List<LinePlot> Plots = new List<LinePlot>();
+
     // Monthly-Name -> (Person1-BalanceName, Person2-BalanceName)
     private Dictionary<string, (string, string)> StaticMonthMap { get; set; } = new Dictionary<string, (string, string)>();
     private Dictionary<string, (string, string)> DynaMonthMap { get; set; } = new Dictionary<string, (string, string)>();
@@ -199,6 +204,9 @@ else
         foreach (var stat in MonthViewConstants.StaticMonthlyCosts)
             Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
 
+        Plots = new List<LinePlot>(Constants.Plots);
+        Plots.RemoveAt(0);
+        Plots.Add(new LinePlot(MR.Name,MR.ProjectPerson1Income,false));
         StateHasChanged();
     }
     private string Pretty(double num)

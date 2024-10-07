@@ -1,7 +1,8 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@using BetterBudgetWeb.Data
+@inject IJSRuntime JSRuntime
 @if (Showing)
 {
-    <div style="display:flex;flex-direction:row;justify-content:center;align-content:center;
+    <div style="height:inherit;width:100%;display:flex;flex-direction:row;justify-content:center;align-content:center;
                 background-color:#384152;border-radius:5px;padding:0;margin:@Margin">
         <div id="@ChartId" style="height:100%;width:100%;"></div>
     </div>
@@ -26,17 +27,5 @@
     {
         var json = System.Text.Json.JsonSerializer.Serialize(Plots.ToArray());
         await JSRuntime.InvokeAsync<object>("drawLineChart", json, ChartId);
-    }
-    public class LinePlot
-    {
-        public string Month { get; set; }
-        public double Amount { get; set; }
-        public bool certainty { get; set; }
-        public LinePlot(string month, double amount, bool cert = true)
-        {
-            Month = month;
-            Amount = amount;
-            certainty = cert;
-        }
     }
 }

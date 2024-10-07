@@ -135,6 +135,21 @@ namespace BetterBudgetWeb
                 }
             }
         }
+        public static EventHandler<List<LinePlot>> PlotsChanged = (sender, value) => { };
+
+        private static List<LinePlot> plots = new List<LinePlot>();
+        public static List<LinePlot> Plots
+        {
+            get => plots;
+            set
+            {
+                if (plots != value)
+                {
+                    plots = value;
+                    PlotsChanged?.Invoke(typeof(Constants), plots);
+                }
+            }
+        }
         public static List<SavingsGoal> SavingsGoals { get; set; } = new();
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; } = new();
         public static List<ProjectedDatum> ProjectedData { get; set; } = new();
@@ -282,6 +297,7 @@ namespace BetterBudgetWeb
             SavingsGoals = new List<SavingsGoal>();
             StaticMonthlyCosts = new List<StaticMonthlyCost>();
             ProjectedData = new List<ProjectedDatum>();
+            Plots = new List<LinePlot>();
 
             foreach (var mon in Monthlies)
             {
@@ -342,6 +358,7 @@ namespace BetterBudgetWeb
             DynamicCostItems = DynamicCostItems.OrderByDescending(dci => dci.Amount).ToList();
             StaticMonthlyCosts = StaticMonthlyCosts.OrderByDescending(smc => smc.TotalAmount).ToList();
             SavingsGoals = SavingsGoals.OrderByDescending(sg => sg.Goal).ToList();
+            Plots = IndexRunner.GeneratePlots();
         }
         public static string MonthYear()
         {
