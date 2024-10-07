@@ -407,7 +407,7 @@
             }
         </ChildContent>
         <ErrorContent Context="Exception">
-            @if (!env.IsProduction())
+            @if (env.IsProduction())
             {
                 <div class="alert alter-primary">
                     <h3>@Exception.GetType()</h3>
@@ -460,8 +460,7 @@
 
     private bool ShowDelete => Constants.Balances != null && Constants.Balances.Count > 0;
     private bool ShowUpdate => Constants.Balances != null && Constants.Balances.Count > 0;
-    private bool ShowPortfolio => Constants.Balances != null && Constants.Balances.FirstOrDefault(b => b.BalanceType == "Stocks") != null &&
-                                  Constants.TIER_LEVEL > Tier.BASIC_TIER;
+    private bool ShowPortfolio => Constants.Balances != null && Constants.TIER_LEVEL > Tier.BASIC_TIER;
     private bool ShowChart => Constants.Transactions != null && Constants.Transactions.Count > 0;
     private bool ShowForecast => Constants.Monthlies != null && Constants.Monthlies.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER;
 

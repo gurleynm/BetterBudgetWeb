@@ -1,4 +1,6 @@
 ﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Runner
+@using static BetterBudgetWeb.Shared.LineChart
 @implements IDisposable
 
 @if (Balances != null)
@@ -30,6 +32,7 @@
                         <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
                     </div>
                 }
+                <LineChart Plots="Plots" ChartId="chart_div" Margin="1em 0 0 0" />
             </div>
         </PopTray>
         <div style="padding-bottom:2vh">
@@ -58,9 +61,13 @@
     private bool FirstToggle = true;
     private bool ShowWorth = true;
     private string WorthTxt => ShowWorth ? "Show Worth" : "Hide Worth";
+    private List<LinePlot> Plots { get; set; } = new();
 
     protected override Task OnInitializedAsync()
     {
+        @if (Constants.Mobile)
+            Plots = IndexRunner.GeneratePlots();
+
         Constants.BalancesChanged += BalancesUpdated;
         RefreshBalances();
         return base.OnInitializedAsync();
