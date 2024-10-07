@@ -19,4 +19,10 @@
 	  <Folder Include="wwwroot\videos\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Content Update="wwwroot\images\RoundLogo.webp">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
 </Project>
