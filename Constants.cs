@@ -161,8 +161,7 @@ namespace BetterBudgetWeb
         public static Dictionary<string, string> ColorScheme = new Dictionary<string, string>();
 
         public static string[] NotExpenses = new string[] { "Income", "Debt", "Equity", "Transfer" };
-
-        public static string BaseUri = "";
+        public static string BaseUri => Test ? "https://localhost:7234/" : "https://api.couplesbetterbudget.com/";
         public static string CUR_USER_NAME { get; set; }
         public static string CUR_USER_EMAIL { get; set; }
         public static string Person1 { get; set; } = "David";
@@ -221,7 +220,6 @@ namespace BetterBudgetWeb
         public static async Task Init(bool PeopleDecide = false)
         {
             SetColorScheme();
-            BaseUri = Test ? "https://localhost:7234/" : "https://api.couplesbetterbudget.com/";
             //BaseUri = Test ? "https://localhost:7234/" : "https://betterbudgetapi.azurewebsites.net/";
             if (PeopleDecide)
             {
