@@ -27,7 +27,7 @@
                     </label>
                 }
             }
-            @if (ShowPerson)
+            @if (ShowPerson && !IsPreview)
             {
                 <span style="color:@TheBalance.TextColor">@(" (" + TheBalance.Person + ")")</span>
             }

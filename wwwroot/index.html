@@ -259,6 +259,30 @@
             //    ['July', 1030, false]
             //]);
 
+            var hAxisVar = {
+                title: null,
+                textStyle: {
+                    fontName: 'Imprint MT Shadow',
+                    color: '#00FFFF'
+                }
+            };
+
+            var vAxisVar = {
+                title: null,
+                format: 'currency',
+                textStyle: {
+                    fontName: 'Imprint MT Shadow',
+                    color: '#FFFFFF'
+                }
+            };
+
+            if (chartId == 'preview') {
+                hAxisVar = {
+                    textPosition: 'none'
+                };
+                vAxisVar = null;
+            }
+
             var options = {
                 title: 'Net Worth (' + lineList.length + '-Month View)',
                 titleTextStyle: {
@@ -268,21 +292,8 @@
                 backgroundColor: 'transparent',
                 borderRadius: '50%',
                 legend: { position: 'none' },
-                hAxis: {
-                    title: null,
-                    textStyle: {
-                        fontName: 'Imprint MT Shadow',
-                        color: '#FFFFFF'
-                    }
-                },
-                vAxis: {
-                    title: null,
-                    format: 'currency',
-                    textStyle: {
-                        fontName: 'Imprint MT Shadow',
-                        color: '#FFFFFF'
-                    }
-                },
+                hAxis: hAxisVar,
+                vAxis: vAxisVar,
                 pointSize: 10,
                 pointShape: { type: 'triangle' },
                 chartArea: { right: '10%' }

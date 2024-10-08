@@ -15,28 +15,25 @@
              style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;padding:0 1em;align-items:center;z-index:1">
             <div class="flex-r" style="align-items:center;width:fit-content;justify-content:start;padding:2px 0;">
                 <img src="images/RoundLogo.webp" alt="Logo image" style="width:6.5vw;height:fit-content;padding:2px 1vw;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("")) />
-                @if (!Constants.Mobile)
-                {
-                    <div class="flex-c" style="height:50%;">
-                        @if (!LoadingDemo)
-                        {
-                            <button style="background-color:transparent;font-family:'CBB Default';"
-                                    class="btn-grad"
-                                    @onclick=GetDemo>
-                                View Demo
-                            </button>
-                        }
-                        else
-                        {
-                            <div class="slide-right" style="width:100%">
-                                <div style="font-size:large;color:white;font-family:'CBB Default';padding:1em">Loading Demo...</div>
-                            </div>
-                        }
-                    </div>
-                }
+                <div class="flex-c" style="height:50%;">
+                    @if (!LoadingDemo)
+                    {
+                        <button style="background-color:transparent;font-family:'CBB Default';"
+                                class="btn-grad"
+                                @onclick=GetDemo>
+                            View Demo
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="slide-right" style="width:100%">
+                            <div style="font-size:large;color:white;font-family:'CBB Default';padding:1em">Loading Demo...</div>
+                        </div>
+                    }
+                </div>
             </div>
 
-            @if (!LoadingDemo && !Constants.Mobile)
+            @if (!LoadingDemo)
             {
                 <div class="ps-3 navbar-dark flex-r">
                     <a class="navbar-brand navbtn" href="pricing" style="font-family:'CBB Default'; text-align:center;cursor:pointer">
@@ -51,6 +48,7 @@
                     <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
                 </div>
             }
+            
         </div>
     }
     else

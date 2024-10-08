@@ -3,6 +3,7 @@
 <PageTitle>Landing Page</PageTitle>
 
 @using BetterBudgetWeb.Data
+@using BetterBudgetWeb.MainMenuItems.Chart
 @using BetterBudgetWeb.Runner
 @inject NavigationManager NavMan
 @inject IJSRuntime jsRuntime
@@ -43,12 +44,60 @@
         </div>
     </div>
 </div>
+<div class="flex-r" style="height:fit-content;width:80%;justify-content:space-evenly">
+    <div style="width:48%">
+        <LineChart Plots=Plots ChartId="preview" />
+    </div>
+    <div class="flex-c" style="width:48%">
+        <h2 style="font-family:'CBB Default'">
+            Watch your net worth grow
+        </h2>
+        <h3 style="font-family:'CBB Default'">
+        </h3>
+    </div>
+</div>
+<div class="flex-r" style="height:fit-content;width:80%;justify-content:space-evenly">
+    <div class="flex-c" style="width:48%">
+        <h2 style="font-family:'CBB Default'">
+            No need for a boring spreadsheet
+        </h2>
+        <h3 style="font-family:'CBB Default'">
+            Don't worry about trying to manage those spreadsheets, let us do it for you! Track your transactions to help you both reach your money goals.
+        </h3>
+    </div>
+    <div style="width:48%">
+        <Chart DPs=DataPoints />
+    </div>
+</div>
 
 @code {
     [CascadingParameter]
     public EventCallback GrabDemo { get; set; }
 
     private bool LoadingDemo { get; set; }
+    private List<LinePlot> Plots { get; set; }
+    private List<DataPoint> DataPoints { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        Plots = new List<LinePlot>();
+        Plots.Add(new LinePlot("October", 1));
+        Plots.Add(new LinePlot("October", 2));
+        Plots.Add(new LinePlot("October", 4));
+        Plots.Add(new LinePlot("October", 8));
+        Plots.Add(new LinePlot("October", 16));
+        Plots.Add(new LinePlot("October", 32));
+
+        DataPoints = new List<DataPoint>();
+        DataPoints.Add(new DataPoint { Label = "1", Value = 131.09, Negative = true });
+        DataPoints.Add(new DataPoint { Label = "2", Value = 9.64, Negative = true });
+        DataPoints.Add(new DataPoint { Label = "3", Value = 2614.09, Negative = true });
+        DataPoints.Add(new DataPoint("4", 2700.07));
+        DataPoints.Add(new DataPoint { Label = "4", Value = 7.99, Negative = true });
+        DataPoints.Add(new DataPoint { Label = "6", Value = 321.68, Negative = true });
+        DataPoints.Add(new DataPoint { Label = "7", Value = 21.35, Negative = true });
+        return base.OnInitializedAsync();
+    }
 
     private async void LoadDemo()
     {

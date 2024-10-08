@@ -4,7 +4,7 @@
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; } = "Savings";
-        public string Person { get; set; } = "Person1";
+        public string Person { get; set; } = Constants.Person1;
         private double val = 0;
         public double Value
         {
