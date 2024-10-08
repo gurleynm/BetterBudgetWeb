@@ -11,7 +11,7 @@
                     <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
                         Stash Cash
                     </h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
                 </div>
                 <div class="modal-body" style="width:100%;color:white;">
@@ -37,7 +37,7 @@
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person1Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
+                                                    <span class="flex-r-100" style="font-style:italic;color:cyan">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
                                                 </div>
                                             </div>
                                         }
@@ -48,13 +48,13 @@
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person2Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
+                                                    <span class="flex-r-100" style="font-style:italic;color:cyan">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
                                                 </div>
                                             </div>
                                         }
                                     </div>
                                     <div class="flex-c">
-                                        <img alt="Stash Arrow" src="/images/StashArrow.png" style="height:3vw;cursor:pointer" @onclick=@(() => HandleStash()) />
+                                        <img alt="Stash Arrow" src="/images/StashArrow.webp" style="height:3vw;cursor:pointer" @onclick=@(() => HandleStash()) />
                                     </div>
                                     <div style="align-content:flex-end">
                                         <Envelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Open=true Adding=true
@@ -84,7 +84,7 @@ else
                     <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
                         Stash Cash
                     </h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
                 </div>
                 <div class="modal-body" style="width:100%;color:white;">
@@ -110,7 +110,7 @@ else
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person1Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
+                                                    <span class="flex-r-100" style="font-style:italic;color:cyan;text-align:center">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
                                                 </div>
                                             </div>
                                         }
@@ -125,13 +125,13 @@ else
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person2Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
+                                                    <span class="flex-r-100" style="font-style:italic;color:cyan;text-align:center">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
                                                 </div>
                                             </div>
                                         }
                                     </div>
                                     <div class="flex-c" style="height:auto">
-                                        <img alt="Stash Arrow" src="/images/StashArrow.png" style="height:30vw;cursor:pointer" @onclick=@(() => HandleStash()) />
+                                        <img alt="Stash Arrow" src="/images/StashArrow.webp" style="height:30vw;cursor:pointer" @onclick=@(() => HandleStash()) />
                                     </div>
                                     <div style="align-content:flex-end">
                                         <Envelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Open=true Adding=true

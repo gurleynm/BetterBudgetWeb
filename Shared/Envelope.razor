@@ -10,7 +10,7 @@
         }
         else
         {
-            <img src="/images/Envelope.png" alt="Closed Envelope" style="width:@scale;height:auto">
+            <img src="/images/Envelope.webp" alt="Closed Envelope" style="width:@scale;height:auto">
         }
         @if (Goal != 0)
         {
@@ -45,7 +45,7 @@ else
 {
     <div class="container-env" style="height:auto;width:auto;padding:0;
         cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
-        <img src="/images/EnvelopeBack.png" alt="Closed Envelope" style="width:@scale;height:auto">
+        <img src="/images/EnvelopeBack.webp" alt="Closed Envelope" style="width:@scale;height:auto">
         <div class="top-centered" style="background-color:white;font-size:@(Font_Size)vw;">
             @Name
         </div>
@@ -138,23 +138,23 @@ else
     private string DetermineState()
     {
         if (!Stashing && Saved > 0 && Adding)
-            return "/images/Envelope-OpenF.png";
+            return "/images/Envelope-OpenF.webp";
         else if (Stashing && Saved <= 0 && Adding)
             return "/images/Fill1.gif";
         else if (Stashing && Saved > 0 && Adding)
             return "/images/FillFull.gif";
         else if (!Stashing && Saved <= 0 && Adding)
-            return "/images/Envelope-OpenE.png";
+            return "/images/Envelope-OpenE.webp";
         else if (!Cashing && Saved > 0 && !Adding)
-            return "/images/Envelope-OpenF.png";
+            return "/images/Envelope-OpenF.webp";
         else if (Cashing && Saved <= 0 && !Adding)
             return "/images/Remove.gif";
         else if (Cashing && Saved > 0 && !Adding)
             return "/images/RemoveFull.gif";
         else if (!Cashing && Saved <= 0 && !Adding)
-            return "/images/Envelope-OpenE.png";
+            return "/images/Envelope-OpenE.webp";
         else
-            return "/images/Envelope-OpenE.png";
+            return "/images/Envelope-OpenE.webp";
     }
     public void Flip()
     {

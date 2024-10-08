@@ -11,7 +11,7 @@
                     <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
                         Cash Out
                     </h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
                 </div>
                 <div class="modal-body" style="width:100%;color:white;">
@@ -34,7 +34,7 @@
                                       Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
                                     <div class="flex-c">
-                                        <img alt="Cash Arrow" src="/images/CashArrow.png" style="height:3vw;cursor:pointer" @onclick=@(() => HandleCash()) />
+                                        <img alt="Cash Arrow" src="/images/CashArrow.webp" style="height:3vw;cursor:pointer" @onclick=@(() => HandleCash()) />
                                     </div>
 
                                     <div class="flex-c" style="justify-content:space-evenly">
@@ -45,7 +45,7 @@
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person1Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Saved: @Constants.Pretty(SelectedEnv.Person1Amount)</span>
+                                                    <span class="flex-r-100" style="font-style:italic;color:cyan">Available Saved: @Constants.Pretty(SelectedEnv.Person1Amount)</span>
                                                 </div>
                                             </div>
                                         }
@@ -56,7 +56,7 @@
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person2Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Saved: @Constants.Pretty(SelectedEnv.Person2Amount)</span>
+                                                    <span class="flex-r-100" style="font-style:italic;color:cyan">Available Saved: @Constants.Pretty(SelectedEnv.Person2Amount)</span>
                                                 </div>
                                             </div>
                                         }
@@ -85,7 +85,7 @@ else
                     <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
                         Cash Out
                     </h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
                 </div>
                 <div class="modal-body" style="width:100%;color:white;">
@@ -111,7 +111,7 @@ else
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person1Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Saved: @Constants.Pretty(SelectedEnv.Person1Amount)</span>
+                                                    <span class="flex-r-100" style="font-style:italic;color:cyan">Available Saved: @Constants.Pretty(SelectedEnv.Person1Amount)</span>
                                                 </div>
                                             </div>
                                         }
@@ -126,13 +126,13 @@ else
                                                 <div>
                                                     <input type="number" placeholder="Amount" @bind="Person2Amount" />
                                                     <br />
-                                                    <span style="font-style:italic;color:dimgray">Available Saved: @Constants.Pretty(SelectedEnv.Person2Amount)</span>
+                                                    <span class="flex-r-100" style="font-style:italic;color:cyan">Available Saved: @Constants.Pretty(SelectedEnv.Person2Amount)</span>
                                                 </div>
                                             </div>
                                         }
                                     </div>
                                     <div class="flex-c" style="height:auto">
-                                        <img alt="Cash Arrow for Mobile" src="/images/CashArrowMobile.png" style="height:30vw;cursor:pointer" @onclick=@(() => HandleCash()) />
+                                        <img alt="Cash Arrow for Mobile" src="/images/CashArrowMobile.webp" style="height:30vw;cursor:pointer" @onclick=@(() => HandleCash()) />
                                     </div>
                                     <div style="align-content:flex-end">
                                         <Envelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Open=true Adding=false
