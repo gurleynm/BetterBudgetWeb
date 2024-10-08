@@ -17,6 +17,9 @@
     <Folder Include="wwwroot\videos\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="wwwroot\robots.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Update="wwwroot\images\RoundLogo.webp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
