@@ -2,8 +2,9 @@
 @inject IJSRuntime JSRuntime
 @if (Showing)
 {
+    @* #384152 *@
     <div style="height:inherit;width:100%;display:flex;flex-direction:row;justify-content:center;align-content:center;
-                background-color:#384152;border-radius:5px;padding:0;margin:@Margin">
+                background-color:transparent;border-radius:5px;border:solid silver 2px;padding:0;margin:@Margin">
         <div id="@ChartId" style="height:100%;width:100%;"></div>
     </div>
 }

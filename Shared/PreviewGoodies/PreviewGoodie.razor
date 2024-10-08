@@ -1,0 +1,45 @@
+﻿@if (Invert && !Constants.Mobile)
+{
+    <div class="preview-goodie">
+        <div class="flex-c" style="height:fit-content">
+            <h2 style="font-family:'CBB Default';text-align:@Constants.TestMobile("center",ShiftDirection)">
+                @Title
+            </h2>
+            <h3 style="font-family:'CBB Default';text-align:@Constants.TestMobile("center",ShiftDirection)">
+                @Desc
+            </h3>
+        </div>
+        <div>
+            @ChildContent
+        </div>
+    </div>
+}
+else
+{
+    <div class="preview-goodie">
+        <div>
+            @ChildContent
+        </div>
+        <div class="flex-c" style="height:fit-content;padding:1em">
+            <h2 style="font-family:'CBB Default';text-align:@Constants.TestMobile("center",ShiftDirection)">
+                @Title
+            </h2>
+            <h3 style="font-family:'CBB Default';text-align:@Constants.TestMobile("center",ShiftDirection)">
+                @Desc
+            </h3>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public string ShiftDirection { get; set; } = "start";
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string Desc { get; set; }
+    [Parameter]
+    public bool Invert { get; set; }
+}

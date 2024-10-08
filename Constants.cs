@@ -660,9 +660,13 @@ namespace BetterBudgetWeb
         {
             return test ? yes : no;
         }
-        public static string TestMobile(string option1, string option2)
+        public static string TestMobile(string MobileOption, string DesktopOption)
         {
-            return Mobile ? option1 : option2;
+            return Mobile ? MobileOption : DesktopOption;
+        }
+        public static double TestMobile(double MobileOption, double DesktopOption)
+        {
+            return Mobile ? MobileOption : DesktopOption;
         }
     }
 }
