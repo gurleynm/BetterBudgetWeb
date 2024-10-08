@@ -163,9 +163,9 @@
                 var head = elm.getBoundingClientRect();
                 marTop = head.height + "px";
 
-                retBool = (marTop == "0px");
+                retBool = head.height > 0;
 
-                if (!retBool) {
+                if (retBool) {
                     var elms = document.getElementsByClassName('main-bar-marg');
                     for (i = 0; i < elms.length; i++) {
                         elms[i].style.marginTop = marTop;
