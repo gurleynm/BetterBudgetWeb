@@ -4,7 +4,7 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 @implements IDisposable
 
-<div id="mobile-nav-bar" class="navbar-dark" style="position:fixed;top:0;padding:0;background-color:indigo;width:100%;z-index:1">
+<div id="main-bar" class="navbar-dark" style="position:fixed;top:0;padding:0;background-color:indigo;width:100%;z-index:1">
     <div class="flex-r" style="width:100%;padding:0 1em;justify-content:space-between;align-items:center">
         <img src="images/RoundLogo.webp" alt="Logo image" style="width:6.5vh;height:fit-content;padding:0;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("home")) />
         <h2 class="flex-c" style="font-family:'CBB Default'">@Constants.CurPage</h2>

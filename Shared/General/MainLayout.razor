@@ -362,7 +362,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div style="position: fixed; margin-top:@HeightTopBar; top:0; bottom:0; left:0;height:auto; width:fit-content;overflow-y:auto;border: solid gray 1px;">
+                        <div class="main-bar-marg" style="position: fixed; top:0; bottom:0; left:0;height:auto; width:fit-content;overflow-y:auto;border: solid gray 1px;">
                             <div style="z-index:1;width: @WidthLeftBar; height:inherit; overflow: auto; position: relative;padding:0">
                                 <CascadingValue Value=RunModal>
                                     <CascadingValue Value=this>
@@ -373,7 +373,7 @@
                         </div>
                     }
 
-                    <article class="content px-4" style="margin-top:@HeightTopBar;@PaddingLeft">
+                    <article class="content px-4 main-bar-marg" style="@PaddingLeft">
                         <CascadingValue Value=LogOff>
                             <CascadingValue Value=RunModal>
                                 <CascadingValue Value=this>
@@ -448,8 +448,6 @@
 
     public BalanceTray GlobalBT { get; set; } = new BalanceTray();
 
-    private double heightTopBar = 0;
-    private string HeightTopBar => heightTopBar + "px";
     private double widthLeftBar = 20;
     private string WidthLeftBar => widthLeftBar + "em";
     private double widthLeftBarPlus => widthLeftBar * 1.1;
@@ -475,29 +473,17 @@
     public string ModalType { get; set; }
     private string Overflow = "auto";
     ValueTask<bool> DeviceCheck { get; set; }
+    private bool SetCorrect = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         try
         {
-            if (heightTopBar <= 0)
-            {
-                string id = await DeviceCheck ? "mobile-nav-bar" : "main-bar";
-                double startH = heightTopBar;
-                var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
-                if (holder == "0")
-                    heightTopBar = -1;
-                else
-                {
-                    heightTopBar = Convert.ToDouble(holder);
-                    if (heightTopBar != startH)
-                        StateHasChanged();
-                }
-            }
+            SetCorrect = await jsRuntime.InvokeAsync<bool>("ElementHeight", "main-bar");
         }
-        catch (Exception e)
+    catch (Exception e)
         {
-
+            SetCorrect = false;
         }
     }
     protected override async Task OnInitializedAsync()
@@ -678,4 +664,4 @@
     {
         Constants.BalancesChanged -= BalancesUpdated;
     }
-}
+    }

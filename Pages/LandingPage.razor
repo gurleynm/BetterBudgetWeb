@@ -9,7 +9,7 @@
 <div style="height:fit-content">
     @if (!Constants.Mobile)
     {
-        <div id="land-top" class="flex-r"
+        <div id="main-bar" class="flex-r"
              style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;padding:0 1em;align-items:center;z-index:1">
             <div class="flex-r" style="align-items:center;width:fit-content;justify-content:start;padding:2px 0;">
                 <img src="images/RoundLogo.webp" alt="Logo image" style="width:6.5vw;height:fit-content;padding:2px 1vw;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("")) />
@@ -55,7 +55,7 @@
     {
         <LandingNavMenu />
     }
-    <div class="flex-r" style="height:fit-content;flex-wrap:wrap;margin-top:@(Constants.TestMobile(HeightTopBar,HeightTopBar));">
+    <div class="flex-r main-bar-marg" style="height:fit-content;flex-wrap:wrap;">
         <CascadingValue Value="GrabDemo">
             @ChildContent
         </CascadingValue>
@@ -67,9 +67,6 @@
     public RenderFragment ChildContent { get; set; }
 
     EventCallback GrabDemo => EventCallback.Factory.Create(this, GetDemo);
-
-    private double heightTopBar = 0;
-    private string HeightTopBar => heightTopBar + "px";
 
     private bool LoadingDemo { get; set; }
     ValueTask<bool> DeviceCheck { get; set; }
@@ -84,31 +81,6 @@
         Constants.WeIn = false;
 
         sessionStorage.SetItemAsync("token", "");
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        try
-        {
-            if (heightTopBar <= 0)
-            {
-                string id = await jsRuntime.InvokeAsync<bool>("isDevice") ? "land-top-mobile" : "land-top";
-                double startH = heightTopBar;
-                var holder = await jsRuntime.InvokeAsync<string>("ElementHeight", id);
-                if (holder == "0")
-                    heightTopBar = -1;
-                else
-                {
-                    heightTopBar = Convert.ToDouble(holder);
-                    if (heightTopBar != startH)
-                        StateHasChanged();
-                }
-            }
-        }
-        catch (Exception e)
-        {
-
-        }
     }
 
     private async void GetDemo()

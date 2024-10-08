@@ -155,13 +155,25 @@
             }
         };
         window.ElementHeight = (id) => {
+            var retBool = false;
+
             var elm = document.getElementById(id);
             if (elm) {
-                var head = document.getElementById(id).getBoundingClientRect();
-                return head.height.toString();
+                var marTop = "0px";
+                var head = elm.getBoundingClientRect();
+                marTop = head.height + "px";
+
+                retBool = (marTop == "0px");
+
+                if (!retBool) {
+                    var elms = document.getElementsByClassName('main-bar-marg');
+                    for (i = 0; i < elms.length; i++) {
+                        elms[i].style.marginTop = marTop;
+                    }
+                }
             }
 
-            return "0";
+            return retBool;
         }
         window.addEventListener('resize', Resized);
         function Resized() {
@@ -249,7 +261,7 @@
             //]);
 
             var options = {
-                title: 'Net Worth (' + lineList.length +'-Month View)',
+                title: 'Net Worth (' + lineList.length + '-Month View)',
                 titleTextStyle: {
                     color: '#FFFFFF',
                     fontName: 'Imprint MT Shadow'

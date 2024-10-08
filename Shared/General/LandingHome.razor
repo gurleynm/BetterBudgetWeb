@@ -50,18 +50,6 @@
 
     private bool LoadingDemo { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            Constants.Mobile = await jsRuntime.InvokeAsync<bool>("isDevice");
-        }
-        catch (Exception e)
-        {
-            Constants.Mobile = false;
-        }
-    }
-
     private async void LoadDemo()
     {
         LoadingDemo = true;
