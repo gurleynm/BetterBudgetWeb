@@ -28,8 +28,8 @@ else
         @if (DataPoints != null && DataPoints.Count > 0)
         {
             <PopTray Id="spend" @bind-ShowWorth=ShowChart
-                     ShowTxt="Show Spending Chart"
-                     HideTxt="Hide Spending Chart"
+                     ShowTxt="Show Spending"
+                     HideTxt="Hide Spending"
                      TopButton=true
                      BottomButton=false>
                 <Chart DPs=DataPoints BarClicked=FilterDate />
@@ -209,7 +209,7 @@ else
 
         @if (DataPoints != null && DataPoints.Count > 0)
         {
-            <PopTray Id="mobile-spend" ShowWorth=ShowChart ShowTxt="Show Spending Chart" HideTxt="Hide Spending Chart" TopButton=true BottomButton=false>
+            <PopTray Id="mobile-spend" ShowWorth=ShowChart ShowTxt="Show Spending" HideTxt="Hide Spending" TopButton=true BottomButton=false>
 
                 <Chart DPs=DataPoints BarClicked=FilterDate />
                 <br />
