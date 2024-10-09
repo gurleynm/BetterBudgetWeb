@@ -1,6 +1,7 @@
 ﻿@page "/update"
 @using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Repo;
+@using BetterBudgetWeb.Shared.InputActions
 @using BetterBudgetWeb.Shared.UpdateActions
 @inject IJSRuntime JSRuntime
 @implements IDisposable
@@ -15,7 +16,7 @@
 }
 
 <div class="tab">
-    <button class="tablinks @BalClass" @onclick="@ShowBalance">Balance</button>
+    <button class="tablinks @BalClass" @onclick="@ShowBalance">Account</button>
     @if (Constants.Envelopes.Count > 0)
     {
         <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
@@ -25,10 +26,10 @@
 @if (ShowBal)
 {
     <div class="tabcontent">
-        <label>Select a Balance:</label>
+        <label>Select a Account:</label>
         <br />
         <select @bind=SelectedBalance title="Select Balance ">
-            <option value="" selected>(Choose a Balance)</option>
+            <option value="" selected>(Choose an Account)</option>
             @foreach (var bal in Balances.OrderBy(b => b.Name))
             {
                 <option value=@bal.Id>@bal.Name</option>
@@ -38,7 +39,7 @@
 
     @if (!string.IsNullOrEmpty(SelectedBalance))
     {
-        <UpdateBalance Id="@SelectedBalance"
+        <InputBalance Id="@SelectedBalance"
                        BalName="@NameBal"
                        APR="@APRBal"
                        Amount="@CurAmountBal"
@@ -47,7 +48,7 @@
                        TextColor="@TColorBal"
                        Person="@PersonBal"
                        PaidThroughWork="@(BalanceType == "Stocks" && int.TryParse(APRBal,out int apr) && apr == 1)">
-        </UpdateBalance>
+        </InputBalance>
     }
 }
 else if (ShowEnv)

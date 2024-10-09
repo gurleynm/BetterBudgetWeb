@@ -226,7 +226,7 @@
 
     .preview-goodie {
         display: flex;
-        flex-direction: @Constants.TestMobile("column","row");
+        flex-direction: @Constants.TestMobile("column", "row");
         height: fit-content;
         width: 98%;
         justify-content: space-evenly;
@@ -303,8 +303,14 @@
                 <main style="margin-bottom:1em">
                     @if (!mobile)
                     {
-                        <div id="main-bar" class="flex-r" style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;align-items:center;z-index:1;padding:0 1em">
-                            <div class="flex-r" style="justify-content:start;align-items:center">
+                        <div id="main-bar" class="flex-r" style="flex-wrap:wrap;background-color:indigo;justify-content:space-between;width:100%;position:fixed;align-items:center;z-index:1;padding:0">
+                            @if (!string.IsNullOrEmpty(Announcement))
+                            {
+                                <div class="flex-r-100" style="height:fit-content;background-image:linear-gradient(to right, #B9AFF8,cyan);color:black;font-family:'CBB Default'">
+                                    @Announcement
+                                </div>
+                            }
+                            <div class="flex-r" style="justify-content:start;align-items:center;padding-left:1em">
                                 <img src="images/RoundLogo.webp" alt="Logo image" style="width:6.5vw;height:fit-content;padding:2px 1vw;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("home")) />
                                 <a href="home" style="font-size:large;font-family:'CBB Default'; text-align:center;color:white;">
                                     <strong>@("Welcome " + Constants.CUR_USER_NAME + "!")</strong>
@@ -367,7 +373,7 @@
                                 }
                             </div>
                             <div>
-                                <a href="account" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;">
+                                <a href="account" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;padding-right:1em">
                                     <span class="oi oi-person"></span>
                                     <strong>@("Manage Account")</strong>
                                 </a>
@@ -468,6 +474,7 @@
     private string theView { get; set; }
 
     private List<Balance> Balances = new List<Balance>();
+    private string Announcement = "";//"Planned Maintenance: "+@DateTime.Now.ToShortDateString();
 
     // Modal vars
     private Transaction SelectedTransaction { get; set; }
@@ -492,7 +499,7 @@
         {
             SetCorrect = await jsRuntime.InvokeAsync<bool>("ElementHeight", "main-bar");
         }
-    catch (Exception e)
+        catch (Exception e)
         {
             SetCorrect = false;
         }
@@ -675,4 +682,4 @@
     {
         Constants.BalancesChanged -= BalancesUpdated;
     }
-    }
+}

@@ -12,8 +12,14 @@
     @if (!Constants.Mobile)
     {
         <div id="main-bar" class="flex-r"
-             style="background-color:indigo;justify-content:space-between;width:100%;position:fixed;padding:0 1em;align-items:center;z-index:1">
-            <div class="flex-r" style="align-items:center;width:fit-content;justify-content:start;padding:2px 0;">
+             style="flex-wrap:wrap;background-color:indigo;justify-content:space-between;width:100%;position:fixed;padding:0;align-items:center;z-index:1">
+            @if (!string.IsNullOrEmpty(Announcement))
+            {
+                <div class="flex-r-100" style="height:fit-content;background-image:linear-gradient(to right, #B9AFF8,cyan);color:black;font-family:'CBB Default'">
+                    @Announcement
+                </div>
+            }
+            <div class="flex-r" style="align-items:center;width:fit-content;justify-content:start;padding:2px 1em;">
                 <img src="images/RoundLogo.webp" alt="Logo image" style="width:6.5vw;height:fit-content;padding:2px 1vw;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("")) />
                 <div class="flex-c" style="height:50%;">
                     @if (!LoadingDemo)
@@ -48,7 +54,7 @@
                     <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
                 </div>
             }
-            
+
         </div>
     }
     else
@@ -70,6 +76,8 @@
 
     private bool LoadingDemo { get; set; }
     ValueTask<bool> DeviceCheck { get; set; }
+
+    private string Announcement = "";//"Get 25% off your first year with code TOGETHER";
 
     protected override async Task OnInitializedAsync()
     {
