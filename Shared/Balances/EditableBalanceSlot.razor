@@ -1,0 +1,142 @@
+﻿@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.MainMenuItems;
+@using BetterBudgetWeb.Repo;
+@using BetterBudgetWeb.Runner;
+@inject NavigationManager NavManager
+@inject IJSRuntime JSRuntime
+
+<div style="margin:1em 0;@Constants.TestMobile("width:100%;","width:50%;")">
+    <div class="flex-r" style="flex-wrap:wrap;justify-content:space-between;
+                                padding:0; margin: 0;cursor:auto;
+                                width:100%;border: 1px gray solid;
+                                background-image:linear-gradient(to left,indigo,@TheBalance.HexColor);
+                                color:@TheBalance.TextColor">
+        <div style="align-self:flex-start">
+            <div class="flex-c" style="justify-content:space-between;padding:0 0 0 .5vw; margin:0">
+                <input class="better" type="text" placeholder="Account Name"
+                       style="padding-left:2px;margin-bottom:1em;font-size:medium;align-self:flex-start;text-align:start;color:@TheBalance.TextColor" @bind-value=@TheBalance.Name />
+
+                @if (ShowTradable)
+                {
+                    @if (TheBalance.APR == 0)
+                    {
+                        <label style="font-size:smaller;margin:0;color:@TheBalance.TextColor">
+                            <i>
+                                @(
+                                    "Tradeable Cash: " + Constants.Pretty(Amount)
+                                    )
+                            </i>
+                        </label>
+                    }
+                }
+                <select class="custom-select" @bind="TheBalance.Person" title="Person's Account" style="color:@TheBalance.TextColor">
+                    <option value="@Constants.Person1" selected>@Constants.Person1</option>
+                    <option value="@Constants.Person2">@Constants.Person2</option>
+                    <option value="Joint">Joint</option>
+                </select>
+            </div>
+        </div>
+        <div class="slot-background" style="align-self:flex-end;padding:0; margin: 0;width:35%">
+            <div class="flex-c" style="justify-content:space-between;padding:0; margin: 0">
+                <input class=@ClassColor type="number" @bind-value=@Amount />
+                <br />
+                <div class="flex-c" style="padding:0">
+                    <select class="custom-select" @bind="TheBalance.BalanceType" title="Type of Account is required " style="color:white">
+                        <option value="" disabled>(Choose Account Type)</option>
+                        <option value="Equity">Equity</option>
+                        <option value="Loan">Credit Card/Loan</option>
+                        <option value="Income">Savings/Checkings/Income</option>
+                        <option value="Stocks">Stocks/Options/Securities</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="@Constants.TestMobile("width:100%","width:50%")">
+    <div class="flex-r-100" style="justify-content:space-around;align-items:center;flex-wrap:wrap">
+        <div class="flex-r" style="justify-content:flex-start;padding:1em;align-self:start">
+            <label style="margin-right:1em">Color:</label>
+            <input type="color" @bind=TheBalance.HexColor />
+        </div>
+        <div class="flex-r" style="justify-content:flex-start;padding:1em">
+            <label style="margin-right:1em">Text Color:</label>
+            <select class="custom-select" @bind=TheBalance.TextColor title="Type of Account is required ">
+                <option value="white" selected>White</option>
+                <option value="black">Black</option>
+            </select>
+        </div>
+        @if (TheBalance.BalanceType != "Stocks")
+        {
+            <div class="flex-r" style="align-items:center">
+                <label style="margin-right:1em">APR:</label>
+                <input type="number" placeholder="APR (optional)" @oninput="@(async (ui) => { APR = (string)ui.Value;})" />
+            </div>
+        }
+        else
+        {
+            <div class="flex-r" style="align-items:baseline">
+                <label>Paid Through Work:</label>
+                <br />
+                <input @bind="PaidThroughWork" type="checkbox" />
+            </div>
+        }
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public Balance TheBalance
+    {
+        get { return theBalance; }
+        set
+        {
+            if (theBalance == value)
+                return;
+            theBalance = value;
+            TheBalanceChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<Balance> TheBalanceChanged { get; set; }
+
+    private Balance theBalance { get; set; }
+    private string APR;
+    private bool PaidThroughWork;
+
+    public string ClassColor => (TheBalance.BalanceType == "Loan" && Amount * -1 < 0) || Amount < 0 ? "income-bad" : "income-good";
+
+    private bool ShowTradable => TheBalance.BalanceType == "Stocks";
+    private double Amount { get; set; } = 0.00;
+
+    protected override Task OnInitializedAsync()
+    {
+        Amount = TheBalance.Value;
+        APR = TheBalance.APR.ToString();
+        return base.OnInitializedAsync();
+    }
+
+    private string Pretty(double num)
+    {
+        return Constants.Pretty(num);
+    }
+
+    public string CheckStatus()
+    {
+        var ErrorMsg = "";
+
+        bool tpAPR = double.TryParse(APR, out double apr);
+
+        ErrorMsg += string.IsNullOrEmpty(TheBalance.Name) ? "Account Name must be set. " : "";
+        ErrorMsg += string.IsNullOrEmpty(TheBalance.BalanceType) ? "Please select an expense type. " : "";
+        ErrorMsg += !string.IsNullOrEmpty(APR) && !tpAPR ? "APR must be a number. " : "";
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            if (TheBalance.BalanceType == "Stocks")
+                TheBalance.APR = PaidThroughWork ? 1 : 0;
+        }
+        return ErrorMsg;
+    }
+}

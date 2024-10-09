@@ -39,16 +39,7 @@
 
     @if (!string.IsNullOrEmpty(SelectedBalance))
     {
-        <InputBalance Id="@SelectedBalance"
-                       BalName="@NameBal"
-                       APR="@APRBal"
-                       Amount="@CurAmountBal"
-                       BalanceType="@BalanceType"
-                       Color="@ColorBal"
-                       TextColor="@TColorBal"
-                       Person="@PersonBal"
-                       PaidThroughWork="@(BalanceType == "Stocks" && int.TryParse(APRBal,out int apr) && apr == 1)">
-        </InputBalance>
+        <InputBalance TheBalance=ThisBalance />
     }
 }
 else if (ShowEnv)
@@ -91,6 +82,7 @@ else if (ShowEnv)
     private bool ShowBal { get; set; } = true;
     private string BalClass => ShowBal ? "active" : "";
 
+    private Balance ThisBalance;
     private string selectedBalance;
     private string SelectedBalance
     {
@@ -114,18 +106,7 @@ else if (ShowEnv)
         if (string.IsNullOrEmpty(SelectedBalance))
             return;
 
-        Balance ThisBalance = Balances.FirstOrDefault(b => b.Id == SelectedBalance);
-
-        if (ThisBalance != null)
-        {
-            NameBal = ThisBalance.Name;
-            APRBal = "" + ThisBalance.APR;
-            CurAmountBal = "" + ThisBalance.Value;
-            BalanceType = ThisBalance.BalanceType;
-            ColorBal = ThisBalance.HexColor;
-            TColorBal = ThisBalance.TextColor;
-            PersonBal = ThisBalance.Person;
-        }
+        ThisBalance = Balances.FirstOrDefault(b => b.Id == SelectedBalance);
     }
     /* End BALANCE */
 
@@ -192,8 +173,7 @@ else if (ShowEnv)
 
     private void BalancesUpdated(object sender, List<Balance> e)
     {
-        SelectedBalance = Balances.Count > 0 ? Balances[0].Name : "";
-        ShowBal = false;
+        SelectedBalance = "";
         StateHasChanged();
     }
 

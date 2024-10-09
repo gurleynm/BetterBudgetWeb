@@ -4,7 +4,7 @@
 @if (Mobile)
 {
     <br style="clear:both" />
-    <div style="border: 2px solid green; width:90vw;height:fit-content;">
+    <div style="width:90vw;height:fit-content;">
         <h1 style="text-align:center;">Envelope Preview:</h1>
         <div class="flex-r">
             <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@(double.TryParse(GoalAmount, out double ga) ? ga : 0)" Saved="@(Person1Amount+Person2Amount)" />
@@ -81,63 +81,67 @@
 else
 {
     <div class="tabcontent">
-        <div style="float:left; margin-right:10vw;">
-            <label>Envelope Saving Goal:</label>
-            <br />
-            <input type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string) ui.Value;})" />
-        </div>
-        <div style="float:left; margin-right:10vw;">
-            <label>Goal Amount:</label>
-            <br />
-            <input type="number" placeholder="Goal Amount" @bind=GoalAmount @oninput="@(async (ui) => { GoalAmount = (string) ui.Value;})" />
-        </div>
-        <br style="clear:both" />
-        <br />
-        <div style="float:left; margin-right:10vw;">
-            <label>@($"{Constants.Person1} Will Pay With:")</label>
-            <br />
-            <select class="custom-select" @bind="WillPayPerson1" title="Paid For is required ">
-                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Will Pay)")</option>
-                @if (Balances != null)
-                {
-                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
-                    {
-                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                    }
-                }
-                <option value="NONE">Will Not Contribute</option>
-            </select>
-        </div>
-        <div>
-            <label>@($"{Constants.Person2} Will Pay With:")</label>
-            <br />
-            <select class="custom-select" @bind="WillPayPerson2" title="Paid For is required ">
-                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Will Pay)")</option>
-                @if (Balances != null)
-                {
-                    @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
-                    {
-                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                    }
-                }
-                <option value="NONE">Will Not Contribute</option>
-            </select>
-        </div>
-        <br style="clear:both" />
-        <br />
-        <div style="float:left; margin-right:10vw;">
-            <label>Update this with Charges:</label>
-            <br />
-            <input @bind="UpdateCheck" type="checkbox" />
-        </div>
-        <div style="position:absolute;border: 2px solid green; width:20vw;height:80vh;right:1vw;top:15vh;">
-            <h1 style="text-align:center;">Envelope Preview:</h1>
-            <div>
-                <Envelope Name="@EnvName" Scale=15 Font_Size=2 Goal="@(double.TryParse(GoalAmount, out double ga) ? ga : 0)" Saved="@(Person1Amount+Person2Amount)" />
+        <div class="flex-r-100">
+            <div style="width:80%">
+                <div style="float:left; margin-right:10vw;">
+                    <label>Envelope Saving Goal:</label>
+                    <br />
+                    <input type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string) ui.Value;})" />
+                </div>
+                <div style="float:left; margin-right:10vw;">
+                    <label>Goal Amount:</label>
+                    <br />
+                    <input type="number" placeholder="Goal Amount" @bind=GoalAmount @oninput="@(async (ui) => { GoalAmount = (string) ui.Value;})" />
+                </div>
+                <br style="clear:both" />
+                <br />
+                <div style="float:left; margin-right:10vw;">
+                    <label>@($"{Constants.Person1} Will Pay With:")</label>
+                    <br />
+                    <select class="custom-select" @bind="WillPayPerson1" title="Paid For is required ">
+                        <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Will Pay)")</option>
+                        @if (Balances != null)
+                        {
+                            @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
+                            {
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
+                            }
+                        }
+                        <option value="NONE">Will Not Contribute</option>
+                    </select>
+                </div>
+                <div>
+                    <label>@($"{Constants.Person2} Will Pay With:")</label>
+                    <br />
+                    <select class="custom-select" @bind="WillPayPerson2" title="Paid For is required ">
+                        <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Will Pay)")</option>
+                        @if (Balances != null)
+                        {
+                            @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
+                            {
+                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
+                            }
+                        }
+                        <option value="NONE">Will Not Contribute</option>
+                    </select>
+                </div>
+                <br style="clear:both" />
+                <br />
+                <div style="float:left; margin-right:10vw;">
+                    <label>Update this with Charges:</label>
+                    <br />
+                    <input @bind="UpdateCheck" type="checkbox" />
+                </div>
             </div>
+            <div style="width:20%;">
+                <h1 style="text-align:center;">Envelope Preview:</h1>
+                <div>
+                    <Envelope Name="@EnvName" Scale=15 Font_Size=2 Goal="@(double.TryParse(GoalAmount, out double ga) ? ga : 0)" Saved="@(Person1Amount+Person2Amount)" />
+                </div>
+            </div>
+            <br style="clear:both" />
+            <br />
         </div>
-        <br style="clear:both" />
-        <br />
         @if (!string.IsNullOrEmpty(ErrorMsg))
         {
             <p style="color:@ErrorColor">@ErrorMsg</p>
@@ -194,7 +198,7 @@ else
         ErrorMsg += double.TryParse(GoalAmount, out double ga) ? ga <= 0 ? "Amount must be >0. " : "" : "Amount must be a number. ";
         ErrorMsg += string.IsNullOrEmpty(WillPayPerson1) ? $"Must set {Constants.Person1} account to pay with. " : "";
         ErrorMsg += string.IsNullOrEmpty(WillPayPerson2) ? $"Must set {Constants.Person2} account to pay with. " : "";
-        ErrorMsg += Envelopes.FirstOrDefault(e => e.Name == EnvName && e.Id != Id) != null ? "Already have a goal with this name. " : ""; 
+        ErrorMsg += Envelopes.FirstOrDefault(e => e.Name == EnvName && e.Id != Id) != null ? "Already have a goal with this name. " : "";
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
