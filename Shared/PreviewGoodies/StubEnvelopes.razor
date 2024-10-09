@@ -1,4 +1,6 @@
-﻿<PreviewGoodie Title="Save like you mean it!" Desc="With our savings goal envelopes, every dollar you make has a job. Create as many envelopes as you want and watch as everything starts to feel more attainable.">
+﻿@implements IDisposable
+
+<PreviewGoodie Title="Save like you mean it!" Desc="With our savings goal envelopes, every dollar you make has a job. Create as many envelopes as you want and watch as everything starts to feel more attainable.">
     <div class="flex-r" style="padding:1em;flex-wrap:wrap;">
         <Envelope Name="Emergency" Scale=@Constants.TestMobile(EnvelopeSize,11) Font_Size=@Constants.TestMobile(EnvelopeFontSize,1.375)
                   Goal=5000
@@ -18,4 +20,17 @@
 @code{
     private double EnvelopeSize = 35;
     private double EnvelopeFontSize = 4.5;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Constants.MobileChanged += MobileUpdated;
+    }
+    private void MobileUpdated(object sender, bool m)
+    {
+        StateHasChanged();
+    }
+    public void Dispose()
+    {
+        Constants.MobileChanged -= MobileUpdated;
+    }
 }

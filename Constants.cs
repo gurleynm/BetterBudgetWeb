@@ -181,7 +181,7 @@ namespace BetterBudgetWeb
                 if (mobile == value) return;
                 mobile = value;
 
-                MobileChanged.InvokeAsync(value);
+                MobileChanged?.Invoke(typeof(Constants), value);
             }
         }
         public static double Person1NetWorth => IndexRunner.CalculateNetWorth(Person1);
@@ -203,7 +203,7 @@ namespace BetterBudgetWeb
             }
         }
         public EventCallback<double> Person2NetWorthChanged { get; set; }
-        public static EventCallback<bool> MobileChanged { get; set; }
+        public static EventHandler<bool> MobileChanged = (sender, value) => { };
 
         public static readonly List<string> Months = new List<string>{"January", "February", "March", "April", "May",
                                                                 "June", "July", "August", "September",

@@ -1,4 +1,6 @@
-﻿<PreviewGoodie ShiftDirection="end" Invert=true Title="No need for a boring spreadsheet" Desc="Don't worry about trying to save everything in a workbook, let us do it for you! We help you track all of your transactions so you can take your mind off balancing your books.">
+﻿@implements IDisposable
+
+<PreviewGoodie ShiftDirection="end" Invert=true Title="No need for a boring spreadsheet" Desc="Don't worry about trying to save everything in a workbook, let us do it for you! We help you track all of your transactions so you can take your mind off balancing your books.">
     <div style="padding:1em">
         <div class="chart-back">
             <div class="chart">
@@ -34,3 +36,18 @@
         </div>
     </div>
 </PreviewGoodie>
+
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        Constants.MobileChanged += MobileUpdated;
+    }
+    private void MobileUpdated(object sender, bool m)
+    {
+        StateHasChanged();
+    }
+    public void Dispose()
+    {
+        Constants.MobileChanged -= MobileUpdated;
+    }
+}
