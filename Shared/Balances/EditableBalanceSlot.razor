@@ -1,0 +1,217 @@
+﻿@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.MainMenuItems;
+@using BetterBudgetWeb.Repo;
+@using BetterBudgetWeb.Runner;
+@inject NavigationManager NavManager
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<div class="flex-r" style="flex-wrap:wrap;justify-content:space-between;
+                                padding:0; margin: 0;cursor:auto;
+                                width:100%;border: 1px gray solid;
+                                background-image:linear-gradient(to left,indigo,@TheBalance.HexColor);
+                                color:@TheBalance.TextColor">
+    <div style="align-self:flex-start">
+        <div class="flex-c" style="justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
+            <input type="text" style="cursor:pointer;font-size:medium;align-self:flex-start;margin:0;" @bind-value=@TheBalance.Name />
+
+            @if (ShowTradable)
+            {
+                @if (TheBalance.APR == 0)
+                {
+                    <label style="font-size:smaller;margin:0;color:@TheBalance.TextColor">
+                        <i>
+                            @(
+                                "Tradeable Cash: " + Constants.Pretty(TheBalance.Value)
+                                )
+                        </i>
+                    </label>
+                }
+            }
+            @if (ShowPerson && !IsPreview)
+            {
+                <span style="color:@TheBalance.TextColor">@(" (" + TheBalance.Person + ")")</span>
+            }
+        </div>
+    </div>
+    <div class="slot-background" style="align-self:flex-end;padding:0; margin: 0;width:35%">
+        <div class="flex-c" style="justify-content:space-between;padding:0 .5vw 0 0; margin: 0">
+            <label class="@ColorClass()" style="cursor:pointer;font-size:medium;align-self:flex-end;margin:0">@Constants.Pretty(Amount)</label>
+            <br />
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public Balance TheBalance { get; set; } = new Balance();
+    [Parameter]
+    public EventCallback<Balance> OnClick { get; set; }
+    [Parameter]
+    public bool IncludeGoals { get; set; }
+    [Parameter]
+    public bool ShowSpending { get; set; } = true;
+    [Parameter]
+    public bool IsPreview { get; set; }
+    [Parameter]
+    public string SetClass { get; set; }
+    [Parameter]
+    public bool ShowPersonInMonthly { get; set; } = true;
+    [Parameter]
+    public bool ParentOpen
+    {
+        get { return parentOpen; }
+        set
+        {
+            if (parentOpen == value)
+                return;
+            parentOpen = value;
+
+            ParentOpenChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<bool> ParentOpenChanged { get; set; }
+    private bool parentOpen { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnDeleteConfirm { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnEditConfirm { get; set; }
+
+    [Parameter]
+    public string ParentId { get; set; }
+
+    private string Id => "monthly-" + TheBalance.Name.Replace(" ", "-");
+
+    private bool ShowTradable => TheBalance.BalanceType == "Stocks";
+
+    private List<Transaction> FilteredTransactions => Constants.catchAll.Transactions.Where(t =>
+                                t.MonthYear() == Constants.MonthYear() && ThisBalance(t)).OrderByDescending(t => t.DateOfTransaction).ToList();
+
+    public bool ShowPerson { get; set; }
+    public double Amount => GetAmount();
+    private bool Show
+    {
+        get;
+        set;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        Constants.BalancesChanged += BalancesUpdated;
+        return base.OnInitializedAsync();
+    }
+
+    private string ColorClass()
+    {
+        int LoanMultiplier = TheBalance.BalanceType == "Loan" ? -1 : 1;
+
+        return TheBalance.Value * LoanMultiplier < 0 ? "income-bad" : "income-good";
+    }
+
+    private string Pretty(double num)
+    {
+        return Constants.Pretty(num);
+    }
+
+    private async void Clicked()
+    {
+        if (IsPreview)
+            return;
+        if (TheBalance.BalanceType == "Stocks")
+        {
+            NavManager.NavigateTo($"/portfolio/{TheBalance.Name}");
+        }
+        else
+        {
+            Show = !Show && ShowSpending;
+            if (OnClick.HasDelegate)
+                await OnClick.InvokeAsync(TheBalance);
+
+            await ResizeParent();
+        }
+    }
+    private async Task ResizeParent()
+    {
+        if (!string.IsNullOrEmpty(ParentId))
+            await JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
+    }
+    private bool ThisBalance(Transaction t)
+    {
+        return t.PaidWithPerson1 == TheBalance.Name ||
+                t.PaidWithPerson2 == TheBalance.Name ||
+                t.PaidOffPerson1 == TheBalance.Name ||
+                t.PaidOffPerson2 == TheBalance.Name;
+    }
+
+    private async void CloseModal(bool accepted)
+    {
+        if (accepted)
+        {
+            await OnEditConfirm.InvokeAsync(accepted);
+            StateHasChanged();
+        }
+    }
+
+    private async void Delete(bool accepted)
+    {
+        if (accepted)
+        {
+            await OnDeleteConfirm.InvokeAsync(accepted);
+        }
+
+        StateHasChanged();
+    }
+    private double GetAmount()
+    {
+        double amount = TheBalance.Value;
+        if (IsPreview) return amount;
+
+        if (-1 <= amount && amount < 0)
+            amount = 0;
+
+        if (IncludeGoals)
+        {
+            amount = TheBalance.GetValueWithGoals();
+        }
+
+        if (TheBalance.BalanceType == "Stocks")
+        {
+            try
+            {
+                var Securities = Constants.Securities.Where(sec => sec.BalanceFrom.ToUpper() == TheBalance.Id.ToUpper())?.ToList();
+                amount += Securities == null ? 0 : Securities.Sum(s => s.Value);
+            }
+            catch (Exception e) { }
+        }
+
+        double returnStr = amount;
+        string testStr = amount.ToString();
+
+        if (testStr == "-0")
+            returnStr = 0;
+
+        return returnStr;
+    }
+
+    void MouseOver(MouseEventArgs e)
+    {
+        ShowPerson = true;
+    }
+    void MouseOut(MouseEventArgs e)
+    {
+        ShowPerson = false;
+    }
+    private async void BalancesUpdated(object sender, List<Balance> e)
+    {
+        Show = false;
+        StateHasChanged();
+    }
+    public void Dispose()
+    {
+        Constants.BalancesChanged -= BalancesUpdated;
+    }
+}
