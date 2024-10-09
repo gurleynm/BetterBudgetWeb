@@ -1,4 +1,4 @@
-﻿<div class="chart-bar" @onclick=OnClick>
+﻿<div class="chart-bar" style="cursor:@Constants.Options(DateBarClicked.HasDelegate,"pointer","auto")" @onclick=OnClick>
     @if (Negative)
     {
         <div class="chart-bar__label" style="color:red">@Constants.Pretty(Value)</div>

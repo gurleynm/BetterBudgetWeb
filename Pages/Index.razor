@@ -32,7 +32,7 @@ else
                      HideTxt="Hide Spending"
                      TopButton=true
                      BottomButton=false>
-                <Chart DPs=DataPoints BarClicked=FilterDate />
+                <Chart DPs=DataPoints />
             </PopTray>
         }
         <br />
@@ -211,7 +211,7 @@ else
         {
             <PopTray Id="mobile-spend" ShowWorth=ShowChart ShowTxt="Show Spending" HideTxt="Hide Spending" TopButton=true BottomButton=false>
 
-                <Chart DPs=DataPoints BarClicked=FilterDate />
+                <Chart DPs=DataPoints />
                 <br />
                 <br />
                 <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
@@ -331,7 +331,7 @@ else
     private List<DataPoint> DataPoints = new List<DataPoint>();
 
     private bool goals;
-    private bool Goals { get { return goals; } set { goals = value; if (!Constants.Mobile) GlobalBT.SetGoals(goals); } }
+    private bool Goals { get { return goals; } set { goals = value; GlobalBT.SetGoals(goals); } }
 
     private bool filtered;
 

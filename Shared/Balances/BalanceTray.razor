@@ -40,7 +40,7 @@
             <div class="flex-c-start">
                 <CascadingValue Value="Goals">
                     <GenBalTray ExpenseType="Equity" />
-                    <GenBalTray ExpenseType="Income" />
+                    <GenBalTray @ref=IncomeTray ExpenseType="Income" />
                     <GenBalTray ExpenseType="Stocks" />
                     <GenBalTray ExpenseType="Credit Cards/Loans" SearchTerm="Loan" />
                 </CascadingValue>
@@ -62,6 +62,7 @@
     public EventCallback<Transaction> RunModal { get; set; }
 
     public bool ViewReports { get; set; }
+    private GenBalTray IncomeTray { get; set; }
 
     private bool FirstToggle = true;
     private bool ShowWorth = true;
