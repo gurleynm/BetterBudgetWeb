@@ -418,7 +418,7 @@ else
     }
 
     private List<Data.Envelope> Envelopes { get; set; }
-    private List<LinePlot> Plots { get; set; } = new();
+    private List<LinePlot> Plots => Constants.Plots;
 
     protected override async Task OnInitializedAsync()
     {
@@ -445,7 +445,6 @@ else
 
         SetDataPoints();
 
-        Plots = new List<LinePlot>(Constants.Plots);
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
 

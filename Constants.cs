@@ -184,8 +184,8 @@ namespace BetterBudgetWeb
                 MobileChanged.InvokeAsync(value);
             }
         }
-        public static double Person1NetWorth => IndexRunner.CalculateNetWorth(Person1, Balances);
-        public static double Person2NetWorth => IndexRunner.CalculateNetWorth(Person2, Balances);
+        public static double Person1NetWorth => IndexRunner.CalculateNetWorth(Person1);
+        public static double Person2NetWorth => IndexRunner.CalculateNetWorth(Person2);
         public static double TotalNetWorth => Person1NetWorth + Person2NetWorth;
         public static EventHandler<string> CurPageChanged = (sender, value) => { };
 

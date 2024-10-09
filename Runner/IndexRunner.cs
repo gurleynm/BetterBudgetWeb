@@ -154,15 +154,15 @@ namespace BetterBudgetWeb.Runner
             nt.DateOfTransaction = newTrans.DateOfTransaction;
             return nt;
         }
-        public static double CalculateNetWorth(string person, List<Balance> Balances)
+        public static double CalculateNetWorth(string person, bool UpdatePlots = true)
         {
-            if (Balances == null)
+            if (Constants.Balances == null || Constants.Balances.Count == 0)
                 return 0;
 
-            double positive = Balances.Where(bal => bal.Person == person && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value);
-            double negative = Balances.Where(bal => bal.Person == person && bal.BalanceType.Contains("Loan")).Sum(b => b.Value);
-            double joint_neg = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && bal.BalanceType.Contains("Loan")).Sum(b => b.Value) / 2;
-            double joint_pos = Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value) / 2;
+            double positive = Constants.Balances.Where(bal => bal.Person == person && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value);
+            double negative = Constants.Balances.Where(bal => bal.Person == person && bal.BalanceType.Contains("Loan")).Sum(b => b.Value);
+            double joint_neg = Constants.Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && bal.BalanceType.Contains("Loan")).Sum(b => b.Value) / 2;
+            double joint_pos = Constants.Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value) / 2;
 
             double stocks = 0;
             try
@@ -175,6 +175,8 @@ namespace BetterBudgetWeb.Runner
 
             }
 
+            if (UpdatePlots)
+                Constants.Plots = GeneratePlots();
             return positive + joint_pos - joint_neg - negative + stocks;
         }
 
@@ -313,8 +315,8 @@ namespace BetterBudgetWeb.Runner
                 Snapshots.Add(new Snapshot
                 {
                     Month = DateTime.Now.ToString("MMMM"),
-                    Person1NetWorth = Constants.Person1NetWorth,
-                    Person2NetWorth = Constants.Person2NetWorth
+                    Person1NetWorth = CalculateNetWorth(Constants.Person1, false),
+                    Person2NetWorth = CalculateNetWorth(Constants.Person2, false)
                 });
                 SnapCnt++;
             }
@@ -323,8 +325,8 @@ namespace BetterBudgetWeb.Runner
                 var exists = Snapshots.FirstOrDefault(s => s.Month + " " + s.Year == Constants.MonthYear());
                 if (exists != null)
                 {
-                    exists.Person1NetWorth = Constants.Person1NetWorth;
-                    exists.Person2NetWorth = Constants.Person2NetWorth;
+                    exists.Person1NetWorth = CalculateNetWorth(Constants.Person1, false);
+                    exists.Person2NetWorth = CalculateNetWorth(Constants.Person2, false);
                 }
             }
 

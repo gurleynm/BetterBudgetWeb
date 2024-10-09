@@ -101,7 +101,7 @@
 
     private double GetNetWorthOf(MonthRelations monthRelations, string person)
     {
-        double nw = IndexRunner.CalculateNetWorth(person, Constants.Balances);
+        double nw = IndexRunner.CalculateNetWorth(person);
         foreach (var monthRel in MonthRels)
         {
             if (monthRel.YearMonth <= monthRelations.YearMonth)

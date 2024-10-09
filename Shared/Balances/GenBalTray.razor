@@ -80,11 +80,11 @@
         return amount;
     }
 
-    private async void BalancesUpdated(object sender, List<Balance> e)
+    private void BalancesUpdated(object sender, List<Balance> e)
     {
         var TempBalances = Constants.Balances.Where(b => b.BalanceType == ST).OrderByDescending(b => b.Value);
         if (TempBalances.Count() != Balances.Count() && OpenTray)
-            await JSRuntime.InvokeAsync<string>("resizeTray", Id);
+            JSRuntime.InvokeAsync<string>("resizeTray", Id);
 
         Balances = TempBalances;
         StateHasChanged();
