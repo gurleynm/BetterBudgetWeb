@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using static BetterBudgetWeb.Shared.Reports;
+using static BetterBudgetWeb.Data.ReportHelperClass;
 
 namespace BetterBudgetWeb.Repo
 {

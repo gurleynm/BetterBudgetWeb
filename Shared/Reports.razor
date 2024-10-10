@@ -5,6 +5,7 @@
 @using System.Globalization
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Linq
+@using static BetterBudgetWeb.Data.ReportHelperClass
 @inject IJSRuntime jsRuntime
 
 @if (!Mobile)
@@ -553,25 +554,5 @@ else
     private string Pretty(double am)
     {
         return Constants.Pretty(am);
-    }
-
-    internal class Dynamo
-    {
-        public string Month = "";
-        public string Year = "";
-        public JArray DynamicCosts;
-    }
-
-    internal class MonthTab
-    {
-        public string MyMonth = "";
-        public string MyYear = "";
-        public string MyClass = "";
-    }
-
-    internal class YearTab
-    {
-        public string MyYear = "";
-        public string MyClass = "";
     }
 }
