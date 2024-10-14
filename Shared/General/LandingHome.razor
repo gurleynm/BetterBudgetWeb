@@ -58,6 +58,10 @@
     public EventCallback GrabDemo { get; set; }
 
     private bool LoadingDemo { get; set; }
+    protected override async Task OnInitializedAsync(){
+        if(NavMan.BaseUri.Contains("mobile."))
+            NavMan.NavigateTo("home");
+    }
 
     private async void LoadDemo()
     {
