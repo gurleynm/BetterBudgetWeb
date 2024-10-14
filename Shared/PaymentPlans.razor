@@ -1,10 +1,8 @@
 ﻿<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-<stripe-pricing-table pricing-table-id="@private_table_id"
-                      publishable-key="@pub_key"
+<stripe-pricing-table pricing-table-id="@HiddenEnv.TableId"
+                      publishable-key="@HiddenEnv.PubKey"
                       client-reference-id="@Constants.catchAll.Token.Id">
 </stripe-pricing-table>
 
 @code {
-    private string private_table_id => HiddenEnv.TableId;
-    private string pub_key => HiddenEnv.PubKey;
 }
