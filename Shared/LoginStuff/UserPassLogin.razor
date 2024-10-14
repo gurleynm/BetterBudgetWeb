@@ -62,7 +62,7 @@
             @ChildContent
         }
 
-        @if (!Hide)
+        @if (!Hide && !NavMan.BaseUri.Contains("mobile."))
         {
             <hr />
             <div class="flex-r">
