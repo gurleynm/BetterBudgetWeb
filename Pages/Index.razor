@@ -730,6 +730,7 @@ else
 
         FilteredTransactions = e.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
 
+        SetDataPoints();
         StateHasChanged();
     }
 
