@@ -11,7 +11,6 @@ namespace BetterBudgetWeb
     {
 
         public static bool Test = false; // true false
-        public static bool StripeTest => HiddenEnv.StripeTestBool;
         public static EventHandler<bool> WeInChanged = (sender, value) => { };
 
         private static bool weIn;
