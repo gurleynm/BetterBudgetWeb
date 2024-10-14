@@ -11,7 +11,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://api.couplesbetterbudget.com") });
 
 builder.Services.AddBlazoredSessionStorage();
-StripeConfiguration.ApiKey = "sk_test_51Q2DNf2L4K66u9tvoLfr7puGwu0fitJyRyOb2cYDe5ndUNkr6BVX2HJF5naq8nt1bGQ5CxKoXB5PiCQgAMlegr0Y00JZQeBnjN";
+StripeConfiguration.ApiKey = HiddenEnv.APIKey;
 
 Constants.SetColorScheme();
 
