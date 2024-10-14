@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PublishIISAssets>true</PublishIISAssets>
+	<WasmEnableSIMD>false</WasmEnableSIMD>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
