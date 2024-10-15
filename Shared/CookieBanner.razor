@@ -1,0 +1,47 @@
+﻿@inject IJSRuntime JSRuntime
+
+@if (!Constants.HideCookieBanner && ShowIt)
+{
+    <div class="flex-r-100" style="position:fixed;bottom:0;left:0;">
+        <div class="flex-r" style="width:fit-content;background-color:dimgray;border:solid silver 1px;padding:1em;border-radius:5px;
+                                box-shadow: 0 0 10px #eee;align-items:center">
+            <span style="font-size:smaller">We use cookies on this site to improve our services and analyze our web traffic. By continuing to browse or by closing out of this message, you indicate your agreement to using these cookies.</span>
+            <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" style="padding-left:1em" @onclick=ExitBanner />
+        </div>
+    </div>
+}
+
+@code {
+    private bool ShowIt = true;
+    protected override async Task OnInitializedAsync()
+    {
+        Constants.HideCookieBanner = await ReadCBCookie();
+    }
+
+    private async Task ExitBanner()
+    {
+        await WriteCookieAsync("HideCookieBanner", true.ToString(), 1000);
+        ShowIt = false;
+        StateHasChanged();
+    }
+
+    protected async Task<bool> ReadCBCookie()
+    {
+        bool response;
+        try
+        {
+            response = Convert.ToBoolean(await JSRuntime.InvokeAsync<string>("ReadCookie", "HideCookieBanner"));
+        }
+        catch (Exception e)
+        {
+            response = false;
+        }
+
+        return response;
+    }
+
+    public async Task WriteCookieAsync(string name, string value, double days)
+    {
+        var test = await JSRuntime.InvokeAsync<object>("WriteCookie", name, value, days);
+    }
+}

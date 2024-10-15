@@ -11,6 +11,7 @@ namespace BetterBudgetWeb
     {
 
         public static bool Test = false; // true false
+        public static bool HideCookieBanner = true;
         public static EventHandler<bool> WeInChanged = (sender, value) => { };
 
         private static bool weIn;

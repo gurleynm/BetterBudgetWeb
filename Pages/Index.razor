@@ -706,8 +706,6 @@ else
             return;
 
         var nt = IndexRunner.Add(addIt);
-        JSRuntime.InvokeAsync<string>("console.log", "DateAddIt: " + addIt.DateOfTransaction.ToString());
-        JSRuntime.InvokeAsync<string>("console.log", "DateNTIt: " + nt.DateOfTransaction.ToString());
 
         if (nt != null)
         {
