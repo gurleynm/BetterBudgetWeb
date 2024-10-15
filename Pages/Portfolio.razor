@@ -442,9 +442,14 @@ else
 
         return Math.Round(GainsLoss, 2);
     }
+
     private void SecuritiesUpdated(object sender, List<Security> sec)
     {
         Securities = new List<Security>(Constants.Securities);
+        AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
+        RefreshTime = DateTime.Now.ToString();
+        var exists = Constants.Balances.FirstOrDefault(bal => bal.Name.ToUpper() == BalanceName.ToUpper());
+        SelectedBalance = exists == null ? InvestmentAccounts[0] : exists;
         StateHasChanged();
     }
 
