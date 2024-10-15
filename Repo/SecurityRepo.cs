@@ -114,7 +114,6 @@ namespace BetterBudgetWeb.Repo
             CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
 
             var secs = catcher.Securities;
-            Constants.Balances = new List<Balance>(catcher.Balances);
             Constants.Securities = new List<Security>(secs);
 
             Securities = secs;

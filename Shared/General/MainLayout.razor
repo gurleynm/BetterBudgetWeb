@@ -437,7 +437,7 @@
             }
         </ChildContent>
         <ErrorContent Context="Exception">
-            @if (env.IsProduction())
+            @if (!env.IsProduction())
             {
                 <div class="alert alter-primary">
                     <h3>@Exception.GetType()</h3>
