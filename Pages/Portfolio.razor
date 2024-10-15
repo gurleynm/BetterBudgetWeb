@@ -6,6 +6,7 @@
 @using BetterBudgetWeb.Shared.DeleteActions
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavMan
+@implements IDisposable
 
 <GoogleAnalytic />
 
@@ -372,6 +373,7 @@ else
 
         AccountSecurities = Securities.Where(sec => sec.BalanceFrom == SelectedBalance.Id).ToList();
         RefreshTime = DateTime.Now.ToString();
+        Constants.SecuritiesChanged += SecuritiesUpdated;
     }
 
     private void ShowBuyTab()
@@ -439,5 +441,15 @@ else
         double GainsLoss = totalIn == 0 ? 0 : (totalValue - totalIn) / totalIn * 100;
 
         return Math.Round(GainsLoss, 2);
+    }
+    private void SecuritiesUpdated(object sender, List<Security> sec)
+    {
+        Securities = new List<Security>(Constants.Securities);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.SecuritiesChanged -= SecuritiesUpdated;
     }
 }

@@ -150,11 +150,25 @@ namespace BetterBudgetWeb
                 }
             }
         }
+        public static EventHandler<List<Security>> SecuritiesChanged = (sender, value) => { };
+
+        private static List<Security> securities = new List<Security>();
+        public static List<Security> Securities
+        {
+            get => securities;
+            set
+            {
+                if (securities != value)
+                {
+                    securities = value;
+                    SecuritiesChanged?.Invoke(typeof(Constants), securities);
+                }
+            }
+        }
         public static List<SavingsGoal> SavingsGoals { get; set; } = new();
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; } = new();
         public static List<ProjectedDatum> ProjectedData { get; set; } = new();
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
-        public static List<Security> Securities { get; set; } = new List<Security>();
         public static CatchAll catchAll { get; set; } = new CatchAll();
         public static DateRange DR { get; set; } = new DateRange();
 
