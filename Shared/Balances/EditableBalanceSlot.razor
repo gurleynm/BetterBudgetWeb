@@ -108,11 +108,19 @@
     public string ClassColor => (TheBalance.BalanceType == "Loan" && Amount * -1 < 0) || Amount < 0 ? "income-bad" : "income-good";
 
     private bool ShowTradable => TheBalance.BalanceType == "Stocks";
-    private double Amount { get; set; } = 0.00;
+    private double amount { get; set; } = 0.00;
+    private double Amount {
+        get{ return amount; }
+        set
+        {
+            amount = value;
+            TheBalance.Value = amount;
+        }
+    }
 
     protected override Task OnInitializedAsync()
     {
-        Amount = TheBalance.Value;
+        amount = TheBalance.Value;
         APR = TheBalance.APR.ToString();
         return base.OnInitializedAsync();
     }
