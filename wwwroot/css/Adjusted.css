@@ -302,6 +302,7 @@ td a, td input, td img {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index:1;
 }
 
 .top-centered {
@@ -309,6 +310,7 @@ td a, td input, td img {
     top: 20%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 2;
 }
 
 .bottom-mid-centered {
@@ -316,6 +318,7 @@ td a, td input, td img {
     top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 2;
 }
 
 .bottom-centered {
@@ -323,6 +326,7 @@ td a, td input, td img {
     top: 80%;
     left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 2;
 }
 
 
