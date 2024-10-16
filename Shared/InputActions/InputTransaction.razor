@@ -54,8 +54,8 @@
         }
         <br />
         <br />
-        <div id="tran-name" class="flex-r" style="justify-content:start;">
-            <div style="width:50%;">
+        <div id="tran-name" class="flex-r" style="justify-content:start;flex-wrap:wrap">
+            <div style="width:100%;">
                 <div>
                     <label>Transaction:</label>
                     <br />
@@ -373,17 +373,11 @@
                         </div>
                     }
                 }
-                <br style="clear:both" />
-                <br style="clear:both" />
-                <br style="clear:both" />
-                <div style="margin-bottom:2vh;">
-                    <button class="btn btn-secondary" style="float:left" disabled=@Disabled @onclick="Submit">Submit</button>
-                </div>
             </div>
             @if (!string.IsNullOrEmpty(TransactionName) && Constants.TIER_LEVEL > Tier.BASIC_TIER)
             {
-                <div class="flex-c" style="width:50%;justify-content:end;">
-                    <div class="flex-c" style="align-items:center;justify-content:end;border:solid silver 1px;height:fit-content">
+                <div class="flex-r-100" style="margin-top:1em;padding:1em">
+                    <div class="flex-r-100" style="align-items:center;justify-content:space-between;height:fit-content">
                         <div class="flex-c" style="justify-content:start;width:fit-content">
                             <label style="float:left;margin-right:1vw">Text Color:</label>
                             <select class="custom-select" @bind=TextColor title="Balance color is required ">
@@ -392,12 +386,12 @@
                             </select>
                         </div>
                         <br />
-                        <div class="flex-r" style="justify-content:start;width:fit-content">
+                        <div class="flex-c" style="justify-content:start;width:fit-content">
                             <label style="float:left;margin-right:1vw">Color:</label>
                             <input @bind=Hex type="color" />
                         </div>
                         <br />
-                        <div style="margin-bottom:2vh;">
+                        <div class="flex-c">
                             <button class="btn btn-primary" style="float:right;background-color:@Hex;" @onclick="AddPreset">
                                 <span style="color:@TextColor;">Add Preset For:</span>
                                 <br />
@@ -407,6 +401,9 @@
                     </div>
                 </div>
             }
+            <div style="margin:2vh 0;">
+                <button class="btn btn-secondary" style="float:left" disabled=@Disabled @onclick="Submit">Submit</button>
+            </div>
             <br />
         </div>
         @if (!string.IsNullOrEmpty(ErrorMsg))
