@@ -175,8 +175,6 @@ namespace BetterBudgetWeb.Runner
 
             }
 
-            if (UpdatePlots)
-                Constants.Plots = GeneratePlots();
             return positive + joint_pos - joint_neg - negative + stocks;
         }
 

@@ -67,13 +67,10 @@
     private bool FirstToggle = true;
     private bool ShowWorth = true;
     private string WorthTxt => ShowWorth ? "Show Worth" : "Hide Worth";
-    private List<LinePlot> Plots { get; set; } = new();
+    private List<LinePlot> Plots => Constants.Mobile ? Constants.Plots : new();
 
     protected override Task OnInitializedAsync()
     {
-        @if (Constants.Mobile)
-            Plots = new List<LinePlot>(Constants.Plots);
-
         Constants.BalancesChanged += BalancesUpdated;
         RefreshBalances();
         return base.OnInitializedAsync();

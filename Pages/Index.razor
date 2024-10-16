@@ -447,6 +447,7 @@ else
 
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
+        Constants.Plots = IndexRunner.GeneratePlots();
 
         StateHasChanged();
     }
@@ -729,6 +730,7 @@ else
         FilteredTransactions = e.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
 
         SetDataPoints();
+        Constants.Plots = IndexRunner.GeneratePlots();
         StateHasChanged();
     }
 

@@ -451,6 +451,7 @@ else
 
         Constants.Balances = await BalanceRepo.GetBalancesAsync();
         SelectedBalance = Constants.Balances.FirstOrDefault(b => b.Id == SelectedBalance.Id);
+        InvestmentAccounts = Constants.Balances.Where(bal => bal.BalanceType.ToUpper() == "STOCKS").ToList();
 
         StateHasChanged();
     }

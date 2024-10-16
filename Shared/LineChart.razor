@@ -13,10 +13,24 @@
     [Parameter]
     public string ChartId { get; set; } = "chart_div";
     [Parameter]
-    public List<LinePlot> Plots { get; set; } //'chart_div'
+    public List<LinePlot> Plots
+    {
+        get { return plots; }
+        set
+        {
+            if (plots != value && value.Count > 0)
+            {
+                plots = value;
+                DrawLineChart();
+            }
+            else
+                plots = value;
+        }
+    }
     [Parameter]
     public string Margin { get; set; } = "0 0 1em 0";
     public bool Showing => Plots != null && Plots.Count > 1;
+    public List<LinePlot> plots { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -27,6 +41,10 @@
     public async void DrawLineChart()
     {
         var json = System.Text.Json.JsonSerializer.Serialize(Plots.ToArray());
-        await JSRuntime.InvokeAsync<object>("drawLineChart", json, ChartId);
+        try
+        {
+            await JSRuntime.InvokeAsync<object>("drawLineChart", json, ChartId);
+        }
+        catch(Exception e){}
     }
 }

@@ -4,36 +4,20 @@
 @if (Mobile)
 {
     <div style="float:left; margin:auto 0;width:100%;">
-        <div class="flex-r" style="margin:2vh 0;width:100%;">
-            <label style="margin:2vw">Sell</label>
-            <label class="switch">
-                <input type="checkbox" @bind=DeleteIsSet>
-                <span class="slider round" style="background-color:@GetColor();color:aqua"></span>
-            </label>
-            <label style="margin:2vw">Delete</label>
-        </div>
+        @* <div class="flex-r" style="margin:2vh 0;width:100%;">
+    <label style="margin:2vw">Sell</label>
+    <label class="switch">
+    <input type="checkbox" @bind=DeleteIsSet>
+    <span class="slider round" style="background-color:@GetColor();color:aqua"></span>
+    </label>
+    <label style="margin:2vw">Delete</label>
+    </div> *@
 
         @if (!DeleteIsSet)
         {
-            <div style="float:left; margin: 0 2vw 2vh 2vw;">
-                <div style="float:left; margin: 0 4vw;">
-                    <div style="float:left; margin: 0;">
-                        <label>Number of Shares:</label>
-                        <br />
-                        <br />
-                        <label>Share Price at Sale:</label>
-                        <br />
-                        <br />
-                        <label>Security Name:</label>
-                    </div>
-                </div>
-                <div style="float:left; margin: 0;">
-                    <input type="number" style="width:23vw" placeholder="Price per Share" @bind-value="@SalePrice" @oninput="@(async (ui) => { SalePrice = (string) ui.Value;})" />
-                    <br />
-                    <br />
-                    <input type="number" style="width:23vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
-                    <br />
-                    <br />
+            <div class="flex-c-start" style="padding:1em">
+                <div class="flex-r-100" style="align-items:center;padding:1em">
+                    <label style="padding-right:1em">Security Name:</label>
                     <select @bind="SecID">
                         <option value="@string.Empty" selected disabled="disabled">(Choose Security)</option>
                         @if (Securities != null)
@@ -44,8 +28,16 @@
                             }
                         }
                     </select>
-                    <br />
-                    <br />
+                </div>
+                <div class="flex-r-100" style="align-items:center;padding:1em">
+                    <label style="padding-right:1em">Number of Shares:</label>
+                    <input type="number" style="min-width:23vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+                </div>
+                <div class="flex-r-100" style="align-items:center;padding:1em">
+                    <label style="padding-right:1em">Share Price at Sale:</label>
+                    <input type="number" style="min-width:23vw" placeholder="Price per Share" @bind-value="@SalePrice" @oninput="@(async (ui) => { SalePrice = (string) ui.Value;})" />
+                </div>
+                <div class="flex-r-100">
                     <button class="btn btn-success" style="margin:0 2vw;" disabled=@Disabled @onclick=Sell>Sell</button>
                 </div>
             </div>
@@ -82,14 +74,14 @@
 else
 {
     <div class="flex-c" style="margin:1vw 1vw;">
-        <div class="flex-r" style="align-items:center;">
-            <label style="margin:0 1vw">Sell</label>
-            <label class="switch">
-                <input type="checkbox" @bind=DeleteIsSet>
-                <span class="slider round" style="background-color:@GetColor();color:aqua"></span>
-            </label>
-            <label style="margin:0 1vw">Delete</label>
-        </div>
+        @* <div class="flex-r" style="align-items:center;">
+    <label style="margin:0 1vw">Sell</label>
+    <label class="switch">
+    <input type="checkbox" @bind=DeleteIsSet>
+    <span class="slider round" style="background-color:@GetColor();color:aqua"></span>
+    </label>
+    <label style="margin:0 1vw">Delete</label>
+    </div> *@
         <div class="flex-r">
             <div class="flex-c-start" style="margin:0 1vw;">
                 <label>Security Name:</label>
@@ -207,7 +199,7 @@ else
 
 
                 ErrorColor = "green";
-                ErrorMsg = $"Security {chosenOne.Name} was sold!";
+                ErrorMsg = $"{chosenOne.Name} was sold!";
 
                 SecID = string.Empty;
             }
@@ -234,7 +226,7 @@ else
 
 
             ErrorColor = "green";
-            ErrorMsg = $"Security '{chosenOne.Name}' was deleted!";
+            ErrorMsg = $"{chosenOne.Name} was deleted!";
 
             SecID = string.Empty;
 
