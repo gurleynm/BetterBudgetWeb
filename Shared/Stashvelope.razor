@@ -1,74 +1,23 @@
 ﻿@inject NavigationManager NaviMan
 
-@if (!ShowBack)
-{
-    <div class="container-env" style="height:auto;width:fit-content;padding:0;
-        cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
-        @if (Open)
-        {
-            <img src="@ImageSrc" alt="Open Full" style="width:@scale;height:auto;">
-        }
-        else
-        {
-            <img src="/images/Envelope.webp" alt="Closed Envelope" style="width:@scale;height:auto">
-        }
-        @if (Goal != 0)
-        {
-            @if (!Open)
-            {
-                <div class="top-centered" style="background-color:transparent;font-size:@(Font_Size/2)vw;border-radius:15px;">
-                    <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
-                </div>
-            }
-            else
-            {
-                <div class="bottom-mid-centered" style="background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;">
-                    <strong>Goal: <span style="color:@GoodOrBad();">@Constants.Pretty(Goal)</span></strong>
-                </div>
-            }
-        }
-        @if (!Open)
-        {
-            <div class="centered" style="background-color:white;font-size:@(Font_Size)vw;">
-                @Name
-            </div>
-        }
-        @if (Goal != 0)
-        {
-            <div class="bottom-centered" style="background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;width:fit-content;white-space:nowrap">
-                <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
-            </div>
-        }
-    </div>
-}
-else
-{
-    <div class="container-env" style="height:auto;width:auto;padding:0;
-        cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
-        <img src="/images/EnvelopeBack.webp" alt="Closed Envelope" style="width:@scale;height:auto">
-        <div class="top-centered" style="background-color:white;font-size:@(Font_Size)vw;">
-            @Name
+
+<div class="container-env" style="height:auto;width:fit-content;padding:0;cursor: auto;">
+    <img src="@ImageSrc" alt="Open Full" style="width:@scale;height:auto;">
+
+    @if (Goal != 0)
+    {
+        <div class="bottom-mid-centered" style="background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;">
+            <strong>Goal: <span style="color:@GoodOrBad();">@Constants.Pretty(Goal)</span></strong>
         </div>
-        <div class="bottom-mid-centered" style="background-color:transparent;font-size:@(Font_Size/2)vw;display:inline;">
-            <div style="float:left;width:@SmallTxtScale">
-                <strong>
-                    @(Constants.Person1 + ":")
-                    <br />
-                    <span style="color:@GoodOrBad()">@Person1Disp</span>
-                </strong>
-            </div>
-            <br />
-            <br />
-            <div style="float:right;width:@SmallTxtScale">
-                <strong>
-                    @(Constants.Person2 + ":")
-                    <br />
-                    <span style="color:@GoodOrBad()">@Person2Disp</span>
-                </strong>
-            </div>
+    }
+
+    @if (Goal != 0)
+    {
+        <div class="bottom-centered" style="background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;width:fit-content;white-space:nowrap">
+            <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
         </div>
-    </div>
-}
+    }
+</div>
 
 @code {
     [Parameter]
@@ -76,39 +25,12 @@ else
     [Parameter]
     public double Scale { get; set; } = 20;
     public string scale => Scale + "vw";
-    public string SmallTxtScale => Scale > 20 ? (Scale - 10) + "vw" : "10vw";
-    [Parameter]
-    public Action OnClick
-    {
-        get; set;
-    }
-    private bool flipClick { get; set; } = false;
-
-    [Parameter]
-    public bool FlipClick
-    {
-        get { return flipClick; }
-        set
-        {
-            flipClick = value;
-        }
-    }
     [Parameter]
     public double Goal { get; set; }
     [Parameter]
     public double Saved { get; set; }
     [Parameter]
-    public double Person1Amount { get; set; }
-    [Parameter]
-    public double Person2Amount { get; set; }
-    [Parameter]
-    public string Person1Account { get; set; }
-    [Parameter]
-    public string Person2Account { get; set; }
-    [Parameter]
     public double Font_Size { get; set; } = 2;
-    [Parameter]
-    public bool Open { get; set; }
     [Parameter]
     public bool Adding { get; set; }
     [Parameter]
@@ -116,21 +38,8 @@ else
     [Parameter]
     public bool Cashing { get; set; }
 
-    private string Person1Disp => string.IsNullOrEmpty(Person1Account) ? Constants.Pretty(Person1Amount) : Constants.Pretty(Person1Amount) + " (" + Person1Account + ")";
-    private string Person2Disp => string.IsNullOrEmpty(Person2Account) ? Constants.Pretty(Person2Amount) : Constants.Pretty(Person2Amount) + " (" + Person2Account + ")";
-
-    private bool ShowBack = false;
-
     public string ImageSrc => DetermineState();
 
-    private void OnClickHandle()
-    {
-        if (OnClick != null)
-            OnClick();
-
-        if (FlipClick)
-            Flip();
-    }
     private string GoodOrBad()
     {
         return Saved < Goal * .99 ? Saved < Goal * .9 ? "red" : "yellowgreen" : "limegreen";
@@ -155,9 +64,5 @@ else
             return "/images/Envelope-OpenE.webp";
         else
             return "/images/Envelope-OpenE.webp";
-    }
-    public void Flip()
-    {
-        ShowBack = !ShowBack;
     }
 }
