@@ -57,7 +57,7 @@
                                         <img alt="Stash Arrow" src="/images/StashArrow.webp" style="height:3vw;cursor:pointer" @onclick=@(() => HandleStash()) />
                                     </div>
                                     <div style="align-content:flex-end">
-                                        <Envelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Open=true Adding=true
+                                        <Stashvelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Open=true Adding=true
                                       Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@ else
                                         <img alt="Stash Arrow" src="/images/StashArrow.webp" style="height:30vw;cursor:pointer" @onclick=@(() => HandleStash()) />
                                     </div>
                                     <div style="align-content:flex-end">
-                                        <Envelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Open=true Adding=true
+                                        <Stashvelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Open=true Adding=true
                                       Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
                                 </div>

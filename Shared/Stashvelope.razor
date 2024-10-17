@@ -2,50 +2,64 @@
 
 @if (!ShowBack)
 {
-    <div class="container-env flex-c" style="height:fit-content;width:@scale;background-image:url(images/Envelope.webp);margin:0;background-size:100% 100%;align-items:center;
+    <div class="container-env" style="height:auto;width:fit-content;padding:0;
         cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
-
+        @if (Open)
+        {
+            <img src="@ImageSrc" alt="Open Full" style="width:@scale;height:auto;">
+        }
+        else
+        {
+            <img src="/images/Envelope.webp" alt="Closed Envelope" style="width:@scale;height:auto">
+        }
         @if (Goal != 0)
         {
-            <div class="flex-r-100" style="font-size:@(Font_Size/2)vw;margin:1em">
-                <div style="width:fit-content;background-color:white">
+            @if (!Open)
+            {
+                <div class="top-centered" style="background-color:transparent;font-size:@(Font_Size/2)vw;border-radius:15px;">
                     <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="bottom-mid-centered" style="background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;">
+                    <strong>Goal: <span style="color:@GoodOrBad();">@Constants.Pretty(Goal)</span></strong>
+                </div>
+            }
         }
-        <div class="flex-r" style="font-size:@(Font_Size)vw;width:100%;white-space:normal;padding:0 10%">
-            <div style="background-color:white;white-space:normal">
+        @if (!Open)
+        {
+            <div class="centered" style="background-color:white;font-size:@(Font_Size)vw;">
                 @Name
             </div>
-        </div>
+        }
         @if (Goal != 0)
         {
-            <div class="flex-r-100" style="font-size:@(Font_Size/2)vw;white-space:nowrap;margin:1em;padding:0;">
-                <div style="width:fit-content;background-color:white">
-                    <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
-                </div>
+            <div class="bottom-centered" style="background-color:white;font-size:@(Font_Size/2)vw;border-radius:15px;width:fit-content;white-space:nowrap">
+                <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
             </div>
         }
     </div>
 }
 else
 {
-    <div class="container-env flex-c-start" style="height:fit-content;width:@scale;background-image:url(images/EnvelopeBack.webp);margin:0;padding:1px;background-size:100% 100%;align-items:center;
+    <div class="container-env" style="height:auto;width:auto;padding:0;
         cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
-        <div class="flex-r-100" style="font-size:@(Font_Size)vw;">
-            <div style="background-color:white;width:fit-content">
-                @Name
-            </div>
+        <img src="/images/EnvelopeBack.webp" alt="Closed Envelope" style="width:@scale;height:auto">
+        <div class="top-centered" style="background-color:white;font-size:@(Font_Size)vw;">
+            @Name
         </div>
-        <div class="flex-c" style="background-color:transparent;font-size:@(Font_Size/2)vw;">
-            <div style="width:@SmallTxtScale">
+        <div class="bottom-mid-centered" style="background-color:transparent;font-size:@(Font_Size/2)vw;display:inline;">
+            <div style="float:left;width:@SmallTxtScale">
                 <strong>
                     @(Constants.Person1 + ":")
                     <br />
                     <span style="color:@GoodOrBad()">@Person1Disp</span>
                 </strong>
             </div>
-            <div style="width:@SmallTxtScale">
+            <br />
+            <br />
+            <div style="float:right;width:@SmallTxtScale">
                 <strong>
                     @(Constants.Person2 + ":")
                     <br />
@@ -93,6 +107,8 @@ else
     public string Person2Account { get; set; }
     [Parameter]
     public double Font_Size { get; set; } = 2;
+    [Parameter]
+    public bool Open { get; set; }
     [Parameter]
     public bool Adding { get; set; }
     [Parameter]

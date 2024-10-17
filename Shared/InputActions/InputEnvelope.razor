@@ -4,12 +4,15 @@
 @if (Mobile)
 {
     <br style="clear:both" />
-    <div style="width:90vw;height:fit-content;">
-        <h1 style="text-align:center;">Envelope Preview:</h1>
-        <div class="flex-r">
-            <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
+    @if (!string.IsNullOrEmpty(EnvName) && !string.IsNullOrEmpty(Amount))
+    {
+        <div style="width:90vw;height:fit-content;">
+            <h1 style="text-align:center;">Envelope Preview:</h1>
+            <div class="flex-r">
+                <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
+            </div>
         </div>
-    </div>
+    }
     <br />
     <div style="position:relative;">
         <div style="float:left; margin-right:10vw;">
@@ -132,12 +135,15 @@ else
                     </div>
                 </div>
             </div>
-            <div class="flex-r" style="width:25%;flex-wrap:wrap">
-                <h1 style="text-align:center;">Envelope Preview:</h1>
-                <div>
-                    <Envelope Name="@EnvName" Scale=15 Font_Size=2 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
+            @if (!string.IsNullOrEmpty(EnvName) && !string.IsNullOrEmpty(Amount))
+            {
+                <div class="flex-r" style="width:25%;flex-wrap:wrap">
+                    <h1 style="text-align:center;">Envelope Preview:</h1>
+                    <div>
+                        <Envelope Name="@EnvName" Scale=15 Font_Size=2 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
+                    </div>
                 </div>
-            </div>
+            }
         </div>
         <br style="clear:both" />
         <br />
