@@ -57,14 +57,10 @@
         <div id="tran-name" class="flex-r" style="justify-content:start;flex-wrap:wrap">
             <div style="width:100%;">
                 <div>
-                    <label>Transaction:</label>
-                    <br />
-                    @if (ExpenseType == "Transfer")
+                    @if (ExpenseType != "Transfer")
                     {
-                        <input type="text" disabled placeholder="Name" value="Transfer" />
-                    }
-                    else
-                    {
+                        <label>Transaction:</label>
+                        <br />
                         <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
                     }
                 </div>
@@ -72,7 +68,7 @@
                 <div>
                     <label>Expense Type:</label>
                     <br />
-                    <select class="custom-select" style="margin:1vh 0 1vh 0;" @bind="ExpenseType" title="Pick an Expense Type ">
+                    <select class="custom-select" style="margin:1vh 0 1vh 0;width:fit-content" @bind="ExpenseType" title="Pick an Expense Type ">
                         <option value="@string.Empty" selected disabled="disabled">Expense</option>
                         @foreach (var et in ExpenseTypes)
                         {
@@ -420,19 +416,15 @@ else
                 <div class="flex-r" style="justify-content:space-between;align-items:start;flex-wrap:wrap;width:75%;padding-right:5%">
                     <div class="flex-r" style="width:100%;justify-content:start;margin-top:1em;flex-wrap:wrap">
                         <div id="tran-name" class="flex-c" style="margin:0 1em">
-                            <label style="margin-right:1em">Transaction Name:</label>
-                            @if (ExpenseType == "Transfer")
+                            @if (ExpenseType != "Transfer")
                             {
-                                <input type="text" disabled placeholder="Name" value="Transfer" />
-                            }
-                            else
-                            {
+                                <label style="margin-right:1em">Transaction Name:</label>
                                 <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
                             }
                         </div>
                         <div class="flex-c" style="margin:0 1em">
                             <label style="margin-right:1em">Expense Type:</label>
-                            <select class="custom-select" style="width:6vw;margin:1vh 0 1vh 0;" @bind="ExpenseType" title="Pick an Expense Type ">
+                            <select class="custom-select" style="min-width:6vw;margin:1vh 0 1vh 0;" @bind="ExpenseType" title="Pick an Expense Type ">
                                 <option value="@string.Empty" selected disabled="disabled">Expense</option>
                                 @foreach (var et in ExpenseTypes)
                                 {
