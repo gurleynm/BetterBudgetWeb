@@ -16,17 +16,21 @@
 }
 
 <div class="tab">
-    <button class="tablinks @BalClass" @onclick="@ShowBalance">Account</button>
+    <button class="tablinks @BalClass" @onclick=@(() => ShowHideIndex(0))>Account</button>
     @if (Constants.Envelopes.Count > 0)
     {
-        <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
+        <button class="tablinks @EnvClass" @onclick=@(() => ShowHideIndex(1))>Goal Envelope</button>
     }
+    @* @if (Constants.RelevantMonthlies.Count > 0)
+    {
+        <button class="tablinks @MonthlyClass" @onclick=@(() => ShowHideIndex(2))>Recurring Transactions</button>
+    } *@
 </div>
 
 @if (ShowBal)
 {
     <div class="tabcontent">
-        <label>Select a Account:</label>
+        <label>Select an account:</label>
         <br />
         <select @bind=SelectedBalance title="Select Balance ">
             <option value="" selected>(Choose an Account)</option>
@@ -45,7 +49,7 @@
 else if (ShowEnv)
 {
     <div class="tabcontent">
-        <label>Select an Envelope:</label>
+        <label>Select an envelope:</label>
         <br />
         <select @bind=SelectedEnv title="Selectn Envelope ">
             <option value="" selected>(Choose an Envelope)</option>
@@ -67,8 +71,33 @@ else if (ShowEnv)
                         UpdateCheck="@UpdateCheckEnv" />
     }
 }
+else if (ShowMon)
+{
+    <div class="tabcontent">
+        <label>Select a recurring transaction:</label>
+        <br />
+        <select @bind=SelectedMonthly title="Select Recurring Transaction">
+            <option value="" selected>(Choose a recurring transaction)</option>
+            @foreach (var mon in Monthlies)
+            {
+                <option>@mon</option>
+            }
+        </select>
+    </div>
+
+    @if (!string.IsNullOrEmpty(SelectedMonthly))
+    {
+        <div><i>Soon</i></div>
+        @* <InputBalance TheBalance=ThisMonthly /> *@
+    }
+}
 
 @code {
+    // index0 => Balance
+    // index1 => Envelope
+    // index2 => Monthly
+    bool[] ShowHides = new bool[] { true, false, false };
+
     /* Start BALANCE */
     private string NameBal;
     private string BalanceType;
@@ -79,7 +108,7 @@ else if (ShowEnv)
     private string TColorBal = "#32A852";
 
     private List<Balance> Balances => Constants.Balances;
-    private bool ShowBal { get; set; } = true;
+    private bool ShowBal => ShowHides[0];
     private string BalClass => ShowBal ? "active" : "";
 
     private Balance ThisBalance;
@@ -93,12 +122,6 @@ else if (ShowEnv)
             SetBalVals();
             StateHasChanged();
         }
-    }
-
-    private void ShowBalance()
-    {
-        ShowBal = !ShowBal;
-        ShowEnv = false;
     }
 
     private void SetBalVals()
@@ -120,7 +143,7 @@ else if (ShowEnv)
     private bool UpdateCheckEnv;
 
     private List<Data.Envelope> Envelopes => Constants.Envelopes;
-    private bool ShowEnv { get; set; }
+    private bool ShowEnv => ShowHides[1];
     private string EnvClass => ShowEnv ? "active" : "";
 
 
@@ -134,12 +157,6 @@ else if (ShowEnv)
             SetEnvVals();
             StateHasChanged();
         }
-    }
-
-    private void ShowEnvelope()
-    {
-        ShowEnv = !ShowEnv;
-        ShowBal = false;
     }
 
     private void SetEnvVals()
@@ -162,6 +179,26 @@ else if (ShowEnv)
     }
     /* End ENVELOPE */
 
+    /* Start Monthly */
+    private List<string> Monthlies => Constants.RelevantMonthlies.OrderBy(mo => mo.Name).Select(m => m.Name).Distinct().ToList();
+    private bool ShowMon => ShowHides[2];
+    private string MonthlyClass => ShowMon ? "active" : "";
+
+    private Monthly ThisMonthly;
+    private string selectedMonthly;
+    private string SelectedMonthly
+    {
+        get { return selectedMonthly; }
+        set
+        {
+            selectedMonthly = value;
+            ThisMonthly = Constants.Monthlies.FirstOrDefault(m => m.Id == selectedMonthly);
+            StateHasChanged();
+        }
+    }
+
+    /* End BALANCE */
+
     protected override async Task OnInitializedAsync()
     {
         Constants.CurPage = "Update";
@@ -169,6 +206,12 @@ else if (ShowEnv)
         SelectedEnv = "";
         Constants.BalancesChanged += BalancesUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
+    }
+
+    private void ShowHideIndex(int ind)
+    {
+        for (int index = 0; index < ShowHides.Length; index++)
+            ShowHides[index] = index == ind;
     }
 
     private void BalancesUpdated(object sender, List<Balance> e)
@@ -180,7 +223,6 @@ else if (ShowEnv)
     private void EnvelopesUpdated(object sender, List<Data.Envelope> e)
     {
         SelectedEnv = Envelopes.Count > 0 ? Envelopes[0].Name : "";
-        ShowEnv = false;
         StateHasChanged();
     }
 

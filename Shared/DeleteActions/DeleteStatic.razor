@@ -3,7 +3,7 @@
 
 <div class="tabcontent">
     <div style="float:left;margin-right:10vw;">
-        <label>Set Cost Name:</label>
+        <label>Set Expense Name:</label>
         <br />
         <select @bind="Name">
             <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
@@ -164,7 +164,8 @@
 
         MonthsToShow.Sort(Constants.SortMonths);
 
-        Monthlies = Constants.GetMonthlies().Where(mon => mon.Dynamic == "STATIC").ToList();
+        var RightNow = DateTime.Now;
+        Monthlies = Constants.RelevantMonthlies.Where(mon => mon.Dynamic == "STATIC").ToList();
         MonthliesNames = Monthlies.OrderBy(mo => mo.Name).Select(m => m.Name).Distinct().ToList();
 
         return base.OnInitializedAsync();

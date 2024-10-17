@@ -169,6 +169,7 @@ namespace BetterBudgetWeb
         public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; } = new();
         public static List<ProjectedDatum> ProjectedData { get; set; } = new();
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
+        public static List<Monthly> RelevantMonthlies => Monthlies.Where(mon => mon.Dynamic != "SAVINGS" && (mon.Year == DateTime.Now.Year.ToString() || mon.Year == "1")).ToList();
         public static CatchAll catchAll { get; set; } = new CatchAll();
         public static DateRange DR { get; set; } = new DateRange();
 
