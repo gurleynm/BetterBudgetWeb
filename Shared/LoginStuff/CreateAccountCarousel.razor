@@ -216,8 +216,8 @@ else if (Page == 2)
     public bool Pass1 { get; set; }
     public bool Pass2 { get; set; }
 
-    public PasswordRules passwordRules1;
-    public PasswordRules passwordRules2;
+    public PasswordRules passwordRules1 = new PasswordRules();
+    public PasswordRules passwordRules2 = new PasswordRules();
     public bool hide;
 
     MiniPage Page1;
