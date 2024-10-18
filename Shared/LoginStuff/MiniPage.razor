@@ -32,10 +32,11 @@
             <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword ShowEye=false @bind-ShowPass=@ShowEyeIntermediate />
         </div>
         <div style="display: flex;">
-            <div style="flex-grow: 1; width: 0;">By creating an account, you agree to the Couple's Better Budget 
+            <div style="flex-grow: 1; width: 0;">
+                By creating an account, you agree to the Couple's Better Budget
                 <a style="text-align:center;" href="Policy.html" onclick="window.open('Policy.html',
                          'newwindow',
-                         'width=300,height=250');return false;">Privacy Policy</a> and 
+                         'width=300,height=250');return false;">Privacy Policy</a> and
                 <a style="text-align:center;" href="TermsOfService.html" onclick="window.open('Policy.html',
                          'newwindow',
                          'width=300,height=250');return false;">Terms of Service</a>.
@@ -130,10 +131,16 @@
     public async Task<bool> CheckConditions()
     {
         if (string.IsNullOrEmpty(Username))
+        {
             ErrUser = "Username must be set";
+            return false;
+        }
 
-        if (string.IsNullOrEmpty(Username))
+        if (string.IsNullOrEmpty(Email))
+        {
             ErrEmail = "Email must be set";
+            return false;
+        }
 
         string chk = await UserRepo.CheckUserEmail(username, email);
         if (!string.IsNullOrEmpty(chk))
@@ -144,7 +151,7 @@
                 ErrUser = "Username already taken.";
             else if (chk == "Email")
                 ErrEmail = "Email already taken.";
-                StateHasChanged();
+            StateHasChanged();
         }
 
         return string.IsNullOrEmpty(ErrUser) && string.IsNullOrEmpty(ErrEmail);
