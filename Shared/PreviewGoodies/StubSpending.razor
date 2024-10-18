@@ -1,7 +1,7 @@
 ﻿@implements IDisposable
 
 <PreviewGoodie ShiftDirection="end" Invert=true Title="No need for a boring spreadsheet" Desc="Don't worry about trying to save everything in a workbook, let us do it for you! We help you track all of your transactions so you can take your mind off balancing your books.">
-    <div style="padding:1em">
+    <div style="padding:1em;">
         <div class="chart-back">
             <div class="chart">
                 <div class="chart-bar" style="cursor:auto">
@@ -32,8 +32,37 @@
                     <div class="chart-bar__label" style="color:red">$1131.50</div><div class="chart-bar__inner"><div class="chart-bar__fill-bad" style="height:42%"></div></div><!--!-->
                     <div class="chart-bar__label">7</div>
                 </div>
-            </div><span style="color:black;"><strong>October (Day)</strong></span>
+            </div><span style="color:black;"><strong>@DateTime.Now.ToString("MMMM") (Day)</strong></span>
         </div>
+    </div>
+    <div class="flex-r-100">
+        <table style="border-radius:10px;width:90%">
+            <tr style="height:3vw"><th style="background-color: #384153;padding:0 1vw;" colspan="100%"><span>@DateTime.Now.ToString("MMMM") Transactions</span></th></tr>
+        <tr style="border:1px black solid;background-color: #203957;"><td colspan="100%"><div style="padding-left:1em;text-align:left">7 Oct</div></td></tr>
+        <tr style="border:1px black solid;background-color: #384153;">
+            <td class="flex-r" style="justify-content:start;border:none">
+                <div class="flex-c" style="justify-content:space-between;align-items:start;padding:1em">
+                    <div style="color:white;text-align:start">Car Payment</div><!--!-->
+                    <div style="text-align:start;color:silver">Static Cost</div>
+                </div>
+            </td>
+            <td style="height:100%;border:none"><div class="income-bad">$676.53</div></td>
+            <td style="height:100%;border:none"><div>Jack (Amex)</div></td>
+            <td style="height:100%;border:none"><div class="flex-r" style=""><button class="btn btn-secondary" style="background-color:transparent;margin:.5vh;height:5vh;" disabled><!--!--><span class="oi oi-pencil"></span></button><button class="btn" style="background-color:transparent;color:red;border:none;margin:.5vh;height:5vh;" disabled><!--!--><span class="bi bi-trash" style="color:red"></span></button></div></td>
+        </tr>
+        <tr style="border:1px black solid;background-color: #384153;">
+            <td class="flex-r" style="justify-content:start;border:none">
+                <div class="flex-c" style="justify-content:space-between;align-items:start;padding:1em">
+                    <div style="color:white;text-align:start">Leaky Spigot</div><!--!-->
+                    <div style="text-align:start;color:silver">Emergency</div>
+                </div>
+            </td>
+            <td style="height:100%;border:none"><div class="income-bad">$454.97</div></td>
+            <td style="height:100%;border:none"><div>Jack (Shared PNC)</div></td>
+            <td style="height:100%;border:none"><div class="flex-r" style=""><button class="btn btn-secondary" style="background-color:transparent;margin:.5vh;height:5vh;" disabled><!--!--><span class="oi oi-pencil"></span></button><button class="btn" style="background-color:transparent;color:red;border:none;margin:.5vh;height:5vh;" disabled><!--!--><span class="bi bi-trash" style="color:red"></span></button></div></td>
+        </tr>
+        <tr style="border:1px black solid;background-color: #203957;"><td colspan="100%"><div style="padding-left:1em;text-align:left">6 Oct</div></td></tr>
+    </table>
     </div>
 </PreviewGoodie>
 
