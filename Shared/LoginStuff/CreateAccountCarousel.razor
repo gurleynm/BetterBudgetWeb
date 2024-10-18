@@ -277,6 +277,8 @@ else if (Page == 2)
 
     async Task<bool> Validate(MiniPage mp, PasswordRules pr)
     {
+        if (pr == null)
+            return false;
         bool PassRules = pr.CheckConditions();
         if (PassRules)
             PassRules = await mp.CheckConditions();
