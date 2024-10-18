@@ -59,12 +59,12 @@
     }
     else
     {
-        <LandingNavMenu />
+        <CascadingValue Value="GrabDemo">
+            <LandingNavMenu />
+        </CascadingValue>
     }
     <div class="flex-r main-bar-marg" style="height:fit-content;flex-wrap:wrap;">
-        <CascadingValue Value="GrabDemo">
-            @ChildContent
-        </CascadingValue>
+        @ChildContent
         <CookieBanner />
     </div>
 </div>

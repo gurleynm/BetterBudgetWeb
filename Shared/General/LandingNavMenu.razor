@@ -1,15 +1,28 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Runner
 @inject NavigationManager NavMan
+@inject IJSRuntime JSRuntime
 
 <div id="main-bar" class="navbar-dark" style="position:fixed;top:0;padding:0;background-color:indigo;width:100%;z-index:10">
     <div class="flex-r" style="width:100%;padding:1em;justify-content:space-between;align-items:center">
-
         <img src="images/RoundLogo.webp" alt="Logo image" style="width:10vh;height:10vh;padding:2px;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("")) />
-        <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        @if (!LoadingDemo)
+        {
+            <button style="background-color:transparent;padding:1em;font-family:'CBB Default';"
+                    class="btn-grad"
+                    @onclick=LoadDemo>
+                View Demo
+            </button>
+            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        }
+        else
+        {
+            <div class="slide-right" style="width:100%">
+                <div style="font-size:large;color:white;font-family:'CBB Default'">Loading Demo...</div>
+            </div>
+        }
     </div>
 
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="width:100%;height:fit-content;overflow:auto">
@@ -37,9 +50,18 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    public EventCallback GrabDemo { get; set; }
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private bool LoadingDemo { get; set; }
+    private async void LoadDemo()
+    {
+        LoadingDemo = true;
+        await GrabDemo.InvokeAsync();
+    }
 
     private void ToggleNavMenu()
     {

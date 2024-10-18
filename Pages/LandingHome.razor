@@ -1,4 +1,6 @@
 ﻿@page "/"
+@implements IDisposable
+
 
 <PageTitle>Landing Page</PageTitle>
 
@@ -28,25 +30,7 @@
         </div>
         <div class="flex-c-start" style="align-items:center">
             <span style="font-family:'CBB Default';font-size:xx-large;text-align:center">Start your commitment-free trial today</span>
-            @if (Constants.Mobile)
-            {
-                @if (!LoadingDemo)
-                {
-                    <button style="background-color:transparent;padding:1em;font-family:'CBB Default';"
-                            class="btn-grad"
-                            @onclick=LoadDemo>
-                        View Demo
-                    </button>
-                }
-                else
-                {
-                    <div style="font-size:large;color:white;font-family:'CBB Default'">Loading Demo...</div>
-                }
-            }
-            else
-            {
-                <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
-            }
+            <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Start 45-Day Trial</button>
         </div>
     </div>
 </div>
@@ -61,18 +45,21 @@
 </div>
 
 @code {
-    [CascadingParameter]
-    public EventCallback GrabDemo { get; set; }
-
+    
     private bool LoadingDemo { get; set; }
-    protected override async Task OnInitializedAsync(){
-        if(NavMan.BaseUri.Contains("mobile."))
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Constants.MobileChanged += MobileUpdated;
+        if (NavMan.BaseUri.Contains("mobile."))
             NavMan.NavigateTo("home");
     }
-
-    private async void LoadDemo()
+    private void MobileUpdated(object sender, bool m)
     {
-        LoadingDemo = true;
-        await GrabDemo.InvokeAsync();
+        StateHasChanged();
+    }
+    public void Dispose()
+    {
+        Constants.MobileChanged -= MobileUpdated;
     }
 }
