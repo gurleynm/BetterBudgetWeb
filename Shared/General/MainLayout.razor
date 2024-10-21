@@ -3,6 +3,7 @@
 @using BetterBudgetWeb.Repo;
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Shared.Balances
+@using BetterBudgetWeb.Shared.General.Footer
 @using BetterBudgetWeb.Shared.LoginStuff
 @using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inherits LayoutComponentBase
@@ -325,7 +326,7 @@
                             <div class="ps-3 navbar-dark flex-r" style="text-align: center;height:fit-content; list-style:none; background-color:transparent;align-items:center">
                                 <div>
                                     <a class="navbtn navbar-brand" href="home" style="font-family:'CBB Default'; text-align:center;">
-                                        <span class="oi oi-lightbulb"></span> Home
+                                        <span class="oi oi-home"></span> Home
                                     </a>
                                 </div>
                                 <div>
@@ -459,7 +460,10 @@
             }
         </ErrorContent>
     </CustomErrorBoundary>
-    <Footer />
+    @if (!NavMan.Uri.Contains("/sign"))
+    {
+        <Footer />
+    }
 </div>
 
 @code {
