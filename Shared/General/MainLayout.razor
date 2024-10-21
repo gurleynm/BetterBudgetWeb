@@ -238,6 +238,7 @@
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
+    <span id="top-piece" />
     <CustomErrorBoundary @ref=errBnd>
         <ChildContent>
             @if (CheckWhitelist())
@@ -310,7 +311,7 @@
                 <main style="margin-bottom:1em">
                     @if (!mobile)
                     {
-                        <div id="main-bar" class="flex-r" style="flex-wrap:wrap;background-color:indigo;justify-content:space-between;width:100%;position:fixed;align-items:center;z-index:10;padding:0">
+                        <div id="main-bar" class="flex-r" style="flex-wrap:wrap;background-color:indigo;justify-content:space-between;width:100%;position:sticky;top:0;align-items:center;z-index:10;padding:0">
                             @if (!string.IsNullOrEmpty(Announcement))
                             {
                                 <div class="flex-r-100" style="height:fit-content;background-image:linear-gradient(to right, #B9AFF8,cyan);color:black;font-family:'CBB Default'">
@@ -386,7 +387,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="main-bar-marg" style="position: fixed; top:0; bottom:0; left:0;height:auto; width:fit-content;overflow-y:auto;border: solid gray 1px;">
+                        <div id="main-bar-marg" class="main-bar-marg" style="position: fixed; top:0; bottom:0; left:0;height:auto; width:fit-content;overflow-y:auto;border: solid gray 1px;">
                             <div style="z-index:1;width: @WidthLeftBar; height:inherit; overflow: auto; position: relative;padding:0">
                                 <CascadingValue Value=RunModal>
                                     <CascadingValue Value=this>
@@ -397,7 +398,7 @@
                         </div>
                     }
 
-                    <article class="content px-4 main-bar-marg" style="@PaddingLeft">
+                    <article class="content px-4" style="@PaddingLeft">
                         <CascadingValue Value=LogOff>
                             <CascadingValue Value=RunModal>
                                 <CascadingValue Value=this>
@@ -508,14 +509,19 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        try
+        if (!Constants.Mobile)
         {
-            SetCorrect = await jsRuntime.InvokeAsync<bool>("ElementHeight", "main-bar");
+            try
+            {
+                SetCorrect = await jsRuntime.InvokeAsync<bool>("ElementHeight", "main-bar");
+            }
+            catch (Exception e)
+            {
+                SetCorrect = false;
+            }
         }
-        catch (Exception e)
-        {
-            SetCorrect = false;
-        }
+        
+        await jsRuntime.InvokeVoidAsync("ScrollToTop");
     }
     protected override async Task OnInitializedAsync()
     {

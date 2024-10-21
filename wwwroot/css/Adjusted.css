@@ -3,26 +3,13 @@
     font-family: 'CBB Default';
     src: url('../fonts/IMPRISHA.TTF') format('truetype'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }  
-.sticky {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-}
-
-.sticky-under {
-    position: relative;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-}
 
 .desktop-view {
     background-position: center center;
     background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    min-height: 100vh;
+    height: 100vh;
     overflow-x: hidden;
 }
 

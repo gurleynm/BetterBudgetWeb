@@ -167,10 +167,8 @@
                 retBool = head.height > 0;
 
                 if (retBool) {
-                    var elms = document.getElementsByClassName('main-bar-marg');
-                    for (i = 0; i < elms.length; i++) {
-                        elms[i].style.marginTop = marTop;
-                    }
+                    var elms = document.getElementById('main-bar-marg');
+                        elms.style.marginTop = marTop;
                 }
             }
 
@@ -188,6 +186,9 @@
             if (elm) {
                 elm.scrollIntoView({ behavior: 'smooth' });
             }
+        }
+        function ScrollToTop() {
+            ScrollTo('top-piece');
         }
         function toggleExpand(id) {
             var element = document.getElementById(id);
