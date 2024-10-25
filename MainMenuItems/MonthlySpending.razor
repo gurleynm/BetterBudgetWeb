@@ -1,5 +1,4 @@
 ﻿@using BetterBudgetWeb.Data;
-@using BetterBudgetWeb.Data;
 @using BetterBudgetWeb.Repo;
 @using BetterBudgetWeb.Runner;
 @using BetterBudgetWeb.Shared.Balances
@@ -7,7 +6,7 @@
 @inject IJSRuntime JSRuntime
 @implements IDisposable
 
-<table style="width:100%;margin-bottom:1vh">
+<table class="mon-table">
     <tr style="height:3vw">
         <th style="background-color: @Constants.ColorScheme["TableOdd"];padding:0 1vw;" colspan="100%">
             <span>@Title</span>
@@ -31,58 +30,76 @@
                     </td>
                 </tr>
             }
-            <tr style="border:1px black solid;background-color: @Constants.ColorScheme["TableOdd"];">
-                <td class="flex-r" style="justify-content:start;border:none">
+            <tr style="background-color: @Constants.ColorScheme["TableOdd"];">
+                <td class="flex-r" style="justify-content:start;">
                     <div class="flex-c" style="justify-content:space-between;align-items:start;padding:1em">
                         <div style="color:white;text-align:start">
                             @transaction.Name
                         </div>
                         <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
-                            @transaction.ExpenseType
+                            @if (!string.IsNullOrEmpty(ExpenseType))
+                            {
+                                if (transaction.Person1Amount == transaction.TotalAmount)
+                                {
+                                    <div>@transaction.PaidWithPerson1</div>
+                                }
+                                else if (transaction.Person2Amount == transaction.TotalAmount)
+                                {
+                                    <div>@transaction.PaidWithPerson2</div>
+                                }
+                                else
+                                {
+                                    <div>@(transaction.PaidWithPerson1 + " " + transaction.PaidWithPerson2)</div>
+                                }
+                            }
+                            else
+                            {
+                                @transaction.ExpenseType
+                            }
                         </div>
                     </div>
                 </td>
                 @if (transaction.Person1Amount == transaction.TotalAmount)
                 {
-                    <td style="height:100%;border:none">
+                    <td style="height:100%;">
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
                     </td>
-                    @if (ShowPerson)
+                    @if (ShowPerson && string.IsNullOrEmpty(ExpenseType))
                     {
-                        <td style="height:100%;border:none">
+                        <td style="height:100%;">
                             <div>@(Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
                         </td>
                     }
                 }
                 else if (transaction.Person2Amount == transaction.TotalAmount)
                 {
-                    <td style="height:100%;border:none">
+                    <td style="height:100%;">
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
                     </td>
-                    @if (ShowPerson)
+                    @if (ShowPerson && string.IsNullOrEmpty(ExpenseType))
                     {
-                        <td style="height:100%;border:none">
+                        <td style="height:100%;">
                             <div>@(Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
                         </td>
                     }
                 }
-                else
+                else if (string.IsNullOrEmpty(ExpenseType))
                 {
-                    <td style="height:100%;border:none">
+                    <td style="height:100%;">
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
                         <br />
                         <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
                     </td>
-                    @if (ShowPerson)
+                    @if (ShowPerson && string.IsNullOrEmpty(ExpenseType))
                     {
-                        <td style="height:100%;border:none">
+                        <td style="height:100%;">
                             <div>@(Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
                             <br />
                             <div>@(Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
                         </td>
                     }
                 }
-                <td style="height:100%;border:none">
+                <td style="height:100%;">
                     <div class="flex-r" style="">
                         @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                         {
@@ -95,8 +112,24 @@
         }
     }
 </table>
+<Confirmation @ref=deletemodal OnClose="@Delete" LeftBtnTxt="Cancel"
+              LeftBtnColor="btn-secondary"
+              RightBtnColor="btn-danger">
+    <span>
+        Do you want to delete this <strong>@SelectedTransaction.Name</strong> transaction?
+    </span>
+</Confirmation>
+<EditorModalDialog @ref=editmodal Title="@(string.Format("{0} (By: {1})","Test", "Deez Nuts"))"
+                   Text="Story"
+                   Transact="@SelectedTransaction"
+                   OnClose="@CloseModal">
+
+</EditorModalDialog>
 
 @code {
+    private Confirmation deletemodal;
+    private EditorModalDialog editmodal;
+
     [CascadingParameter]
     public BalanceTray GlobalBT { get; set; }
     [CascadingParameter]
@@ -120,6 +153,7 @@
     public EventCallback RefreshParent { get; set; }
 
     public List<Transaction> FilteredTransactions { get; set; }
+    public Transaction SelectedTransaction { get; set; } = new();
 
     [Parameter]
     public string TheBalance
@@ -159,8 +193,28 @@
 
     private async void DelBtn(Transaction transaction)
     {
-        MainLayout.ModalType = "D";
-        await RunModal.InvokeAsync(transaction);
+        if (!Constants.Mobile)
+        {
+            MainLayout.ModalType = "D";
+            await RunModal.InvokeAsync(transaction);
+        }
+        else
+        {
+            SelectedTransaction = new Transaction(transaction);
+            await deletemodal.OnShowModalClick();
+        }
+    }
+    private async void Delete(bool accepted)
+    {
+        if (accepted)
+        {
+            // TransactionRepo sets everything in Constants
+            await TransactionRepo.RemoveAsync(SelectedTransaction.Id);
+            if (!Constants.Mobile)
+                GlobalBT.RefreshBalances();
+        }
+
+        StateHasChanged();
     }
     private async void CloseModal(bool accepted)
     {
@@ -170,13 +224,20 @@
             await RefreshParent.InvokeAsync();
             StateHasChanged();
         }
-        MainLayout.ToggleOverflow("auto");
     }
     private async void OpenModal(Transaction trans)
     {
-        MainLayout.ModalType = "E";
-        await RunModal.InvokeAsync(trans);
-        StateHasChanged();
+        if (!Constants.Mobile)
+        {
+            MainLayout.ModalType = "E";
+            await RunModal.InvokeAsync(trans);
+            StateHasChanged();
+        }
+        else
+        {
+            SelectedTransaction = new Transaction(trans);
+            await editmodal.LaunchModal();
+        }
     }
     private List<Transaction> GetTransactions()
     {

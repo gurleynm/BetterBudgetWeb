@@ -10,7 +10,7 @@
 
 @if (!Mobile)
 {
-    <Confirmation Title="Your Reports" OnClose="ModalCancel"
+    <Confirmation @ref=confirmation Title="Your Reports" OnClose="ModalCancel"
                   RightBtnTxt="@(SelectedMonth == "All" ? "Rebalance to Spent" : "")"
                   RightBtnColor="btn-primary"
                   RightBtnClick="@(() => { if (SelectedMonth == "All") Rebalancing = !Rebalancing; })">
@@ -127,7 +127,7 @@
 }
 else
 {
-    <Confirmation Title="Your Reports" OnClose="ModalCancel"
+    <Confirmation @ref=confirmation Title="Your Reports" OnClose="ModalCancel"
                   RightBtnTxt="" >
         <div class="modal-body" style="width:fit-content;max-height:85vh;color:black;overflow-y:scroll;padding-bottom:2em">
             @if (SFDs != null && SFDs.Count > 0)
@@ -286,6 +286,7 @@ else
     private List<DynamicCostItem> DCIs = new List<DynamicCostItem>();
     private List<StaticMonthlyCost> SMCs = new List<StaticMonthlyCost>();
     private List<Snapshot> snaps = new List<Snapshot>();
+    private Confirmation confirmation;
 
     protected override async Task OnInitializedAsync()
     {
@@ -496,14 +497,21 @@ else
             return "income-bad";
     }
 
-    private Task ModalCancel()
+    public async Task LaunchModal()
     {
-        return OnClose.InvokeAsync(false);
+        await confirmation.OnShowModalClick();
+    }
+
+    private async Task ModalCancel()
+    {
+        await OnClose.InvokeAsync(false);
+        await confirmation.OnHideModalClick();
     }
 
     private async Task ModalDecline()
     {
         await OnClose.InvokeAsync(false);
+        await confirmation.OnHideModalClick();
     }
 
     private void ToggleClasses(string Month)

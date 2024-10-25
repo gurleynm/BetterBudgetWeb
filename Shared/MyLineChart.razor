@@ -1,0 +1,242 @@
+﻿@using BetterBudgetWeb.Data
+@implements IDisposable
+
+<div class="container-fluid overflow-x-auto"
+     style="border:solid silver 1px;border-radius:10px;margin-bottom:1em">
+    @if (Constants.Mobile)
+    {
+        <LineChart @ref="lineChart" Height="400"/>
+    }
+    else
+    {
+        <LineChart @ref="lineChart" />
+    }
+</div>
+
+@code {
+    // Helpful link: https://demos.blazorbootstrap.com/charts/line-chart
+
+    private List<LinePlot> plots { get; set; } = new();
+    [Parameter]
+    public List<LinePlot> Plots
+    {
+        get { return plots; }
+        set
+        {
+            if (plots == value)
+                return;
+            plots = value;
+        }
+    }
+    [Parameter]
+    public EventCallback<List<LinePlot>> PlotsChanged { get; set; }
+    private LineChart lineChart = default!;
+    private LineChartOptions lineChartOptions = default!;
+    private ChartData chartData = default!;
+
+    private int datasetsCount;
+    private int labelsCount;
+    private bool GoingUpPrev = true;
+    private bool GoingUp = true;
+
+    private Random random = new();
+
+    protected override void OnInitialized()
+    {
+        if (Plots.Count == 0)
+            chartData = new ChartData { Labels = GetDefaultDataLabels(6), Datasets = GetDefaultDataSets(3) };
+        else
+            chartData = new ChartData { Labels = Plots.Select(p => p.Month).ToList(), Datasets = LineChartFromPlots(Plots) };
+        lineChartOptions = new()
+            {
+                IndexAxis = "x",
+                Interaction = new Interaction { Mode = InteractionMode.Index, Intersect = false },
+                Responsive = true,
+            };
+        var c = Constants.ColorScheme["Accent"];
+        lineChartOptions.Scales.X!.Ticks = new ChartAxesTicks { Color = "cyan" };
+        lineChartOptions.Scales.Y!.Ticks = new ChartAxesTicks { Color = Constants.ColorScheme["Accent"] };
+        lineChartOptions.Scales.Y.BeginAtZero = false;
+
+        Constants.PlotsChanged += PlotsUpdated;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await lineChart.InitializeAsync(chartData, lineChartOptions);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task RandomizeAsync()
+    {
+        if (chartData is null || chartData.Datasets is null || !chartData.Datasets.Any()) return;
+
+        var newDatasets = new List<IChartDataset>();
+
+        foreach (var dataset in chartData.Datasets)
+        {
+            if (dataset is LineChartDataset lineChartDataset
+                && lineChartDataset is not null
+                && lineChartDataset.Data is not null)
+            {
+                var count = lineChartDataset.Data.Count;
+
+                var newData = new List<double?>();
+                for (var i = 0; i < count; i++)
+                {
+                    newData.Add(random.Next(200));
+                }
+
+                lineChartDataset.Data = newData;
+                newDatasets.Add(lineChartDataset);
+            }
+        }
+
+        chartData.Datasets = newDatasets;
+
+        await lineChart.UpdateValuesAsync(chartData);
+    }
+
+    private async Task AddDatasetAsync()
+    {
+        if (chartData is null || chartData.Datasets is null) return;
+
+        var chartDataset = GetRandomLineChartDataset();
+        chartData = await lineChart.AddDatasetAsync(chartData, chartDataset, lineChartOptions);
+    }
+
+    private async Task AddDataAsync()
+    {
+        if (chartData is null || chartData.Datasets is null)
+            return;
+
+        var data = new List<IChartDatasetData>();
+        foreach (var dataset in chartData.Datasets)
+        {
+            if (dataset is LineChartDataset lineChartDataset)
+                data.Add(new LineChartDatasetData(lineChartDataset.Label, random.Next(200)));
+        }
+
+        chartData = await lineChart.AddDataAsync(chartData, GetNextDataLabel(), data);
+    }
+
+    private List<IChartDataset> GetDefaultDataSets(int numberOfDatasets)
+    {
+        var datasets = new List<IChartDataset>();
+
+        for (var index = 0; index < numberOfDatasets; index++)
+        {
+            datasets.Add(GetRandomLineChartDataset());
+        }
+
+        return datasets;
+    }
+
+    private List<IChartDataset> LineChartFromPlots(List<LinePlot> plots)
+    {
+        var c = ColorUtility.CategoricalTwelveColors[datasetsCount].ToColor();
+        var Red = ColorExtensions.ToColor("#FF0000");
+        var Green = ColorExtensions.ToColor("#00FF00");
+
+        List<double?> amounts = new();
+        List<string?> PointColor = new();
+        for (int index = 0; index < plots.Count; index++)
+        {
+            amounts.Add(plots[index].Amount);
+            if (index > 0)
+            {
+                PointColor.Add(plots[index - 1].Amount < plots[index].Amount ? Green.ToRgbString() : Red.ToRgbString());
+            }
+            else
+                PointColor.Add(Green.ToRgbString());
+        }
+
+        GoingUpPrev = GoingUp;
+        GoingUp = plots.Last().Amount < plots.First().Amount;
+        var TheColor = ColorExtensions.ToColor(GoingUp ? "#FF0000" : "#00FF00");
+
+        var lcd = new LineChartDataset
+            {
+                Label = "Net Worth ($)",
+                Data = amounts,
+                BackgroundColor = TheColor.ToRgbaString(),
+                BorderColor = TheColor.ToRgbString(),
+                PointBackgroundColor = PointColor,
+                PointBorderColor = PointColor,
+                PointRadius = new List<double> { 5 },
+                PointHoverRadius = new List<double> { 8 },
+            };
+
+        lcd.FillToValue(0);
+        return new List<IChartDataset> { lcd };
+    }
+
+    private LineChartDataset GetRandomLineChartDataset()
+    {
+        var c = ColorUtility.CategoricalTwelveColors[datasetsCount].ToColor();
+
+        datasetsCount += 1;
+
+        return new LineChartDataset
+            {
+                Label = $"Team {datasetsCount}",
+                Data = GetRandomData(),
+                BackgroundColor = "RGBA(0, 255, 0, 0.2)",
+                BorderColor = c.ToRgbString(),
+                PointRadius = new List<double> { 5 },
+                PointHoverRadius = new List<double> { 8 },
+            };
+    }
+
+    private List<double?> GetRandomData()
+    {
+        var data = new List<double?>();
+        for (var index = 0; index < labelsCount; index++)
+        {
+            data.Add(random.Next(200));
+        }
+
+        return data;
+    }
+
+    private List<string> GetDefaultDataLabels(int numberOfLabels)
+    {
+        var labels = new List<string>();
+        for (var index = 0; index < numberOfLabels; index++)
+        {
+            labels.Add(GetNextDataLabel());
+        }
+
+        return labels;
+    }
+
+    private string GetNextDataLabel()
+    {
+        labelsCount += 1;
+        return $"Day {labelsCount}";
+    }
+
+    public async Task Reload()
+    {
+        chartData.Datasets = LineChartFromPlots(Constants.Plots);
+
+        if (GoingUp == GoingUpPrev)
+            await lineChart.UpdateValuesAsync(chartData);
+        else
+            await lineChart.UpdateAsync(chartData, lineChartOptions);
+    }
+
+    private async void PlotsUpdated(object sender, List<LinePlot> lp)
+    {
+        await Task.Delay(1000);
+        await Reload();
+    }
+
+    public void Dispose()
+    {
+        Constants.PlotsChanged -= PlotsUpdated;
+    }
+}

@@ -2,24 +2,24 @@
 
 <PreviewGoodie Title="Save like you mean it!" Desc="With our savings goal envelopes, every dollar you make has a job. Create as many envelopes as you want and watch as everything starts to feel so much more attainable.">
     <div class="flex-r" style="padding:1em;flex-wrap:wrap;">
-        <Envelope Name="Emergency" Scale=@Constants.TestMobile(EnvelopeSize,11) Font_Size=@Constants.TestMobile(EnvelopeFontSize,1.375)
+        <Envelope Name="Emergency" Scale=@EnvelopeSize Font_Size=@EnvelopeFontSize
                   Goal=5000
                   Saved=5000 FlipClick=false />
-        <Envelope Name="Home" Scale=@Constants.TestMobile(EnvelopeSize,11) Font_Size=@Constants.TestMobile(EnvelopeFontSize,1.375)
+        <Envelope Name="Home" Scale=@EnvelopeSize Font_Size=@EnvelopeFontSize
                   Goal=10000
                   Saved=1560.45 FlipClick=false />
-        <Envelope Name="Vacation" Scale=@Constants.TestMobile(EnvelopeSize,11) Font_Size=@Constants.TestMobile(EnvelopeFontSize,1.375)
+        <Envelope Name="Vacation" Scale=@EnvelopeSize Font_Size=@EnvelopeFontSize
                   Goal=2000
                   Saved=500 FlipClick=false />
-        <Envelope Name="New Car" Scale=@Constants.TestMobile(EnvelopeSize,11) Font_Size=@Constants.TestMobile(EnvelopeFontSize,1.375)
+        <Envelope Name="New Car" Scale=@EnvelopeSize Font_Size=@EnvelopeFontSize
                   Goal=6000
                   Saved=2350.78 FlipClick=false />
     </div>
 </PreviewGoodie>
 
 @code{
-    private double EnvelopeSize = 35;
-    private double EnvelopeFontSize = 4.5;
+    private double EnvelopeSize => Constants.TestMobile(35, 10);
+    private double EnvelopeFontSize => EnvelopeSize/8;
 
     protected override async Task OnInitializedAsync()
     {

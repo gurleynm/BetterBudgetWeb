@@ -2,72 +2,32 @@
 @using BetterBudgetWeb.Repo
 
 
-@if (!Mobile)
-{
-    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" style="background-color:rgba(0,0,0,.8);">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="min-width:30vw;width:fit-content;position: absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"]">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white">
-                        <strong>@Title</strong>
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
-                    </button>
-                </div>
-                <div class="modal-body" style="width:fit-content;color:black;">
-                    <div>
-                        @ChildContent
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    @if (LeftBtnShow)
-                    {
-                        <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
-                    }
-                    @if (MidBtnShow)
-                    {
-                        <button type="button" disabled=@Disabled class="btn @MidBtnColor" data-dismiss="modal" @onclick="@MiddleClicked">@MidBtnTxt</button>
-                    }
-                    @if (RightBtnShow)
-                    {
-                        <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-}
-else
-{
-    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" style="background-color:rgba(0,0,0,.8);">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:fit-content;margin:0 auto;background-color:@Constants.ColorScheme["ComponentBackground"];">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
-                        <strong>@Title</strong>
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
-                    </button>
-                </div>
-                <div class="modal-body" style="width:fit-content;color:black;">
-                    @ChildContent
-                </div>
-                <div class="modal-footer flex-r" style="justify-content:space-around">
-                    @if (LeftBtnShow)
-                    {
-                        <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="float:left" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
-                    }
-                    @if (RightBtnShow)
-                    {
-                        <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
+<Modal @ref="modal" Title="@Title" UseStaticBackdrop="true" CloseOnEscape="false" Size="ModalSize.ExtraLarge" CloseIconColor="IconColor.Light">
+    <BodyTemplate>
+        @ChildContent
+    </BodyTemplate>
+    <FooterTemplate>
+        @if (Disabled)
+        {
+            <LoadingDots />
+        }
+        else
+        {
+            @if (LeftBtnShow)
+            {
+                <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
+            }
+            @if (MidBtnShow)
+            {
+                <button type="button" disabled=@Disabled class="btn @MidBtnColor" data-dismiss="modal" @onclick="@MiddleClicked">@MidBtnTxt</button>
+            }
+            @if (RightBtnShow)
+            {
+                <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
+            }
+        }
+    </FooterTemplate>
+</Modal>
 @code {
     public bool Mobile => Constants.Mobile;
 
@@ -129,6 +89,14 @@ else
     [Parameter]
     public EventCallback<bool> DisabledChanged { get; set; }
     private bool disabled;
+    private Modal modal = default!;
+
+    public async Task SetDisabled(bool setvar)
+    {
+        Disabled = setvar;
+        await Task.Delay(100);
+        StateHasChanged();
+    }
 
     private Task RightClicked()
     {
@@ -145,7 +113,7 @@ else
         else
             return MidBtnClick.InvokeAsync(true);
     }
-    
+
     private Task LeftClicked()
     {
         if (!LeftBtnClick.HasDelegate)
@@ -154,15 +122,30 @@ else
             return LeftBtnClick.InvokeAsync(true);
     }
 
-    private Task ModalCancel()
+    private async Task ModalCancel()
     {
-        Disabled = true;
-        return OnClose.InvokeAsync(false);
+        await OnHideModalClickInternal();
     }
 
-    private Task ModalAccept()
+    private async Task ModalAccept()
     {
-        Disabled = true;
-        return OnClose.InvokeAsync(true);
+        await OnHideModalClickInternal(true);
+    }
+
+    public async Task OnShowModalClick()
+    {
+        Disabled = false;
+        await modal.ShowAsync();
+    }
+
+    private async Task OnHideModalClickInternal(bool accept = false)
+    {
+        await OnClose.InvokeAsync(accept);
+        await OnHideModalClick();
+    }
+
+    public async Task OnHideModalClick()
+    {
+        await modal.HideAsync();
     }
 }

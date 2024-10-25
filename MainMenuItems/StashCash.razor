@@ -3,158 +3,131 @@
 
 @if (!Mobile)
 {
-    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:50vw;position: absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"];">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
-                        Stash Cash
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
-                    </button>
-                </div>
-                <div class="modal-body" style="width:100%;color:white;">
-                    <div class="flex-c" style="justify-content:space-between">
-                        @if (Envelopes != null && Envelopes.Count > 0)
-                        {
-                            <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
-                                <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
-                                @foreach (var env in Envelopes)
-                                {
-                                    <option value=@env.Id>@env.Name</option>
-                                }
-                            </select>
-                            @if (SelectedEnv != null)
+    <Confirmation @ref=confirmation Title="Stash Cash" OnClose="ModalCancel" LeftBtnTxt="" MidBtnTxt="" RightBtnTxt="">
+        <div class="flex-c" style="justify-content:space-between">
+            @if (Envelopes != null && Envelopes.Count > 0)
+            {
+                <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
+                    <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
+                    @foreach (var env in Envelopes)
+                    {
+                        <option value=@env.Id>@env.Name</option>
+                    }
+                </select>
+                @if (SelectedEnv != null)
+                {
+                    <br />
+                    <div class="flex-r" style="justify-content:space-between;width:100%;">
+                        <div class="flex-c" style="justify-content:space-evenly">
+                            @if (SelectedEnv.Person1Account != "NONE")
                             {
-                                <br />
-                                <div class="flex-r" style="justify-content:space-between;width:100%;">
-                                    <div class="flex-c" style="justify-content:space-evenly">
-                                        @if (SelectedEnv.Person1Account != "NONE")
-                                        {
-                                            <div class="flex-r" style="justify-content:space-between">
-                                                <label>@Constants.Person1:</label>
-                                                <div>
-                                                    <input type="number" placeholder="Amount" @bind="Person1Amount" />
-                                                    <br />
-                                                    <span class="flex-r-100" style="font-style:italic;color:cyan">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
-                                                </div>
-                                            </div>
-                                        }
-                                        @if (SelectedEnv.Person2Account != "NONE")
-                                        {
-                                            <div class="flex-r" style="justify-content:space-between">
-                                                <label>@Constants.Person2:</label>
-                                                <div>
-                                                    <input type="number" placeholder="Amount" @bind="Person2Amount" />
-                                                    <br />
-                                                    <span class="flex-r-100" style="font-style:italic;color:cyan">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                    <div class="flex-c">
-                                        <img alt="Stash Arrow" src="/images/StashArrow.webp" style="height:3vw;cursor:pointer" @onclick=@(() => HandleStash()) />
-                                    </div>
-                                    <div style="align-content:flex-end">
-                                        <Stashvelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Adding=true
-                                                     Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                                <div class="flex-r" style="justify-content:space-between">
+                                    <label>@Constants.Person1:</label>
+                                    <div>
+                                        <input type="number" placeholder="Amount" @bind="Person1Amount" />
+                                        <br />
+                                        <span class="flex-r-100" style="font-style:italic;color:cyan">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
                                     </div>
                                 </div>
                             }
-
-                            @if (!string.IsNullOrEmpty(ErrorMsg))
+                            @if (SelectedEnv.Person2Account != "NONE")
                             {
-                                <p style="color:@ErrorColor">@ErrorMsg</p>
+                                <div class="flex-r" style="justify-content:space-between">
+                                    <label>@Constants.Person2:</label>
+                                    <div>
+                                        <input type="number" placeholder="Amount" @bind="Person2Amount" />
+                                        <br />
+                                        <span class="flex-r-100" style="font-style:italic;color:cyan">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
+                                    </div>
+                                </div>
                             }
-
-                        }
+                        </div>
+                        <div class="flex-c">
+                            <img alt="Stash Arrow" src="/images/StashArrow.webp" style="height:3vw;cursor:pointer" @onclick=@(() => HandleStash()) />
+                        </div>
+                        <div style="align-content:flex-end">
+                            <Stashvelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Adding=true
+                                         Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                        </div>
                     </div>
-                </div>
-            </div>
+                }
+
+                @if (!string.IsNullOrEmpty(ErrorMsg))
+                {
+                    <p style="color:@ErrorColor">@ErrorMsg</p>
+                }
+
+            }
         </div>
-    </div>
+    </Confirmation>
 }
 else
 {
-    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="width:fit-content;margin:0 auto;background-color:@Constants.ColorScheme["ComponentBackground"];">
-                <div class="modal-header">
-                    <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
-                        Stash Cash
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
-                    </button>
-                </div>
-                <div class="modal-body" style="width:100%;color:white;@(SelectedEnv != null ? "overflow-y:auto;height:90vh;" : "")">
-                    <div class="flex-c" style="justify-content:space-between">
-                        @if (Envelopes != null && Envelopes.Count > 0)
-                        {
-                            <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
-                                <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
-                                @foreach (var env in Envelopes)
-                                {
-                                    <option value=@env.Id>@env.Name</option>
-                                }
-                            </select>
-                            @if (SelectedEnv != null)
+    <Confirmation @ref=confirmation Title="Stash Cash" LeftBtnTxt="" MidBtnTxt="" RightBtnTxt="">
+        <div class="flex-c" style="justify-content:space-between">
+            @if (Envelopes != null && Envelopes.Count > 0)
+            {
+                <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
+                    <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
+                    @foreach (var env in Envelopes)
+                    {
+                        <option value=@env.Id>@env.Name</option>
+                    }
+                </select>
+                @if (SelectedEnv != null)
+                {
+                    <br />
+                    <div class="flex-c" style="justify-content:space-between;width:100%;">
+                        <table class="borderless-table" style="border-radius:0">
+                            @if (SelectedEnv.Person1Account != "NONE")
                             {
-                                <br />
-                                <div class="flex-c" style="justify-content:space-between;width:100%;">
-                                    <table class="borderless-table" style="border-radius:0">
-                                        @if (SelectedEnv.Person1Account != "NONE")
-                                        {
-                                            <tr>
-                                                <td style="padding:1em 0;vertical-align:top">
-                                                    <label>@Constants.Person1:</label>
-                                                </td>
-                                                <td style="padding:1em 0">
-                                                    <div>
-                                                        <input type="number" placeholder="Amount" @bind="Person1Amount" />
-                                                        <br />
-                                                        <span class="flex-r-100" style="font-style:italic;color:cyan;text-align:center">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        }
-                                        @if (SelectedEnv.Person2Account != "NONE")
-                                        {
-                                            <tr>
-                                                <td style="padding:1em 0;vertical-align:top">
-                                                    <label>@Constants.Person2:</label>
-                                                </td>
-                                                <td style="padding:1em 0">
-                                                    <div>
-                                                        <input type="number" placeholder="Amount" @bind="Person2Amount" />
-                                                        <br />
-                                                        <span class="flex-r-100" style="font-style:italic;color:cyan;text-align:center">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </table>
-                                    <div class="flex-c" style="height:auto">
-                                        <img alt="Stash Arrow" src="/images/StashArrow.webp" style="height:30vw;cursor:pointer" @onclick=@(() => HandleStash()) />
-                                    </div>
-                                    <div style="align-content:flex-end">
-                                        <Stashvelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Adding=true
-                                                     Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
-                                    </div>
-                                </div>
+                                <tr>
+                                    <td style="padding:1em 0;vertical-align:top">
+                                        <label>@Constants.Person1:</label>
+                                    </td>
+                                    <td style="padding:1em 0">
+                                        <div>
+                                            <input type="number" placeholder="Amount" @bind="Person1Amount" />
+                                            <br />
+                                            <span class="flex-r-100" style="font-style:italic;color:cyan;text-align:center">Available Balance: @Constants.Pretty(Person1Bal.GetValueWithGoals())</span>
+                                        </div>
+                                    </td>
+                                </tr>
                             }
-
-                            @if (!string.IsNullOrEmpty(ErrorMsg))
+                            @if (SelectedEnv.Person2Account != "NONE")
                             {
-                                <p style="color:@ErrorColor">@ErrorMsg</p>
+                                <tr>
+                                    <td style="padding:1em 0;vertical-align:top">
+                                        <label>@Constants.Person2:</label>
+                                    </td>
+                                    <td style="padding:1em 0">
+                                        <div>
+                                            <input type="number" placeholder="Amount" @bind="Person2Amount" />
+                                            <br />
+                                            <span class="flex-r-100" style="font-style:italic;color:cyan;text-align:center">Available Balance: @Constants.Pretty(Person2Bal.GetValueWithGoals())</span>
+                                        </div>
+                                    </td>
+                                </tr>
                             }
-
-                        }
+                        </table>
+                        <div class="flex-c" style="height:auto">
+                            <img alt="Stash Arrow" src="/images/StashArrow.webp" style="height:30vw;cursor:pointer" @onclick=@(() => HandleStash()) />
+                        </div>
+                        <div style="align-content:flex-end">
+                            <Stashvelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Adding=true
+                                         Stashing=Stashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                        </div>
                     </div>
-                </div>
-            </div>
+                }
+
+                @if (!string.IsNullOrEmpty(ErrorMsg))
+                {
+                    <p style="color:@ErrorColor">@ErrorMsg</p>
+                }
+
+            }
         </div>
-    </div>
+    </Confirmation>
 }
 
 @code {
@@ -186,7 +159,7 @@ else
     private Balance Person2Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person2Account);
 
     public bool Mobile => Constants.Mobile;
-
+    private Confirmation confirmation;
 
     protected override Task OnInitializedAsync()
     {
@@ -242,13 +215,20 @@ else
         }
     }
 
-    private Task ModalCancel()
+    private async Task ModalCancel()
     {
-        return OnClose.InvokeAsync(false);
+        await OnClose.InvokeAsync(false);
+        await confirmation.OnHideModalClick();
     }
 
     private async Task ModalDecline()
     {
         await OnClose.InvokeAsync(false);
+        await confirmation.OnHideModalClick();
+    }
+
+    public async Task LaunchModal()
+    {
+        await confirmation.OnShowModalClick();
     }
 }

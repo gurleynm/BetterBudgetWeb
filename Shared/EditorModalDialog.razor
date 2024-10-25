@@ -3,13 +3,13 @@
 
 @if (!Mobile)
 {
-    <Confirmation Title="Editting Transaction" OnClose="ModalCancel"
+    <Confirmation @ref=confirmation Title="Editting Transaction" OnClose="ModalCancel"
                   LeftBtnClick="ModalCancel" LeftBtnTxt="Close" LeftBtnColor="btn-secondary"
                   MidBtnClick="ModalDecline" MidBtnTxt="Decline" MidBtnColor="btn-danger"
                   RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
         <EditForm Model="@Transact">
-            <table class="toggle-table">
-                <tr>
+            <table class="mon-table">
+                <tr style="border-bottom:solid black 1px;background-color:@Constants.ColorScheme["TableEven"];">
                     <td>
                         <label>Date</label>
                     </td>
@@ -29,7 +29,7 @@
                         <label>Total</label>
                     </td>
                 </tr>
-                <tr>
+                <tr style="background-color:@Constants.ColorScheme["TableEven"]">
                     <td style="padding:1vw">
                         <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
                     </td>
@@ -62,17 +62,17 @@
 }
 else
 {
-    <Confirmation Title="Editting Transaction" OnClose="ModalCancel"
+    <Confirmation @ref=confirmation Title="Editting Transaction" OnClose="ModalCancel"
                   LeftBtnClick="ModalCancel" LeftBtnTxt="Decline" LeftBtnColor="btn-danger"
                   RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
         <div class="modal-body" style="width:100%;color:black;">
             <EditForm Model="@Transact">
-                <table class="toggle-table">
-                    <tr>
+                <table class="toggle-table" style="border-radius:0">
+                    <tr style="background-color:@Constants.ColorScheme["TableEven"]">
                         <td><label style="text-decoration:underline">Parameter</label></td>
                         <td><label style="text-decoration:underline">Value</label></td>
                     </tr>
-                    <tr>
+                    <tr style="background-color:@Constants.ColorScheme["TableEven"]">
                         <td>
                             <label>Date</label>
                         </td>
@@ -171,9 +171,8 @@ else
         }
     }
 
+    private Confirmation confirmation;
     public bool Mobile => Constants.Mobile;
-
-    private bool Disabled;
 
     protected override Task OnInitializedAsync()
     {
@@ -183,22 +182,25 @@ else
         return base.OnInitializedAsync();
     }
 
-    private Task ModalCancel()
+    private async Task ModalCancel()
     {
-        Disabled = true;
-        return OnClose.InvokeAsync(false);
+        await confirmation.SetDisabled(true);
+        await OnClose.InvokeAsync(false);
+        await confirmation.OnHideModalClick();
     }
 
     private async Task ModalDecline()
     {
-        Disabled = true;
+        await confirmation.SetDisabled(true);
         await OnClose.InvokeAsync(false);
+        await confirmation.OnHideModalClick();
     }
 
     private async Task ModalAccept()
     {
         ErrorMsg = "";
-        Disabled = true;
+        await confirmation.SetDisabled(true);
+
         string badType = "Envelope";
         if (Transact.ExpenseType == "Envelope")
         {
@@ -229,12 +231,18 @@ else
 
         if (string.IsNullOrEmpty(Transact.PaidWithPerson1) && string.IsNullOrEmpty(Transact.PaidWithPerson2))
         {
-            Disabled = false;
+            await confirmation.SetDisabled(false);
             ErrorMsg = "Enter a" + badType + " value for at least 1 person.";
             return;
         }
 
         await TransactionRepo.AddOrUpdateAsync(Transact);
         await OnClose.InvokeAsync(true);
+        await confirmation.OnHideModalClick();
+    }
+
+    public async Task LaunchModal()
+    {
+        await confirmation.OnShowModalClick();
     }
 }

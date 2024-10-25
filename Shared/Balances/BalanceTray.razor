@@ -1,14 +1,14 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Shared.General
-@using static BetterBudgetWeb.Shared.LineChart
+@using static BetterBudgetWeb.Shared.MyLineChart
 @implements IDisposable
 
 @if (Balances != null)
 {
     <div id="balance-tray" class="flex-c-start" style="width:100%">
         <PopTray Id="wor">
-            <div style="height:fit-content;padding-bottom:3em">
+            <div style="height:fit-content;padding:1em 0">
                 <h3 style="text-align:center;">
                     <span>
                         TOTAL NET WORTH:
@@ -29,11 +29,14 @@
 
                 @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
                 {
-                    <div class="flex-c" style="padding-top:1em">
+                    <div class="flex-c" style="padding:1em 0">
                         <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
                     </div>
                 }
-                <LineChart Plots="Plots" ChartId="chart_div" Margin="1em 0 0 0" />
+                @if (Constants.Mobile)
+                {
+                    <MyLineChart Plots="Plots" />
+                }
             </div>
         </PopTray>
         <div style="padding-bottom:2vh">

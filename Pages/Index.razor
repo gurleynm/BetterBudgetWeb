@@ -9,7 +9,7 @@
 @using BetterBudgetWeb.Shared.General
 @using BetterBudgetWeb.Shared.Tutorial
 @using System.Collections.Specialized
-@using static BetterBudgetWeb.Shared.LineChart
+@using static BetterBudgetWeb.Shared.MyLineChart
 @using static BetterBudgetWeb.MainMenuItems.AddExpense
 @inject IJSRuntime JSRuntime
 @implements IDisposable
@@ -40,7 +40,8 @@ else
         <div class="flex-r" style="flex-wrap:nowrap;justify-content:space-between">
             <div class="flex-r" style="justify-content:start;">
                 <div style="width:100%;float:left; margin-right:1vw; margin-bottom:2vh;display:inline-block;">
-                    <LineChart Plots="Plots" ChartId="chart_div" />
+                    <MyLineChart @ref=myLineChart Plots="Plots" />
+                    @* <MyLineChart Plots="Plots" ChartId="chart_div" /> *@
                     <div class="flex-r" style="margin-bottom:2vh;">
                         <div>
                             <!-- Savings Goals-->
@@ -256,19 +257,9 @@ else
 
         <br style="clear:both" />
         <br />
-    }    
-    @if (StashCashBool)
-    {
-        <StashCash OnClose="@CloseModal">
-
-        </StashCash>
     }
-    @if (CashOutBool)
-    {
-        <CashOut OnClose="@CloseModal">
-
-        </CashOut>
-    }
+    <StashCash @ref=stash OnClose="@CloseModal" />
+    <CashOut @ref=cash OnClose="@CloseModal" />
 }
 
 @code {
@@ -335,9 +326,6 @@ else
 
     private bool filtered;
 
-    private bool StashCashBool { get; set; }
-    private bool CashOutBool { get; set; }
-
     private bool hideEnvExp = true;
     private bool HideEnvExp
     {
@@ -366,6 +354,8 @@ else
     private List<string> ETs => FillEts();
 
     private bool Disabled;
+    private StashCash stash;
+    private CashOut cash;
 
     private List<string> FillEts()
     {
@@ -418,12 +408,12 @@ else
     }
 
     private List<Data.Envelope> Envelopes { get; set; }
-    private List<LinePlot> Plots => Constants.Plots;
+    private List<LinePlot> Plots = Constants.Plots;
+    private MyLineChart myLineChart;
 
     protected override async Task OnInitializedAsync()
     {
         Constants.CurPage = "Home";
-        MainLayout.ToggleOverflow("auto");
 
         Transactions = Constants.catchAll.Transactions;
         FilteredTransactions = new List<Transaction>(Transactions);
@@ -447,7 +437,8 @@ else
 
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
-        Constants.Plots = IndexRunner.GeneratePlots();
+        Constants.PlotsChanged += PlotsUpdated;
+        Plots = IndexRunner.GeneratePlots();
 
         StateHasChanged();
     }
@@ -624,16 +615,11 @@ else
     }
     private async void CloseModal(bool accepted)
     {
-        StashCashBool = false;
-        CashOutBool = false;
-
         if (accepted)
         {
             Transactions = Constants.Transactions;
             FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
         }
-
-        MainLayout.ToggleOverflow("auto");
     }
     private async void CloseTutModal(bool DontShowAgain)
     {
@@ -641,7 +627,6 @@ else
             await WriteCookieAsync("TutorialSeen", "YES", 1000);
 
         ShowTutorial = false;
-        MainLayout.ToggleOverflow("auto");
     }
     protected async Task<string> ReadCookies(string CookieName)
     {
@@ -676,19 +661,11 @@ else
     }
     private async void ToggleStash()
     {
-        StashCashBool = !StashCashBool;
-        if (StashCashBool)
-            MainLayout.ToggleOverflow("hidden");
-        else
-            MainLayout.ToggleOverflow("auto");
+        await stash.LaunchModal();
     }
     private async void ToggleCash()
     {
-        CashOutBool = !CashOutBool;
-        if (CashOutBool)
-            MainLayout.ToggleOverflow("hidden");
-        else
-            MainLayout.ToggleOverflow("auto");
+        await cash.LaunchModal();
     }
     async Task DownloadCSV()
     {
@@ -742,9 +719,15 @@ else
         StateHasChanged();
     }
 
+    private async void PlotsUpdated(object sender, List<LinePlot> lp)
+    {
+        Plots = new List<LinePlot>(lp);
+    }
+
     public void Dispose()
     {
         Constants.TransactionsChanged -= TransactionsUpdated;
         Constants.EnvelopesChanged -= EnvelopesUpdated;
+        Constants.PlotsChanged -= PlotsUpdated;
     }
 }

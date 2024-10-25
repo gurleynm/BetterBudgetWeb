@@ -468,6 +468,8 @@ namespace BetterBudgetWeb
             ColorScheme["Tab-Back"] = "#203957";
             ColorScheme["Tab-Active"] = "#384152";
             ColorScheme["Tab-Hover"] = "#05DDA9";
+
+            ColorScheme["Accent"] = "#B9AFF8";
         }
 
         public static bool Nighttime()

@@ -105,7 +105,14 @@
                     </tr>
                     <tr>
                         <td colspan="3">
-                            <button class="btn btn-primary" disabled=@Disabled @onclick="Add">Add</button>
+                            @if (Disabled)
+                            {
+                                <LoadingDots />
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary" disabled=@Disabled @onclick="Add">Add</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -139,7 +146,7 @@
                                 }
                                 else
                                 {
-                                    <div style="color:white">@(NewTrans.TopWhoPaid+ " Paid")</div>
+                                    <div style="color:white">@(NewTrans.TopWhoPaid + " Paid")</div>
                                 }
                             }
                         </td>
@@ -167,7 +174,7 @@
                                     }
                                     else
                                     {
-                                        <div style="color:white">@(NewTrans.BottomWhoPaid+ " Paid")</div>
+                                        <div style="color:white">@(NewTrans.BottomWhoPaid + " Paid")</div>
                                     }
                                 }
                             </td>
@@ -195,7 +202,14 @@
                     </tr>
                     <tr>
                         <td colspan="3">
-                            <button class="btn btn-primary" disabled=@Disabled @onclick="Add">Add</button>
+                            @if (Disabled)
+                            {
+                                <LoadingDots />
+                            }
+                            else
+                            {
+                                <button class="btn btn-primary" disabled=@Disabled @onclick="Add">Add</button>
+                            }
                         </td>
                     </tr>
                 }
@@ -260,6 +274,7 @@
     private async void Add()
     {
         Disabled = true;
+        await Task.Delay(100);
         StateHasChanged();
 
         ErrorMsg = "";
@@ -332,5 +347,6 @@
         }
 
         Disabled = false;
+        StateHasChanged();
     }
 }
