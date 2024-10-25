@@ -178,8 +178,8 @@
         function Resized() {
             const CurMobile = IsMobile;
             IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
-            if (CurMobile != IsMobile)
-                window.location.reload();
+            //if (CurMobile != IsMobile)
+            //    window.location.reload();
         }
         function ScrollTo(id) {
             var elm = document.getElementById(id);

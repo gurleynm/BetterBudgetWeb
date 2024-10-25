@@ -8,7 +8,7 @@
                   MidBtnClick="ModalDecline" MidBtnTxt="Decline" MidBtnColor="btn-danger"
                   RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
         <EditForm Model="@Transact">
-            <table class="toggle-table">
+            <table class="toggle-table" style="border-radius:0">
                 <tr>
                     <td>
                         <label>Date</label>
@@ -65,7 +65,7 @@ else
     <Confirmation Title="Editting Transaction" OnClose="ModalCancel"
                   LeftBtnClick="ModalCancel" LeftBtnTxt="Decline" LeftBtnColor="btn-danger"
                   RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
-        <div class="modal-body" style="width:100%;color:black;">
+        <div class="modal-body" style="width:100%;color:black;border-radius:0">
             <EditForm Model="@Transact">
                 <table class="toggle-table">
                     <tr>
