@@ -23,7 +23,7 @@ namespace BetterBudgetWeb.Data
             Color.DarkOliveGreen,
             Color.BlueViolet,
             Color.DarkSalmon,
-            Color.Black,
+            Color.Blue,
             Color.SandyBrown,
         };
         private static int _colorsCount => _colors.Length;
