@@ -7,5 +7,9 @@
         public double Amount { get; set; }
         public Flow() { }
         public Flow(string from, string to, double total) { From = from; To = to; Amount = total; }
+        public override string ToString()
+        {
+            return From + "->" + To;
+        }
     }
 }

@@ -371,21 +371,20 @@
             for (var i = 0; i < sankList.length; i++) {
                 temp = [];
                 obj = sankList[i];
-                console.log('obj-' + i + ':' + obj);
                 temp.push(obj['From']);
                 temp.push(obj['To']);
                 temp.push(obj['Amount']);
-                //temp.push("<text style='font-family:Arial;font-size:16'>" + obj['From'] + ' -> ' + obj['To'] + '<br/>$' + obj['Amount'] +"</text>");
                 holder.push(temp);
             }
 
             data.addColumn('string', 'From');
             data.addColumn('string', 'To');
             data.addColumn('number', 'Amount');
-            //data.addColumn({ type: 'string', role: 'tooltip' });
             data.addRows(
                 holder
             );
+
+            var autoHeight = data.getNumberOfRows() * 15;
 
             // Sets chart options.
             let FontSize = 10;
@@ -400,6 +399,7 @@
                         '#b2df8a',        // giving the links for that node the color.
                         '#33a02c'
                     ],
+                    height: autoHeight,
                     node: {
                         label: {
                             color: 'white',
@@ -411,6 +411,7 @@
             };
 
             // Instantiates and draws our chart, passing in some options.
+            sank.style.height = (autoHeight + 100) + 'px';
             var chart = new google.visualization.Sankey(sank);
             chart.draw(data, options);
             return true;

@@ -11,8 +11,10 @@
 <PageTitle>Sankey Chart</PageTitle>
 
 <div class="flex-c" style="overflow-y:auto;align-items:center">
-<div id="sankey_basic" style="width: 95%; height:fit-content;min-height: 75vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
-                                overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 0 1em 0;"></div>
+@* <div id="sankey_basic" style="width: 95%;min-height: 100vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
+                                overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 0 1em 0;"></div> *@
+ <div id="sankey_basic" style="width: 95%;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
+                                overflow-x:clip;padding:1em;margin: 1em 0 1em 0;"></div>
 <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="justify-content:space-evenly;align-items:center;flex-wrap:wrap; width:100%">
     <div>
         <table class="toggle-table">
@@ -55,7 +57,10 @@
             }
         </select>
     </div>
-    
+    <div class="flex-c">
+        <label>Combine expenses under</label>
+        <input type="number" @bind-value=@UnderNum />
+    </div>
     <div >
         @if (Levels != null && Levels.Count > 0)
         {
@@ -89,6 +94,7 @@
 
 
 @code {
+    private double UnderNum = 25;
     private string selectedYear;
     private string selectedMonth;
     private string selectedPerson;
@@ -231,9 +237,6 @@
         string TKey;
         string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer" };
 
-        bool firstPerson = SelectedPerson == "Both" || SelectedPerson == Constants.Person1;
-        bool secondPerson = SelectedPerson == "Both" || SelectedPerson == Constants.Person2;
-
         foreach (var transact in DesiredTransactions)
         {
             if (IgnoreThese.Contains(transact.ExpenseType))
@@ -365,8 +368,21 @@
             foreach (var key in DictIncome.Keys)
                 TheFlows.Add(DictIncome[key].ToFlow(incomeTotals,"",generalTotals));
 
-            foreach (var key in GeneralTransactions.Keys)
-                TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL",incomeTotals));
+            foreach (var key in GeneralTransactions.Keys){
+                var GenFlow = GeneralTransactions[key].ToFlow(maxTotals, "GENERAL", incomeTotals);
+                TheFlows.Add(GenFlow);
+                foreach (var dict_key in keys)
+                {
+                    if (DesiredTransactionsDict[dict_key].ExpenseType != key)
+                        continue;
+
+                    string From = DesiredTransactionsDict[dict_key].Name + " (" + DesiredTransactionsDict[dict_key].TotalAmount.ToString("C2") + ")";
+                    if (GenFlow.To == From)
+                        continue;
+                    TheFlows.Add(new Flow(GenFlow.To, From, DesiredTransactionsDict[dict_key].TotalAmount));
+                }
+            }
+
 
             TotalIn = incomeTotals + RefundSum;
             TotalOut = generalTotals;
@@ -387,33 +403,39 @@
             }
         }
 
-        string[] DecreaseAmount = new string[] { "Eating Out", "Unexpected Adulting", "Fun" };
-
         // Cut down on # of Entries
-        if (DecreaseAmount.Contains(SelectedLevel) && TheFlows.Count > 30)
+        if (TheFlows.Count > 30)
         {
-            int numOfUnder25 = 0;
-            double totalOfUnder25 = 0;
-            string plural;
+            int numOfUnder = 0;
+            double totalOfUnder = 0;
+
+            Dictionary<string, (double,double)> CondenseFlow = new();
+            Dictionary<string, List<Flow>> ExpenseFlows = new();
+
+            for (int step = 0; step < TheFlows.Count; step++)
+            {
+                if (TheFlows[step].From.Contains("Income") || ExpenseFlows.ContainsKey(TheFlows[step].From))
+                    continue;
+                else {
+                    var LessThans = TheFlows.Where(tf => tf.From == TheFlows[step].From && tf.Amount < UnderNum);
+
+                    if(LessThans.Count() > 1)
+                        ExpenseFlows.Add(TheFlows[step].From, LessThans.ToList());
+                }
+            }
 
             for (int step = TheFlows.Count - 1; step >= 0; step--)
             {
-                if (TheFlows[step].Amount < 25)
-                {
-                    numOfUnder25++;
-                    totalOfUnder25 += TheFlows[step].Amount;
+                if (ExpenseFlows.Keys.Contains(TheFlows[step].From) && TheFlows[step].Amount < UnderNum)
                     TheFlows.RemoveAt(step);
-                }
             }
-            plural = numOfUnder25 != 1 ? "s" : "";
-            TheFlows.Add(new Transaction
-                {
-                    Name = numOfUnder25 + " Item" + plural + " Under $25.00",
-                    Person1Amount = totalOfUnder25 / 2,
-                    Person2Amount = totalOfUnder25 / 2,
-                    ExpenseType = SelectedLevel
-                }
-                .ToFlow(Totals));
+
+            foreach(var key in ExpenseFlows.Keys){
+                var curs = ExpenseFlows[key];
+                TheFlows.Add(new Flow(key, ExpenseFlows[key].Count + " " + key.Split('(')[0] + " Under " + UnderNum.ToString("C2")
+                                             + " (" + ExpenseFlows[key].Sum(ef => ef.Amount).ToString("C2") + ")", 
+                                           ExpenseFlows[key].Sum(ef => ef.Amount)));
+            }
         }
 
         StateHasChanged();
