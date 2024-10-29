@@ -24,6 +24,7 @@
 <PageTitle>Forecast</PageTitle>
 
 
+<LineChart Plots="Plots" ChartId="chart_div" />
 <div class="flex-c-start">
     @foreach (var mr in MonthRels)
     {
@@ -64,6 +65,7 @@
 <br />
 
 @code {
+    private List<LinePlot> Plots = new List<LinePlot>();
     private static int TotalNumMonths = 6;
 
     private List<MonthRelations> MonthRels = new List<MonthRelations>();
@@ -78,12 +80,14 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         Constants.CurPage = "Forecast";
         if (Constants.TIER_LEVEL <= Tier.BASIC_TIER)
             NavMan.NavigateTo("home");
 
         InitMonths();
 
+        Plots = MonthViewConstants.GetPlots();
         StateHasChanged();
     }
 
@@ -122,6 +126,7 @@
                 }
             }
         }
+
         return nw;
     }
 }

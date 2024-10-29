@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using BetterBudgetWeb.Runner;
 
 namespace BetterBudgetWeb.MonthView
 {
@@ -206,6 +207,24 @@ namespace BetterBudgetWeb.MonthView
             }
 
             return total;
+        }
+        public static List<LinePlot> GetPlots(int TotalNumMonths = 6)
+        {
+            double prevNW = Constants.Person1NetWorth + Constants.Person2NetWorth;
+            SavingsGoal Default1 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person1) && sg.Month == "All");
+            SavingsGoal Default2 = Constants.SavingsGoals.FirstOrDefault(sg => sg.Person.Contains(Constants.Person2) && sg.Month == "All");
+            List<LinePlot> plots = new List<LinePlot>();
+
+            DateTime nextOne;
+            for (int cnt = 0; cnt < TotalNumMonths; cnt++)
+            {
+                nextOne = DateTime.Today.AddMonths(cnt + 1);
+                SetMonthlies(nextOne.Month, nextOne.Year);
+                prevNW += Default1.Goal + Default2.Goal - GetTotalExpenses();
+                plots.Add(new LinePlot(Constants.TheMonthsFromInt[nextOne.Month], prevNW, false));
+            }
+
+            return plots;
         }
     }
 }
