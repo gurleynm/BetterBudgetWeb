@@ -31,7 +31,14 @@
         </div>
         @if (string.IsNullOrEmpty(message))
         {
-            <button type="submit" class="btn btn-primary" style="margin:1em 0">Send</button>
+            @if (Disabled)
+            {
+                <LoadingDots />
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" style="margin:1em 0">Send</button>
+            }
         }
     </EditForm>
     @if (!string.IsNullOrEmpty(message))
@@ -46,6 +53,7 @@
     private ContactFormModel contactFormModel = new();
     private string toAddress = "<your-email-address>";
     private string message;
+    private bool Disabled;
 
     private async Task ClearMessage()
     {
@@ -59,8 +67,12 @@
     {
         try
         {
+            Disabled = true;
+            await Task.Delay(100);
+            StateHasChanged();
             await EmailService.SendEmailAsync(contactFormModel.Email, contactFormModel.Subject, contactFormModel.Message);
             message = "Your message has been sent successfully.";
+            Disabled = false;
             StateHasChanged();
             await ClearMessage();
         }
