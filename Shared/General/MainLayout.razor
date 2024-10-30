@@ -520,7 +520,7 @@
                 SetCorrect = false;
             }
         }
-        
+
         await jsRuntime.InvokeVoidAsync("ScrollToTop");
     }
     protected override async Task OnInitializedAsync()
@@ -668,7 +668,7 @@
     {
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
         curUrl = curUrl.Split("/")[0];
-        string[] whitelisted = new string[] { "policy", "reset", "sign", "contact-us" };
+        string[] whitelisted = new string[] { "policy", "reset", "sign" };
         foreach (string white in whitelisted)
         {
             if (curUrl == white)
@@ -684,7 +684,11 @@
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
 
         curUrl = curUrl.Split("/")[0];
-        string[] whitelisted = new string[] { "pricing", "FAQs", "contact-us" };
+        List<string> whitelisted = new List<string> { "pricing", "FAQs" };
+        
+        if (!Constants.WeIn)
+            whitelisted.Add("contact-us");
+
         foreach (string white in whitelisted)
         {
             if (curUrl == white)
