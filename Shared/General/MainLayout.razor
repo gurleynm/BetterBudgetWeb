@@ -217,8 +217,8 @@
         color: @Constants.ColorScheme["Text"];
     }
 
-    td, option, input, label, select, textarea {
-        font-size: @Constants.TestMobile("3vw;", "1em");
+    td, option, input, select, textarea {
+        font-size: medium;
     }
 
     span {
@@ -258,7 +258,9 @@
             }
             else if (!Constants.WeIn)
             {
-                <Login />
+                <LandingPage>
+                    <Login />
+                </LandingPage>
             }
             else if (Constants.TIER_STATUS == "expired")
             {
@@ -668,7 +670,7 @@
     {
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
         curUrl = curUrl.Split("/")[0];
-        string[] whitelisted = new string[] { "policy", "reset", "sign" };
+        string[] whitelisted = new string[] { "policy", "reset" };
         foreach (string white in whitelisted)
         {
             if (curUrl == white)
@@ -684,8 +686,8 @@
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
 
         curUrl = curUrl.Split("/")[0];
-        List<string> whitelisted = new List<string> { "pricing", "FAQs" };
-        
+        List<string> whitelisted = new List<string> { "pricing", "FAQs", "sign" };
+
         if (!Constants.WeIn)
             whitelisted.Add("contact-us");
 

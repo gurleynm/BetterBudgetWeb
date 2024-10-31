@@ -462,6 +462,7 @@ td a, td input, td img {
     display: flex;
     justify-content: space-around;
     height: 20rem;
+    overflow-x: auto;
 }
 
 .chart-back {
@@ -509,5 +510,6 @@ td a, td input, td img {
     transition: all 0.3s ease-out;
 }
 label {
-    font-family: 'CBB Default'
+    font-family: 'CBB Default';
+    font-size:large;
 }

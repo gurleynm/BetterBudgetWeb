@@ -9,10 +9,6 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 <PageTitle>Enter Password</PageTitle>
 
-@if (!NavMan.BaseUri.Contains("mobile."))
-{
-    <div style="position:absolute;top:1em;left:1em"><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
-}
 @if (mobile)
 {
     <div style="display:inline-block;width:100vw;height:100%;">
