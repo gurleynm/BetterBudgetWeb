@@ -639,7 +639,7 @@ else
                                 </select>
                             </div>
                             <div class="flex-c" style="margin:0 1em">
-                                <strong>@($"{Constants.Person2} Paying Off:")</strong>
+                                <label><strong>@($"{Constants.Person2} Paying Off:")</strong></label>
                                 <select class="custom-select" @bind="PaidOffPerson2" title="Paid Off is required ">
                                     <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person2}'s Account 2)")</option>
                                     @if (Person2BalancesLoans != null)
