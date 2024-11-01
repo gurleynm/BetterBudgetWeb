@@ -1,4 +1,5 @@
 ﻿@inject IJSRuntime JSRuntime
+@inject NavigationManager NavMan
 
 @if (!Constants.HideCookieBanner && ShowIt)
 {
@@ -27,6 +28,8 @@
 
     protected async Task<bool> ReadCBCookie()
     {
+        if (NavMan.BaseUri.Contains("mobile."))
+            return true;
         bool response;
         try
         {
