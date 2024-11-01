@@ -258,9 +258,16 @@
             }
             else if (!Constants.WeIn)
             {
-                <LandingPage>
+                @if (!NavMan.BaseUri.Contains("mobile."))
+                {
+                    <LandingPage>
+                        <Login />
+                    </LandingPage>
+                }
+                else
+                {
                     <Login />
-                </LandingPage>
+                }
             }
             else if (Constants.TIER_STATUS == "expired")
             {
