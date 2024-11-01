@@ -83,6 +83,10 @@ else
 
     [Parameter]
     public string direction { get; set; } = "in";
+    [SupplyParameterFromQuery]
+    public string user { get; set; }
+    [SupplyParameterFromQuery]
+    public string pwd { get; set; }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -107,6 +111,16 @@ else
         CreatingAccount = direction == "up";
 
         await CheckWeIn(false);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(pwd))
+        {
+            username = user;
+            password = pwd;
+            await CheckWeIn();
+        }
     }
 
     private async void Enter(KeyboardEventArgs e)
