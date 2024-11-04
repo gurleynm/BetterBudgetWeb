@@ -6,7 +6,7 @@
 <div id="main-bar" class="navbar-dark" style="position:sticky;top:0;padding:0;background-color:indigo;width:100%;z-index:10">
     <div class="flex-r" style="width:100%;padding:0 1em;justify-content:space-between;align-items:center">
         <img src="images/RoundLogo.webp" alt="Logo image" style="height:6.5vh;width:6.5vh;padding:0;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("home")) />
-        <h2 class="flex-c" style="font-family:'CBB Default'">@Constants.CurPage</h2>
+        <h2 id="page-name" class="flex-c" style="font-family:'CBB Default'">@Constants.CurPage</h2>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
