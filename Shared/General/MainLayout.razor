@@ -586,7 +586,7 @@
         Constants.Token = "";
         await sessionStorage.SetItemAsync("token", Constants.Token);
         await sessionStorage.SetItemAsync("CUR_USER_NAME", "");
-        NavMan.NavigateTo(NavMan.BaseUri.Contains("mobile.") ? "home" : "");
+        NavMan.NavigateTo(NavMan.BaseUri.Contains("mobile.") ? "home" : "", NavMan.BaseUri.Contains("mobile."));
         StateHasChanged();
     }
 
