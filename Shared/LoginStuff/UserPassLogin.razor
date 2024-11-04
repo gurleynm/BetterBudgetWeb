@@ -6,71 +6,73 @@
         <div>
             <h2 style="text-align:center;color:white;font-family:'CBB Default';">@($"Welcome")</h2>
         </div>
-
-        @if (CreatingAccount)
+        @if (!NavMan.BaseUri.Contains("mobile."))
         {
-            <CreateAccountCarousel @bind-CreatingAccount=@CreatingAccount CheckIn="CheckIn"
-                                   @bind-Username=@Username @bind-Username2=@Username2
-                                   @bind-Email=@Email @bind-Email2=@Email2 @bind-ErrorMsg=@ErrorMsg
-                                   @bind-Password2=@Password2 @bind-Password=@Password @bind-Hide=Hide />
-        }
-        else if (ForgotPassword)
-        {
-            <div class="flex-c">
-                <label style="color:white">Enter email associated with your account</label>
-                <div class="flex-r">
-                    <input class="better" id="user" placeholder="Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email = (string) ui.Value;})" />
-                </div>
-                <div class="flex-r">
-                    <span style="color:@errLocalColor">@errorMsgLocal</span>
-                </div>
-                <div class="flex-r">
-                    <button class="btn btn-primary" @onclick=SendEmail>Submit</button>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="flex-c">
-                <label style="color:white">Username</label>
-                <div class="flex-r" style="justify-content:start">
-                    <input class="better" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
-                </div>
-                <br />
-                <label style="color:white">Password</label>
-                <div class="flex-r" style="justify-content:start">
-                    <PasswordInput Enter="Enter" @bind-Password=@Password ShowEye="false" />
-                </div>
-                @if (!Hide)
-                {
-                    <div>
-                        <a style="text-decoration:underline;color:cyan;cursor:pointer" @onclick=@(() => ForgotPassword = !ForgotPassword)>Forgot Password?</a>
+            @if (CreatingAccount)
+            {
+                <CreateAccountCarousel @bind-CreatingAccount=@CreatingAccount CheckIn="CheckIn"
+                                       @bind-Username=@Username @bind-Username2=@Username2
+                                       @bind-Email=@Email @bind-Email2=@Email2 @bind-ErrorMsg=@ErrorMsg
+                                       @bind-Password2=@Password2 @bind-Password=@Password @bind-Hide=Hide />
+            }
+            else if (ForgotPassword)
+            {
+                <div class="flex-c">
+                    <label style="color:white">Enter email associated with your account</label>
+                    <div class="flex-r">
+                        <input class="better" id="user" placeholder="Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email = (string) ui.Value;})" />
                     </div>
-                }
-            </div>
-        }
-        @if (!string.IsNullOrEmpty(ErrorMsg))
-        {
-            <p style="text-align:center;color:red">
-                @ErrorMsg
-            </p>
-        }
+                    <div class="flex-r">
+                        <span style="color:@errLocalColor">@errorMsgLocal</span>
+                    </div>
+                    <div class="flex-r">
+                        <button class="btn btn-primary" @onclick=SendEmail>Submit</button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="flex-c">
+                    <label style="color:white">Username</label>
+                    <div class="flex-r" style="justify-content:start">
+                        <input class="better" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                    </div>
+                    <br />
+                    <label style="color:white">Password</label>
+                    <div class="flex-r" style="justify-content:start">
+                        <PasswordInput Enter="Enter" @bind-Password=@Password ShowEye="false" />
+                    </div>
+                    @if (!Hide)
+                    {
+                        <div>
+                            <a style="text-decoration:underline;color:cyan;cursor:pointer" @onclick=@(() => ForgotPassword = !ForgotPassword)>Forgot Password?</a>
+                        </div>
+                    }
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(ErrorMsg))
+            {
+                <p style="text-align:center;color:red">
+                    @ErrorMsg
+                </p>
+            }
 
-        @* Show Submit if ready *@
-        @if (!CreatingAccount && !ForgotPassword)
-        {
-            @ChildContent
-        }
+            @* Show Submit if ready *@
+            @if (!CreatingAccount && !ForgotPassword)
+            {
+                @ChildContent
+            }
 
-        @if (!Hide && !NavMan.BaseUri.Contains("mobile."))
-        {
-            <hr />
-            <div class="flex-r">
-                <span style="color:white">
-                    @AccountTxt
-                    <a style="text-decoration:underline;color:cyan;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
-                </span>
-            </div>
+            @if (!Hide && !NavMan.BaseUri.Contains("mobile."))
+            {
+                <hr />
+                <div class="flex-r">
+                    <span style="color:white">
+                        @AccountTxt
+                        <a style="text-decoration:underline;color:cyan;cursor:pointer" @onclick=@(() => CreatingAccount = !CreatingAccount)>@SignTxt</a>
+                    </span>
+                </div>
+            }
         }
     </div>
 </div>
