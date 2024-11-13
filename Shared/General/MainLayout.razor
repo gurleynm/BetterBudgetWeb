@@ -274,7 +274,7 @@
                 <main>
                     <article>
                         <div class="flex-c-start">
-                            @if (!NavMan.BaseUri.Contains("mobile."))
+                            @if (!Constants.MobileApp)
                             {
                                 <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-left:10px;padding-top:1em" /> Back to main page</a></div>
                             }
@@ -284,7 +284,14 @@
                                 <button class="btn btn-primary" style="color:white;background-color:indigo" @onclick=@(() => AccountDelete = true)>Cancel Account</button>
                             </div>
                             <DeleteAccountModal @bind-ShowDelete=AccountDelete />
-                            <PaymentPlans />
+                            @if (Constants.MobileApp)
+                            {
+                                <h3 style="text-align:center;font-family:'CBB Default'">(You can't upgrade to Basic or Advanced in the app. It's silly, we know)</h3>
+                            }
+                            else
+                            {
+                                <PaymentPlans />
+                            }
                         </div>
                     </article>
                 </main>
@@ -306,7 +313,14 @@
                                 <button class="btn btn-primary" style="color:white;background-color:indigo" @onclick=@(() => AccountDelete = true)>Cancel Account</button>
                             </div>
                             <DeleteAccountModal @bind-ShowDelete=AccountDelete />
-                            <PaymentPlans />
+                            @if (Constants.MobileApp)
+                            {
+                                <h3 style="text-align:center;font-family:'CBB Default'">(You can't upgrade to Basic or Advanced in the app. It's silly, we know)</h3>
+                            }
+                            else
+                            {
+                                <PaymentPlans />
+                            }
                         </div>
                     </article>
                 </main>
