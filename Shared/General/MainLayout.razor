@@ -539,6 +539,7 @@
         {
             DeviceCheck = jsRuntime.InvokeAsync<bool>("isDevice");
             Constants.Mobile = await DeviceCheck;
+            Constants.MobileApp = NavMan.BaseUri.Contains("mobile.");
         }
         catch (Exception e)
         {

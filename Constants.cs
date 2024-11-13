@@ -187,6 +187,7 @@ namespace BetterBudgetWeb
         public static string TIER_STATUS { get; set; } = "active";
         public static bool TryingItOut => TIER_LEVEL == Tier.TRIAL || TIER_LEVEL == Tier.DEMO;
 
+        public static bool MobileApp = false;
         private static bool mobile = false;
         public static bool Mobile
         {

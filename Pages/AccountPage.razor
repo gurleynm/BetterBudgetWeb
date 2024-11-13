@@ -62,7 +62,7 @@
             <button class="btn btn-primary" style="background-color:indigo" disabled=@ShowChangedDisabled @onclick=@(() => { Update(); })>Save Changes</button>
         </div>
     }
-    @if (Constants.TIER_LEVEL < Data.Tier.GOD_TIER)
+    @if (Constants.TIER_LEVEL < Data.Tier.GOD_TIER && !Constants.MobileApp)
     {
         <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
             <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
