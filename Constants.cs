@@ -187,7 +187,18 @@ namespace BetterBudgetWeb
         public static string TIER_STATUS { get; set; } = "active";
         public static bool TryingItOut => TIER_LEVEL == Tier.TRIAL || TIER_LEVEL == Tier.DEMO;
 
-        public static bool MobileApp = false;
+        public static bool mobileApp = false;
+        public static bool MobileApp
+        {
+            get { return mobileApp; }
+            set
+            {
+                if (mobileApp == value) return;
+                mobileApp = value;
+
+                MobileAppChanged?.Invoke(typeof(Constants), value);
+            }
+        }
         private static bool mobile = false;
         public static bool Mobile
         {
@@ -219,6 +230,7 @@ namespace BetterBudgetWeb
             }
         }
         public EventCallback<double> Person2NetWorthChanged { get; set; }
+        public static EventHandler<bool> MobileAppChanged = (sender, value) => { };
         public static EventHandler<bool> MobileChanged = (sender, value) => { };
 
         public static readonly List<string> Months = new List<string>{"January", "February", "March", "April", "May",
