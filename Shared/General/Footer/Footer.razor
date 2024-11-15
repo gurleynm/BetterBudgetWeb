@@ -1,7 +1,7 @@
 ﻿@inject NavigationManager NavMan
 
 <div class="footer" style="width:100%;padding-top:2em">
-    @if (!Constants.MobileApp)
+    @if (!NavMan.BaseUri.Contains("mobile."))
     {
         <div class="flex-r-100" style="min-height:1em;height:fit-content;justify-content:center;flex-wrap:wrap;align-content:center">
             <a style="text-align:center;padding-right:1em" href="Policy.html" onclick="window.open('Policy.html',
