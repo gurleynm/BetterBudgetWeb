@@ -188,12 +188,19 @@
         }
         else if (!string.IsNullOrEmpty(TheBalance))
         {
-            transactions = transactions.Where(tr =>
-                            (tr.PaidWithPerson1 + " " + tr.PaidWithPerson2).Contains(TheBalance)).ToList();
+            transactions = transactions.Where(tr => ValidBalance(tr)).ToList();
         }
 
         transactions = transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
         return transactions;
+    }
+
+    private bool ValidBalance(Transaction transaction)
+    {
+        return transaction.PaidWithPerson1 == TheBalance ||
+               transaction.PaidWithPerson2 == TheBalance ||
+               transaction.PaidOffPerson1  == TheBalance  ||
+               transaction.PaidOffPerson2  == TheBalance;
     }
 
     public void RefreshMe()
