@@ -55,7 +55,7 @@
                             {
                                 <div class="flex-r" style="justify-content:space-evenly">
                                     <button class="btn btn-danger" style="margin:0 1vh;" @onclick=@(() => OnHide(nsfd))>Hide</button>
-                                    <button class="btn btn-success" @onclick=@(() => OnCick(nsfd))>Save</button>
+                                    <button class="btn btn-success" @onclick=@(() => OnClick(nsfd))>Save</button>
                                 </div>
                             }
                         </td>
@@ -233,7 +233,7 @@ else
         StateHasChanged();
     }
 
-    public async void OnCick(EditableSFD esfd)
+    public async void OnClick(EditableSFD esfd)
     {
         if (esfd.Month == null)
             esfd.Month = "All";
