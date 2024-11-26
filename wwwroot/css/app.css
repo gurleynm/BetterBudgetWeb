@@ -62,3 +62,30 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+.expense-date {
+    display: flex;
+    margin: 1vw auto;
+    flex-direction: column;
+    width: 7rem;
+    height: 7rem;
+    border: 1px solid #ececec;
+    background-color: #2a2a2a;
+    color: white;
+    border-radius: 12px;
+    align-items: center;
+    justify-content: center;
+}
+
+.expense-date__month {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.expense-date__year {
+    font-size: 1rem;
+}
+
+.expense-date__day {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
