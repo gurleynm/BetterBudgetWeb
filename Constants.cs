@@ -11,6 +11,7 @@ namespace BetterBudgetWeb
     {
 
         public static bool Test = false; // true false
+        public static bool AllFree = true; // true false
         public static bool HideCookieBanner = true;
         public static EventHandler<bool> WeInChanged = (sender, value) => { };
 
@@ -185,7 +186,7 @@ namespace BetterBudgetWeb
         public static string Token = "Nice Try";
         public static Tier TIER_LEVEL { get; set; } = Tier.TRIAL;
         public static string TIER_STATUS { get; set; } = "active";
-        public static bool TryingItOut => TIER_LEVEL == Tier.TRIAL || TIER_LEVEL == Tier.DEMO;
+        public static bool TryingItOut => (TIER_LEVEL == Tier.TRIAL || TIER_LEVEL == Tier.DEMO) && !AllFree;
 
         public static bool mobileApp = false;
         public static bool MobileApp

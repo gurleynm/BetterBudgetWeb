@@ -1,15 +1,21 @@
 ﻿@using Stripe
 
-<div class="flex-r-100" style="justify-content:space-evenly;padding:5%;border-top:solid silver 2px;">
+<div class="flex-r-100" style="justify-content:space-evenly;padding:0% 5%;">
     <div class="flex-c-start">
-        <h4 style="font-family: 'CBB Default';color:silver">@TheProduct.Name</h4>
-        <h2 style="font-family: 'CBB Default';color:silver">@(Constants.Pretty(Price) + "/" + TimeFrame)</h2>
-        <h5 style="font-family: 'CBB Default';color:silver">@TheProduct.Description</h5>
+        @if (!Constants.AllFree)
+        {
+            <h4 style="font-family: 'CBB Default';color:silver">@TheProduct.Name</h4>
+            <h2 style="font-family: 'CBB Default';color:silver">@(Constants.Pretty(Price) + "/" + TimeFrame)</h2>
+            <h5 style="font-family: 'CBB Default';color:silver">@TheProduct.Description</h5>
+        }
     </div>
-    <div class="flex-c-start" style="width:50%;">
+    <div class="flex-c-start" style="width:@(Constants.AllFree ? "100%" : "50%");">
         @foreach (var feature in TheProduct.MarketingFeatures)
         {
-            <div><span class="oi oi-circle-check"></span> @feature.Name</div>
+            @if (!Constants.AllFree || !feature.Name.Contains("basic tier"))
+            {
+                <div><span class="oi oi-circle-check"></span> @feature.Name</div>
+            }
         }
     </div>
 </div>
@@ -23,6 +29,6 @@
     public IEnumerable<Price> Prices { get; set; }
 
     private string TimeFrame => Monthly ? "month" : "year";
-    private double Price => Monthly ?   Prices.FirstOrDefault(p => p.Recurring.Interval == "month").UnitAmount.Value / 100.0 :
+    private double Price => Monthly ? Prices.FirstOrDefault(p => p.Recurring.Interval == "month").UnitAmount.Value / 100.0 :
                                         Prices.FirstOrDefault(p => p.Recurring.Interval != "month").UnitAmount.Value / 100.0;
 }

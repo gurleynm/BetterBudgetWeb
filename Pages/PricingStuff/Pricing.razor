@@ -1,4 +1,4 @@
-﻿@page "/pricing"
+﻿@page "/features"
 
 @using BetterBudgetWeb.Repo
 @using Stripe
@@ -7,7 +7,7 @@
 <PageTitle>Pricing</PageTitle>
 
 <div class="flex-c-start" style="height:fit-content">
-    <h1 class="flex-r-100" style="font-family: 'CBB Default';color:cyan">Pricing</h1>
+    <h1 class="flex-r-100" style="font-family: 'CBB Default';color:cyan">Features</h1>
     <div class="flex-c" style="align-items:center">
         <div class="flex-c-start" style="border:solid gray 2px;border-radius:10px">
             <div class="flex-r-100">
@@ -15,11 +15,11 @@
             </div>
             @if (Products != null)
             {
-                <div class="flex-r" style="padding:.5em">
+                @* <div class="flex-r" style="padding:.5em">
                     <span class="@Constants.Options(ShowMonthly,"sel-span","unsel-span")" @onclick=ToggleMonthly>Monthly</span>
                     <span class="@Constants.Options(ShowMonthly,"unsel-span","sel-span")" @onclick=ToggleMonthly>Yearly</span>
-                </div>
-                <div class="flex-c-start" style="justify-content:space-evenly">
+                </div> *@
+                <div class="flex-c-start" style="justify-content:space-evenly;padding-bottom:5%">
                     @foreach (var prod in Products)
                     {
                         <TierListing TheProduct=prod Prices="ProductPrices[prod.Id]" Monthly="ShowMonthly" />
