@@ -129,7 +129,7 @@ else
 {
     <Confirmation Title="Your Reports" OnClose="ModalCancel"
                   RightBtnTxt="" >
-        <div class="modal-body" style="width:fit-content;max-height:85vh;color:black;overflow-y:scroll;padding-bottom:2em">
+        <div style="width:fit-content;max-height:85vh;color:black;overflow-y:scroll;padding-bottom:2em">
             @if (SFDs != null && SFDs.Count > 0)
             {
                 @if (Years != null && Years.Count > 1)
@@ -161,14 +161,13 @@ else
                     <div>
                         <table class="toggle-table">
                             <tr>
-                                <th colspan="4" style="background-color:darkblue;color:white;"><i>Summary</i></th>
+                                <th colspan="3" style="background-color:darkblue;color:white;"><i>Summary</i></th>
                             </tr>
                             <tr>
                                 <th></th>
                                 <th style="padding:5px">
                                     @Constants.Person1
-                                </th>
-                                <th style="padding:5px">
+                                    <br />
                                     @Constants.Person2
                                 </th>
                                 <th style="padding:5px">
@@ -177,8 +176,11 @@ else
                             </tr>
                             <tr>
                                 <td style="padding:5px">Transactions:</td>
-                                <td style="padding:5px">@Person1TransCount</td>
-                                <td style="padding:5px">@Person2TransCount</td>
+                                <td style="padding:5px">
+                                    @Person1TransCount
+                                    <br />
+                                    @Person2TransCount
+                                </td>
                                 <td style="padding:5px">
                                     @TotalTransCount
                                     @if (Person1TransCount + Person2TransCount > TotalTransCount)
@@ -192,35 +194,48 @@ else
                                 <td style="padding:5px">
                                     Projected Expense Total:
                                 </td>
-                                <td style="padding:5px">@Pretty(Person1Projected)</td>
-                                <td style="padding:5px">@Pretty(Person2Projected)</td>
+                                <td style="padding:5px">
+                                    @Pretty(Person1Projected)
+                                    <br />
+                                    @Pretty(Person2Projected)
+                                </td>
                                 <td style="padding:5px">@Pretty(TotalProjected)</td>
                             </tr>
                             <tr>
                                 <td style="padding:5px">
                                     Actual Expense Total:
                                 </td>
-                                <td class="income-bad" style="padding:5px">@Pretty(Person1Actual)</td>
-                                <td class="income-bad" style="padding:5px">@Pretty(Person2Actual)</td>
+                                <td class="income-bad" style="padding:5px">
+                                    @Pretty(Person1Actual)
+                                    <br />
+                                    @Pretty(Person2Actual)
+                                </td>
                                 <td class="income-bad" style="padding:5px">@Pretty(TotalActual)</td>
                             </tr>
                             <tr>
                                 <td style="padding:5px">
                                     Income + Added Equity Total:
                                 </td>
-                                <td class="income-good" style="padding:5px">@Pretty(Person1Income)</td>
-                                <td class="income-good" style="padding:5px">@Pretty(Person2Income)</td>
+                                <td class="income-good" style="padding:5px">
+                                    @Pretty(Person1Income)
+                                    <br />
+                                    @Pretty(Person2Income)
+                                
+                                </td>
                                 <td class="income-good" style="padding:5px">@Pretty(TotalIncome)</td>
                             </tr>
                             <tr>
-                                <td colspan="4" style="padding:5px">=</td>
+                                <td colspan="3" style="padding:5px">=</td>
                             </tr>
                             <tr>
                                 <td style="padding:5px">
                                     Net for Month:
                                 </td>
-                                <td class="@TranColor(Person1Income - Person1Actual)" style="padding:5px">@Pretty(Person1Income - Person1Actual)</td>
-                                <td class="@TranColor(Person2Income - Person2Actual)" style="padding:5px">@Pretty(Person2Income - Person2Actual)</td>
+                                <td class="@TranColor(Person1Income - Person1Actual)" style="padding:5px">
+                                    <span class="@TranColor(Person1Income - Person1Actual)">@Pretty(Person1Income - Person1Actual)</span>
+                                    <br />
+                                    <span class="@TranColor(Person2Income - Person2Actual)">@Pretty(Person2Income - Person2Actual)</span>
+                                </td>
                                 <td class="@TranColor(TotalIncome - TotalActual)" style="padding:5px">@Pretty(TotalIncome - TotalActual)</td>
                             </tr>
                         </table>
@@ -229,7 +244,6 @@ else
                     <div>
                         <ReportDynamic SFDs=@SFDs />
                     </div>
-
                 </div>
             }
             else
