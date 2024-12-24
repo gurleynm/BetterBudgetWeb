@@ -10,9 +10,8 @@ namespace BetterBudgetWeb.Repo
 
         public static async Task<StripeList<Product>> GetProducts()
         {
-            var options = new ProductListOptions { Limit = 3 };
             var service = new ProductService();
-            StripeList<Product> products = await service.ListAsync(options);
+            StripeList<Product> products = await service.ListAsync();
 
             return products;
         }

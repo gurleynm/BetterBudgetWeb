@@ -4,7 +4,7 @@
 @using Stripe
 @inject NavigationManager NavMan
 
-<PageTitle>Pricing</PageTitle>
+<PageTitle>Features</PageTitle>
 
 <div class="flex-c-start" style="height:fit-content">
     <h1 class="flex-r-100" style="font-family: 'CBB Default';color:cyan">Features</h1>
@@ -15,10 +15,13 @@
             </div>
             @if (Products != null)
             {
-                @* <div class="flex-r" style="padding:.5em">
-                    <span class="@Constants.Options(ShowMonthly,"sel-span","unsel-span")" @onclick=ToggleMonthly>Monthly</span>
-                    <span class="@Constants.Options(ShowMonthly,"unsel-span","sel-span")" @onclick=ToggleMonthly>Yearly</span>
-                </div> *@
+                @if (!Constants.AllFree)
+                {
+                    <div class="flex-r" style="padding:.5em">
+                        <span class="@Constants.Options(ShowMonthly,"sel-span","unsel-span")" @onclick=ToggleMonthly>Monthly</span>
+                        <span class="@Constants.Options(ShowMonthly,"unsel-span","sel-span")" @onclick=ToggleMonthly>Yearly</span>
+                    </div>
+                }
                 <div class="flex-c-start" style="justify-content:space-evenly;padding-bottom:5%">
                     @foreach (var prod in Products)
                     {
@@ -28,7 +31,22 @@
             }
             else
             {
-                <LoadingDots />
+                @if (Constants.AllFree)
+                {
+                    <div class="flex-c-start" style="justify-content:space-evenly;padding-bottom:5%">
+                        <!--!--><div class="flex-r-100" style="justify-content:space-evenly;padding:0% 5%;">
+                            <div class="flex-c-start"></div><!--!-->
+                            <div class="flex-c-start" style="width:100%;"><div><!--!--><span class="oi oi-circle-check"></span> Track account transactions</div><div><!--!--><span class="oi oi-circle-check"></span> Utilize savings envelopes</div><div><!--!--><span class="oi oi-circle-check"></span> Record recurring transactions</div><div><!--!--><span class="oi oi-circle-check"></span> Export data to CSV</div></div>
+                        </div><!--!--><div class="flex-r-100" style="justify-content:space-evenly;padding:0% 5%;">
+                            <div class="flex-c-start"></div><!--!-->
+                            <div class="flex-c-start" style="width:100%;"><div><!--!--><span class="oi oi-circle-check"></span> Ability to track stocks, ETFs &amp; cryptocurrencies [BETA]</div><div><!--!--><span class="oi oi-circle-check"></span> Forecast your expenses and net worth in later months</div><div><!--!--><span class="oi oi-circle-check"></span> Add transaction presets for frequently made purchases</div></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <LoadingDots />
+                }
             }
         </div>
     </div>
@@ -42,21 +60,24 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Products = await StripeRepo.GetProducts();
-        Prices = await StripeRepo.GetPrices();
-
-        ProductPrices = new Dictionary<string, IEnumerable<Price>>();
-
-        foreach (var prod in Products)
+        if (!Constants.AllFree)
         {
-            ProductPrices[prod.Id] = Prices.Where(p => p.ProductId == prod.Id);
+            Products = await StripeRepo.GetProducts();
+            Prices = await StripeRepo.GetPrices();
 
-            var price = ProductPrices[prod.Id].FirstOrDefault(p => p.Recurring.Interval == "month");
-            if (price == null)
-                continue;
-            prod.DefaultPrice = price;
+            ProductPrices = new Dictionary<string, IEnumerable<Price>>();
+
+            foreach (var prod in Products)
+            {
+                ProductPrices[prod.Id] = Prices.Where(p => p.ProductId == prod.Id);
+
+                var price = ProductPrices[prod.Id].FirstOrDefault(p => p.Recurring.Interval == "month");
+                if (price == null)
+                    continue;
+                prod.DefaultPrice = price;
+            }
+            Products = Products.OrderBy(p => p.DefaultPrice.UnitAmount);
         }
-        Products = Products.OrderBy(p => p.DefaultPrice.UnitAmount);
     }
 
     private void ToggleMonthly()
