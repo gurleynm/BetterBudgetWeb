@@ -333,7 +333,7 @@ namespace BetterBudgetWeb.Runner
             {
                 snapshot = Snapshots[index];
                 MonthIndex = PrevMonthYear.Month;
-                CurMonthYear = new DateTime(snapshot.Year, Constants.Months.IndexOf(snapshot.Month), 1);
+                CurMonthYear = new DateTime(snapshot.Year, Constants.Months.IndexOf(snapshot.Month) + 1, 1);
                 int Months = ((PrevMonthYear.Year - CurMonthYear.Year) * 12) + PrevMonthYear.Month - CurMonthYear.Month;
                 //if (Months >= 0)
                 while (Months > 0)
