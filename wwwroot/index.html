@@ -142,7 +142,16 @@
         let IsMobile;
         window.onload = function () {
             google.charts.load('current', { 'packages': ['sankey', 'corechart', 'line'] });
-            IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navigator.userAgent);
+            IsMobile = document.URL.includes("mobile."); //resolves true/false
+            const navUser = navigator.userAgent;
+            const IsiPad = (navigator.userAgent.match(/Mac/) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+            if (!IsMobile)
+            {
+                if (IsiPad)
+                    IsMobile = true;
+                else
+                    IsMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(navUser);
+            }
 
             const LoadImg = document.getElementById('LoadImg');
             if (LoadImg) {
