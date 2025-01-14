@@ -10,10 +10,7 @@
         {
             @if (CreatingAccount)
             {
-                <CreateAccountCarousel @bind-CreatingAccount=@CreatingAccount CheckIn="CheckIn"
-                                       @bind-Username=@Username @bind-Username2=@Username2
-                                       @bind-Email=@Email @bind-Email2=@Email2 @bind-ErrorMsg=@ErrorMsg
-                                       @bind-Password2=@Password2 @bind-Password=@Password @bind-Hide=Hide />
+                <SignUpEmail />
             }
             else if (ForgotPassword)
             {
@@ -82,6 +79,22 @@
 </div>
 
 @code {
+    public bool signIsUp;
+
+    [CascadingParameter]
+    public bool SignIsUp
+    {
+        get { return signIsUp; }
+        set
+        {
+            if (signIsUp == value)
+                return;
+            signIsUp = value;
+
+            CreatingAccount = signIsUp;
+        }
+    }
+
     [Parameter]
     public RenderFragment ChildContent { get; set; }
 

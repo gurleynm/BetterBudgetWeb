@@ -144,19 +144,7 @@ else
                 return false;
             }
 
-            if (CreatingAccount)
-            {
-                countAttempt = false;
-                Disabled = true;
-                StateHasChanged();
-                Constants.WeIn = await UserRepo.AddUser(username, username2, email, email2, password, password2);
-
-                if (!Constants.WeIn)
-                    ErrorMsg = "Denied. One of your usernames is already taken.";
-
-                StateHasChanged();
-            }
-            else
+            if (!CreatingAccount)
             {
                 Disabled = true;
                 StateHasChanged();

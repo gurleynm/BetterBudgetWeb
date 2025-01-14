@@ -708,7 +708,7 @@
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
 
         curUrl = curUrl.Split("/")[0];
-        List<string> whitelisted = new List<string> { "features", "FAQs", "sign" };
+        List<string> whitelisted = new List<string> { "features", "FAQs", "sign", "create" };
 
         if (!Constants.WeIn)
             whitelisted.Add("contact-us");

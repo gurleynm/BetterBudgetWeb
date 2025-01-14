@@ -100,6 +100,43 @@ namespace BetterBudgetWeb.Repo
 
             return true;
         }
+        public static async Task<bool> AddUser(User user)
+        {
+            if (Constants.Token == "DEMO")
+                return true;
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            string adjustedUrl = baseURI;
+
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
+
+            requestMessage.Content = JsonContent.Create(user);
+
+            var response = await client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            if (string.IsNullOrEmpty(content))
+                return false;
+
+            if (content.Contains("message"))
+                return false;
+
+            CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
+
+            Constants.Person1 = CA.Token.Name;
+            Constants.Token = CA.Token.Token;
+
+            return true;
+        }
         public static async Task<bool> AddUser(string user, string user2, string email, string email2, string pass, string pass2)
         {
             if (Constants.Token == "DEMO")
@@ -242,6 +279,77 @@ namespace BetterBudgetWeb.Repo
 
             return content.Contains("Success");
         }
+        public static async Task<string> SendCreateEmails(string email1, string email2)
+        {
+            if (Constants.Token == "DEMO")
+                return "";
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            string adjustedUrl = baseURI + "/SignUp" + $"?email={email1}&email2={email2}";
+
+            HttpClient client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
+
+            requestMessage.Content = JsonContent.Create("");
+
+            var response = await client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(content))
+                return "both";
+
+            if (content.Contains("Success"))
+                return "";
+
+            if (content.Contains("message"))
+            {
+                var json = JObject.Parse(content);
+                return json["message"].ToString();
+            }
+
+            return "both";
+        }
+        public static async Task<string> VerifyCreateToken(string token)
+        {
+            if (Constants.Token == "DEMO")
+                return "";
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            string adjustedUrl = baseURI + "/Create" + $"?createToken={token}";
+
+
+            HttpClient client = new HttpClient();
+
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Put, adjustedUrl);
+
+            requestMessage.Content = JsonContent.Create("");
+
+            var response = await client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (!response.IsSuccessStatusCode)
+                return "";
+
+            if (string.IsNullOrEmpty(content))
+                return "";
+
+            if (content.Contains("Success"))
+            {
+                var json = JObject.Parse(content);
+                return json["Email"].ToString();
+            }
+
+            return "";
+        }
+
         public static async Task<bool> VerifyResetToken(string token)
         {
             if (Constants.Token == "DEMO")

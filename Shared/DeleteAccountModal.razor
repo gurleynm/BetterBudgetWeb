@@ -107,9 +107,9 @@
         {
             ErrorMsgPass = "";
 
-            if (User1 != Constants.Person1)
+            if (User1 != Constants.CUR_USER_NAME)
                 ErrorMsgPass = "Name is incorrect.";
-            else if (User2 != Constants.Person2)
+            else if (User2 != OtherUser)
                 ErrorMsgPass = "Second name is incorrect.";
             else if (string.IsNullOrEmpty(Password))
                 ErrorMsgPass = "Password must be entered";

@@ -13,11 +13,7 @@
     <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
         <label style="color:white;margin-right:1em">Email:</label>
         <div class="flex-c">
-            <input class="better" placeholder="Email" type="email" @bind-value=Email />
-            @if (!string.IsNullOrEmpty(ErrEmail))
-            {
-                <span style="color:red">@ErrEmail</span>
-            }
+            <input class="better" disabled placeholder="Email" type="email" @bind-value=Email />
         </div>
     </div>
     <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
@@ -82,10 +78,6 @@
             if (email == value) return;
             email = value;
             EmailChanged.InvokeAsync(value);
-
-            ErrEmail = "";
-            if (!Constants.IsValidEmail(email))
-                ErrEmail = "Invalid email";
         }
     }
     [Parameter]
@@ -126,19 +118,12 @@
     private bool passValidation;
 
     private string ErrUser = "";
-    private string ErrEmail = "";
 
     public async Task<bool> CheckConditions()
     {
         if (string.IsNullOrEmpty(Username))
         {
             ErrUser = "Username must be set";
-            return false;
-        }
-
-        if (string.IsNullOrEmpty(Email))
-        {
-            ErrEmail = "Email must be set";
             return false;
         }
 
@@ -149,11 +134,9 @@
                 ErrUser = "Error accessing API. Please refresh and attempt again";
             else if (chk == "Username")
                 ErrUser = "Username already taken.";
-            else if (chk == "Email")
-                ErrEmail = "Email already taken.";
             StateHasChanged();
         }
 
-        return string.IsNullOrEmpty(ErrUser) && string.IsNullOrEmpty(ErrEmail);
+        return string.IsNullOrEmpty(ErrUser);
     }
 }

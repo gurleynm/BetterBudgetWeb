@@ -1,0 +1,221 @@
+﻿@page "/create/{CreateToken}"
+@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@inject NavigationManager NavMan
+
+@if (!string.IsNullOrEmpty(Email))
+{
+    <div style="display:block;background-color:transparent;border-radius:1vw;width:auto;padding:1em;padding-bottom:2vw">
+        <div style="display:flex;flex-direction:column;justify-content:space-evenly; padding:1em;align-items:start">
+            <label style="color:white;margin-right:1em">Email: @Email </label>
+            <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
+                <label style="color:white;margin-right:1em">Username:</label>
+                <div class="flex-c">
+                    <input class="better" placeholder="Username" type="text" @bind-value=Username />
+                    @if (!string.IsNullOrEmpty(ErrUser))
+                    {
+                        <span style="color:red">@ErrUser</span>
+                    }
+                </div>
+            </div>
+            <div class="flex-c" style="justify-content:space-evenly;margin-bottom:1em">
+                <label style="color:white;margin-right:1em">Password:</label>
+                <div class="flex-r">
+                    <PasswordInput Enter="Enter" Placeholder="Password" @bind-Password=@Password ShowAny=false @bind-ShowPass=@ShowEyeIntermediate />
+                </div>
+            </div>
+            <div class="flex-c" style="justify-content:space-evenly">
+                <label style="color:white;margin-right:1em">Confirm Password:</label>
+                <div class="flex-r">
+                    <PasswordInput Enter="Enter" Placeholder="Confirm Password" @bind-Password=@ConfirmPassword ShowEye=false @bind-ShowPass=@ShowEyeIntermediate />
+                </div>
+                <div style="display: flex;">
+                    <div style="flex-grow: 1; width: 0;">
+                        By creating an account, you agree to the Couple's Better Budget
+                        <a style="text-align:center;" href="Policy.html" onclick="window.open('Policy.html',
+                         'newwindow',
+                         'width=300,height=250');return false;">Privacy Policy</a> and
+                        <a style="text-align:center;" href="TermsOfService.html" onclick="window.open('Policy.html',
+                         'newwindow',
+                         'width=300,height=250');return false;">Terms of Service</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <PasswordRules @ref=@passwordRules Password="@Password" ConfirmedPassword="@ConfirmPassword" ConfirmedRequired="true" />
+
+        @if (!Disabled)
+        {
+            <div class="flex-r" style="justify-content:space-between;padding-top:1em">
+                <button class="btn btn-primary" style="width:100%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan" @onclick="Submit">Sign Up</button>
+            </div>
+        }
+        else
+        {
+            <LoadingDots />
+        }
+    </div>
+}
+else{
+    <h3 class="flex-r-100" style="text-align:center">This token has already been used.</h3>
+}
+
+@code {
+    private bool ShowEyeIntermediate { get; set; }
+
+    [Parameter]
+    public string CreateToken { get; set; }
+
+    [Parameter]
+    public Action CheckIn { get; set; }
+
+    [Parameter]
+    public Action<KeyboardEventArgs> Enter { get; set; }
+
+    [Parameter]
+    public string Username
+    {
+        get { return username; }
+        set
+        {
+            if (username == value) return;
+            username = value;
+            UsernameChanged.InvokeAsync(value);
+
+            ErrUser = "";
+            string tmpUser = username.Replace("-", "").Replace("_", "").Replace("_", ".");
+            bool HasSpecChars = tmpUser.Any(c => !char.IsLetterOrDigit(c));
+            if (username.Length < 6)
+                ErrUser = "Username must be at least 6 characters";
+            else if (HasSpecChars)
+                ErrUser = "Username cannot contain special characters.";
+        }
+    }
+    [Parameter]
+    public EventCallback<string> UsernameChanged { get; set; }
+
+    [Parameter]
+    public string Email
+    {
+        get { return email; }
+        set
+        {
+            if (email == value) return;
+            email = value;
+            EmailChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<string> EmailChanged { get; set; }
+
+    [Parameter]
+    public string Password
+    {
+        get { return password; }
+        set
+        {
+            if (password == value) return;
+            password = value;
+            PasswordChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<string> PasswordChanged { get; set; }
+
+    [Parameter]
+    public string ConfirmPassword
+    {
+        get { return confirmPassword; }
+        set
+        {
+            if (confirmPassword == value) return;
+            confirmPassword = value;
+            ConfirmPasswordChanged.InvokeAsync(value);
+        }
+    }
+    [Parameter]
+    public EventCallback<string> ConfirmPasswordChanged { get; set; }
+
+    private string username;
+    private string email;
+    private string password;
+    private string confirmPassword;
+    private bool passValidation;
+    private PasswordRules passwordRules = new PasswordRules();
+
+    private string ErrUser = "";
+
+    public async Task<bool> CheckConditions()
+    {
+        if (string.IsNullOrEmpty(Username))
+        {
+            ErrUser = "Username must be set";
+            return false;
+        }
+
+        string chk = await UserRepo.CheckUserEmail(username, email);
+        if (!string.IsNullOrEmpty(chk))
+        {
+            if (chk == "404")
+                ErrUser = "Error accessing API. Please refresh and attempt again";
+            else if (chk == "Username")
+                ErrUser = "Username already taken.";
+            StateHasChanged();
+        }
+
+        return string.IsNullOrEmpty(ErrUser);
+    }
+    public bool Disabled { get; set; }
+    public bool ValidCreate => !string.IsNullOrEmpty(Email);
+
+    protected override async Task OnInitializedAsync()
+    {
+        Constants.CurPage = "Create User";
+        Email = await UserRepo.VerifyCreateToken(CreateToken);
+        StateHasChanged();
+    }
+
+    private async void Submit()
+    {
+        Disabled = true;
+        ErrUser = "";
+        StateHasChanged();
+
+        bool Passed = passwordRules.CheckConditions();
+        if (Passed)
+        {
+            if (await CheckConditions())
+            {
+                Disabled = true;
+                StateHasChanged();
+                User NewUser = new User(username, email, password);
+                NewUser.Token = CreateToken;
+
+                Constants.WeIn = await UserRepo.AddUser(NewUser);
+
+                if (Constants.WeIn)
+                {
+                    await sessionStorage.SetItemAsync("token", Constants.Token);
+
+                    if (string.IsNullOrEmpty(username))
+                    {
+                        Constants.CUR_USER_NAME = await sessionStorage.GetItemAsync<string>("CUR_USER_NAME");
+                        await Constants.Init(true);
+                    }
+                    else
+                    {
+                        Constants.CUR_USER_NAME = username;
+                        await sessionStorage.SetItemAsync("CUR_USER_NAME", Constants.CUR_USER_NAME);
+                        await Constants.Init(true);
+                        NavMan.NavigateTo("home");
+                    }
+                }
+            }
+        }
+
+        Disabled = false;
+        StateHasChanged();
+    }
+}

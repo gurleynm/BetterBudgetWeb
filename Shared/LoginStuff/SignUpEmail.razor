@@ -1,0 +1,79 @@
+﻿@using BetterBudgetWeb.Repo
+<div class="flex-c">
+    <div class="flex-c" style="margin:1em 0">
+        <label style="color:white">Enter your email:</label>
+        <div class="flex-r">
+            <input class="better" id="user" placeholder="Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email1 = (string) ui.Value;})" />
+        </div>
+        <div class="flex-r">
+            <span style="color:@EmailErrorMsgColor1">@EmailErrorMsg1</span>
+        </div>
+    </div>
+    <div class="flex-c" style="margin:1em 0">
+        <label style="color:white">Enter your partner's email:</label>
+        <div class="flex-r">
+            <input class="better" id="user" placeholder="Partner's Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email2 = (string) ui.Value;})" />
+        </div>
+        <div class="flex-r">
+            <span style="color:@EmailErrorMsgColor2">@EmailErrorMsg2</span>
+        </div>
+    </div>
+    <div class="flex-r">
+        <button class="btn btn-primary" disabled=@(string.IsNullOrEmpty(Email1) && string.IsNullOrEmpty(Email2)) @onclick=SendEmail>Submit</button>
+    </div>
+</div>
+
+@code {
+    string Email1 = "";
+    string Email2 = "";
+    string EmailErrorMsg1 = "";
+    string EmailErrorMsg2 = "";
+    string EmailErrorMsgColor1 = "";
+    string EmailErrorMsgColor2 = "";
+
+    private async void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+            SendEmail();
+    }
+
+    private async void SendEmail()
+    {
+        EmailErrorMsgColor1 = "red";
+        EmailErrorMsgColor2 = "red";
+        EmailErrorMsg1 = "";
+        EmailErrorMsg2 = "";
+
+        Email1 = Email1.Trim();
+        Email2 = Email2.Trim();
+
+        if (!Constants.IsValidEmail(Email1))
+            EmailErrorMsg1 = "Invalid email";
+
+        if (!Constants.IsValidEmail(Email2))
+            EmailErrorMsg2 = "Invalid email";
+
+        if (Email1 == Email2)
+            EmailErrorMsg2 = "Emails must be different.";
+
+        if (string.IsNullOrEmpty(EmailErrorMsg1) && string.IsNullOrEmpty(EmailErrorMsg2))
+        {
+            string EmailsSent = await UserRepo.SendCreateEmails(Email1, Email2);
+            if (string.IsNullOrEmpty(EmailsSent))
+            {
+                EmailErrorMsgColor2 = "green";
+                EmailErrorMsg2 = "Email sent. Check inboxes for account creation links";
+            }
+            else if (EmailsSent.Contains(Email1))
+            {
+                EmailErrorMsg1 = EmailsSent;
+            }
+            else
+            {
+                EmailErrorMsg2 = EmailsSent;
+            }
+
+            StateHasChanged();
+        }
+    }
+}

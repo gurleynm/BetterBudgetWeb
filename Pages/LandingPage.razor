@@ -12,7 +12,7 @@
     @if (!Constants.Mobile)
     {
         <div id="" class="flex-r"
-             style="flex-wrap:wrap;background-color:indigo;justify-content:space-between;width:100%;position:sticky;top:0;padding:0;align-items:center;z-index:10">
+        style="flex-wrap:wrap;background-color:indigo;justify-content:space-between;width:100%;position:sticky;top:0;padding:0;align-items:center;z-index:10">
             @if (!string.IsNullOrEmpty(Announcement))
             {
                 <div class="flex-r-100" style="height:fit-content;background-image:linear-gradient(to right, #B9AFF8,cyan);color:black;font-family:'CBB Default'">
@@ -25,8 +25,8 @@
                     @if (!LoadingDemo)
                     {
                         <button style="background-color:transparent;font-family:'CBB Default';"
-                                class="btn-grad"
-                                @onclick=GetDemo>
+                        class="btn-grad"
+                        @onclick=GetDemo>
                             View Demo
                         </button>
                     }
@@ -50,8 +50,8 @@
                     </a>
                 </div>
                 <div class="flex-r" style="align-items:center;margin-right:2vw">
-                    <a href="sign/in" style="font-family:'CBB Default';margin-right:1em;font-size:large;color:white">Log in</a>
-                    <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Sign Up</button>
+                    <a @onclick=@(() => ToggleSign(false)) href="sign/in" style="font-family:'CBB Default';margin-right:1em;font-size:large;color:white">Log in</a>
+                    <button class="btn btn-primary" @onclick=@(() => ToggleSign(true)) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Sign Up</button>
                 </div>
             }
 
@@ -64,7 +64,9 @@
         </CascadingValue>
     }
     <div class="flex-r" style="height:fit-content;flex-wrap:wrap;">
-        @ChildContent
+        <CascadingValue Value="SignIsUp">
+            @ChildContent
+        </CascadingValue>
         <CookieBanner />
     </div>
 </div>
@@ -72,6 +74,8 @@
 @code {
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    public bool SignIsUp { get; set; }
 
     EventCallback GrabDemo => EventCallback.Factory.Create(this, GetDemo);
 
@@ -90,6 +94,16 @@
         Constants.WeIn = false;
 
         sessionStorage.SetItemAsync("token", "");
+    }
+
+    private void ToggleSign(bool signIsUp)
+    {
+        SignIsUp = signIsUp;
+
+        if (signIsUp)
+            NavMan.NavigateTo("sign/up");
+        else
+            NavMan.NavigateTo("sign/in");
     }
 
     private async void GetDemo()
