@@ -6,7 +6,11 @@
         <div>
             <h2 style="text-align:center;color:white;font-family:'CBB Default';">@($"Welcome")</h2>
         </div>
-        @if (!NavMan.BaseUri.Contains("mobile."))
+        @if (NavMan.BaseUri.Contains("mobile.") && NavMan.Uri.Contains("user="))
+        {
+            <LoadingDots />
+        }
+        else
         {
             @if (CreatingAccount)
             {
@@ -60,7 +64,7 @@
                 @ChildContent
             }
 
-            @if (!Hide && !NavMan.BaseUri.Contains("mobile."))
+            @if (!Hide)
             {
                 <hr />
                 <div class="flex-r">
@@ -70,10 +74,6 @@
                     </span>
                 </div>
             }
-        }
-        else
-        {
-            <LoadingDots />
         }
     </div>
 </div>

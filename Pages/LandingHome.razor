@@ -52,8 +52,6 @@
     {
         Constants.MobileChanged += MobileUpdated;
         Constants.MobileApp = NavMan.BaseUri.Contains("mobile.");
-        if (Constants.MobileApp)
-            NavMan.NavigateTo("home");
     }
     private void MobileUpdated(object sender, bool m)
     {

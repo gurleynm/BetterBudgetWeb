@@ -258,15 +258,15 @@
             }
             else if (!Constants.WeIn)
             {
-                @if (!NavMan.BaseUri.Contains("mobile."))
+                @if ((NavMan.BaseUri.Contains("mobile.") && NavMan.Uri.Contains("user=")))
+                {
+                    <Login />
+                }
+                else
                 {
                     <LandingPage>
                         <Login />
                     </LandingPage>
-                }
-                else
-                {
-                    <Login />
                 }
             }
             else if (Constants.TIER_STATUS == "expired")

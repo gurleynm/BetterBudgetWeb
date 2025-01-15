@@ -42,8 +42,9 @@
                     <span style="font-family:'CBB Default';color:white">FAQs</span>
                 </NavLink>
             </div>
-            <div class="flex-r-100" style="justify-content:end;align-items:center">
-                <div style="font-family:'CBB Default';color:white;padding:1em" @onclick=@(()=>NavMan.NavigateTo("sign/in"))>Log in</div>
+            <div class="flex-r" style="align-items:center;margin:1em 0 1em 0">
+                <a @onclick=@(() => ToggleSign(false)) href="sign/in" style="font-family:'CBB Default';margin-right:1em;font-size:large;color:white">Log in</a>
+                <button class="btn btn-primary" @onclick=@(() => ToggleSign(true)) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Sign Up</button>
             </div>
         </nav>
     </div>
@@ -52,11 +53,16 @@
 @code {
     [CascadingParameter]
     public EventCallback GrabDemo { get; set; }
+    
+    [CascadingParameter]
+    public bool SignIsUp { get; set; }
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private bool LoadingDemo { get; set; }
+
     private async void LoadDemo()
     {
         LoadingDemo = true;
@@ -66,5 +72,15 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private void ToggleSign(bool signIsUp)
+    {
+        SignIsUp = signIsUp;
+
+        if (signIsUp)
+            NavMan.NavigateTo("sign/up");
+        else
+            NavMan.NavigateTo("sign/in");
     }
 }
