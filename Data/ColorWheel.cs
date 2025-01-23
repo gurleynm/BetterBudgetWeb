@@ -4,7 +4,7 @@ namespace BetterBudgetWeb.Data
 {
     public class ColorWheel
     {
-        private static Color[] _colors = { 
+        private static Color[] _colors = {
             Color.Indigo,
             Color.Aquamarine,
             Color.DarkCyan,
@@ -31,7 +31,7 @@ namespace BetterBudgetWeb.Data
         public static Color NextColor()
         {
             _colorsIndex++;
-            if(_colorsIndex == _colors.Length)
+            if (_colorsIndex == _colors.Length)
                 _colorsIndex = 0;
 
             return _colors[_colorsIndex];

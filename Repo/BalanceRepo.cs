@@ -29,6 +29,7 @@ namespace BetterBudgetWeb.Repo
 
             CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
             Balances = catcher.Balances;
+            Constants.Balances = new List<Balance>(Balances);
 
             return Balances;
         }
@@ -46,46 +47,15 @@ namespace BetterBudgetWeb.Repo
             if (string.IsNullOrEmpty(name))
                 return "";
 
-            bool FirstLoad = false;
-            if (Balances == null)
-            {
-                Balances = GetBalances();
-                if (Balances == null) return null;
-
-                FirstLoad = false;
-            }
-
-            var TheBal = Balances.FirstOrDefault(b => b.Name == name);
-
-            if (TheBal == null && !FirstLoad)
-            {
-                Balances = GetBalances();
-                TheBal = Balances.FirstOrDefault(b => b.Name == name);
-            }
-
+            var TheBal = Balances?.FirstOrDefault(b => b.Name == name);
             return TheBal == null ? null : TheBal.Id;
         }
         public static string GetName(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id) || id == "NONE")
                 return "";
 
-            bool FirstLoad = false;
-            if (Balances == null)
-            {
-                Balances = GetBalances();
-                if (Balances == null) return "";
-
-                FirstLoad = false;
-            }
-
-            var TheBal = Balances.FirstOrDefault(b => b.Id == id);
-
-            if (TheBal == null && !FirstLoad)
-            {
-                Balances = GetBalances();
-                TheBal = Balances.FirstOrDefault(b => b.Id == id);
-            }
+            var TheBal = Constants.Balances?.FirstOrDefault(b => b.Id == id);
 
             return TheBal == null ? "" : TheBal.Name;
         }
@@ -165,15 +135,12 @@ namespace BetterBudgetWeb.Repo
         }
         public static Balance GetBalanceFromName(string name, bool IgnoreCase = false)
         {
-            if (Balances == null)
-                GetBalances();
-
             name = name.Replace("'", "’");
 
             if (IgnoreCase)
                 name = name.ToUpper();
 
-            return Balances.FirstOrDefault(b => (IgnoreCase && b.Name.ToUpper() == name) || b.Name == name);
+            return Constants.Balances?.FirstOrDefault(b => (IgnoreCase && b.Name.ToUpper() == name) || b.Name == name);
         }
     }
 }

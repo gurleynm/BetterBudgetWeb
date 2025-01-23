@@ -1,5 +1,4 @@
 ﻿using BetterBudgetWeb.Data;
-using static BetterBudgetWeb.MainMenuItems.AddExpense;
 
 namespace BetterBudgetWeb.Runner
 {

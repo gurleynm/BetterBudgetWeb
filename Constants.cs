@@ -672,10 +672,8 @@ namespace BetterBudgetWeb
             {
                 case "BASIC_TIER":
                     return Tier.BASIC_TIER;
-
                 case "ADVANCED_TIER":
                     return Tier.ADVANCED_TIER;
-
                 case "GOD_TIER":
                     return Tier.GOD_TIER;
                 case "TRIAL":

@@ -220,6 +220,11 @@
             return IsMobile;
         }
         function drawLineChart(lineList, chartId) {
+            const cId = document.getElementById(chartId);
+            cId.style.height = "20em";
+            cId.innerHTML = "<span class=\"oi oi-media-record first-dot\"></span>" +
+                "<span class=\"oi oi-media-record second-dot\"></span>"+
+                "<span class=\"oi oi-media-record third-dot\"></span>"
             var data = new google.visualization.DataTable();
             lineList = JSON.parse(lineList);
 
@@ -314,7 +319,7 @@
                 chartArea: { right: '10%' }
             };
 
-            var chart = new google.visualization.LineChart(document.getElementById(chartId));
+            var chart = new google.visualization.LineChart(cId);
             chart.draw(dataView, options);
             //var chartLineWithDash = new google.visualization.LineChart(document.getElementById(chartId));
             //chartLineWithDash.draw(data,options);

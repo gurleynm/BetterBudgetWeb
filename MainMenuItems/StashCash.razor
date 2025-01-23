@@ -182,8 +182,8 @@ else
         }
     }
     private Data.Envelope SelectedEnv { get; set; }
-    private Balance Person1Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person1Account);
-    private Balance Person2Bal => BalanceRepo.GetBalances().FirstOrDefault(b => b.Id == SelectedEnv.Person2Account);
+    private Balance Person1Bal => Constants.Balances.FirstOrDefault(b => b.Id == SelectedEnv.Person1Account);
+    private Balance Person2Bal => Constants.Balances.FirstOrDefault(b => b.Id == SelectedEnv.Person2Account);
 
     public bool Mobile => Constants.Mobile;
 

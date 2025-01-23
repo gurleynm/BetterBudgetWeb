@@ -89,3 +89,10 @@ a, .btn-link {
     font-size: 2.5rem;
     font-weight: bold;
 }
+
+.loading-holder {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 1em
+}
