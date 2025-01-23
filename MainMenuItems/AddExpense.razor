@@ -225,6 +225,25 @@
     [Parameter]
     public bool Added { get; set; }
 
+    private bool disabled;
+    [Parameter]
+    public bool Disabled
+    {
+        get { return disabled; }
+        set
+        {
+            if (disabled == value) return;
+            disabled = value;
+
+            if (!disabled && string.IsNullOrEmpty(ErrorMsg))
+                NewTrans = new NewTransaction();
+            DisabledChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> DisabledChanged { get; set; }
+
     private NewTransaction newTrans { get; set; }
     [Parameter]
     public NewTransaction NewTrans
@@ -263,8 +282,6 @@
     }
     private string ErrorMsg;
     private string ErrorMsgColor = "red";
-
-    private bool Disabled;
 
     protected override Task OnInitializedAsync()
     {
@@ -343,10 +360,9 @@
             }
 
             await OnAddConfirm.InvokeAsync(NewTrans);
-            NewTrans = new NewTransaction();
             ShowSecond = false;
         }
-
-        Disabled = false;
+        else
+            Disabled = false;
     }
 }

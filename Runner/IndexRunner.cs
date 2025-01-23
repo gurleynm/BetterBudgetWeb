@@ -164,16 +164,8 @@ namespace BetterBudgetWeb.Runner
             double joint_neg = Constants.Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && bal.BalanceType.Contains("Loan")).Sum(b => b.Value) / 2;
             double joint_pos = Constants.Balances.Where(bal => bal.Person.ToUpper() == "JOINT" && !bal.BalanceType.Contains("Loan") && !bal.BalanceType.Contains("Debt")).Sum(b => b.Value) / 2;
 
-            double stocks = 0;
-            try
-            {
-                stocks = Constants.Securities.Where(stock => stock.Person.ToUpper() == "JOINT").Sum(s => s.Value) / 2;
-                stocks += Constants.Securities.Where(stock => stock.Person == person).Sum(s => s.Value);
-            }
-            catch (Exception e)
-            {
-
-            }
+            double stocks = Constants.Securities.Where(stock => stock.Person.ToUpper() == "JOINT").Sum(s => s.Value) / 2;
+            stocks += Constants.Securities.Where(stock => stock.Person == person).Sum(s => s.Value);
 
             return positive + joint_pos - joint_neg - negative + stocks;
         }
@@ -318,15 +310,6 @@ namespace BetterBudgetWeb.Runner
                 });
                 SnapCnt++;
             }
-            else
-            {
-                var exists = Snapshots.FirstOrDefault(s => s.Month + " " + s.Year == Constants.MonthYear());
-                if (exists != null)
-                {
-                    exists.Person1NetWorth = CalculateNetWorth(Constants.Person1, false);
-                    exists.Person2NetWorth = CalculateNetWorth(Constants.Person2, false);
-                }
-            }
 
             int MonthIndex;
             for (int index = SnapCnt - 1; Plots.Count < 6 && index > -1; index--)
@@ -346,11 +329,15 @@ namespace BetterBudgetWeb.Runner
                     if (Plots.Count == 6)
                         break;
                 }
-                //else
-                //    Plots.Add(new LinePlot(snapshot.Month, snapshot.Person1NetWorth + snapshot.Person2NetWorth, true));
 
                 PrevMonthYear = new DateTime(CurMonthYear.Ticks);
             }
+
+            var existsPlot = Plots.FirstOrDefault(p => p.Month == Constants.Months[DateTime.Now.Month - 1]);
+
+            if (Plots.Count > 0)
+                Plots[0].Amount = Constants.TotalNetWorth;
+
             Plots.Reverse();
             return Plots;
         }
