@@ -145,8 +145,7 @@
             IsMobile = document.URL.includes("mobile."); //resolves true/false
             const navUser = navigator.userAgent;
             const IsiPad = (navigator.userAgent.match(/Mac/) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
-            if (!IsMobile)
-            {
+            if (!IsMobile) {
                 if (IsiPad)
                     IsMobile = true;
                 else
@@ -221,10 +220,9 @@
         }
         function drawLineChart(lineList, chartId) {
             const cId = document.getElementById(chartId);
-            cId.style.height = "20em";
-            cId.innerHTML = "<span class=\"oi oi-media-record first-dot\"></span>" +
-                "<span class=\"oi oi-media-record second-dot\"></span>"+
-                "<span class=\"oi oi-media-record third-dot\"></span>"
+            cId.innerHTML = "<div class=\"loading-holder\" style=\"height:100%;align-items:center;\"><span class=\"oi oi-media-record first-dot\"></span>" +
+                "<span class=\"oi oi-media-record second-dot\"></span>" +
+                "<span class=\"oi oi-media-record third-dot\"></span></div>"
             var data = new google.visualization.DataTable();
             lineList = JSON.parse(lineList);
 
@@ -321,6 +319,7 @@
 
             var chart = new google.visualization.LineChart(cId);
             chart.draw(dataView, options);
+
             //var chartLineWithDash = new google.visualization.LineChart(document.getElementById(chartId));
             //chartLineWithDash.draw(data,options);
         }
