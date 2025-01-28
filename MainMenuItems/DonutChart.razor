@@ -47,20 +47,4 @@
         var json = System.Text.Json.JsonSerializer.Serialize(Expenses.ToArray());
         await JSRuntime.InvokeAsync<object>("drawCoreChart", json, ChartId);
     }
-
-    public class ExpenseAmount
-    {
-
-        private static Random rnd = new Random();
-        public string SegmentColor { get; set; }
-        public string ExpenseType { get; set; }
-        public double Amount { get; set; }
-        public ExpenseAmount(string et, double am) 
-        {
-            Color color = ColorWheel.NextColor();
-            SegmentColor = "#" + color.R.ToString("X2") + color.G.ToString("X2") + color.B.ToString("X2");
-            ExpenseType = et; 
-            Amount = am; 
-        }
-    }
 }

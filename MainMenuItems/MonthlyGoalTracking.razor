@@ -4,7 +4,6 @@
 @using BetterBudgetWeb.Repo;
 @implements IDisposable
 
-@using static BetterBudgetWeb.MainMenuItems.DonutChart
 <div class="chart-back-hor" style="width:100%;">
     <div class="flex-r" style="width:100%;justify-content:space-evenly;border:solid black 1px;border-radius:10px;margin-bottom:1em;padding:1em">
         <table style="background-color:transparent;border-radius:0;border:none;margin-bottom:1em">
@@ -19,9 +18,9 @@
             <tr style="background-color:transparent">
                 <td style="border:none;padding-left:1em">
                     <input type="number" placeholder="Income"
-                           style="width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
+                    style="width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
                                     border:solid white 1px;text-align:center;"
-                           @bind=ProjectedIncomeAmountStr />
+                    @bind=ProjectedIncomeAmountStr />
                 </td>
                 <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ProjectedDynamicAmount + ProjectedStaticAmount))">@Constants.Pretty(ProjectedDynamicAmount + ProjectedStaticAmount)</span></td>
                 <td style="border:none"><span style="color:@Constants.GoodOrBad(ProjectedNetAmount)">@Constants.Pretty(ProjectedNetAmount)</span></td>
@@ -43,18 +42,18 @@
     </div>
     <div class="chart-hor" style="margin-bottom:1em">
         <ChartBarHorizontal Value=@ActualIncomeAmount
-                            Reverse=true
-                            Label="Income Goal"
-                            MaxValue=@ProjectedIncomeAmount
-                            FillColor="green"
-                            BackgroundColor="#c3b4f3"
-                            SearchTerm="Income"
-                            BottomBorder=false/>
+        Reverse=true
+        Label="Income Goal"
+        MaxValue=@ProjectedIncomeAmount
+        FillColor="green"
+        BackgroundColor="#c3b4f3"
+        SearchTerm="Income"
+        BottomBorder=false/>
     </div>
     @if (Expenses != null && Expenses.Count > 0)
     {
         <div class="chart-hor">
-            <DonutChart @ref=Donut ChartId="donut1" Expenses=@Expenses />
+            <MyDoughnutChart @ref=Donut Expenses="Expenses" />
         </div>
     }
 </div>
@@ -72,7 +71,7 @@
     [Parameter]
     public double EnvelopeAmount { get; set; }
 
-    public DonutChart Donut { get; set; }
+    public MyDoughnutChart Donut { get; set; }
 
     public List<Transaction> Transactions { get; set; }
 
@@ -152,19 +151,21 @@
         foreach (var stat in statics)
             Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
 
-        var envs = Transactions.Where(tr => envNames.Contains(tr.ExpenseType));
-        foreach(var e in envs)
-            Expenses.Add(new ExpenseAmount(e.Name, e.TotalAmount));
+        var envs = Transactions.Where(tr => envNames.Contains(tr.ExpenseType)).ToList();
+        var UsedEnvs = envs.Select(en => en.ExpenseType).Distinct();
+        
+        foreach(var env in UsedEnvs)
+            Expenses.Add(new ExpenseAmount(env, envs.Where(en => en.ExpenseType == env).Sum(e => e.TotalAmount)));
 
         StateHasChanged();
     }
 
-    private void TransactionsUpdated(object sender, List<Transaction> e)
+    private async void TransactionsUpdated(object sender, List<Transaction> e)
     {
         if (e != null && e.Count > 0)
         {
             Refresh();
-            Donut?.DrawCoreChart();
+            await Donut?.Redrive();
             StateHasChanged();
         }
     }

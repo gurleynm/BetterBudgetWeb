@@ -9,6 +9,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://api.couplesbetterbudget.com") });
+builder.Services.AddBlazorBootstrap();
 
 builder.Services.AddBlazoredSessionStorage();
 StripeConfiguration.ApiKey = HiddenEnv.APIKey;
