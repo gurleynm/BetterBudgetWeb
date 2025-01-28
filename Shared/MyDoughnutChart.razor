@@ -3,11 +3,22 @@
 *@
 
 @using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Data.Doughnut
 @using BlazorBootstrap
 
 <div class="flex-c" style="width:100%">
+    @* 
     <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await AddDataAsync()">Add Data</Button>
-
+    <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await RandomizeAsync()">Randomize</Button>
+ *@
+    @if (Title != "All Expenses")
+    {
+        <span style="text-align:start;cursor:pointer" @onclick="async () => await Redrive(Expenses)">
+            <span class="oi oi-caret-left" />
+            <span> Reset</span>
+        </span>
+    }
+    <h2>@Title</h2>
     <div class="donutCell flex-r">
         <DoughnutChart @ref="doughnutChart" Width="200" Class="mb-5" />
     </div>
@@ -17,20 +28,38 @@
             <th style="border:none;padding:1em">Expense</th>
             <th style="border:none;padding:1em">Amount</th>
         </tr>
-        @foreach (var ex in Expenses.OrderByDescending(e => e.Amount))
+        @for (int index = 0; index < OrderedExpenses.Count; index++)
         {
+            var ex = OrderedExpenses[index];
+            @if (ex.Amount > 0)
+            {
             <tr>
                 <td class="flex-r" style="border:none;padding:1em">
                     <div style="background-color:@ex.SegmentColor;border-radius:2em;width:2em;height:2em;"></div>
                 </td>
-                <td style="border:none">@ex.ExpenseType</td>
+                @if (FullNut[ex.ExpenseType].SliceValues.Count > 1 && ShowAnotherLayer)
+                {
+                    <td style="border:none;text-decoration:underline;cursor:pointer" @onclick="async () => await ZoomIn(ex.ExpenseType)">@ex.ExpenseType</td>
+                }
+                else
+                {
+                    <td style="border:none">@ex.ExpenseType</td>
+                }
                 <td style="border:none">@Constants.Pretty(ex.Amount)</td>
             </tr>
+            }
+            else
+            {
+                <tr>
+                    <td style="border:none">Refunded:</td>
+                    <td style="border:none">@ex.ExpenseType</td>
+                    <td style="border:none">@Constants.Pretty(ex.Amount)</td>
+                </tr>
+            }
         }
     </table>
 </div>
 @* 
-<Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await RandomizeAsync()"> Randomize </Button>
 <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await AddDatasetAsync()"> Add Dataset </Button>
 <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await AddDataAsync()">Add Data</Button>
  *@
@@ -38,19 +67,22 @@
     [Parameter]
     public List<ExpenseAmount> Expenses { get; set; }
 
+    public List<ExpenseAmount> OrderedExpenses => FullNut.GetOrderedExpenses();
+
+    private string Title = "All Expenses";
+    private bool ShowAnotherLayer = true;
+
+    private FullDoughnut FullNut = new();
     private DoughnutChart doughnutChart = default!;
     private DoughnutChartOptions doughnutChartOptions = default!;
     private ChartData chartData = default!;
     private string[]? backgroundColors;
 
-    private int datasetsCount = 0;
-    private int dataLabelsCount = 0;
-
-    private Random random = new();
-
     protected override void OnInitialized()
     {
-        Redrive(true);
+        backgroundColors = ColorUtility.CategoricalTwelveColors;
+
+        Redrive(Expenses);
 
         doughnutChartOptions = new();
         doughnutChartOptions.Responsive = true;
@@ -71,41 +103,72 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public async Task Redrive(bool firstTime = false)
+    public async Task Redrive(List<ExpenseAmount> expenses, string title = "All Expenses")
     {
-        backgroundColors = ColorUtility.CategoricalTwelveColors;
-        SortedDictionary<string, ExpenseAmount> ExpenseTypes = new SortedDictionary<string, ExpenseAmount>();
+        ShowAnotherLayer = title == "All Expenses";
+        Title = title;
 
-        for (int index = 0; index < Expenses.Count; index++)
-        {
-            if (ExpenseTypes.ContainsKey(Expenses[index].ExpenseType))
-                ExpenseTypes[Expenses[index].ExpenseType].AddAmount(Expenses[index].Amount);
-            else
-                ExpenseTypes[Expenses[index].ExpenseType] = new ExpenseAmount(Expenses[index], backgroundColors[index % 12]);
-        }
+        FullNut.Clear();
 
-        Expenses.Clear();
-        foreach (string key in ExpenseTypes.Keys)
-            if (ExpenseTypes[key].Amount < 0)
-                ExpenseTypes.Remove(key);
-            else
-                Expenses.Add(ExpenseTypes[key]);
+        for (int index = 0; index < expenses.Count; index++)
+            FullNut.Add(expenses[index]);
 
-        if (firstTime)
-            chartData = new ChartData
-                {
-                    Datasets = SetDatasets(),
-                    Labels = ExpenseTypes.Keys.ToList()
-                };
-        else
-        {
-            chartData.Datasets = SetDatasets();
-            doughnutChartOptions.Plugins.Title.Text = Constants.Pretty(Expenses.Sum(e => e.Amount));
+        var datasets = new List<IChartDataset>();
+        datasets.Add(new DoughnutChartDataset()
+            {
+                Label = Title,
+                Data = ConvertToMaybeDouble(FullNut.GetExpenseTotals()),
+                BackgroundColor = FullNut.GetBackgroundColors()
+            });
 
-            await doughnutChart.UpdateAsync(chartData, doughnutChartOptions);
-        }
+        chartData = new ChartData
+            {
+                Datasets = datasets,
+                Labels = FullNut.GetLabels()
+            };
+
+        doughnutChartOptions.Plugins.Title.Text = Constants.Pretty(expenses.Sum(e => e.Amount));
+        await Task.Delay(100);
+        await doughnutChart.UpdateAsync(chartData, doughnutChartOptions);
     }
 
+    public async Task ZoomIn(string expenseType)
+    {
+        List<ExpenseAmount> AdjustedExpenses = new();
+        foreach (var exp in FullNut[expenseType].SliceValues)
+        {
+            var Holder = new ExpenseAmount(exp);
+            Holder.ExpenseType = exp.Name;
+            AdjustedExpenses.Add(Holder);
+        }
+
+        await Redrive(AdjustedExpenses, expenseType);
+    }
+
+    private async Task AddDatasetAsync()
+    {
+        if (chartData is null || chartData.Datasets is null) return;
+
+        // var chartDataset = GetRandomDoughnutChartDataset();
+        // chartData = await doughnutChart.AddDatasetAsync(chartData, chartDataset, doughnutChartOptions);
+    }
+
+    private async Task AddDataAsync()
+    {
+        if (chartData is null || chartData.Datasets is null)
+            return;
+
+        var data = new List<IChartDatasetData>();
+        foreach (var dataset in chartData.Datasets)
+        {
+            if (dataset is DoughnutChartDataset doughnutChartDataset)
+            {
+                data.Add(new DoughnutChartDatasetData(doughnutChartDataset.Label, new Random().Next(0, 1000), ColorWheel.NextColor().ToHexString()));
+            }
+        }
+
+        chartData = await doughnutChart.AddDataAsync(chartData, "Sausage", data);
+    }
     private async Task RandomizeAsync()
     {
         if (chartData is null || chartData.Datasets is null || !chartData.Datasets.Any()) return;
@@ -123,7 +186,7 @@
                 var newData = new List<double?>();
                 for (var i = 0; i < count; i++)
                 {
-                    newData.Add(random.Next(0, 100));
+                    newData.Add(new Random().Next(0, 100));
                 }
 
                 doughnutChartDataset.Data = newData;
@@ -131,79 +194,11 @@
             }
         }
 
-        chartData.Datasets = newDatasets;
+        // chartData.Datasets = newDatasets;
 
         await doughnutChart.UpdateAsync(chartData, doughnutChartOptions);
     }
 
-    private async Task AddDatasetAsync()
-    {
-        if (chartData is null || chartData.Datasets is null) return;
-
-        var chartDataset = GetRandomDoughnutChartDataset();
-        chartData = await doughnutChart.AddDatasetAsync(chartData, chartDataset, doughnutChartOptions);
-    }
-
-    private async Task AddDataAsync()
-    {
-        if (dataLabelsCount >= 12)
-            return;
-
-        if (chartData is null || chartData.Datasets is null)
-            return;
-
-        var data = new List<IChartDatasetData>();
-        foreach (var dataset in chartData.Datasets)
-        {
-            if (dataset is DoughnutChartDataset doughnutChartDataset)
-            {
-                data.Add(new DoughnutChartDatasetData(doughnutChartDataset.Label, random.Next(0, 1000), backgroundColors![dataLabelsCount]));
-            }
-        }
-
-        chartData = await doughnutChart.AddDataAsync(chartData, GetNextDataLabel(), data);
-
-        dataLabelsCount += 1;
-    }
-
-    #region Data Preparation
-
-    private List<IChartDataset> SetDatasets()
-    {
-        var datasets = new List<IChartDataset>();
-
-        datasets.Add(new DoughnutChartDataset()
-            {
-                Label = $"Expense Types",
-                Data = ConvertToMaybeDouble(Expenses.Select(ex => ex.Amount).ToList()),
-                BackgroundColor = Expenses.Select(ex => ex.SegmentColor).ToList()
-            });
-
-        return datasets;
-    }
-
-    private List<IChartDataset> GetDefaultDataSets(int numberOfDatasets)
-    {
-        var datasets = new List<IChartDataset>();
-
-        for (var index = 0; index < numberOfDatasets; index++)
-        {
-            datasets.Add(GetRandomDoughnutChartDataset());
-        }
-
-        return datasets;
-    }
-
-    private DoughnutChartDataset GetRandomDoughnutChartDataset()
-    {
-        datasetsCount += 1;
-        return new()
-            {
-                Label = $"Expenses",
-                Data = ConvertToMaybeDouble(Expenses.Select(e => e.Amount).ToList()),
-                BackgroundColor = GetRandomBackgroundColors()
-            };
-    }
     private List<double?> ConvertToMaybeDouble(List<double> og)
     {
         List<double?> helper = new List<double?>();
@@ -212,43 +207,4 @@
 
         return helper;
     }
-    private List<double?> GetRandomData()
-    {
-        var data = new List<double?>();
-        for (var index = 0; index < dataLabelsCount; index++)
-        {
-            data.Add(random.Next(0, 100));
-        }
-
-        return data;
-    }
-
-    private List<string> GetRandomBackgroundColors()
-    {
-        var colors = new List<string>();
-        for (var index = 0; index < dataLabelsCount; index++)
-        {
-            colors.Add(backgroundColors![index]);
-        }
-
-        return colors;
-    }
-
-    private List<string> GetDefaultDataLabels(int numberOfLabels)
-    {
-        var labels = new List<string>();
-        for (var index = 0; index < numberOfLabels; index++)
-        {
-            labels.Add(GetNextDataLabel());
-            dataLabelsCount += 1;
-        }
-
-        return labels;
-    }
-
-    private string GetNextDataLabel() => $"Product {dataLabelsCount + 1}";
-
-    private string GetNextDataBackgrounfColor() => backgroundColors![dataLabelsCount];
-
-    #endregion  Data Preparation
 }

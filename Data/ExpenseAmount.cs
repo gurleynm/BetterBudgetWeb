@@ -2,7 +2,7 @@
 
 namespace BetterBudgetWeb.Data
 {
-    public class ExpenseAmount
+    public class ExpenseAmount : IComparable<ExpenseAmount>
     {
 
         private static Random rnd = new Random();
@@ -10,6 +10,7 @@ namespace BetterBudgetWeb.Data
         public string Name { get; set; }
         public string ExpenseType { get; set; }
         public double Amount { get; set; }
+        public ExpenseAmount() {  } 
         public ExpenseAmount(ExpenseAmount other) 
         { 
             Amount = other.Amount;
@@ -47,6 +48,16 @@ namespace BetterBudgetWeb.Data
         public override string ToString()
         {
             return ExpenseType + "," + Amount + "," + SegmentColor;
+        }
+
+        public int CompareTo(ExpenseAmount other)
+        {
+            if(other == null) return 1;
+            if(other == this) return 0;
+            if(other.Amount < Amount) return -1;
+            if(other.Amount > Amount) return 1;
+            
+            return 0;
         }
     }
 }

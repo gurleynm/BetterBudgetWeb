@@ -417,6 +417,10 @@ namespace BetterBudgetWeb
         {
             return num.ToString("C", CultureInfo.CurrentCulture);
         }
+        public static string Pretty(double? num)
+        {
+            return Pretty((double)num);
+        }
         public static string[] HandlePresets(string preset)
         {
             Preset pres = Presets.FirstOrDefault(p => p.Name == preset);
