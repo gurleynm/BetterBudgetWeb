@@ -1,0 +1,22 @@
+﻿@page "/test"
+@using BetterBudgetWeb.Data
+
+<MyDoughnutChart Expenses="Expenses" />
+<MyLineChart />
+
+@code {
+    public List<ExpenseAmount> Expenses { get; set; } = new List<ExpenseAmount>();
+
+    protected override void OnInitialized()
+    {
+        Expenses = new List<ExpenseAmount>();
+
+        var Transactions = Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
+
+        foreach (var trans in Transactions)
+            if (!"Debt Transfer Income".Contains(trans.ExpenseType))
+            Expenses.Add(new ExpenseAmount(trans.ExpenseType, trans.TotalAmount, trans.Name));
+
+        base.OnInitialized();
+    }
+}

@@ -402,6 +402,11 @@
                                         </a>
                                     </div>
                                 }
+                                <div>
+                                    <a class="navbtn navbar-brand" href="test" style="font-family:'CBB Default'; text-align:center;">
+                                        <span class="glyphicon glyphicon-signal" aria-hidden="true"></span> Test
+                                    </a>
+                                </div>
                             </div>
                             <div>
                                 <a href="account" style="font-size:large;font-family:'CBB Default'; text-align:center; float:left;color:white;padding-right:1em">
@@ -458,6 +463,10 @@
                             </CascadingValue>
                         </CascadingValue>
                     </article>
+                    @if (!NavMan.Uri.Contains("/sign"))
+                    {
+                        <Footer />
+                    }
                 </main>
             }
         </ChildContent>
@@ -484,10 +493,6 @@
             }
         </ErrorContent>
     </CustomErrorBoundary>
-    @if (!NavMan.Uri.Contains("/sign"))
-    {
-        <Footer />
-    }
 </div>
 
 @code {

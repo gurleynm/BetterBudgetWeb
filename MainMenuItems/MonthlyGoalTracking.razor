@@ -4,7 +4,6 @@
 @using BetterBudgetWeb.Repo;
 @implements IDisposable
 
-@using static BetterBudgetWeb.MainMenuItems.DonutChart
 <div class="chart-back-hor" style="width:100%;">
     <div class="flex-r" style="width:100%;justify-content:space-evenly;border:solid black 1px;border-radius:10px;margin-bottom:1em;padding:1em">
         <table style="background-color:transparent;border-radius:0;border:none;margin-bottom:1em">
@@ -49,12 +48,12 @@
                             FillColor="green"
                             BackgroundColor="#c3b4f3"
                             SearchTerm="Income"
-                            BottomBorder=false/>
+                            BottomBorder=false />
     </div>
     @if (Expenses != null && Expenses.Count > 0)
     {
         <div class="chart-hor">
-            <DonutChart @ref=Donut ChartId="donut1" Expenses=@Expenses />
+            <MyDoughnutChart @ref=Donut Expenses="Expenses" />
         </div>
     }
 </div>
@@ -72,7 +71,7 @@
     [Parameter]
     public double EnvelopeAmount { get; set; }
 
-    public DonutChart Donut { get; set; }
+    public MyDoughnutChart Donut { get; set; }
 
     public List<Transaction> Transactions { get; set; }
 
@@ -125,7 +124,6 @@
 
         var dcis = Constants.DynamicCostItems;
         var dciNames = Constants.DynamicCostItems.Select(d => d.Name);
-        var envNames = Constants.Envelopes.Select(e => e.Name);
         var smcs = Constants.StaticMonthlyCosts;
 
         ProjectedDynamicAmount = dcis.Sum(dci => dci.Amount);
@@ -141,30 +139,21 @@
         ProjectedIncomeAmountStr = projectedIncomeAmountStrOG;
         Transactions = Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
 
-        foreach (var dcin in dciNames)
-        {
-            double sum = Transactions.Where(t => t.ExpenseType == dcin).Sum(to => to.TotalAmount);
-            if (sum > 0)
-                Expenses.Add(new ExpenseAmount(dcin, sum));
-        }
+        string[] Ignore = new string[] { "Debt", "Transfer", "Income", "Equity" };
 
-        var statics = Transactions.Where(tr => tr.ExpenseType == "Static Cost");
-        foreach (var stat in statics)
-            Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
-
-        var envs = Transactions.Where(tr => envNames.Contains(tr.ExpenseType));
-        foreach(var e in envs)
-            Expenses.Add(new ExpenseAmount(e.Name, e.TotalAmount));
+        foreach (var trans in Transactions)
+            if (!Ignore.Contains(trans.ExpenseType))
+                Expenses.Add(new ExpenseAmount(trans.ExpenseType,trans.TotalAmount,trans.Name));
 
         StateHasChanged();
     }
 
-    private void TransactionsUpdated(object sender, List<Transaction> e)
+    private async void TransactionsUpdated(object sender, List<Transaction> e)
     {
         if (e != null && e.Count > 0)
         {
             Refresh();
-            Donut?.DrawCoreChart();
+            await Donut?.Redrive(Expenses);
             StateHasChanged();
         }
     }
