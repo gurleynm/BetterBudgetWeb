@@ -18,10 +18,6 @@
             else
             {
                 <h2 style="font-family: 'CBB Default';color:silver">@(Constants.Pretty(Price) + "/" + TimeFrame.ToLower())</h2>
-                @if (!HideSubscribe)
-                {
-                    <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo(TheProduct.SubscribeLink,true))>Subscribe</button>
-                }
                 <h5 style="font-family: 'CBB Default';color:@Constants.ColorScheme["Text"]">@TheProduct.Description</h5>
             }
         }
@@ -32,6 +28,17 @@
             @if (!Constants.AllFree || !feature.Contains("basic tier"))
             {
                 <div><span class="oi oi-circle-check"></span> @feature</div>
+            }
+        }
+        @if (!HideSubscribe && !TheProduct.CurrentPlan)
+        {
+            @if (!Constants.TryingItOut && Constants.DeviceSubscribed == "iOS")
+            {
+                <h3 class="plain-announce" style="color:@Constants.ColorScheme["Text"]">Plan must be managed from the App Store</h3>
+            }
+            else
+            {
+                <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo(TheProduct.SubscribeLink,true))>Subscribe</button>
             }
         }
     </div>

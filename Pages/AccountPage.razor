@@ -73,16 +73,16 @@
         else
         {
             <h4 class="plain-announce">@GetRejectText()</h4>
-            <button class="btn-grad" @onclick=@(() => Constants.Device = "Android")>Pretend Android</button>
+            @* <button class="btn-grad" @onclick=@(() => Constants.Device = "Android")>Pretend Android</button>
             <button class="btn-grad" @onclick=@(() => Constants.Device = "iOS")>Pretend iOS</button>
-            <button class="btn-grad" @onclick=@(() => Constants.Device = "WEB")>Pretend WEB</button>
+            <button class="btn-grad" @onclick=@(() => Constants.Device = "WEB")>Pretend WEB</button> *@
         }
     }
     @if (ShowPricingTable)
     {
         <PaymentPlans />
     }
-    else if (!Constants.Mobile)
+    else if (!Constants.Mobile && false)
     {
         <button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
     }
@@ -136,11 +136,11 @@ else
         </div>
     </Confirmation>
 }
-@if (Constants.CUR_USER_NAME == "Nathan1" || Constants.CUR_USER_NAME == "Phillip")
+@* @if (Constants.CUR_USER_NAME == "Nathan1" || Constants.CUR_USER_NAME == "Phillip")
 {
         <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo($"/subscribe?token={Constants.Token}&plan=cbb_base_plan_year",true))>Subscribe Base</button>
         <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo($"/subscribe?token={Constants.Token}&plan=cbb_advanced_plan_year",true))>Subscribe Adv</button>
-}
+} *@
 <DeleteAccountModal @bind-ShowDelete=ShowDelete />
 
 
@@ -292,7 +292,7 @@ else
         else
         {
             retStr += $"an {Constants.DeviceSubscribed} device from our mobile app. ";
-            HowToDoSo = "app";
+            HowToDoSo = Constants.DeviceSubscribed == "iOS" ? "App Store" : "app";
         }
 
         retStr += "To make additional changes to your subscription, please do so from the " + HowToDoSo + ".";
