@@ -32,14 +32,7 @@
         }
         @if (!HideSubscribe && !TheProduct.CurrentPlan)
         {
-            @if (!Constants.TryingItOut && Constants.DeviceSubscribed == "iOS")
-            {
-                <h3 class="plain-announce" style="color:@Constants.ColorScheme["Text"]">Plan must be managed from the App Store</h3>
-            }
-            else
-            {
-                <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo(TheProduct.SubscribeLink,true))>Subscribe</button>
-            }
+            <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo(TheProduct.SubscribeLink,true))>Subscribe</button>
         }
     </div>
 </div>
