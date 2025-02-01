@@ -136,9 +136,10 @@ else
         </div>
     </Confirmation>
 }
-@if (Constants.CUR_USER_NAME == "Nathan")
+@if (Constants.CUR_USER_NAME == "Nathan1" || Constants.CUR_USER_NAME == "Phillip")
 {
-    <button class="btn-grad btn-primary" @onclick=@(() => NavMan.NavigateTo("subscribe?token="+Constants.Token,true))>Subscribe</button>
+        <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo($"/subscribe?token={Constants.Token}&plan=cbb_base_plan_year",true))>Subscribe Base</button>
+        <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo($"/subscribe?token={Constants.Token}&plan=cbb_advanced_plan_year",true))>Subscribe Adv</button>
 }
 <DeleteAccountModal @bind-ShowDelete=ShowDelete />
 
