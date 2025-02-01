@@ -12,7 +12,7 @@ namespace BetterBudgetWeb
     {
 
         public static bool Test = false; // true false
-        public static bool AllFree = true; // true false
+        public static bool AllFree = false; // true false
         public static string Device { get; set; } = "WEB"; // true false
         public static string SignUpText => AllFree ? "Sign Up" : "Start 45-Day Trial"; // true false
         public static string DeviceSubscribed { get; set; } = "WEB"; // true false

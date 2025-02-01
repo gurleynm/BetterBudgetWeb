@@ -115,8 +115,8 @@
 
             string AdjustedName = prod.Name.ToUpper().Trim();
             bool containsName = AdjustedName.Contains(curPlan);
-            MyProduct MonthlyProd = new MyProduct(prod, monthlyCost, "MONTH", "", containsName && chargedMonthly);
-            MyProduct YearlyProd = new MyProduct(prod, yearlyCost, "YEAR", "", containsName && !chargedMonthly);
+            MyProduct MonthlyProd = new MyProduct(prod, monthlyCost, "MONTH", containsName && chargedMonthly);
+            MyProduct YearlyProd = new MyProduct(prod, yearlyCost, "YEAR", containsName && !chargedMonthly);
 
             if (!chargedMonthly)
                 MonthlyProd.Unavailable = true;

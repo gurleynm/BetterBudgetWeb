@@ -13,7 +13,7 @@ namespace BetterBudgetWeb.Data
         public bool Unavailable { get; set; }
         public string SubscribeLink { get; set; }
         public MyProduct() { }
-        public MyProduct(Product prod, double cost, string time, string subLink, bool currentPlan = false)
+        public MyProduct(Product prod, double cost, string time, bool currentPlan = false)
         {
             if (prod == null)
                 return;
@@ -21,7 +21,6 @@ namespace BetterBudgetWeb.Data
             Name = prod.Name;
             Cost = cost;
             Timeframe = time;
-            SubscribeLink = subLink;
             Description = prod.Description;
 
             Features.Clear();
