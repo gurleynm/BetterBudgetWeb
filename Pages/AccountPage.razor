@@ -62,17 +62,27 @@
             <button class="btn btn-primary" style="background-color:indigo" disabled=@ShowChangedDisabled @onclick=@(() => { Update(); })>Save Changes</button>
         </div>
     }
-    @if (Constants.TIER_LEVEL < Data.Tier.GOD_TIER && !Constants.MobileApp)
+    @if (Constants.TIER_LEVEL < Data.Tier.GOD_TIER)
     {
-        <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
-            <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
-        </div>
+        @if (Constants.Device == Constants.DeviceSubscribed || Constants.TIER_LEVEL == Tier.TRIAL)
+        {
+            <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
+                <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
+            </div>
+        }
+        else
+        {
+            <h4 class="plain-announce">@GetRejectText()</h4>
+            <button class="btn-grad" @onclick=@(() => Constants.Device = "Android")>Pretend Android</button>
+            <button class="btn-grad" @onclick=@(() => Constants.Device = "iOS")>Pretend iOS</button>
+            <button class="btn-grad" @onclick=@(() => Constants.Device = "WEB")>Pretend WEB</button>
+        }
     }
     @if (ShowPricingTable)
     {
         <PaymentPlans />
     }
-    else if(!Constants.Mobile)
+    else if (!Constants.Mobile)
     {
         <button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
     }
@@ -82,7 +92,7 @@ else
 {
     <div style="font-family:'CBB Default';font-size:large">This the demo page. Normally, this would contain info about your account and subscription.</div>
     <div class="flex-r" style="width:100%">
-        <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Sign Up</button>
+        <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">@Constants.SignUpText</button>
     </div>
 }
 
@@ -125,6 +135,10 @@ else
             <span style="color:red">@ErrorMsgPass</span>
         </div>
     </Confirmation>
+}
+@if (Constants.CUR_USER_NAME == "Nathan")
+{
+    <button class="btn-grad btn-primary" @onclick=@(() => NavMan.NavigateTo("subscribe?token="+Constants.Token,true))>Subscribe</button>
 }
 <DeleteAccountModal @bind-ShowDelete=ShowDelete />
 
@@ -258,9 +272,30 @@ else
 
     private void ManageSubscription()
     {
-        if (Constants.TIER_LEVEL == Data.Tier.TRIAL)
+        if (Constants.TIER_LEVEL == Data.Tier.TRIAL || Constants.DeviceSubscribed != "WEB")
             ShowPricingTable = !ShowPricingTable;
         else
             NavMan.NavigateTo(HiddenEnv.StripePortal);
+    }
+
+    private string GetRejectText()
+    {
+        string retStr = "You subscrbied via ";
+        string HowToDoSo;
+
+        if (Constants.DeviceSubscribed == "WEB")
+        {
+            retStr += $"our website. ";
+            HowToDoSo = "site";
+        }
+        else
+        {
+            retStr += $"an {Constants.DeviceSubscribed} device from our mobile app. ";
+            HowToDoSo = "app";
+        }
+
+        retStr += "To make additional changes to your subscription, please do so from the " + HowToDoSo + ".";
+
+        return retStr;
     }
 }

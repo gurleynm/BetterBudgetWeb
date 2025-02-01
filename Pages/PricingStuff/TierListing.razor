@@ -1,20 +1,37 @@
-﻿@using Stripe
+﻿@using BetterBudgetWeb.Data
+@inject NavigationManager NavMan
 
 <div class="flex-r-100" style="justify-content:space-evenly;padding:0% 5%;">
     <div class="flex-c-start">
         @if (!Constants.AllFree)
         {
             <h4 style="font-family: 'CBB Default';color:silver">@TheProduct.Name</h4>
-            <h2 style="font-family: 'CBB Default';color:silver">@(Constants.Pretty(Price) + "/" + TimeFrame)</h2>
-            <h5 style="font-family: 'CBB Default';color:silver">@TheProduct.Description</h5>
+
+            @if (TheProduct.CurrentPlan)
+            {
+                <h2 class="plain-announce" style="color:@Constants.ColorScheme["Text"]">Current Plan</h2>
+            }
+            else if (TheProduct.Unavailable)
+            {
+                <h3 class="plain-announce" style="color:@Constants.ColorScheme["Text"]">Unavailable due to current plan</h3>
+            }
+            else
+            {
+                <h2 style="font-family: 'CBB Default';color:silver">@(Constants.Pretty(Price) + "/" + TimeFrame.ToLower())</h2>
+                @if (!HideSubscribe)
+                {
+                    <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo(TheProduct.SubscribeLink,true))>Subscribe</button>
+                }
+                <h5 style="font-family: 'CBB Default';color:@Constants.ColorScheme["Text"]">@TheProduct.Description</h5>
+            }
         }
     </div>
     <div class="flex-c-start" style="width:@(Constants.AllFree ? "100%" : "50%");">
-        @foreach (var feature in TheProduct.MarketingFeatures)
+        @foreach (var feature in TheProduct.Features)
         {
-            @if (!Constants.AllFree || !feature.Name.Contains("basic tier"))
+            @if (!Constants.AllFree || !feature.Contains("basic tier"))
             {
-                <div><span class="oi oi-circle-check"></span> @feature.Name</div>
+                <div><span class="oi oi-circle-check"></span> @feature</div>
             }
         }
     </div>
@@ -22,13 +39,10 @@
 
 @code {
     [Parameter]
-    public Product TheProduct { get; set; }
+    public MyProduct TheProduct { get; set; }
     [Parameter]
-    public bool Monthly { get; set; }
-    [Parameter]
-    public IEnumerable<Price> Prices { get; set; }
+    public bool HideSubscribe { get; set; }
 
-    private string TimeFrame => Monthly ? "month" : "year";
-    private double Price => Monthly ? Prices.FirstOrDefault(p => p.Recurring.Interval == "month").UnitAmount.Value / 100.0 :
-                                        Prices.FirstOrDefault(p => p.Recurring.Interval != "month").UnitAmount.Value / 100.0;
+    private string TimeFrame => TheProduct.Timeframe;
+    private double Price => TheProduct.Cost;
 }

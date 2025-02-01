@@ -513,3 +513,7 @@ label {
     font-family: 'CBB Default';
     font-size:large;
 }
+.plain-announce {
+    font-family: 'CBB Default';
+    text-align: center;
+}

@@ -284,14 +284,7 @@
                                 <button class="btn btn-primary" style="color:white;background-color:indigo" @onclick=@(() => AccountDelete = true)>Cancel Account</button>
                             </div>
                             <DeleteAccountModal @bind-ShowDelete=AccountDelete />
-                            @if (Constants.MobileApp)
-                            {
-                                <h3 style="text-align:center;font-family:'CBB Default'">(You can't upgrade to Basic or Advanced in the app. It's silly, we know)</h3>
-                            }
-                            else
-                            {
-                                <PaymentPlans />
-                            }
+                            <PaymentPlans />
                         </div>
                     </article>
                 </main>
@@ -313,14 +306,7 @@
                                 <button class="btn btn-primary" style="color:white;background-color:indigo" @onclick=@(() => AccountDelete = true)>Cancel Account</button>
                             </div>
                             <DeleteAccountModal @bind-ShowDelete=AccountDelete />
-                            @if (Constants.MobileApp)
-                            {
-                                <h3 style="text-align:center;font-family:'CBB Default'">(You can't upgrade to Basic or Advanced in the app. It's silly, we know)</h3>
-                            }
-                            else
-                            {
-                                <PaymentPlans />
-                            }
+                            <PaymentPlans />
                         </div>
                     </article>
                 </main>
@@ -535,6 +521,9 @@
     ValueTask<bool> DeviceCheck { get; set; }
     private bool SetCorrect = false;
 
+    [SupplyParameterFromQuery]
+    public string device { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!Constants.Mobile)
@@ -553,6 +542,9 @@
     }
     protected override async Task OnInitializedAsync()
     {
+        if (!string.IsNullOrEmpty(device))
+            Constants.Device = device;
+
         Constants.BalancesChanged += BalancesUpdated;
         try
         {
@@ -697,7 +689,8 @@
     {
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
         curUrl = curUrl.Split("/")[0];
-        string[] whitelisted = new string[] { "policy", "reset" };
+        curUrl = curUrl.Split("?")[0];
+        string[] whitelisted = new string[] { "policy", "reset", "subscribe" };
         foreach (string white in whitelisted)
         {
             if (curUrl == white)
@@ -713,6 +706,7 @@
         string curUrl = NavMan.Uri.Replace(NavMan.BaseUri, "");
 
         curUrl = curUrl.Split("/")[0];
+        curUrl = curUrl.Split("?")[0];
         List<string> whitelisted = new List<string> { "features", "FAQs", "sign", "create" };
 
         if (!Constants.WeIn)

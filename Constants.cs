@@ -4,6 +4,7 @@ using BetterBudgetWeb.Repo;
 using BetterBudgetWeb.Runner;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace BetterBudgetWeb
 {
@@ -12,6 +13,9 @@ namespace BetterBudgetWeb
 
         public static bool Test = false; // true false
         public static bool AllFree = true; // true false
+        public static string Device { get; set; } = "WEB"; // true false
+        public static string SignUpText => AllFree ? "Sign Up" : "Start 45-Day Trial"; // true false
+        public static string DeviceSubscribed { get; set; } = "WEB"; // true false
         public static bool HideCookieBanner = true;
         public static EventHandler<bool> WeInChanged = (sender, value) => { };
 
