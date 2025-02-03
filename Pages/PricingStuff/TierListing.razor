@@ -1,11 +1,12 @@
 ﻿@using BetterBudgetWeb.Data
 @inject NavigationManager NavMan
 
-<div class="flex-r-100" style="justify-content:space-evenly;padding:0% 5%;">
+<div class="flex-c-start" style="justify-content:space-evenly;padding:0% 5%;width:100%">
     <div class="flex-c-start">
         @if (!Constants.AllFree)
         {
-            <h4 style="font-family: 'CBB Default';color:silver">@TheProduct.Name</h4>
+            <h2 style="font-family: 'CBB Default';color:silver">@TheProduct.Name</h2>
+            <h4 style="font-family: 'CBB Default';color:@Constants.ColorScheme["Text"]">@TheProduct.Description</h4>
 
             @if (TheProduct.CurrentPlan)
             {
@@ -13,26 +14,26 @@
             }
             else if (TheProduct.Unavailable)
             {
-                <h3 class="plain-announce" style="color:@Constants.ColorScheme["Text"]">Unavailable due to current plan</h3>
+                <h3 class="plain-announce" style="color:@Constants.ColorScheme["Text"]">Unavailable Plan</h3>
             }
             else
             {
-                <h2 style="font-family: 'CBB Default';color:silver">@(Constants.Pretty(Price) + "/" + TimeFrame.ToLower())</h2>
-                <h5 style="font-family: 'CBB Default';color:@Constants.ColorScheme["Text"]">@TheProduct.Description</h5>
+                <h1 style="font-family: 'CBB Default';color:silver">@(Constants.Pretty(Price) + "/" + TimeFrame.ToLower())</h1>
+                @if (!HideSubscribe && !TheProduct.CurrentPlan && !TheProduct.Unavailable)
+                {
+                    <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo(TheProduct.SubscribeLink,true))>Subscribe</button>
+                }
             }
         }
     </div>
-    <div class="flex-c-start" style="width:@(Constants.AllFree ? "100%" : "50%");">
+    <div class="flex-c-start" style="width:100%">
+        <h5>This includes:</h5>
         @foreach (var feature in TheProduct.Features)
         {
             @if (!Constants.AllFree || !feature.Contains("basic tier"))
             {
-                <div><span class="oi oi-circle-check"></span> @feature</div>
+                <div style="margin:.5em"><span class="oi oi-circle-check"></span> @feature</div>
             }
-        }
-        @if (!HideSubscribe && !TheProduct.CurrentPlan)
-        {
-            <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo(TheProduct.SubscribeLink,true))>Subscribe</button>
         }
     </div>
 </div>
