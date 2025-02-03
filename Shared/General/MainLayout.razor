@@ -542,9 +542,6 @@
     }
     protected override async Task OnInitializedAsync()
     {
-        if (!string.IsNullOrEmpty(device))
-            Constants.Device = device;
-
         Constants.BalancesChanged += BalancesUpdated;
         try
         {
@@ -563,6 +560,12 @@
             StateHasChanged();
 
         await CheckWeIn(false);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(device))
+            Constants.Device = device;
     }
 
     public async Task<bool> CheckWeIn(bool countAttempt = true)
