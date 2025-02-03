@@ -127,7 +127,8 @@
                 YearlyProd.Unavailable = true;
             }
 
-
+            MonthlyProd.Name = MonthlyProd.Name.Replace("Tier", "Plan");
+            YearlyProd.Name = YearlyProd.Name.Replace("Tier", "Plan Year");
             MyProducts.Add(MonthlyProd);
             MyProducts.Add(YearlyProd);
         }
