@@ -310,24 +310,28 @@ namespace BetterBudgetWeb.Runner
                 SnapCnt++;
             }
 
+            DateTime now = DateTime.Now;
             int MonthIndex;
             for (int index = SnapCnt - 1; Plots.Count < 6 && index > -1; index--)
             {
                 snapshot = Snapshots[index];
-                MonthIndex = PrevMonthYear.Month;
+                MonthIndex = PrevMonthYear.Month - 1;
                 CurMonthYear = new DateTime(snapshot.Year, Constants.Months.IndexOf(snapshot.Month) + 1, 1);
                 int Months = ((PrevMonthYear.Year - CurMonthYear.Year) * 12) + PrevMonthYear.Month - CurMonthYear.Month;
-                //if (Months >= 0)
-                while (Months > 0)
-                {
-                    MonthIndex--;
-                    if (MonthIndex == -1)
-                        MonthIndex = 11;
-                    Months--;
+
+                if (Months == 0 && CurMonthYear == new DateTime(now.Year, now.Month, 1))
                     Plots.Add(new LinePlot(Constants.Months[MonthIndex], snapshot.Person1NetWorth + snapshot.Person2NetWorth, true));
-                    if (Plots.Count == 6)
-                        break;
-                }
+                else
+                    while (Months > 0)
+                    {
+                        MonthIndex--;
+                        if (MonthIndex == -1)
+                            MonthIndex = 11;
+                        Months--;
+                        Plots.Add(new LinePlot(Constants.Months[MonthIndex], snapshot.Person1NetWorth + snapshot.Person2NetWorth, true));
+                        if (Plots.Count == 6)
+                            break;
+                    }
 
                 PrevMonthYear = new DateTime(CurMonthYear.Ticks);
             }
