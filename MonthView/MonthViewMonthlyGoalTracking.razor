@@ -1,7 +1,7 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.MainMenuItems
 @using BetterBudgetWeb.Repo;
-@using static BetterBudgetWeb.MainMenuItems.DonutChart
+
 <div class="chart-back-hor" style="width:100%;">
     <div class="flex-r" style="width:100%;justify-content:space-evenly">
         <div class="flex-c-start">
@@ -21,7 +21,7 @@
     @if (Expenses != null && Expenses.Count > 0)
     {
         <div>
-            <DonutChart ChartId="@("donut_"+Month)" Expenses=@Expenses />
+            <MyDoughnutChart Expenses="Expenses" />
         </div>
     }
 </div>
