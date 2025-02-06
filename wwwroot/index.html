@@ -373,63 +373,6 @@
             var chart = new google.visualization.PieChart(document.getElementById(chartId));
             chart.draw(data, options);
         }
-        function drawChart(sankList) {
-            var sank = document.getElementById('sankey_basic');
-            if (!sank) {
-                return false;
-            }
-            var data = new google.visualization.DataTable();
-            sankList = JSON.parse(sankList);
-
-            const holder = [];
-            var temp = [];
-            var obj;
-            for (var i = 0; i < sankList.length; i++) {
-                temp = [];
-                obj = sankList[i];
-                temp.push(obj['From']);
-                temp.push(obj['To']);
-                temp.push(obj['Amount']);
-                //temp.push("<text style='font-family:Arial;font-size:16'>" + obj['From'] + ' -> ' + obj['To'] + '<br/>$' + obj['Amount'] +"</text>");
-                holder.push(temp);
-            }
-
-            data.addColumn('string', 'From');
-            data.addColumn('string', 'To');
-            data.addColumn('number', 'Amount');
-            //data.addColumn({ type: 'string', role: 'tooltip' });
-            data.addRows(
-                holder
-            );
-
-            // Sets chart options.
-            let FontSize = 10;
-            if (IsMobile)
-                FontSize = 8;
-            var options = {
-                sankey: {
-                    iterations: 100,
-                    colors: [
-                        '#a6cee3',        // Custom color palette for sankey links.
-                        '#1f78b4',        // Nodes will cycle through this palette
-                        '#b2df8a',        // giving the links for that node the color.
-                        '#33a02c'
-                    ],
-                    node: {
-                        label: {
-                            color: 'white',
-                            fontSize: FontSize
-                        }
-                    }
-                },
-                tooltip: { isHtml: true }
-            };
-
-            // Instantiates and draws our chart, passing in some options.
-            var chart = new google.visualization.Sankey(sank);
-            chart.draw(data, options);
-            return true;
-        }
         function CSVToArray(strData, strDelimiter) {
             // Check to see if the delimiter is defined. If not,
             // then default to comma.

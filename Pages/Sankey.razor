@@ -3,6 +3,8 @@
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Runner
 @using System.Globalization;
+@using CrispyCode.BlazorSankey;
+@using CrispyCode.BlazorSankey.Model;
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 
@@ -11,8 +13,8 @@
 <PageTitle>Sankey Chart</PageTitle>
 
 <div class="flex-c" style="overflow-y:auto;align-items:center">
-    <div id="sankey_basic" style="width: 95%; height:fit-content;min-height: 75vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
-                                overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 0 1em 0;"></div>
+    @* <div id="sankey_basic" style="width: 95%; height:fit-content;min-height: 75vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
+                                overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 0 1em 0;"></div> *@
     <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="justify-content:space-evenly;align-items:center;flex-wrap:wrap; width:100%">
         <div>
             <table class="toggle-table">
@@ -85,10 +87,26 @@
             }
         </div>
     </div>
+    @if (links.Count > 0)
+    {
+        <div style="height:fit-content;width:100%;background-color:@Constants.ColorScheme["ComponentBackground"];padding:1em 0;overflow-x:auto">
+            <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "200vw" : "100%")" Height="@(Constants.Mobile ? "100vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
+        </div>
+    }
+    else
+    {
+        <LoadingDots />
+    }
 </div>
 
 
 @code {
+    Dictionary<string,int> nodeIds = new();
+    Dictionary<string,string> nodeColors = new();
+    int nodeCnt = 0;
+
+    private Dictionary<string,Node> nodes = new Dictionary<string,Node>();
+    private List<Link> links = new List<Link>();
     private string selectedYear;
     private string selectedMonth;
     private string selectedPerson;
@@ -190,25 +208,17 @@
             return;
 
 
-        List<Flow> objs = GetFlows(SelectedMonth, SelectedYear);
-        bool drawn = false;
-        int Tried = 0;
-
-        while (!drawn && Tried < 2)
-        {
-            var json = System.Text.Json.JsonSerializer.Serialize(objs);
-            drawn = await JSRuntime.InvokeAsync<bool>("drawChart", json);
-            Tried++;
-        }
+        await GetFlows(SelectedMonth, SelectedYear);
     }
 
-    private List<Flow> GetFlows(string Month, string Year)
+    private async Task GetFlows(string Month, string Year)
     {
         List<Flow> TheFlows = new List<Flow>();
         List<Transaction> DesiredTransactions = new List<Transaction>();
         Dictionary<string, Transaction> DesiredTransactionsDict = new Dictionary<string, Transaction>();
         Dictionary<string, Transaction> DictIncome = new Dictionary<string, Transaction>();
 
+        // Get the proper set of transactions -- START
         var SelectedDownload = SelectedMonth + " " + SelectedYear;
 
         if (SelectedDownload == "All All")
@@ -227,13 +237,12 @@
 
         if (SelectedLevel != "All")
             DesiredTransactions = DesiredTransactions.Where(dt => ValidTransaction(dt)).ToList();
+        // Get the proper set of transactions -- END
 
+        // Sum up all transactions by transaction name
+        double threshold = 100;
         string TKey;
         string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer" };
-
-        bool firstPerson = SelectedPerson == "Both" || SelectedPerson == Constants.Person1;
-        bool secondPerson = SelectedPerson == "Both" || SelectedPerson == Constants.Person2;
-
         foreach (var transact in DesiredTransactions)
         {
             if (IgnoreThese.Contains(transact.ExpenseType))
@@ -252,11 +261,20 @@
                 {
                     DictIncome[TKey] = new Transaction(transact);
                 }
-                continue;
             }
-
-
-            if (DesiredTransactionsDict.ContainsKey(TKey))
+            else if (0 < transact.TotalAmount && transact.TotalAmount < threshold && SelectedLevel == "All")
+            {
+                Transaction newT = new(transact);
+                newT.Name = "Misc. " + newT.ExpenseType + " Under " + Constants.Pretty(threshold);
+                if (!DesiredTransactionsDict.ContainsKey(newT.Name))
+                    DesiredTransactionsDict[newT.Name] = newT;
+                else
+                {
+                    DesiredTransactionsDict[newT.Name].Person1Amount += transact.Person1Amount;
+                    DesiredTransactionsDict[newT.Name].Person2Amount += transact.Person2Amount;
+                }
+            }
+            else if (DesiredTransactionsDict.ContainsKey(TKey))
             {
                 DesiredTransactionsDict[TKey].Person1Amount += transact.Person1Amount;
                 DesiredTransactionsDict[TKey].Person2Amount += transact.Person2Amount;
@@ -267,164 +285,155 @@
             }
         }
 
+        nodes = new();
+        links = new();
+        await Task.Delay(100);
+
+        double totalT = 0;
+        double totalI = 0;
+        double Refunds = 0;
+
+        nodeIds = new();
+        Dictionary<string,List<Transaction>> expenseTypeTotals = new();
+        nodeColors = new();
+        nodeCnt = 0;
+
+        nodeColors["Income"] = "forestgreen";
+        AddNode("Income",0);
+
+        foreach(var income in DictIncome.Keys)
+        {
+            nodeColors[income] = "limegreen";
+            AddNode(income,DictIncome[income].Name, DictIncome[income].TotalAmount);
+            AddLink(income, "Income", DictIncome[income].TotalAmount);
+            totalI += DictIncome[income].TotalAmount;
+        }
+
         foreach (var key in DesiredTransactionsDict.Keys)
-            if (DesiredTransactionsDict[key].TotalAmount == 0)
-                DesiredTransactionsDict.Remove(key);
-
-        Dictionary<string, Transaction> GeneralTransactions = new Dictionary<string, Transaction>();
-        Transaction trans;
-        var keys = DesiredTransactionsDict.Keys.ToArray();
-        Array.Sort(keys);
-        double Charges = DesiredTransactionsDict.Values.Where(d => d.TotalAmount > 0).Sum(di => di.TotalAmount);
-        var Refunds = DesiredTransactionsDict.Values.Where(d => d.TotalAmount < 0).ToList();
-
-        double Totals = Charges;
-        double BudgetedAmount;
-        double RefundSum = Refunds.Sum(dc => dc.TotalAmount) * -1;
-
-        List<string> Skip = new List<string>();
-
-        Skip.Add("Static Cost");
-
-        foreach (var ev in Constants.Envelopes)
-            Skip.Add(ev.Name);
-
-        if (SelectedLevel != "All" && SelectedMonth != "All" && !Skip.Contains(SelectedLevel))
         {
-            BudgetedAmount = Constants.GetBudgetedAmount(SelectedLevel, SelectedMonth, SelectedYear);
+            Transaction tempTrans = DesiredTransactionsDict[key];
+            // If transaction totals to 0, remove it
+            if (tempTrans.TotalAmount == 0)
+                DesiredTransactionsDict.Remove(key);            
 
-            // Line below may be obsolete
-            Totals = BudgetedAmount + RefundSum > Totals ? BudgetedAmount + Refunds.Sum(dc => dc.TotalAmount) * -1 : Totals;
-
-            if (Charges < BudgetedAmount)
-                Totals = Charges;
-            else if (BudgetedAmount == 0)
+            string SubKey = tempTrans.ExpenseType + "_" + tempTrans.Name;
+            if(!nodeIds.ContainsKey(SubKey))
             {
-                // Most likely an Envelope
-                BudgetedAmount = Totals;
-            }
+                if(!nodeIds.ContainsKey(tempTrans.ExpenseType))
+                {
+                    nodeColors[tempTrans.ExpenseType] = ColorWheel.RandomInSet("blue");
+                    expenseTypeTotals[tempTrans.ExpenseType] = new(){ new(tempTrans) };
+                    AddNode(tempTrans.ExpenseType, tempTrans.TotalAmount);
+                }
+                else
+                {
+                    expenseTypeTotals[tempTrans.ExpenseType].Add(new(tempTrans));
+                }
 
-            TheFlows.Add(new Transaction { 
-                Name = "Budgeted Amount", 
-                ExpenseType = SelectedLevel, 
-                Person1Amount = BudgetedAmount
-            }.ToFlow(Totals, "~B~"));
-
-
-            foreach (var refund in Refunds)
-                TheFlows.Add(refund.ToFlow(Totals, "~~~"));
-        }
-
-        foreach (var key in keys)
-        {
-            if (DesiredTransactionsDict[key].TotalAmount > 0 && SelectedLevel != "All")
-            {
-                TheFlows.Add(DesiredTransactionsDict[key].ToFlow(Totals));
-            }
-
-            trans = DesiredTransactionsDict[key];
-
-            if (trans.ExpenseType == "Income" || IgnoreThese.Contains(trans.ExpenseType))
-                continue;
-            else
-                TKey = trans.ExpenseType;
-
-            if (GeneralTransactions.ContainsKey(TKey))
-            {
-                GeneralTransactions[TKey].Person1Amount += trans.Person1Amount;
-                GeneralTransactions[TKey].Person2Amount += trans.Person2Amount;
+                nodeColors[SubKey] = ColorWheel.NextColorString();
+                AddNode(SubKey,tempTrans.Name, tempTrans.TotalAmount < 0 ? -tempTrans.TotalAmount : tempTrans.TotalAmount);
             }
             else
             {
-                GeneralTransactions[TKey] = new Transaction(trans);
+                expenseTypeTotals[tempTrans.ExpenseType].Add(new(tempTrans));
             }
-        }
 
-        if (SelectedLevel == "All")
-        {
-            double generalTotals = GeneralTransactions.Values.Sum(di => di.TotalAmount);
-            double incomeTotals = DictIncome.Values.Sum(di => di.TotalAmount);
-            double maxTotals = Math.Max(incomeTotals, generalTotals);
-
-            foreach (var key in DictIncome.Keys)
-                TheFlows.Add(DictIncome[key].ToFlow(incomeTotals,"",generalTotals));
-
-            foreach (var key in GeneralTransactions.Keys)
-                TheFlows.Add(GeneralTransactions[key].ToFlow(maxTotals, "GENERAL",incomeTotals));
-
-            TotalIn = incomeTotals + RefundSum;
-            TotalOut = generalTotals;
-        }
-        else
-        {
-            if(TheFlows.Count > 0)
+            if (tempTrans.TotalAmount < 0)
             {
-                TotalIn = TotalOut = 0;
-
-                foreach(var flow in TheFlows)
-                {
-                    // Examples:
-                    //  Flow => Budget Amount ($325.00) -> House Things ($167.50)
-                    //  Flow => House Things ($167.50) -> More Zones ($78.03)
-                    bool CalcOut = flow.From.Split('(')[0].Trim() == SelectedLevel;
-
-                    // Split on the dollar signs
-                    var FromSplit = flow.From.Split('$');
-                    var ToSplit = flow.To.Split('$');
-
-                    // Pull the dollar amount
-                    var From = FromSplit.Length > 1 ? FromSplit[1].Trim(')') : "0";
-                    var To = ToSplit.Length > 1 ? ToSplit[1].Trim(')') : "0";
-                    if (CalcOut)
-                    {
-                        // Calculating TotalOut
-                        TotalOut += double.TryParse(To, out double to) ? to : 0;
-                    }
-                    else
-                    {
-                        // Calculating TotalIn
-                        TotalIn += double.TryParse(From, out double from) ? from : 0;
-                    }
-                }
+                AddLink(SubKey,tempTrans.ExpenseType, -tempTrans.TotalAmount);
             }
             else
-            {
-                TotalIn = TotalOut = 0;
-            }
+                AddLink(tempTrans.ExpenseType, SubKey, tempTrans.TotalAmount);
+
+            totalT += tempTrans.TotalAmount;
         }
 
-        string[] DecreaseAmount = new string[] { "Eating Out", "Unexpected Adulting", "Fun" };
-
-        // Cut down on # of Entries
-        if (DecreaseAmount.Contains(SelectedLevel) && TheFlows.Count > 30)
+        foreach(var ett in expenseTypeTotals.Keys)
         {
-            int numOfUnder25 = 0;
-            double totalOfUnder25 = 0;
-            string plural;
-
-            for (int step = TheFlows.Count - 1; step >= 0; step--)
-            {
-                if (TheFlows[step].Amount < 25)
-                {
-                    numOfUnder25++;
-                    totalOfUnder25 += TheFlows[step].Amount;
-                    TheFlows.RemoveAt(step);
-                }
-            }
-            plural = numOfUnder25 != 1 ? "s" : "";
-            TheFlows.Add(new Transaction
-                {
-                    Name = numOfUnder25 + " Item" + plural + " Under $25.00",
-                    Person1Amount = totalOfUnder25 / 2,
-                    Person2Amount = totalOfUnder25 / 2,
-                    ExpenseType = SelectedLevel
-                }
-                .ToFlow(Totals));
+            AddLink("Income", ett, expenseTypeTotals[ett].Sum(ex => ex.TotalAmount));
         }
 
+        nodes["Income"].Name = "Income (" + Constants.Pretty(double.Max(totalT,totalI)) + ")";
+
+        if(totalT > totalI && totalI != 0)
+        {
+            nodeColors["Overspent"] = ColorWheel.RandomInSet("red");
+            AddNode("Overspent",totalT-totalI);
+            AddLink("Overspent", "Income", totalT-totalI);
+        } 
+        else if(totalT < totalI && totalT != 0)
+        {
+            nodeColors["Savings"] = ColorWheel.RandomInSet("green");
+            AddNode("Savings",totalI-totalT);
+            AddLink("Income", "Savings", totalI-totalT);
+        }
+
+        foreach(var key in nodes.Keys)
+        {
+            double left = 0;
+            double right = 0;
+            if(expenseTypeTotals.ContainsKey(key)){
+                left = expenseTypeTotals[key].Where(ex => ex.TotalAmount < 0).Sum(ex => -ex.TotalAmount);
+                right = expenseTypeTotals[key].Where(ex => ex.TotalAmount > 0).Sum(ex => ex.TotalAmount);
+
+                UpdateNode(key, double.Max(left,right));
+            }
+        }
+
+        TotalIn = totalI;
+        TotalOut = totalT - Refunds;
+        await Task.Delay(100);
         StateHasChanged();
-        return TheFlows;
     }
+
+    private void LinkClicked(Link link)
+    {
+        try
+        {
+            if (link != null)
+            {
+                string from = link.Source.Name;
+                string to = link.Target.Name;
+                foreach (string lev in Levels)
+                {
+                    if (to.Contains(lev))
+                    {
+                        SelectedLevel = lev;
+                        DrawChart();
+                        break;
+                    }
+                    else if (from.Contains(lev))
+                    {
+                        SelectedLevel = lev;
+                        DrawChart();
+                        break;
+                    }
+                }
+            }
+        }
+        catch(Exception e){ }
+    }
+
+    private void NodeClicked(Node node)
+    {
+        try
+        {
+            if (node != null)
+            {
+                string title = node.Name;
+                foreach(string lev in Levels)
+                {
+                    if(title.Contains(lev)){
+                        SelectedLevel = lev;
+                        DrawChart();
+                        break;
+                    }
+                }
+            }
+        }
+        catch(Exception e){ }
+    }
+
 
     private bool ValidTransaction(Transaction dt)
     {
@@ -449,46 +458,78 @@
         List<Transaction> DesiredTransactions;
 
         if (SelectedYear != "All")
-            {
-                // Specific Year
+        {
+            // Specific Year
 
-                if (SelectedMonth == "All")
-                    // All Months
-                    DesiredTransactions = Constants.Transactions.Where(tr => tr.DateOfTransaction.Year.ToString() == SelectedYear).OrderByDescending(t => t.DateOfTransaction).ToList();
-                else
-                    // Specific Month
-                    DesiredTransactions = Constants.Transactions.Where(tr => tr.MonthYear() == SelectedMonth + " " + SelectedYear).OrderByDescending(t => t.DateOfTransaction).ToList();
-            }
+            if (SelectedMonth == "All")
+                // All Months
+                DesiredTransactions = Constants.Transactions.Where(tr => tr.DateOfTransaction.Year.ToString() == SelectedYear).OrderByDescending(t => t.DateOfTransaction).ToList();
             else
-            {
-                // All Years
+                // Specific Month
+                DesiredTransactions = Constants.Transactions.Where(tr => tr.MonthYear() == SelectedMonth + " " + SelectedYear).OrderByDescending(t => t.DateOfTransaction).ToList();
+        }
+        else
+        {
+            // All Years
 
-                if (SelectedMonth == "All")
-                    // All Months
-                    DesiredTransactions = Constants.Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
-                else
-                    // Specific Month
-                    DesiredTransactions = Constants.Transactions.Where(tr => tr.DateOfTransaction.ToString("MMMM") == SelectedMonth).OrderByDescending(t => t.DateOfTransaction).ToList();
-            }
-                
+            if (SelectedMonth == "All")
+                // All Months
+                DesiredTransactions = Constants.Transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+            else
+                // Specific Month
+                DesiredTransactions = Constants.Transactions.Where(tr => tr.DateOfTransaction.ToString("MMMM") == SelectedMonth).OrderByDescending(t => t.DateOfTransaction).ToList();
+        }
 
-            SelectedLevel = "All";
 
-            Levels = new List<string>();
+        SelectedLevel = "All";
 
-            string[] IgnoreThese = new string[] { "Debt", "Income", "Equity", "Envelope", "Transfer" };
+        Levels = new List<string>();
 
-            foreach (var dt in DesiredTransactions)
-            {
-                if (Levels.Contains(dt.ExpenseType) || IgnoreThese.Contains(dt.ExpenseType))
-                    continue;
+        string[] IgnoreThese = new string[] { "Debt", "Income", "Equity", "Envelope", "Transfer" };
 
-                Levels.Add(dt.ExpenseType);
-            }
+        foreach (var dt in DesiredTransactions)
+        {
+            if (Levels.Contains(dt.ExpenseType) || IgnoreThese.Contains(dt.ExpenseType))
+                continue;
 
-            StateHasChanged();
+            Levels.Add(dt.ExpenseType);
+        }
+
+        StateHasChanged();
     }
+    private void AddLink(string from, string to, double val)
+    {
+        links.Add(new Link(nodeIds[from], nodeIds[to], val,null,nodeColors[from],nodeColors[to]));
+    }
+    private void AddNode(string id, string title, double amount)
+    {
+        AddNode(id, title, amount, nodeColors[id]);
+    }
+    private void AddNode(string id, double amount)
+    {
+        AddNode(id, amount, nodeColors[id]);
+    }
+    private void AddNode(string id, double amount, string color)
+    {
+        AddNode(id, id, amount, color);
+    }
+    private void AddNode(string id, string title, double amount, string color)
+    {
+        nodes[id] = new Node(nodeCnt, title + " (" + Constants.Pretty(Math.Abs(amount)) + ")", null,color,1);
+        nodeIds[id] = nodeCnt;
+        nodeCnt++;
+    }
+    private void UpdateNode(string id, double? amount)
+    {
+        if (amount is null)
+            return;
 
+        string CurTitle = nodes[id].Name;
+        if (!string.IsNullOrEmpty(CurTitle))
+        {
+            nodes[id] = new Node(nodes[id].Id, id + " (" + Constants.Pretty(amount) + ")", null, nodes[id].Color, 1);
+        }
+    }
     public class CashFlow
     {
         public string Name { get; set; }

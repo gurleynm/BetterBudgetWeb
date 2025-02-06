@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using BlazorBootstrap;
+using System.Drawing;
 
 namespace BetterBudgetWeb.Data
 {
@@ -36,5 +37,24 @@ namespace BetterBudgetWeb.Data
 
             return _colors[_colorsIndex];
         }
+        public static string NextColorString()
+        {
+            return NextColor().ToHexString();
+        }
+        public static string RandomInSet(string RGB)
+        {
+            if (string.IsNullOrEmpty(RGB))
+                RGB = "R";
+
+            Random rnd = new Random();
+            int r = RGB.ToUpper().StartsWith("R") ? 255 : rnd.Next(256);
+            int g = RGB.ToUpper().StartsWith("G") ? 255 : rnd.Next(256);
+            int b = RGB.ToUpper().StartsWith("B") ? 255 : rnd.Next(256);
+
+            Color randomColor = Color.FromArgb(r,g,b);
+
+            return randomColor.ToHexString();
+        }
+
     }
 }
