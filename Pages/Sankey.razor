@@ -35,10 +35,6 @@
             <br />
             <select class="custom-select" @bind="SelectedYear" title="Pick a Timeframe ">
                 <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option>
-                @if (FoundYears.Count > 1)
-                {
-                    <option value="All">All</option>
-                }
                 @foreach (var dt in FoundYears)
                 {
                     <option value="@dt">@dt</option>
@@ -240,7 +236,7 @@
         // Get the proper set of transactions -- END
 
         // Sum up all transactions by transaction name
-        double threshold = 100;
+        double threshold = SelectedMonth == "All" || SelectedMonth == "All" ? 400 : 100;
         string TKey;
         string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer" };
         foreach (var transact in DesiredTransactions)
@@ -262,7 +258,7 @@
                     DictIncome[TKey] = new Transaction(transact);
                 }
             }
-            else if (0 < transact.TotalAmount && transact.TotalAmount < threshold && SelectedLevel == "All")
+            else if (0 < transact.TotalAmount && transact.TotalAmount < threshold && (SelectedLevel == "All" && Constants.Token != "DEMO"))
             {
                 Transaction newT = new(transact);
                 newT.Name = "Misc. " + newT.ExpenseType + " Under " + Constants.Pretty(threshold);
