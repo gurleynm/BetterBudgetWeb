@@ -221,6 +221,10 @@ td a, td input, td img {
     display: inline-block;
 }
 
+.borderless-table {
+    border-radius: 0;
+}
+
 .borderless-table tr td {
     border: none;
     text-align: center;
