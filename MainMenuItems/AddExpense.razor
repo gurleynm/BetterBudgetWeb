@@ -35,24 +35,25 @@
                         <td>
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
                         </td>
-                        <td style="width:9vw">
-                            @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith))
+                        <td>
+                            @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith) && !string.IsNullOrEmpty(NewTrans.TopWhoPaid))
                             {
-                                @if (string.IsNullOrEmpty(NewTrans.TopWhoPaid))
-                                {
+                                <div style="color:white">@(NewTrans.TopWhoPaid + " Paid")</div>
+                            }
+                        </td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith) && string.IsNullOrEmpty(NewTrans.TopWhoPaid))
+                        {
+                            <tr>
+                                <td colspan="3">
                                     <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="@NewTrans.TopWhoPaid">
                                         <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                         <option>@Constants.Person1</option>
                                         <option>@Constants.Person2</option>
                                     </select>
-                                }
-                                else
-                                {
-                                    <div style="color:white">@(NewTrans.TopWhoPaid + " Paid")</div>
-                                }
-                            }
-                        </td>
-                    </tr>
+                                </td>
+                            </tr>
+                    }
                     @if (ShowSecond)
                     {
                         <tr>
@@ -64,22 +65,23 @@
                             <td>
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
                             </td>
-                            <td style="width:9vw">
-                                @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith))
+                            <td>
+                                @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith) && !string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
                                 {
-                                    @if (string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
-                                    {
-                                        <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="@NewTrans.BottomWhoPaid">
-                                            <option value="@string.Empty" disabled selected>--Pick Person--</option>
-                                            <option>@Constants.Person1</option>
-                                            <option>@Constants.Person2</option>
-                                        </select>
-                                    }
-                                    else
-                                    {
-                                        <div style="color:white">@(NewTrans.BottomWhoPaid + " Paid")</div>
-                                    }
+                                    <div style="color:white">@(NewTrans.BottomWhoPaid + " Paid")</div>
                                 }
+                            </td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith) && string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
+                    {
+                        <tr>
+                            <td colspan="3">
+                                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="@NewTrans.BottomWhoPaid">
+                                    <option value="@string.Empty" disabled selected>--Pick Person--</option>
+                                    <option>@Constants.Person1</option>
+                                    <option>@Constants.Person2</option>
+                                </select>
                             </td>
                         </tr>
                     }
