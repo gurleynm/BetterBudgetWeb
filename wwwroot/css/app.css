@@ -97,3 +97,13 @@ a, .btn-link {
     justify-content: space-around;
     margin: 1em
 }
+.sankey{
+    background-color:transparent !important;
+    margin-bottom:2em;
+}
+g.node text {
+    stroke: cyan !important;
+}
+g.link {
+    opacity: 1;
+}

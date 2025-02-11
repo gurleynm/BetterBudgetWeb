@@ -8,15 +8,15 @@
 @implements IDisposable
 
 <table style="width:100%;margin-bottom:1vh">
-    <tr style="height:3vw">
+    @* <tr style="height:3vw">
         <th style="background-color: @Constants.ColorScheme["TableOdd"];padding:0 1vw;" colspan="100%">
-            <span>@Title</span>
+            <h4>@Title</h4>
             @if (!string.IsNullOrEmpty(TheBalance))
             {
-                <span>@(" for " + TheBalance)</span>
+                <h4>@(" for " + TheBalance)</h4>
             }
         </th>
-    </tr>
+    </tr> *@
     @if (FilteredTransactions != null)
     {
         string PrevMonth = "";
@@ -31,7 +31,7 @@
                     </td>
                 </tr>
             }
-            <tr style="border:1px black solid;background-color: @Constants.ColorScheme["TableOdd"];">
+            <tr style="cursor:pointer;border:1px black solid;background-color: @Constants.ColorScheme["TableOdd"];" @onclick=@(() => TransEdits[transaction.Id] = !TransEdits[transaction.Id])>
                 <td class="flex-r" style="justify-content:start;border:none">
                     <div class="flex-c" style="justify-content:space-between;align-items:start;padding:1em">
                         <div style="color:white;text-align:start">
@@ -42,55 +42,33 @@
                         </div>
                     </div>
                 </td>
-                @if (transaction.Person1Amount == transaction.TotalAmount)
+                @if (TransEdits[transaction.Id])
                 {
-                    <td style="height:100%;border:none">
-                        <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
+                    <td>
+                        <div class="flex-r">
+                            @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
+                            {
+                                <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                            }
+                            <button class="btn" disabled=@Disabled style="background-color:transparent;color:red;border:none;margin:.5vh;height:5vh;" @onclick="(() => DelBtn(transaction))"><span class="bi bi-trash" style="color:red"></span></button>
+                        </div>
                     </td>
-                    @if (ShowPerson)
-                    {
-                        <td style="height:100%;border:none">
-                            <div>@(Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
-                        </td>
-                    }
-                }
-                else if (transaction.Person2Amount == transaction.TotalAmount)
-                {
-                    <td style="height:100%;border:none">
-                        <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
-                    </td>
-                    @if (ShowPerson)
-                    {
-                        <td style="height:100%;border:none">
-                            <div>@(Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
-                        </td>
-                    }
                 }
                 else
                 {
-                    <td style="height:100%;border:none">
-                        <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
-                        <br />
-                        <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
-                    </td>
-                    @if (ShowPerson)
+                    @if (transaction.Person1Amount == transaction.TotalAmount)
                     {
                         <td style="height:100%;border:none">
-                            <div>@(Constants.Person1 + " (" + transaction.PaidWithPerson1 + ")")</div>
-                            <br />
-                            <div>@(Constants.Person2 + " (" + transaction.PaidWithPerson2 + ")")</div>
+                            <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
+                        </td>
+                    }
+                    else if (transaction.Person2Amount == transaction.TotalAmount)
+                    {
+                        <td style="height:100%;border:none">
+                            <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
                         </td>
                     }
                 }
-                <td style="height:100%;border:none">
-                    <div class="flex-r" style="">
-                        @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
-                        {
-                            <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
-                        }
-                        <button class="btn" disabled=@Disabled style="background-color:transparent;color:red;border:none;margin:.5vh;height:5vh;" @onclick="(() => DelBtn(transaction))"><span class="bi bi-trash" style="color:red"></span></button>
-                    </div>
-                </td>
             </tr>
         }
     }
@@ -138,6 +116,8 @@
 
     private bool Show { get; set; }
     private bool Disabled { get; set; }
+
+    private Dictionary<string, bool> TransEdits { get; set; } = new();
 
     protected override Task OnInitializedAsync()
     {
@@ -192,6 +172,12 @@
         }
 
         transactions = transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+
+        TransEdits.Clear();
+
+        foreach (var tt in transactions)
+            TransEdits[tt.Id] = false;
+
         return transactions;
     }
 
@@ -199,8 +185,8 @@
     {
         return transaction.PaidWithPerson1 == TheBalance ||
                transaction.PaidWithPerson2 == TheBalance ||
-               transaction.PaidOffPerson1  == TheBalance  ||
-               transaction.PaidOffPerson2  == TheBalance;
+               transaction.PaidOffPerson1 == TheBalance ||
+               transaction.PaidOffPerson2 == TheBalance;
     }
 
     public void RefreshMe()

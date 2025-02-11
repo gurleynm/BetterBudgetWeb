@@ -15,60 +15,43 @@
 <div class="flex-c" style="overflow-y:auto;align-items:center">
     @* <div id="sankey_basic" style="width: 95%; height:fit-content;min-height: 75vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
                                 overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 0 1em 0;"></div> *@
-    <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="justify-content:space-evenly;align-items:center;flex-wrap:wrap; width:100%">
-        <div>
-            <table class="toggle-table">
-                <tr>
-                    <th style="padding:0 2vw">Total In</th>
-                    <th style="padding:0 2vw">Total Out</th>
-                    <th style="padding:0 2vw">Difference</th>   
-                </tr>
-                <tr>
-                    <td style="padding:0 2vw;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</td>
-                    <td style="padding:0 2vw;color:red">@Constants.Pretty(TotalOut)</td>
-                    <td style="padding:0 2vw;color:@DecideColor(TotalIn - TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</td>
-                </tr>
-            </table>    
+    <div class="flex-r-100" style="justify-content:space-between;flex-wrap:wrap;align-content:center">
+        <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
+                    background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid;">
+            <span>Total Income</span>
+            <span style="padding:0;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</span>
         </div>
-        <div>
-            <label>Year</label>
-            <br />
-            <select class="custom-select" @bind="SelectedYear" title="Pick a Timeframe ">
-                <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option>
-                @foreach (var dt in FoundYears)
-                {
-                    <option value="@dt">@dt</option>
-                }
-            </select>    
+        <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
+                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+            <span>Total Expenses</span>
+            <span style="padding:0;color:red">@Constants.Pretty(TotalOut)</span>
         </div>
-        <div>
-            <label>Month</label>
-            <br />
-            <select class="custom-select" @bind="SelectedMonth" title="Pick a Timeframe ">
-                <option value="@string.Empty" selected disabled="disabled">(Choose a Timeframe)</option
-                <option value="All">All</option>
-                @foreach (var dt in FoundMonths)
-                {
-                    <option value="@dt">@dt</option>
-                }
-            </select>
+        <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
+                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+            <span>Total Net</span>
+            <span style="padding:0;color:@Constants.GoodOrBad(TotalIn-TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</span>
         </div>
+        <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
+                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+            <span>Savings Rate</span>
+            <span style="padding:0;color:@Constants.GoodOrBad((TotalIn-TotalOut)/TotalIn)">@(Math.Round(TotalIn == 0 ? 0 : (TotalIn - TotalOut) / TotalIn * 100, 1) + "%")</span>
+        </div>
+    </div>
+    @if (links.Count > 0)
+    {
+        <div style="width:100%;padding:1em 0;overflow-x:auto">
+            <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "200vw" : "100%")" Height="@(Constants.Mobile ? Constants.MobileApp ? "80vh" : "90vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
+        </div>
+    }
+    else
+    {
+        <LoadingDots />
+    }
+    <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="justify-content:center;align-items:center;flex-wrap:wrap; width:100%">
+        <input type="month" id="start" name="start" min=@(MinMonYear.ToString("yyyy-MM")) max=@(MaxMonYear.ToString("yyyy-MM")) @bind=@MonYear />
 
-        <div >
-            @if (Levels != null && Levels.Count > 0)
-            {
-                <label>Level</label>
-                <br />
-                <select class="custom-select" @bind="SelectedLevel" title="Pick a Level ">
-                    <option value="@string.Empty" selected disabled="disabled">(Choose a level)</option>
-                    <option value="All">All</option>
-                    @foreach (var dt in Levels)
-                    {
-                        <option value="@dt">@dt</option>
-                    }
-                </select>
-            }
-            else
+        <div>
+            @if (Levels == null || Levels.Count == 0)
             {
                 <br />
                 <label style="color:red">No values for this combination.</label>
@@ -78,33 +61,26 @@
             @if (Levels != null && Levels.Count > 0)
             {
                 <div class="flex-r" style="margin:1em">
-                    <button class="btn btn-primary" @onclick=DrawChart>Enter</button>
+                    <button class="btn btn-primary" @onclick=DrawChartEnter>@(SelectedLevel == "All" ? "Enter" : "Reset")</button>
                 </div>
             }
         </div>
     </div>
-    @if (links.Count > 0)
-    {
-        <div style="height:fit-content;width:100%;background-color:@Constants.ColorScheme["ComponentBackground"];padding:1em 0;overflow-x:auto">
-            <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "200vw" : "100%")" Height="@(Constants.Mobile ? "100vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
-        </div>
-    }
-    else
-    {
-        <LoadingDots />
-    }
 </div>
 
 
 @code {
-    Dictionary<string,int> nodeIds = new();
-    Dictionary<string,string> nodeColors = new();
+    Dictionary<string, int> nodeIds = new();
+    Dictionary<string, string> nodeColors = new();
     int nodeCnt = 0;
 
-    private Dictionary<string,Node> nodes = new Dictionary<string,Node>();
+    private Dictionary<string, Node> nodes = new Dictionary<string, Node>();
     private List<Link> links = new List<Link>();
     private string selectedYear;
     private string selectedMonth;
+    private DateTime monYear;
+    private DateTime MinMonYear;
+    private DateTime MaxMonYear;
     private string selectedPerson;
     private string SelectedYear
     {
@@ -132,6 +108,23 @@
             selectedMonth = value;
 
             DecideDesired();
+        }
+    }
+    private DateTime MonYear
+    {
+        get { return monYear; }
+        set
+        {
+            if (value == null || value == monYear)
+                return;
+
+            monYear = value;
+            List<Transaction> DesiredTransactions;
+            selectedYear = monYear.Year.ToString();
+            selectedMonth = monYear.ToString("MMMM");
+
+            DecideDesired();
+
         }
     }
     private string SelectedPerson
@@ -162,6 +155,16 @@
         Constants.Transactions = await TransactionRepo.GetTransactionsAsync("ALL");
         DateTime latestDate = Constants.Transactions.Max(t => t.DateOfTransaction);
 
+        MaxMonYear = latestDate;
+        MinMonYear = latestDate;
+        MonYear = latestDate;
+
+        if (FoundYears.Count > 0)
+        {
+            SelectedYear = FoundYears.LastOrDefault();
+            MinMonYear = new DateTime(int.Parse(SelectedYear), Constants.TheMonthsFromString[FoundMonths[0]], 1);
+        }
+
         SelectedMonth = latestDate.ToString("MMMM");
         SelectedYear = latestDate.Year.ToString();
         SelectedLevel = "All";
@@ -177,7 +180,7 @@
         else
             AllFoundMonths = IndexRunner.GetMonths(Constants.Transactions.Where(tr => tr.DateOfTransaction.Year.ToString() == SelectedYear).ToList(), false);
 
-        AllFoundMonths =  AllFoundMonths.Select(x => 
+        AllFoundMonths = AllFoundMonths.Select(x =>
                                  new { Name = x, Sort = DateTime.ParseExact(x, "MMMM", CultureInfo.InvariantCulture) })
                                      .OrderBy(x => x.Sort.Month)
                                      .Select(x => x.Name).ToList();
@@ -196,6 +199,12 @@
 
         years.Sort((a, b) => b.CompareTo(a));
         return years;
+    }
+
+    public async void DrawChartEnter()
+    {
+        SelectedLevel = "All";
+        await GetFlows(SelectedMonth, SelectedYear);
     }
 
     public async void DrawChart()
@@ -236,7 +245,14 @@
         // Get the proper set of transactions -- END
 
         // Sum up all transactions by transaction name
-        double threshold = SelectedMonth == "All" || SelectedMonth == "All" ? 400 : 100;
+        double threshold = 100;
+        if (DesiredTransactions.Count < 25)
+            threshold = 0;
+        else if (DesiredTransactions.Count < 50)
+            threshold = 100;
+        // else
+        //     threshold = 400;
+
         string TKey;
         string[] IgnoreThese = new string[] { "Debt", "Equity", "Transfer" };
         foreach (var transact in DesiredTransactions)
@@ -258,10 +274,10 @@
                     DictIncome[TKey] = new Transaction(transact);
                 }
             }
-            else if (0 < transact.TotalAmount && transact.TotalAmount < threshold && (SelectedLevel == "All" && Constants.Token != "DEMO"))
+            else if (0 < transact.TotalAmount && transact.TotalAmount < threshold)
             {
                 Transaction newT = new(transact);
-                newT.Name = "Misc. " + newT.ExpenseType + " Under " + Constants.Pretty(threshold);
+                newT.Name = "'" + newT.ExpenseType + "' < " + Constants.Pretty(threshold);
                 if (!DesiredTransactionsDict.ContainsKey(newT.Name))
                     DesiredTransactionsDict[newT.Name] = newT;
                 else
@@ -290,17 +306,17 @@
         double Refunds = 0;
 
         nodeIds = new();
-        Dictionary<string,List<Transaction>> expenseTypeTotals = new();
+        Dictionary<string, List<Transaction>> expenseTypeTotals = new();
         nodeColors = new();
         nodeCnt = 0;
 
         nodeColors["Income"] = "forestgreen";
-        AddNode("Income",0);
+        AddNode("Income", 0);
 
-        foreach(var income in DictIncome.Keys)
+        foreach (var income in DictIncome.Keys)
         {
             nodeColors[income] = "limegreen";
-            AddNode(income,DictIncome[income].Name, DictIncome[income].TotalAmount);
+            AddNode(income, DictIncome[income].Name, DictIncome[income].TotalAmount);
             AddLink(income, "Income", DictIncome[income].TotalAmount);
             totalI += DictIncome[income].TotalAmount;
         }
@@ -310,15 +326,15 @@
             Transaction tempTrans = DesiredTransactionsDict[key];
             // If transaction totals to 0, remove it
             if (tempTrans.TotalAmount == 0)
-                DesiredTransactionsDict.Remove(key);            
+                DesiredTransactionsDict.Remove(key);
 
             string SubKey = tempTrans.ExpenseType + "_" + tempTrans.Name;
-            if(!nodeIds.ContainsKey(SubKey))
+            if (!nodeIds.ContainsKey(SubKey))
             {
-                if(!nodeIds.ContainsKey(tempTrans.ExpenseType))
+                if (!nodeIds.ContainsKey(tempTrans.ExpenseType))
                 {
                     nodeColors[tempTrans.ExpenseType] = ColorWheel.RandomInSet("blue");
-                    expenseTypeTotals[tempTrans.ExpenseType] = new(){ new(tempTrans) };
+                    expenseTypeTotals[tempTrans.ExpenseType] = new() { new(tempTrans) };
                     AddNode(tempTrans.ExpenseType, tempTrans.TotalAmount);
                 }
                 else
@@ -327,7 +343,7 @@
                 }
 
                 nodeColors[SubKey] = ColorWheel.NextColorString();
-                AddNode(SubKey,tempTrans.Name, tempTrans.TotalAmount < 0 ? -tempTrans.TotalAmount : tempTrans.TotalAmount);
+                AddNode(SubKey, tempTrans.Name, tempTrans.TotalAmount < 0 ? -tempTrans.TotalAmount : tempTrans.TotalAmount);
             }
             else
             {
@@ -336,7 +352,7 @@
 
             if (tempTrans.TotalAmount < 0)
             {
-                AddLink(SubKey,tempTrans.ExpenseType, -tempTrans.TotalAmount);
+                AddLink(SubKey, tempTrans.ExpenseType, -tempTrans.TotalAmount);
             }
             else
                 AddLink(tempTrans.ExpenseType, SubKey, tempTrans.TotalAmount);
@@ -344,35 +360,36 @@
             totalT += tempTrans.TotalAmount;
         }
 
-        foreach(var ett in expenseTypeTotals.Keys)
+        foreach (var ett in expenseTypeTotals.Keys)
         {
             AddLink("Income", ett, expenseTypeTotals[ett].Sum(ex => ex.TotalAmount));
         }
 
-        nodes["Income"].Name = "Income (" + Constants.Pretty(double.Max(totalT,totalI)) + ")";
+        nodes["Income"].Name = "Income (" + Constants.Pretty(double.Max(totalT, totalI)) + ")";
 
-        if(totalT > totalI && totalI != 0)
+        if (totalT > totalI && totalI != 0)
         {
             nodeColors["Overspent"] = ColorWheel.RandomInSet("red");
-            AddNode("Overspent",totalT-totalI);
-            AddLink("Overspent", "Income", totalT-totalI);
-        } 
-        else if(totalT < totalI && totalT != 0)
+            AddNode("Overspent", totalT - totalI);
+            AddLink("Overspent", "Income", totalT - totalI);
+        }
+        else if (totalT < totalI && totalT != 0)
         {
             nodeColors["Savings"] = ColorWheel.RandomInSet("green");
-            AddNode("Savings",totalI-totalT);
-            AddLink("Income", "Savings", totalI-totalT);
+            AddNode("Savings", totalI - totalT);
+            AddLink("Income", "Savings", totalI - totalT);
         }
 
-        foreach(var key in nodes.Keys)
+        foreach (var key in nodes.Keys)
         {
             double left = 0;
             double right = 0;
-            if(expenseTypeTotals.ContainsKey(key)){
+            if (expenseTypeTotals.ContainsKey(key))
+            {
                 left = expenseTypeTotals[key].Where(ex => ex.TotalAmount < 0).Sum(ex => -ex.TotalAmount);
                 right = expenseTypeTotals[key].Where(ex => ex.TotalAmount > 0).Sum(ex => ex.TotalAmount);
 
-                UpdateNode(key, double.Max(left,right));
+                UpdateNode(key, double.Max(left, right));
             }
         }
 
@@ -407,7 +424,7 @@
                 }
             }
         }
-        catch(Exception e){ }
+        catch (Exception e) { }
     }
 
     private void NodeClicked(Node node)
@@ -417,9 +434,10 @@
             if (node != null)
             {
                 string title = node.Name;
-                foreach(string lev in Levels)
+                foreach (string lev in Levels)
                 {
-                    if(title.Contains(lev)){
+                    if (title.Contains(lev))
+                    {
                         SelectedLevel = lev;
                         DrawChart();
                         break;
@@ -427,7 +445,7 @@
                 }
             }
         }
-        catch(Exception e){ }
+        catch (Exception e) { }
     }
 
 
@@ -495,7 +513,7 @@
     }
     private void AddLink(string from, string to, double val)
     {
-        links.Add(new Link(nodeIds[from], nodeIds[to], val,null,nodeColors[from],nodeColors[to]));
+        links.Add(new Link(nodeIds[from], nodeIds[to], val, null, nodeColors[from], nodeColors[to]));
     }
     private void AddNode(string id, string title, double amount)
     {
@@ -511,7 +529,7 @@
     }
     private void AddNode(string id, string title, double amount, string color)
     {
-        nodes[id] = new Node(nodeCnt, title + " (" + Constants.Pretty(Math.Abs(amount)) + ")", null,color,1);
+        nodes[id] = new Node(nodeCnt, title + " (" + Constants.Pretty(Math.Abs(amount)) + ")", null, color, 1);
         nodeIds[id] = nodeCnt;
         nodeCnt++;
     }

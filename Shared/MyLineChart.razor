@@ -1,63 +1,120 @@
-﻿@using BlazorBootstrap
+﻿@using BetterBudgetWeb.Data
+@using BlazorBootstrap
 
-<BlazorBootstrap.LineChart @ref="lineChart" Width="800" Class="mb-4" />
+@if (Plots?.Count > 0)
+{
+    <BlazorBootstrap.LineChart @ref="lineChart" Height="@Height" />
+}
 
 @code {
+    [Parameter]
+    public int? Height { get; set; }
+
+    [Parameter]
+    public List<LinePlot> Plots
+    {
+        get { return plots; }
+        set
+        {
+            if (plots != value && value.Count > 0)
+            {
+                bool redrive = plots?.Count > 0;
+
+                plots = value;
+                if (redrive)
+                    Redrive(Plots);
+                //lineChart.UpdateValuesAsync(chartData);
+            }
+            else
+                plots = value;
+        }
+    }
+    public List<LinePlot> plots { get; set; }
+
     private BlazorBootstrap.LineChart lineChart = default!;
     private LineChartOptions lineChartOptions = default!;
     private ChartData chartData = default!;
 
     protected override void OnInitialized()
     {
-        var colors = ColorUtility.CategoricalTwelveColors;
+        lineChartOptions = new();
+        lineChartOptions.Responsive = true;
+        lineChartOptions.Interaction = new Interaction { Mode = InteractionMode.Index };
+        lineChartOptions.Plugins.Legend.Display = false;
 
-        var labels = new List<string> { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+        lineChartOptions.Scales.Y = new ChartAxes
+            {
+                Title = new ChartAxesTitle { Text = "Value ($)", Display = true, Color = "#B9AFF8" },
+                Ticks = new ChartAxesTicks { Color = "#B9AFF8" }
+            };
+
+        lineChartOptions.Scales.X = new ChartAxes
+            {
+                Title = new ChartAxesTitle { Text = "Month", Display = false, Color = "white" },
+                Ticks = new ChartAxesTicks { Color = "#00FFFF" }
+            };
+
+        lineChartOptions.Plugins.Title = new ChartPluginsTitle
+            {
+                Text = "Net Worth (6-month view)",
+                Display = true,
+                Color = Constants.ColorScheme["Text"],
+                Align = "center",
+                Font = new ChartFont { Size = 16, Family = "Imprint MT Shadow" }
+            };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && Plots?.Count > 0)
+        {
+            // pass the plugin name to enable the data labels
+            await Redrive(Plots);
+            await lineChart.InitializeAsync(chartData, lineChartOptions);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public async Task Redrive(List<LinePlot> thePlots)
+    {
+        string good = "#32CD32";
+        string bad = "#FF0000";
+
+        var labels = thePlots.Select(pl => pl.Month).ToList();
+        List<double?> numbers = new List<double?>();
+        foreach (var pl in thePlots)
+        {
+            numbers.Add(pl.Amount);
+        }
+
         var datasets = new List<IChartDataset>();
+        string genColor = thePlots.Count > 0 && thePlots[0].Amount <= thePlots.LastOrDefault()?.Amount ? good : bad;
 
         var dataset1 = new LineChartDataset
             {
-                Label = "Windows",
-                Data = new List<double?> { 7265791, 5899643, 6317759, 6315641, 5338211, 8496306, 7568556, 8538933, 8274297, 8657298, 7548388, 7764845 },
-                BackgroundColor = colors[0],
-                BorderColor = colors[0],
+                Label = "Net Worth",
+                Data = new List<double?>(numbers),
+                BackgroundColor = genColor + "15", // add a low alpha for fill
+                BorderColor = genColor,
                 BorderWidth = 2,
                 HoverBorderWidth = 4,
-                PointBackgroundColor = new List<string?> { colors[0] },
-                PointRadius = new List<double> { 3 }, // show points
-                PointHoverRadius = new List<double> { 4 },
-
-                // datalabels
-                Datalabels = new() { Alignment = Alignment.End }
+                PointBackgroundColor = new List<string?> { genColor },
+                PointBorderColor = new List<string?> { genColor },
+                PointRadius = new List<double> { 6 }, // show points
+                PointHoverRadius = new List<double> { 8 },
+                PointStyle = new List<string?> { "triangle" }
             };
+
+        if (Plots.Any(pl => !pl.certainty))
+        {
+            dataset1.BorderDash = new List<double> { 8 };
+            dataset1.BorderColor = "#4C619A";
+            dataset1.BackgroundColor = "#4C619A15";
+        }
+
+        dataset1.FillToStart();
+
         datasets.Add(dataset1);
-
-        var dataset2 = new LineChartDataset
-            {
-                Label = "macOS",
-                Data = new List<double?> { 1809499, 1816642, 2122410, 1809499, 1850793, 1846743, 1954797, 2391313, 1983430, 2469918, 2633303, 2821149 },
-                BackgroundColor = colors[1],
-                BorderColor = colors[1],
-                BorderWidth = 2,
-                HoverBorderWidth = 4,
-                PointBackgroundColor = new List<string?> { colors[0] },
-                PointRadius = new List<double> { 3 }, // show points
-                PointHoverRadius = new List<double> { 4 }
-            };
-        datasets.Add(dataset2);
-
-        var dataset3 = new LineChartDataset
-            {
-                Label = "Other",
-                Data = new List<double?> { 1081241, 1100363, 1118136, 1073255, 1120315, 1395736, 1488788, 1489466, 1489947, 1414739, 1735811, 1820171 },
-                BackgroundColor = colors[2],
-                BorderColor = colors[2],
-                BorderWidth = 2,
-                HoverBorderWidth = 4,
-                PointBackgroundColor = new List<string?> { colors[0] },
-                PointRadius = new List<double> { 3 }, // show points
-                PointHoverRadius = new List<double> { 4 }
-            };
-        datasets.Add(dataset3);
 
         chartData = new ChartData
             {
@@ -65,33 +122,9 @@
                 Datasets = datasets
             };
 
-        lineChartOptions = new();
-        lineChartOptions.Responsive = true;
-        lineChartOptions.Interaction = new Interaction { Mode = InteractionMode.Index };
+        lineChartOptions.Scales.Y!.Min = double.Round((double)dataset1.Data.Min() * .99, 0);
 
-        lineChartOptions.Scales.X.Title = new();
-        lineChartOptions.Scales.Y.Title = new();
-        lineChartOptions.Scales.X.Title.Text = "2019";
-        lineChartOptions.Scales.X.Title.Display = true;
-
-        lineChartOptions.Scales.Y.Title.Text = "Visitors";
-        lineChartOptions.Scales.Y.Title.Display = true;
-
-        lineChartOptions.Plugins.Title.Text = "Operating system";
-        lineChartOptions.Plugins.Title.Display = true;
-
-        // datalabels
-        lineChartOptions.Plugins.Datalabels.Color = "white";
+        await Task.Delay(100);
+        await lineChart.UpdateAsync(chartData, lineChartOptions);
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            // pass the plugin name to enable the data labels
-            await lineChart.InitializeAsync(chartData: chartData, chartOptions: lineChartOptions, plugins: new string[] { "ChartDataLabels" });
-        }
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
 }

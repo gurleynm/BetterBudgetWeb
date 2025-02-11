@@ -19,10 +19,10 @@
                 @if (Determine(smc))
                 {
                     <tr style="text-decoration:line-through;color:forestgreen">
-                        <td style="padding:.5vw 1vw;">@smc.Name</td>
-                        <td>@("$" + smc.Person1Amount)</td>
-                        <td>@("$" + smc.Person2Amount)</td>
-                        <td>@("$" + smc.TotalAmount)</td>
+                        <td style="padding:.5vw 1vw;color:forestgreen">@smc.Name</td>
+                        <td style="color:forestgreen">@("$" + smc.Person1Amount)</td>
+                        <td style="color:forestgreen">@("$" + smc.Person2Amount)</td>
+                        <td style="color:forestgreen">@("$" + smc.TotalAmount)</td>
                     </tr>
                 }
                 else
@@ -65,10 +65,10 @@ else
                 @if (Determine(smc))
                 {
                     <tr style="text-decoration:line-through;color:forestgreen">
-                        <td style="padding:.5vw 1vw;">@smc.Name</td>
-                        <td>@("$" + smc.Person1Amount)</td>
-                        <td>@("$" + smc.Person2Amount)</td>
-                        <td>@("$" + smc.TotalAmount)</td>
+                        <td style="color:forestgreen;padding:.5vw 1vw;">@smc.Name</td>
+                        <td style="color:forestgreen">@("$" + smc.Person1Amount)</td>
+                        <td style="color:forestgreen">@("$" + smc.Person2Amount)</td>
+                        <td style="color:forestgreen">@("$" + smc.TotalAmount)</td>
                     </tr>
                 }
                 else

@@ -5,23 +5,29 @@
 
 <div id="main-bar" class="navbar-dark" style="position:sticky;top:0;padding:0;background-color:indigo;width:100%;z-index:10">
     <div class="flex-r" style="width:100%;padding:0 1em;justify-content:space-between;align-items:center">
-        <img src="images/RoundLogo.webp" alt="Logo image" style="height:6.5vh;width:6.5vh;padding:0;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("home")) />
-        <h2 id="page-name" class="flex-c" style="font-family:'CBB Default'">@Constants.CurPage</h2>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <img src="images/RoundLogo.webp" alt="Logo image" style="height:6.5vh;width:6.5vh;padding:0;cursor:pointer" @onclick=@(() => NavMan.NavigateTo("/home")) />
+        <h2 id="page-name" style="font-family:'CBB Default'">@Constants.CurPage</h2>
+        <span class="oi oi-menu" style="font-size:large" @onclick="ToggleNavMenu"></span>
     </div>
 
     <div class="@NavMenuCssClass" @onclick="ToggleNavMenu" style="padding:0 1em;width:100%;height:fit-content;overflow:auto">
         <nav class="flex-column" style="justify-content:start">
+            @if (!TheApp)
+            {
+                <div class="nav-item px-1">
+                    <NavLink class="nav-link" href="home" Match="NavLinkMatch.All" style="font-size:large">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
+                    </NavLink>
+                </div>
+                <div class="nav-item px-1">
+                    <NavLink class="nav-link" href="input" style="font-size:large">
+                        <span class="oi oi-plus" aria-hidden="true"></span> Input
+                    </NavLink>
+                </div>
+            }
             <div class="nav-item px-1">
-                <NavLink class="nav-link" href="home" Match="NavLinkMatch.All" style="font-size:large">
-                    <span class="oi oi-home" aria-hidden="true"></span> Home
-                </NavLink>
-            </div>
-            <div class="nav-item px-1">
-                <NavLink class="nav-link" href="input" style="font-size:large">
-                    <span class="oi oi-plus" aria-hidden="true"></span> Input
+                <NavLink class="nav-link" href="update" style="font-size:large">
+                    <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
                 </NavLink>
             </div>
             <div class="nav-item px-1">
@@ -29,37 +35,35 @@
                     <span class="oi oi-minus" aria-hidden="true"></span> Delete
                 </NavLink>
             </div>
-            <div class="nav-item px-1">
-                <NavLink class="nav-link" href="update" style="font-size:large">
-                    <span class="oi oi-arrow-thick-top" aria-hidden="true"></span> Update
-                </NavLink>
-            </div>
-            @if (Constants.TIER_LEVEL > Tier.BASIC_TIER)
+            @if (ShowPortfolio)
             {
-                        <div class="nav-item px-1 @Constants.Options(Constants.TryingItOut,"componentWrapper","")">
-                            <AdvancedWrapper Bottom="false" Top="true" Class="">
-                                <NavLink class="nav-link" href="portfolio" style="font-size:large">
-                                    <span class="oi oi-dollar" aria-hidden="true"></span> Portfolio
-                                </NavLink>
-                            </AdvancedWrapper>
-                        </div>
+                <div class="nav-item px-1 @Constants.Options(Constants.TryingItOut,"componentWrapper","")">
+                    <AdvancedWrapper Bottom="false" Top="true" Class="">
+                        <NavLink class="nav-link" href="portfolio" style="font-size:large">
+                            <span class="oi oi-dollar" aria-hidden="true"></span> Portfolio
+                        </NavLink>
+                    </AdvancedWrapper>
+                </div>
             }
-            <div class="nav-item px-1">
-                <NavLink class="nav-link" href="chart" style="font-size:large">
-                    <span class="oi oi-bar-chart" aria-hidden="true"></span> Chart
-                </NavLink>
-            </div>
-            @if (Constants.TIER_LEVEL > Tier.BASIC_TIER)
+            @if (ShowChart)
             {
-                        <div class="nav-item px-1 @Constants.Options(Constants.TryingItOut,"componentWrapper","")">
-                              <AdvancedWrapper Bottom="false" Top="true" Class="">
-                            <NavLink class="nav-link" href="forecast" style="font-size:large">
+                <div class="nav-item px-1">
+                    <NavLink class="nav-link" href="chart" style="font-size:large">
+                        <span class="oi oi-bar-chart" aria-hidden="true"></span> Chart
+                    </NavLink>
+                </div>
+            }
+            @if (ShowChart)
+            {
+                <div class="nav-item px-1 @Constants.Options(Constants.TryingItOut,"componentWrapper","")">
+                    <AdvancedWrapper Bottom="false" Top="true" Class="">
+                        <NavLink class="nav-link" href="forecast" style="font-size:large">
                             <span class="oi oi-sun"></span> Forecast
                         </NavLink>
-                            </AdvancedWrapper>
-                        </div>                
+                    </AdvancedWrapper>
+                </div>
             }
-            @* <div class="nav-item px-1">
+            @*  <div class="nav-item px-1">
                 <NavLink class="nav-link" href="test" style="font-size:large">
                     <span class="oi oi-bar-chart" aria-hidden="true"></span> Test
                 </NavLink>
@@ -74,9 +78,16 @@
 </div>
 
 @code {
+    private bool TheApp => Constants.MobileApp;
     private bool collapseNavMenu = true;
     private string ThePageTitle => ToTitleCae(NavMan.Uri.Replace(NavMan.BaseUri, ""));
     private string ThePageTitle2 => NavMan.Uri;
+
+    private bool ShowDelete => Constants.Balances != null && Constants.Balances.Count > 0;
+    private bool ShowUpdate => Constants.Balances != null && Constants.Balances.Count > 0;
+    private bool ShowPortfolio => Constants.Balances != null && Constants.TIER_LEVEL > Tier.BASIC_TIER && !TheApp;
+    private bool ShowChart => Constants.Transactions != null && Constants.Transactions.Count > 0 && !TheApp;
+    private bool ShowForecast => Constants.Monthlies != null && Constants.Monthlies.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER && !TheApp;
 
     [CascadingParameter]
     public EventCallback LogOff { get; set; }

@@ -1,15 +1,23 @@
 ﻿<div class="text-color flex-c" style="background-color:transparent;width:100%;">
     <div class="chart-bar-hor__label flex-r" style="justify-content:start;border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
-        <span class="text-color" style="padding-right:1em">@Label </span>
+        <h4 class="text-color" style="padding-right:1em">@Label </h4>
         @if (Show)
         {
-            <span class="oi oi-caret-bottom"></span>
+            <h4 class="oi oi-caret-bottom"></h4>
         }
         else
         {
-            <span class="oi oi-caret-right"></span>
+            <h4 class="oi oi-caret-right"></h4>
         }
     </div>
+    @if (Negative)
+    {
+        <h5 style="cursor:pointer;color:red;text-align:center">@(Constants.Pretty(Value))</h5>
+    }
+    else
+    {
+        <h5 style="cursor:pointer;color:@Constants.ColorScheme["IncomeGood"];padding-left:calc(@BarFillWidth - 1em);text-align:start">@(Constants.Pretty(Value))</h5>
+    }
     <div class="chart-bar-hor__inner flex-r" style="@BackgroundColorAdjusted;justify-content:start;cursor:pointer" @onclick=OnClick>
         @if (Negative)
         {
@@ -18,6 +26,7 @@
         }
         else
         {
+
             <div class="chart-bar-hor__fill"
                  style="@FillColorAdjusted;width:@BarFillWidth"></div>
         }
@@ -25,11 +34,11 @@
     <div class="chart-bar-hor__label flex-c" style="border:none;width:100%;">
         @if (Negative)
         {
-            <span @onclick=OnClick style="color:red;cursor:pointer">@(Constants.Pretty(Value) + "/" + Constants.Pretty(MaxValue).Trim('$'))</span>
+            <h5 @onclick=OnClick style="text-align:end;color:red;cursor:pointer">@(Constants.Pretty(MaxValue))</h5>
         }
         else
         {
-            <span @onclick=OnClick style="cursor:pointer;color:@Constants.ColorScheme["IncomeGood"]">@(Constants.Pretty(Value) + "/" + Constants.Pretty(MaxValue).Trim('$'))</span>
+            <h5 @onclick=OnClick style="text-align:end;cursor:pointer;color:@Constants.ColorScheme["IncomeGood"]">@(Constants.Pretty(MaxValue))</h5>
         }
 
         @if (Show)
@@ -89,7 +98,7 @@
             if (MaxValue > 0)
             {
 
-                SetFillWidth(); 
+                SetFillWidth();
                 StateHasChanged();
             }
 

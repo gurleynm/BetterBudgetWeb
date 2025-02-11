@@ -11,7 +11,7 @@
 }
 @if (!Constants.Mobile)
 {
-    <div class="tab">
+    <div class="tab flex-r" style="width:100%;flex-wrap:wrap">
         @if (NoBalances)
         {
             <button class="tablinks @BalClass" @onclick="@ShowAccount">Account</button>
@@ -20,40 +20,40 @@
         {
             <button class="tablinks @TransClass" @onclick="@ShowTransaction">Transaction</button>
             <button class="tablinks @BalClass" @onclick="@ShowAccount">Account</button>
-            <button class="tablinks @MonthClass" @onclick="@ShowStaticCost">Monthly Charge</button>
+            <button class="tablinks @MonthClass" @onclick="@ShowStaticCost">Recurring Charge</button>
             <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
         }
     </div>
 }
 else
 {
-    <div class="tab" style="width:fit-content">
+    <div class="tab flex-r" style="width:fit-content;max-width:100%;flex-wrap:wrap">
         @if (NoBalances)
         {
             <button class="tablinks" @onclick="@ShowAccount">Account</button>
         }
         else
         {
-            <button class="tablinks" @onclick="@ShowTransaction">Transaction</button>
-            <button class="tablinks" @onclick="@ShowAccount">Account</button>
-            <button class="tablinks" @onclick="@ShowStaticCost">Monthly Charge</button>
-            <button class="tablinks" @onclick="@ShowEnvelope">Goal Envelope</button>
+            <button class="tablinks @TransClass" @onclick="@ShowTransaction">Transaction</button>
+            <button class="tablinks @BalClass" @onclick="@ShowAccount">Account</button>
+            <button class="tablinks @MonthClass" @onclick="@ShowStaticCost">Recurring Charge</button>
+            <button class="tablinks @EnvClass" @onclick="@ShowEnvelope">Goal Envelope</button>
         }
     </div>
 }
 @if (ShowTrans)
 {
     <InputTransaction TransactionName="@TransactionName"
-                  ExpenseType="@ExpenseType"
-                  PaidOffPerson1="@PaidOffPerson1"
-                  PaidOffPerson2="@PaidOffPerson2"
-                  PaidWithPerson1="@PaidWithPerson1"
-                  PaidWithPerson2="@PaidWithPerson2"
-                  Person1Amount="@Person1Amount"
-                  Person2Amount="@Person2Amount"
-                  Hex="@HexColor"
-                  TextColor="@TextColor"
-                  Preset="Preset">
+    ExpenseType="@ExpenseType"
+    PaidOffPerson1="@PaidOffPerson1"
+    PaidOffPerson2="@PaidOffPerson2"
+    PaidWithPerson1="@PaidWithPerson1"
+    PaidWithPerson2="@PaidWithPerson2"
+    Person1Amount="@Person1Amount"
+    Person2Amount="@Person2Amount"
+    Hex="@HexColor"
+    TextColor="@TextColor"
+    Preset="Preset">
     </InputTransaction>
 }
 else if (ShowBal)
@@ -121,10 +121,10 @@ else if (ShowStatic)
     {
         Constants.CurPage = "Input";
         if (NoBalances)
-        {
-            ShowTrans = false;
             ShowBal = true;
-        }
+
+        ShowTrans = !NoBalances;
+        StateHasChanged();
     }
 
     private void ShowTransaction()
