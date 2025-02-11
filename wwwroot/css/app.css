@@ -97,10 +97,25 @@ a, .btn-link {
     justify-content: space-around;
     margin: 1em
 }
-.sankey{
-    background-color:transparent !important;
-    margin-bottom:2em;
+.sankey {
+    background-color: transparent !important;
+    margin-bottom: 2em;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 }
+/* Hide scrollbar for Chrome, Safari and Opera */
+    .sankey::-webkit-scrollbar {
+        display: none;
+    }
+
+.nobar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+    .nobar::-webkit-scrollbar {
+        display: none;
+    }
 g.node text {
     stroke: cyan !important;
 }
