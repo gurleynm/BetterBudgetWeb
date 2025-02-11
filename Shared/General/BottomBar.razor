@@ -45,7 +45,7 @@
     private string ThePageTitle => ToTitleCae(NavMan.Uri.Replace(NavMan.BaseUri, ""));
     private string ThePageTitle2 => NavMan.Uri;
 
-    private bool ShowPortfolio => Constants.Balances != null && Constants.TIER_LEVEL > Tier.BASIC_TIER && false;
+    private bool ShowPortfolio => Constants.Balances != null && Constants.TIER_LEVEL > Tier.BASIC_TIER;
     private bool ShowChart => Constants.Transactions != null && Constants.Transactions.Count > 0;
     private bool ShowForecast => Constants.Monthlies != null && Constants.Monthlies.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER;
 
