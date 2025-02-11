@@ -15,6 +15,23 @@
 <div class="flex-c" style="overflow-y:auto;align-items:center">
     @* <div id="sankey_basic" style="width: 95%; height:fit-content;min-height: 75vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
                                 overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 0 1em 0;"></div> *@
+    @if (Levels != null && Levels.Count > 0)
+    {
+        <div class="flex-r">
+            <div class="flex-c">
+                <input type="month" id="start" name="start" min=@(MinMonYear.ToString("yyyy-MM")) max=@(MaxMonYear.ToString("yyyy-MM")) @bind=@MonYear />
+            </div>
+
+            <div class="flex-r" style="margin:1em">
+                <button class="btn-grad" @onclick=DrawChartEnter>@(SelectedLevel == "All" ? "Enter" : "Reset")</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <br />
+        <label style="color:red">No values for this combination.</label>
+    }
     <div class="flex-r-100" style="justify-content:space-between;flex-wrap:wrap;align-content:center">
         <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
                     background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid;">
@@ -37,23 +54,7 @@
             <span style="padding:0;color:@Constants.GoodOrBad((TotalIn-TotalOut)/TotalIn)">@(Math.Round(TotalIn == 0 ? 0 : (TotalIn - TotalOut) / TotalIn * 100, 1) + "%")</span>
         </div>
     </div>
-    @if (Levels != null && Levels.Count > 0)
-    {
-        <div class="flex-r">            
-            <div class="flex-c">
-                <input type="month" id="start" name="start" min=@(MinMonYear.ToString("yyyy-MM")) max=@(MaxMonYear.ToString("yyyy-MM")) @bind=@MonYear />
-            </div>
-
-            <div class="flex-r" style="margin:1em">
-                <button class="btn-grad" @onclick=DrawChartEnter>@(SelectedLevel == "All" ? "Enter" : "Reset")</button>
-            </div>
-        </div>
-    }
-    else
-    {
-        <br />
-        <label style="color:red">No values for this combination.</label>
-    }
+    
     @if (links.Count > 0)
     {
         <div class="nobar" style="width:100%;padding:1em 0;overflow-x:auto">
@@ -159,6 +160,7 @@
         SelectedMonth = latestDate.ToString("MMMM");
         SelectedYear = latestDate.Year.ToString();
         SelectedLevel = "All";
+        DecideDesired();
         DrawChart();
     }
 
