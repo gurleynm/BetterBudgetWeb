@@ -4,7 +4,7 @@
 @implements IDisposable
 @inject NavigationManager NavMan
 
-<div id="bottom-bar" class="navbar-dark" style="position:sticky;bottom:0;padding:0;padding-bottom:env(safe-area-inset-bottom);background-color:indigo;width:100%;z-index:10">
+<div id="bottom-bar" class="navbar-dark" style="position:sticky;bottom:0;padding:0;background-color:indigo;width:100%;z-index:10">
     <div class="flex-r-100" style="justify-content:space-around">
         <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Home" ? "cyan" : "white")" @onclick=@(() => NavMan.NavigateTo("/home"))>
             <h4 class="oi oi-home" aria-hidden="true"></h4>

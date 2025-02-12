@@ -23,8 +23,9 @@
 
 <PageTitle>Forecast</PageTitle>
 
-
-<MyLineChart Plots="Plots" Height=@(Constants.Mobile ? 300 : null) />
+<div class="flex-r-100">
+    <MyLineChart Plots="Plots" Height=@(Constants.Mobile ? 300 : null) />
+</div>
 <div class="flex-r-100 nobar" style="overflow-x:auto;justify-content:flex-start">
     @foreach (var mr in MonthRels)
     {
