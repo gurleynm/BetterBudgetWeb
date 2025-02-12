@@ -135,6 +135,10 @@ a, .btn-link {
     text-align: center;
 }
 
+.tab-btn {
+    flex-grow:1;
+}
+
 g.node text {
     stroke: cyan !important;
 }

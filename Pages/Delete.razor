@@ -11,18 +11,18 @@
     <h1 style="font-family:'CBB Default'">Delete</h1>
 }
 <div class="tab flex-r" style="width:100%;flex-wrap:wrap">
-    <button class="tablinks @BalanceClass" @onclick="@ShowBalanceGoal">Account</button>
+    <button class="tablinks tab-btn @BalanceClass" @onclick="@ShowBalanceGoal">Account</button>
     @if(Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "DYNAMIC") != null)
-    {        
-        <button class="tablinks @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Charge</button>
+    {
+        <button class="tablinks tab-btn @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Charge</button>
     }
     @if (Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "STATIC") != null)
     {
-        <button class="tablinks @StaticClass" @onclick="@ShowStaticGoal">Set Charge</button>
+        <button class="tablinks tab-btn @StaticClass" @onclick="@ShowStaticGoal">Set Charge</button>
     }
     @if(Constants.Envelopes.Count > 0)
-    {        
-        <button class="tablinks @EnvelopesClass" @onclick="@ShowEnvelopes">Goal Envelopes</button>
+    {
+        <button class="tablinks tab-btn @EnvelopesClass" @onclick="@ShowEnvelopes">Goal Envelopes</button>
     }
     @*<button class="tablinks @SavingsClass" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
 </div>
