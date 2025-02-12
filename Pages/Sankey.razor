@@ -15,55 +15,55 @@
 <div class="flex-c" style="overflow-y:auto;align-items:center">
     @* <div id="sankey_basic" style="width: 95%; height:fit-content;min-height: 75vh;background-color:@Constants.ColorScheme["ComponentBackground"];border-radius:10px;
                                 overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 0 1em 0;"></div> *@
-    @if (Levels != null && Levels.Count > 0)
-    {
-        <div class="flex-r">
-            <div class="flex-c">
-                <input type="month" id="start" name="start" min=@(MinMonYear.ToString("yyyy-MM")) max=@(MaxMonYear.ToString("yyyy-MM")) @bind=@MonYear />
-            </div>
+    <div class="flex-r">
+        <div class="flex-c">
+            <input style="padding:.5em" type="month" min=@(MinMonYear.ToString("yyyy-MM")) max=@(MaxMonYear.ToString("yyyy-MM")) @bind=@MonYear />
+        </div>
 
-            <div class="flex-r" style="margin:1em">
-                <button class="btn-grad" @onclick=DrawChartEnter>@(SelectedLevel == "All" ? "Enter" : "Reset")</button>
-            </div>
-        </div>
-    }
-    else
-    {
-        <br />
-        <label style="color:red">No values for this combination.</label>
-    }
-    <div class="flex-r-100" style="justify-content:space-between;flex-wrap:wrap;align-content:center">
-        <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                    background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid;">
-            <span>Total Income</span>
-            <span style="padding:0;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</span>
-        </div>
-        <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
-            <span>Total Expenses</span>
-            <span style="padding:0;color:red">@Constants.Pretty(TotalOut)</span>
-        </div>
-        <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
-            <span>Total Net</span>
-            <span style="padding:0;color:@Constants.GoodOrBad(TotalIn-TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</span>
-        </div>
-        <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
-            <span>Savings Rate</span>
-            <span style="padding:0;color:@Constants.GoodOrBad((TotalIn-TotalOut)/TotalIn)">@(Math.Round(TotalIn == 0 ? 0 : (TotalIn - TotalOut) / TotalIn * 100, 1) + "%")</span>
+        <div class="flex-r" style="margin:1em">
+            <button class="btn-grad" @onclick=DrawChartEnter>@(SelectedLevel == "All" ? "Enter" : "Reset")</button>
         </div>
     </div>
-    
-    @if (links.Count > 0)
+    @if (Levels == null || Levels.Count == 0)
     {
-        <div class="nobar" style="width:100%;padding:1em 0;overflow-x:auto">
-            <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "200vw" : "100%")" Height="@(Constants.Mobile ? Constants.MobileApp ? "80vh" : "90vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
-        </div>
+            <br />
+            <label style="color:red">No values for this combination.</label>
     }
     else
     {
-        <LoadingDots />
+        <div class="flex-r-100" style="justify-content:space-between;flex-wrap:wrap;align-content:center">
+            <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
+                    background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid;">
+                <span>Total Income</span>
+                <span style="padding:0;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</span>
+            </div>
+            <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
+                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                <span>Total Expenses</span>
+                <span style="padding:0;color:red">@Constants.Pretty(TotalOut)</span>
+            </div>
+            <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
+                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                <span>Total Net</span>
+                <span style="padding:0;color:@Constants.GoodOrBad(TotalIn-TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</span>
+            </div>
+            <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
+                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                <span>Savings Rate</span>
+                <span style="padding:0;color:@Constants.GoodOrBad((TotalIn-TotalOut)/TotalIn)">@(Math.Round(TotalIn == 0 ? 0 : (TotalIn - TotalOut) / TotalIn * 100, 1) + "%")</span>
+            </div>
+        </div>
+
+        @if (links.Count > 0)
+        {
+                <div class="nobar" style="width:100%;padding:1em 0;overflow-x:auto">
+                    <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "200vw" : "100%")" Height="@(Constants.Mobile ? Constants.MobileApp ? "80vh" : "90vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
+                </div>
+        }
+        else
+        {
+                <LoadingDots />
+        }
     }
 </div>
 
@@ -115,8 +115,6 @@
             List<Transaction> DesiredTransactions;
             selectedYear = monYear.Year.ToString();
             selectedMonth = monYear.ToString("MMMM");
-
-            DecideDesired();
 
         }
     }
@@ -197,6 +195,9 @@
     public async void DrawChartEnter()
     {
         SelectedLevel = "All";
+        DecideDesired();
+        if (Levels == null || Levels.Count == 0)
+            return;
         await GetFlows(SelectedMonth, SelectedYear);
     }
 

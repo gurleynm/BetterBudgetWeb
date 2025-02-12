@@ -22,11 +22,11 @@
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Number of Shares:</label>
-                <input type="number" style="width:20vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+                <input type="number" style="width:20vw" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Share Price at Sale:</label>
-                <input type="number" style="width:23vw" placeholder="Cost Per Share" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
+                <input type="number" style="width:23vw" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
             </div>
             <div class="flex-r-100">
                 <button class="btn btn-secondary" style="margin:auto 0" disabled=@Disabled @onclick=Submit>
@@ -79,11 +79,11 @@ else
             }
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label># of Shares:</label>
-                <input type="number" style="width:7vw" placeholder="# of Shares" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+                <input type="number" style="width:7vw" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
             </div>
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Cost Per Share:</label>
-                <input type="number" style="width:8vw" placeholder="Cost Per Share" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
+                <input type="number" style="width:8vw" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
             </div>
             @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
             {

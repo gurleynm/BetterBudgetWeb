@@ -78,7 +78,7 @@
 </div>
 
 @code {
-    private bool TheApp => Constants.MobileApp;
+    private bool TheApp => false; //Constants.MobileApp;
     private bool collapseNavMenu = true;
     private string ThePageTitle => ToTitleCae(NavMan.Uri.Replace(NavMan.BaseUri, ""));
     private string ThePageTitle2 => NavMan.Uri;
