@@ -1,0 +1,144 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Pages.PricingStuff
+@using BetterBudgetWeb.Repo
+@using Stripe
+@inject NavigationManager NavMan
+
+<div class="flex-c-start" style="height:fit-content">
+    <h1 class="flex-r-100" style="font-family: 'CBB Default';color:cyan">Features</h1>
+    <div class="flex-c" style="align-items:center">
+        <div class="flex-c-start" style="border:solid gray 2px;border-radius:10px">
+            <div class="flex-r-100">
+                <h3 style="padding:1em">What's included in a subscription?</h3>
+            </div>
+            @if (MyProducts != null)
+            {
+                @if (!Constants.AllFree)
+                {
+                    <div class="flex-r" style="padding:.5em">
+                        <span class="@Constants.Options(ShowMonthly,"sel-span","unsel-span")" @onclick=ToggleMonthly>Monthly</span>
+                        <span class="@Constants.Options(ShowMonthly,"unsel-span","sel-span")" @onclick=ToggleMonthly>Yearly</span>
+                    </div>
+                    <hr />
+                }
+                <div class="flex-c-start" style="justify-content:space-evenly;padding-bottom:5%">
+                    @foreach (var prod in MyProducts)
+                    {
+                        @if (prod.Timeframe == "MONTH" && ShowMonthly)
+                        {
+                            <TierListing HideSubscribe=@HideSubscribe TheProduct=prod />
+                            <hr />
+                        }
+                        else if (prod.Timeframe == "YEAR" && !ShowMonthly)
+                        {
+                            <TierListing HideSubscribe=@HideSubscribe TheProduct=prod />
+                            <hr />
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                @if (Constants.AllFree)
+                {
+                    <div class="flex-c-start" style="justify-content:space-evenly;padding-bottom:5%">
+                        <!--!--><div class="flex-r-100" style="justify-content:space-evenly;padding:0% 5%;">
+                            <div class="flex-c-start"></div><!--!-->
+                            <div class="flex-c-start" style="width:100%;"><div><!--!--><span class="oi oi-circle-check"></span> Track account transactions</div><div><!--!--><span class="oi oi-circle-check"></span> Utilize savings envelopes</div><div><!--!--><span class="oi oi-circle-check"></span> Record recurring transactions</div><div><!--!--><span class="oi oi-circle-check"></span> Export data to CSV</div></div>
+                        </div><!--!--><div class="flex-r-100" style="justify-content:space-evenly;padding:0% 5%;">
+                            <div class="flex-c-start"></div><!--!-->
+                            <div class="flex-c-start" style="width:100%;"><div><!--!--><span class="oi oi-circle-check"></span> Ability to track stocks, ETFs &amp; cryptocurrencies [BETA]</div><div><!--!--><span class="oi oi-circle-check"></span> Forecast your expenses and net worth in later months</div><div><!--!--><span class="oi oi-circle-check"></span> Add transaction presets for frequently made purchases</div></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <LoadingDots />
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public bool HideSubscribe { get; set; }
+
+    private bool ShowMonthly { get; set; } = true;
+    private List<MyProduct> MyProducts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Constants.AllFree)
+            return;
+
+        string curPlan = "NONE";
+        bool chargedMonthly = true;
+
+        if (!HideSubscribe)
+        {
+            var SubInfo = await SubscriptionRepo.GetMobileSubscriptionAsync();
+
+            curPlan = SubInfo.Item2;
+            curPlan = curPlan.Replace("cbb_base_plan", "BASIC");
+            curPlan = curPlan.Replace("cbb_advanced_plan", "ADVANCED");
+
+            chargedMonthly = !curPlan.EndsWith("year");
+            curPlan = curPlan.Replace("_year", "");
+        }
+
+        IEnumerable<Product> Products = await StripeRepo.GetProducts();
+        List<Price> Prices = (await StripeRepo.GetPrices()).Where(pr => pr.Active).ToList();
+
+        Dictionary<string, List<double>> ProductPrices = new Dictionary<string, List<double>>();
+        MyProducts = new();
+
+        foreach (var prod in Products)
+        {
+            var ThesePrices = Prices.Where(p => p.ProductId == prod.Id);
+            double monthlyCost = ThesePrices.FirstOrDefault(p => p.Recurring.Interval == "month").UnitAmount.Value / 100.0;
+            double yearlyCost = ThesePrices.FirstOrDefault(p => p.Recurring.Interval != "month").UnitAmount.Value / 100.0;
+
+            if (Constants.Device == "iOS")
+            {
+                if (prod.Name.ToUpper().Contains("BASIC"))
+                {
+                    monthlyCost = 2.99;
+                    yearlyCost = 29.99;
+                }
+                else
+                {
+                    monthlyCost = 4.99;
+                    yearlyCost = 49.99;
+                }
+            }
+
+            string AdjustedName = prod.Name.ToUpper().Trim();
+            bool containsName = AdjustedName.Contains(curPlan);
+            MyProduct MonthlyProd = new MyProduct(prod, monthlyCost, "MONTH", containsName && chargedMonthly);
+            MyProduct YearlyProd = new MyProduct(prod, yearlyCost, "YEAR", containsName && !chargedMonthly);
+
+            if (!chargedMonthly)
+                MonthlyProd.Unavailable = true;
+
+            if (curPlan == "ADVANCED" && AdjustedName.Contains("BASIC"))
+            {
+                MonthlyProd.Unavailable = true;
+                YearlyProd.Unavailable = true;
+            }
+
+            MonthlyProd.Name = MonthlyProd.Name.Replace("Tier", "Plan");
+            YearlyProd.Name = YearlyProd.Name.Replace("Tier", "Plan Year");
+            MyProducts.Add(MonthlyProd);
+            MyProducts.Add(YearlyProd);
+        }
+
+        MyProducts = MyProducts.OrderBy(p => p.Cost).ToList();
+    }
+
+    private void ToggleMonthly()
+    {
+        ShowMonthly = !ShowMonthly;
+        StateHasChanged();
+    }
+}

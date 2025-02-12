@@ -5,7 +5,6 @@
 {
     <Confirmation Title="Editting Transaction" OnClose="ModalCancel"
                   LeftBtnClick="ModalCancel" LeftBtnTxt="Close" LeftBtnColor="btn-secondary"
-                  MidBtnClick="ModalDecline" MidBtnTxt="Decline" MidBtnColor="btn-danger"
                   RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
         <EditForm Model="@Transact">
             <table class="toggle-table" style="border-radius:0">
@@ -63,44 +62,39 @@
 else
 {
     <Confirmation Title="Editting Transaction" OnClose="ModalCancel"
-                  LeftBtnClick="ModalCancel" LeftBtnTxt="Decline" LeftBtnColor="btn-danger"
+                  LeftBtnClick="ModalCancel"
                   RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
-        <div class="modal-body" style="width:100%;color:black;border-radius:0">
             <EditForm Model="@Transact">
-                <table class="toggle-table">
+            <table class="side-to-side spaced-table" style="border-radius:0;width:100%">
                     <tr>
-                        <td><label style="text-decoration:underline">Parameter</label></td>
-                        <td><label style="text-decoration:underline">Value</label></td>
+                        <td style="padding:1em 0">
+                            <label>Name</label>
+                        </td>
+                        <td>
+                            <InputText @bind-Value="Transact.Name" style="color:white" />
+                        </td>
                     </tr>
                     <tr>
                         <td>
                             <label>Date</label>
                         </td>
-                        <td style="padding:1vw">
+                        <td>
                             <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding:1vw">
+                        <td style="padding:1em 0">
                             <label>Expense Type</label>
                         </td>
-                        <td style="padding:1vw">
+                        <td>
                             <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <label>Name</label>
-                        </td>
-                        <td style="padding:1vw">
-                            <InputText @bind-Value="Transact.Name" style="color:white" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:1vw;">
+                        <td style="padding:1em 0">
                             <label>@(Constants.Person1 + " Values")</label>
                         </td>
-                        <td style="padding:1vw">
+                        <td>
                             <span style="border:solid white 1px;padding-left:1em">
                                 $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
                             </span>
@@ -109,10 +103,10 @@ else
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding:1vw;">
+                        <td style="padding:1em 0">
                             <label>@(Constants.Person2 + " Values")</label>
                         </td>
-                        <td style="padding:1vw">
+                        <td>
                             <span style="border:solid white 1px;padding-left:1em">
                                 $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
                             </span>
@@ -121,18 +115,16 @@ else
                         </td>
                     </tr>
                     <tr>
-
-                        <td>
+                        <td style="padding:1em 0">
                             <label>Total</label>
                         </td>
-                        <td style="padding:1vw">
+                        <td>
                             <label>@Transact.TotalAmount</label>
                         </td>
                     </tr>
                 </table>
             </EditForm>
             <p style="color:red">@ErrorMsg</p>
-        </div>
     </Confirmation>
 }
 

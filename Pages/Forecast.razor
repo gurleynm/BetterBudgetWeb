@@ -11,11 +11,11 @@
 
 <style>
     button {
-        color: black;
+    color: black;
     }
 
     th {
-        padding: 1em;
+    padding: 1em;
     }
 </style>
 
@@ -23,21 +23,20 @@
 
 <PageTitle>Forecast</PageTitle>
 
-
-<LineChart Plots="Plots" ChartId="chart_div" />
+<div class="flex-r-100">
+    <MyLineChart Plots="Plots" Height=@(Constants.Mobile ? 300 : null) />
+</div>
+<div class="flex-r-100 nobar" style="overflow-x:auto;justify-content:flex-start">
+    @foreach (var mr in MonthRels)
+    {
+        <div class="@(mr.Show ? "month-rel-selected" : "month-rel")" @onclick=@(() => SetMR(mr))>
+            <h4>@mr.Name</h4>
+        </div>
+    }
+</div>
 <div class="flex-c-start">
     @foreach (var mr in MonthRels)
     {
-        <button class="spendchart-btn" style="text-align:left;width:100%" @onclick=@(() => mr.Show = !mr.Show)>
-            @if (mr.Show)
-            {
-                <h2 style="width:100%">@(mr.Name)&nbsp;&nbsp;<i class="arrow down"></i></h2>
-            }
-            else
-            {
-                <h2 style="width:100%">@(mr.Name)&nbsp;<i class="arrow right"></i></h2>
-            }
-        </button>
         @if (mr.Show)
         {
             <div class="flex-r" style="justify-content:space-between;width:100%">
@@ -56,7 +55,7 @@
             </div>
 
             <MonthView MR=mr @bind-Person1Overflow=mr.ProjectPerson1Income
-                       @bind-Person2Overflow=mr.ProjectPerson2Income />
+            @bind-Person2Overflow=mr.ProjectPerson2Income />
         }
     }
 </div>
@@ -87,6 +86,9 @@
 
         InitMonths();
 
+        if (MonthRels?.Count > 0)
+            MonthRels[0].Show = true;
+
         Plots = MonthViewConstants.GetPlots();
         StateHasChanged();
     }
@@ -98,8 +100,22 @@
         DateTime nextOne;
         for (int cnt = 0; cnt < TotalNumMonths; cnt++)
         {
+            List<ExpenseAmount> Expenses = new List<ExpenseAmount>();
             nextOne = DateTime.Today.AddMonths(cnt + 1);
-            MonthRels.Add(new MonthRelations(nextOne.Month, nextOne.Year));
+
+            MonthViewConstants.SetMonthlies(nextOne.Month, nextOne.Year);
+
+            foreach (var dcin in MonthViewConstants.DynamicCostItems)
+                Expenses.Add(new ExpenseAmount(dcin.Name, dcin.Amount));
+
+            foreach (var stat in MonthViewConstants.StaticMonthlyCosts)
+                Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
+
+            var temp = new MonthRelations(nextOne.Month, nextOne.Year, Expenses);
+            temp.ProjectPerson1Income = Expenses.Sum(ex => ex.Amount) / 2;
+            temp.ProjectPerson2Income = Expenses.Sum(ex => ex.Amount) / 2;
+
+            MonthRels.Add(temp);
         }
     }
 
@@ -128,5 +144,15 @@
         }
 
         return nw;
+    }
+
+    private void SetMR(MonthRelations monthRelations)
+    {
+        foreach (var m in MonthRels)
+        {
+            m.Show = monthRelations.Name == m.Name;
+            if (m.Show)
+                MonthViewConstants.SetMonthlies(m.Month, m.Year);
+        }
     }
 }

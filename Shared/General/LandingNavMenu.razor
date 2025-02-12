@@ -13,9 +13,7 @@
                     @onclick=LoadDemo>
                 View Demo
             </button>
-            <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <span class="oi oi-menu" style="font-size:large" @onclick="ToggleNavMenu"></span>
         }
         else
         {
@@ -44,7 +42,7 @@
             </div>
             <div class="flex-r" style="align-items:center;margin:1em 0 1em 0">
                 <a @onclick=@(() => ToggleSign(false)) href="sign/in" style="font-family:'CBB Default';margin-right:1em;font-size:large;color:white">Log in</a>
-                <button class="btn btn-primary" @onclick=@(() => ToggleSign(true)) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Sign Up</button>
+                <button class="btn btn-primary" @onclick=@(() => ToggleSign(true)) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">@Constants.SignUpText</button>
             </div>
         </nav>
     </div>

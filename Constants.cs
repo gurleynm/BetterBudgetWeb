@@ -4,6 +4,7 @@ using BetterBudgetWeb.Repo;
 using BetterBudgetWeb.Runner;
 using Microsoft.AspNetCore.Components;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace BetterBudgetWeb
 {
@@ -11,7 +12,10 @@ namespace BetterBudgetWeb
     {
 
         public static bool Test = false; // true false
-        public static bool AllFree = true; // true false
+        public static bool AllFree = false; // true false
+        public static string Device { get; set; } = "WEB"; // true false
+        public static string SignUpText => AllFree ? "Sign Up" : "Start 45-Day Trial"; // true false
+        public static string DeviceSubscribed { get; set; } = "WEB"; // true false
         public static bool HideCookieBanner = true;
         public static EventHandler<bool> WeInChanged = (sender, value) => { };
 
@@ -447,7 +451,7 @@ namespace BetterBudgetWeb
                 values[5] = pres.Person2Amount.ToString();
                 values[6] = pres.PaidOffPerson1 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson1);
                 values[7] = pres.PaidOffPerson2 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson2);
-                values[8] = pres.TextColor.ToString() == "#FFFFFF" ? "white" : "black";
+                values[8] = pres.TextColor.ToString().ToUpper() == "#FFFFFF" ? "white" : "black";
                 values[9] = pres.HexColor.ToString();
             }
 
@@ -473,7 +477,7 @@ namespace BetterBudgetWeb
         public static void SetColorScheme()
         {
             ColorScheme["Background"] = "#111827";
-            ColorScheme["ComponentBackground"] = "#384153";
+            ColorScheme["ComponentBackground"] = "#152030";
             ColorScheme["Text"] = "silver";
             ColorScheme["TextOnSilver"] = "white";
             ColorScheme["TableEven"] = "#203957";

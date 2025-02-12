@@ -15,11 +15,11 @@
     <h1 style="font-family:'CBB Default'">Update</h1>
 }
 
-<div class="tab">
-    <button class="tablinks @BalClass" @onclick=@(() => ShowHideIndex(0))>Account</button>
+<div class="tab flex-r" style="width:100%;flex-wrap:wrap">
+    <button class="tablinks tab-btn @BalClass" @onclick=@(() => ShowHideIndex(0))>Account</button>
     @if (Constants.Envelopes.Count > 0)
     {
-        <button class="tablinks @EnvClass" @onclick=@(() => ShowHideIndex(1))>Goal Envelope</button>
+        <button class="tablinks tab-btn @EnvClass" @onclick=@(() => ShowHideIndex(1))>Goal Envelope</button>
     }
     @* @if (Constants.RelevantMonthlies.Count > 0)
     {

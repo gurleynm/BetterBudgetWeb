@@ -52,8 +52,8 @@
         </div>
     }
     <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="width:100%;justify-content:space-between">
-        <h4>Your name is: <input type="text" @bind-value=@NewUsername /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
-        <h4>Your email is: <input type="email" @bind-value=@NewEmail style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
+        <h4>Your name is: <input type="text" @bind-value=@NewUsername @oninput="@(async (ui) => { NewUsername = (string) ui.Value;})" /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
+        <h4>Your email is: <input type="email" @bind-value=@NewEmail @oninput="@(async (ui) => { NewEmail = (string) ui.Value;})" style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
         <h4>The second user's name is: <span>@OtherUser</span></h4>
     </div>
     @if (Constants.Mobile)
@@ -62,27 +62,36 @@
             <button class="btn btn-primary" style="background-color:indigo" disabled=@ShowChangedDisabled @onclick=@(() => { Update(); })>Save Changes</button>
         </div>
     }
-    @if (Constants.TIER_LEVEL < Data.Tier.GOD_TIER && !Constants.MobileApp)
+    @if (Constants.TIER_LEVEL < Data.Tier.GOD_TIER && !Constants.AllFree)
     {
-        <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
-            <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">Manage Subscription</button>
-        </div>
+        @if (Constants.Device == Constants.DeviceSubscribed || Constants.TIER_LEVEL == Tier.TRIAL)
+        {
+            <div class="flex-r" style="justify-content:space-evenly;width:100%;margin-bottom:1em">
+                <button class="btn btn-primary" style="background-color:indigo" @onclick="ManageSubscription">@(ShowPricingTable ? "Hide Subscriptions" : "Manage Subscriptions")</button>
+            </div>
+        }
+        else
+        {
+            <h4 class="plain-announce">@GetRejectText()</h4>
+            @* <button class="btn-grad" @onclick=@(() => Constants.Device = "Android")>Pretend Android</button>
+            <button class="btn-grad" @onclick=@(() => Constants.Device = "iOS")>Pretend iOS</button>
+            <button class="btn-grad" @onclick=@(() => Constants.Device = "WEB")>Pretend WEB</button> *@
+        }
     }
     @if (ShowPricingTable)
     {
         <PaymentPlans />
     }
-    else if(!Constants.Mobile)
+    @* else if (!Constants.Mobile)
     {
         <button class="btn btn-danger" style="position:absolute;right:1rem;bottom:1rem" @onclick=@(() => {ShowDelete = true; ErrorMsgPass = "";})>Delete Account</button>
-    }
-
+    } *@
 }
 else
 {
     <div style="font-family:'CBB Default';font-size:large">This the demo page. Normally, this would contain info about your account and subscription.</div>
     <div class="flex-r" style="width:100%">
-        <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">Sign Up</button>
+        <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">@Constants.SignUpText</button>
     </div>
 }
 
@@ -126,6 +135,11 @@ else
         </div>
     </Confirmation>
 }
+@* @if (Constants.CUR_USER_NAME == "Nathan1" || Constants.CUR_USER_NAME == "Phillip")
+{
+        <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo($"/subscribe?token={Constants.Token}&plan=cbb_base_plan_year",true))>Subscribe Base</button>
+        <button class="btn-grad" @onclick=@(() => NavMan.NavigateTo($"/subscribe?token={Constants.Token}&plan=cbb_advanced_plan_year",true))>Subscribe Adv</button>
+} *@
 <DeleteAccountModal @bind-ShowDelete=ShowDelete />
 
 
@@ -258,9 +272,30 @@ else
 
     private void ManageSubscription()
     {
-        if (Constants.TIER_LEVEL == Data.Tier.TRIAL)
+        if (Constants.TIER_LEVEL == Data.Tier.TRIAL || Constants.DeviceSubscribed != "WEB")
             ShowPricingTable = !ShowPricingTable;
         else
             NavMan.NavigateTo(HiddenEnv.StripePortal);
+    }
+
+    private string GetRejectText()
+    {
+        string retStr = "You subscrbied via ";
+        string HowToDoSo;
+
+        if (Constants.DeviceSubscribed == "WEB")
+        {
+            retStr += $"our website. ";
+            HowToDoSo = "site";
+        }
+        else
+        {
+            retStr += $"an {Constants.DeviceSubscribed} device from our mobile app. ";
+            HowToDoSo = "app";
+        }
+
+        retStr += "To make additional changes to your subscription, please do so from the " + HowToDoSo + ".";
+
+        return retStr;
     }
 }

@@ -2,7 +2,7 @@
 
 @if (!Mobile)
 {
-    <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="PaidWith" title="Pick a payment type ">
+    <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;border:none;color:white" @bind="PaidWith" title="Pick a payment type ">
         @if (Balances != null)
         {
             <option selected value="@string.Empty" disabled>@Balance1Header</option>
@@ -16,7 +16,7 @@
 }
 else
 {
-    <select class="custom-select" style="margin:1vh 0 1vh 0;color:white" @bind="PaidWith" title="Pick a payment type ">
+    <select class="custom-select" style="margin:1vh 0 1vh 0;border:none;color:white" @bind="PaidWith" title="Pick a payment type ">
         @if (Balances != null)
         {
             <option selected value="@string.Empty" disabled>@Balance1Header</option>

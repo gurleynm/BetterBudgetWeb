@@ -9,6 +9,7 @@
         public string Token { get; set; }
         public string Status { get; set; }
         public string Tier { get; set; }
+        public string Device { get; set; }
         public TokenHolder() { }
         public TokenHolder(User user)
         {
@@ -27,6 +28,7 @@
             Token = other.Token;
             Status = other.Status;
             Tier = other.Tier;
+            Device = other.Device;
         }
     }
 }

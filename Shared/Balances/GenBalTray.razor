@@ -2,22 +2,22 @@
 @inject IJSRuntime JSRuntime
 @implements IDisposable
 
-<div class="flex-r" style="width:100%;justify-content:start;cursor:pointer;align-items:center;
+<div class="flex-r" style="width:100%;justify-content:start;cursor:pointer;align-items:center;align-content:center;
             background-color:@Constants.ColorScheme["ComponentBackground"];padding:.5em"
      @onclick=@(() => OpenTray = !OpenTray)>
-    <div class="flex-r" style="width:100%;justify-content:start;align-items:center;">
-        <span style="margin-right:1em">@ExpenseType</span>
+    <div class="flex-r" style="width:75%;justify-content:start;align-items:center;">
+        <h5 style="margin-right:1em">@ExpenseType</h5>
         @if (OpenTray)
         {
-            <span class="oi oi-caret-bottom"></span>
+            <h5 class="oi oi-caret-bottom"></h5>
         }
         else
         {
-            <span class="oi oi-caret-right"></span>
+            <h5 class="oi oi-caret-right"></h5>
         }
     </div>
 
-    <div style="align-self:end;color:@Constants.GoodOrBad(BalanceTotal)">@Constants.Pretty(BalanceTotal)</div>
+    <h5 style="align-self:end;color:@Constants.GoodOrBad(BalanceTotal)">@Constants.Pretty(BalanceTotal)</h5>
 </div>
 <PopTray Id="@Id" @bind-ShowWorth=OpenTray ShowButton=false
          StartOpen=!Constants.Mobile>

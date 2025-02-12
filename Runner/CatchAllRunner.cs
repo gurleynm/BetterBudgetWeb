@@ -27,7 +27,8 @@ namespace BetterBudgetWeb.Runner
 
             CatchAll CA = JsonSerializer.Deserialize<CatchAll>(content, _options);
             Constants.TIER_STATUS = CA.Token.Status;
-            Constants.TIER_LEVEL = false ? Tier.BASIC_TIER : Constants.StringToTier(CA.Token.Tier);
+            Constants.TIER_LEVEL = Constants.StringToTier(CA.Token.Tier);
+            Constants.DeviceSubscribed = CA.Token.Device;
             Constants.CUR_USER_EMAIL = CA.Token.Email;
 
             return CA;

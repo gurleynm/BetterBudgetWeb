@@ -221,11 +221,17 @@ td a, td input, td img {
     display: inline-block;
 }
 
-.borderless-table > tr > td {
+.borderless-table {
+    border-radius: 0;
+}
+
+.borderless-table tr td {
     border: none;
     text-align: center;
     vertical-align: middle;
-    margin:0;
+    font-size: large;
+    padding: .5em;
+    margin: 0;
 }
 
 .flex-r-100 {
@@ -402,7 +408,6 @@ td a, td input, td img {
     border: solid gold;
     border-radius: 40px;
     padding: 15px 10px 10px;
-    width: 100%;
     -webkit-box-shadow: 0 0 10px gold;
     -moz-box-shadow: 0 0 10px gold;
     box-shadow: 0 0 10px gold;
@@ -421,7 +426,8 @@ td a, td input, td img {
 }
 
 .header {
-    position: absolute;
+    position: relative;
+    width: fit-content;
     margin-top: -25px;
     right: 10px;
     color: #384153;
@@ -431,9 +437,10 @@ td a, td input, td img {
 }
 
 .header-left {
-    position: absolute;
+    position: relative;
     margin-top: -25px;
     margin-left: 10px;
+    width: fit-content;
     color: #384153;
     background: gold;
     border-radius: 10px;
@@ -512,4 +519,17 @@ td a, td input, td img {
 label {
     font-family: 'CBB Default';
     font-size:large;
+}
+.plain-announce {
+    font-family: 'CBB Default';
+    text-align: center;
+}
+.spaced-table tr
+{
+    border-top: .5px solid silver;
+    border-bottom: .5px solid silver;
+}
+.spaced-table td
+{
+    padding: 1em 0;
 }

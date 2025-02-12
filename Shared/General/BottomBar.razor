@@ -1,0 +1,83 @@
+﻿@using BetterBudgetWeb.Data
+@using System.Globalization
+@inject NavigationManager NavMan
+@implements IDisposable
+@inject NavigationManager NavMan
+
+<div id="bottom-bar" class="navbar-dark" style="position:sticky;bottom:0;padding:0;background-color:indigo;width:100%;z-index:10">
+    <div class="flex-r-100" style="justify-content:space-around">
+        <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Home" ? "cyan" : "white")" @onclick=@(() => NavMan.NavigateTo("/home"))>
+            <h4 class="oi oi-home" aria-hidden="true"></h4>
+            <span style="color:inherit">Home</span>
+        </div>
+        <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Input" ? "cyan" : "white")" @onclick=@(() => NavMan.NavigateTo("/input"))>
+            <h4 class="oi oi-plus" aria-hidden="true"></h4>
+            <span style="color:inherit">Input</span>
+        </div>
+        @if (ShowPortfolio)
+        {
+            @* <AdvancedWrapper > *@
+            <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Portfolio" ? "cyan" : "white")" @onclick=@(() => NavMan.NavigateTo("/portfolio"))>
+                <h4 class="oi oi-dollar" aria-hidden="true"></h4>
+                <span style="color:inherit">Portfolio</span>
+            </div>
+            @* </AdvancedWrapper> *@
+        }
+        <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Chart" ? "cyan" : "white")" @onclick=@(() => NavMan.NavigateTo("/chart"))>
+            <h4 class="oi oi-bar-chart" aria-hidden="true"></h4>
+            <span style="color:inherit">Chart</span>
+        </div>
+        @if (ShowForecast)
+        {
+            @* <AdvancedWrapper> *@
+            <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Forecast" ? "cyan" : "white")" @onclick=@(() => NavMan.NavigateTo("/forecast"))>
+                <h4 class="oi oi-sun" aria-hidden="true"></h4>
+                <span style="color:inherit">Forecast</span>
+            </div>
+            @* </AdvancedWrapper> *@
+        }
+    </div>
+
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string ThePageTitle => ToTitleCae(NavMan.Uri.Replace(NavMan.BaseUri, ""));
+    private string ThePageTitle2 => NavMan.Uri;
+
+    private bool ShowPortfolio => Constants.Balances != null && Constants.TIER_LEVEL > Tier.BASIC_TIER;
+    private bool ShowChart => Constants.Transactions != null && Constants.Transactions.Count > 0;
+    private bool ShowForecast => Constants.Monthlies != null && Constants.Monthlies.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER;
+
+
+    [CascadingParameter]
+    public EventCallback LogOff { get; set; }
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override Task OnInitializedAsync()
+    {
+        Constants.CurPageChanged += CurPageUpdated;
+        return base.OnInitializedAsync();
+    }
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+    private string ToTitleCae(string txt)
+    {
+        TextInfo txtInfo = new CultureInfo("en-us", false).TextInfo;
+        return txtInfo.ToTitleCase(txt);
+    }
+
+    private void CurPageUpdated(object sender, string cp)
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.CurPageChanged -= CurPageUpdated;
+    }
+}

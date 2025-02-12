@@ -20,7 +20,7 @@ namespace BetterBudgetWeb.Data.Doughnut
         public void Add(ExpenseAmount expense)
         {
             if (string.IsNullOrEmpty(BackgroundColor))
-                BackgroundColor = ColorWheel.NextColor().ToHexString();
+                BackgroundColor = ColorWheel.NextColorString();
 
             SliceValues.Add(new ExpenseAmount(expense, BackgroundColor));
         }

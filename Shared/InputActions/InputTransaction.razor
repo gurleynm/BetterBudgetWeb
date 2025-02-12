@@ -1,23 +1,7 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Shared.PresetSections
-<style>
-    .food {
-        background-color: deeppink;
-    }
 
-    .gas {
-        background-color: coral;
-    }
-
-    .fun {
-        background-color: green;
-    }
-
-    h4 {
-        margin-left: 1vw;
-    }
-</style>
 @if (Mobile)
 {
     <div style="width:fit-content;">
@@ -25,7 +9,7 @@
         {
             <br style="clear:both" />
             <AdvancedWrapper Bottom="false" Top="true">
-                <div style="width:90%;height:fit-content;right:1vw;top:15vh;border:@Constants.Options(Constants.TryingItOut,"","solid silver 1px");">
+                <div style="width:100%;height:fit-content;border:@Constants.Options(Constants.TryingItOut,"","solid silver 1px");">
                     <h1 style="text-align:center">Presets:</h1>
                     <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var et in ExpenseTypesForPresets)
@@ -720,7 +704,7 @@ else
                 <div class="flex-r" style="width:25%;height:auto">
                     @if (Presets != null && Presets.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER)
                     {
-                        <AdvancedWrapper Bottom="false" Left="true" Class="componentWrapper">
+                        <AdvancedWrapper Bottom="false" Top="true"  Left="true" Class="componentWrapper">
                             <div class="flex-c-start" style="height: 70vh;">
                                 <h1 style="text-align:center;height:10%;">Presets:</h1>
                                 <div class="flex-r" style="flex: 1;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap;overflow-y:auto;">

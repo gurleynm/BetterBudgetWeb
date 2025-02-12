@@ -2,9 +2,9 @@
 @if (Constants.TryingItOut)
 {
     <div class="@Class">
-        @if (Top)
+        @if (Top && ShowText)
         {
-            @if (Left)
+            @if (Left && ShowText)
             {
                 <div class="header-left">Advanced</div>
             }
@@ -14,7 +14,7 @@
             }
         }
         @ChildContent
-        @if (Bottom)
+        @if (Bottom && ShowText)
         {
             <div class="header-bottom">Advanced</div>
         }
@@ -28,6 +28,8 @@ else
 @code {
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+    [Parameter]
+    public bool ShowText { get; set; } = true;
     [Parameter]
     public bool Top { get; set; } = true;
     [Parameter]
