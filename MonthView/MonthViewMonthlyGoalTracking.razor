@@ -7,7 +7,7 @@
         <div class="flex-c-start">
             <span>INCOME</span>
             <input type="number" placeholder="Income" style="width:5em;padding:0;margin:0;margin-bottom:1vh"
-                   @bind=ProjectedIncomeAmountStr />
+            @bind=ProjectedIncomeAmountStr />
         </div>
         <div class="flex-c-start">
             <span>EXPENSES</span>
@@ -21,19 +21,49 @@
     @if (Expenses != null && Expenses.Count > 0)
     {
         <div>
-            <MyDoughnutChart Expenses="Expenses" />
+            <MyDoughnutChart @ref=Donut Expenses="Expenses" />
         </div>
     }
 </div>
 
 @code {
+    [CascadingParameter]
+    public MonthRelations MR { get; set; }
+
+    private List<ExpenseAmount> Expenses => MR.Expenses;
+
+    private MyDoughnutChart Donut;
     public bool Mobile => Constants.Mobile;
+    private double dynamicCostAmount { get; set; }
+    private double staticCostAmount { get; set; }
     [Parameter]
     public int Month { get; set; }
     [Parameter]
-    public double DynamicCostAmount { get; set; }
+    public double DynamicCostAmount
+    {
+        get { return dynamicCostAmount; }
+        set
+        {
+            if (value == dynamicCostAmount)
+                return;
+
+            dynamicCostAmount = value;
+            Donut?.Redrive(Expenses);
+        }
+    }
     [Parameter]
-    public double StaticCostAmount { get; set; }
+    public double StaticCostAmount
+    {
+        get { return staticCostAmount; }
+        set
+        {
+            if (value == staticCostAmount)
+                return;
+
+            staticCostAmount = value;
+            Donut?.Redrive(Expenses);
+        }
+    }
 
     public double incomeOverflow { get; set; }
     [Parameter]
@@ -51,11 +81,8 @@
     [Parameter]
     public EventCallback<double> IncomeOverflowChanged { get; set; }
 
-    [Parameter]
-    public List<ExpenseAmount> Expenses { get; set; } = new List<ExpenseAmount>();
-
     public string projectedIncomeAmountStrOG { get; set; }
-    public string projectedIncomeAmountStr { get; set; }    
+    public string projectedIncomeAmountStr { get; set; }
     public string ProjectedIncomeAmountStr
     {
         get { return projectedIncomeAmountStr; }

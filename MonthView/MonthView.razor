@@ -13,50 +13,53 @@
     <div class="flex-r" style="flex-wrap:wrap;justify-content:space-evenly;margin-bottom:2vh">
         <div class="flex-c">
             <!-- Monthly Goal Tracking -->
-            <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
-                                          StaticCostAmount="@StaticCostAmount" Expenses=@Expenses @bind-IncomeOverflow="IncomeOverflow" />
+            <CascadingValue Value="MR">
+                <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
+                                              StaticCostAmount="@StaticCostAmount" @bind-IncomeOverflow="IncomeOverflow" />
+            </CascadingValue>
+
         </div>
         <div class="flex-c-start">
             <!-- Dynamic Costs -->
 
             <div style="width:100%;margin-bottom:1em">
                 <table class="toggle-table">
-                <tr>
+                    <tr>
                         <th colspan="2" style="background-color:magenta;color:white;"><i>Dynamic Monthly Expenses</i></th>
-                </tr>
-                <tr>
-                    <th>
-                        <span>Expense</span>
-                    </th>
-                    <th>Total Budget Amount</th>
-                </tr>
-                @foreach (var dci in MonthViewConstants.DynamicCostItems)
-                {
-                    @if (dci.Name.Contains("EXAMPLE DATA"))
+                    </tr>
+                    <tr>
+                        <th>
+                            <span>Expense</span>
+                        </th>
+                        <th>Total Budget Amount</th>
+                    </tr>
+                    @foreach (var dci in MonthViewConstants.DynamicCostItems)
                     {
-                        <tr>
-                            <td style="padding:.5vw 1vw;"><i>@dci.Name</i></td>
-                            <td>@Pretty(dci.Amount)</td>
-                        </tr>
+                        @if (dci.Name.Contains("EXAMPLE DATA"))
+                        {
+                            <tr>
+                                <td style="padding:.5vw 1vw;"><i>@dci.Name</i></td>
+                                <td>@Pretty(dci.Amount)</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td style="padding:.5vw 1vw;">
+                                    <span style="align-self:start">@dci.Name</span>
+                                </td>
+                                <td>@Pretty(dci.Amount)</td>
+                            </tr>
+                        }
                     }
-                    else
-                    {
-                        <tr>
-                            <td style="padding:.5vw 1vw;">
-                                <span style="align-self:start">@dci.Name</span>
-                            </td>
-                            <td>@Pretty(dci.Amount)</td>
-                        </tr>
-                    }
-                }
-                <tr>
-                    <td colspan="2">=</td>
-                </tr>
-                <tr>
-                    <td><strong>Total</strong></td>
-                    <td>@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.Amount))</td>
-                </tr>
-            </table>
+                    <tr>
+                        <td colspan="2">=</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Total</strong></td>
+                        <td>@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+                    </tr>
+                </table>
             </div>
 
             <!-- Set Monthly Expenses Goals -->
@@ -66,6 +69,15 @@
 }
 else
 {
+    <br style="clear:both" />
+    <br />
+
+    <!-- Monthly Goal Tracking -->
+    <CascadingValue Value="MR">
+        <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
+                                      StaticCostAmount="@StaticCostAmount" @bind-IncomeOverflow="IncomeOverflow" />
+    </CascadingValue>
+
     <!-- Dynamic Costs -->
     <div style="width:100%;">
         <table class="toggle-table">
@@ -109,13 +121,6 @@ else
 
     <!-- Set Monthly Expenses Goals -->
     <MonthViewSetMonthlyTable Month=Month Year=Year @bind-StaticMonthMap=StaticMonthMap />
-
-    <br style="clear:both" />
-    <br />
-
-    <!-- Monthly Goal Tracking -->
-    <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
-                                  StaticCostAmount="@StaticCostAmount" Expenses=@Expenses @bind-IncomeOverflow="IncomeOverflow" />
 
     <br />
     <br />
@@ -184,7 +189,7 @@ else
     private double DynamicCostAmount => MonthViewConstants.DynamicCostItems.Sum(d => d.Amount);
     private double StaticCostAmount => MonthViewConstants.StaticMonthlyCosts.Sum(smc => smc.TotalAmount);
 
-    private List<ExpenseAmount> Expenses = new List<ExpenseAmount>();
+    private List<ExpenseAmount> Expenses => MR.Expenses;
 
     private string MonthYear => (new DateTime(Year, Month, 1).ToString("MMMM") + " " + Year.ToString());
 
@@ -195,15 +200,9 @@ else
         StaticMonthMap = new Dictionary<string, (string, string)>();
         DynaMonthMap = new Dictionary<string, (string, string)>();
 
-        foreach (var dcin in MonthViewConstants.DynamicCostItems)
-            Expenses.Add(new ExpenseAmount(dcin.Name, dcin.Amount));
-
-        foreach (var stat in MonthViewConstants.StaticMonthlyCosts)
-            Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));
-
         Plots = new List<LinePlot>(Constants.Plots);
         Plots.RemoveAt(0);
-        Plots.Add(new LinePlot(MR.Name,MR.ProjectPerson1Income,false));
+        Plots.Add(new LinePlot(MR.Name, MR.ProjectPerson1Income, false));
         StateHasChanged();
     }
     private string Pretty(double num)
