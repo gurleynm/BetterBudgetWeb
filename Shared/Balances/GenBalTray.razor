@@ -2,7 +2,7 @@
 @inject IJSRuntime JSRuntime
 @implements IDisposable
 
-<div class="flex-r" style="width:100%;justify-content:start;cursor:pointer;align-items:center;
+<div class="flex-r" style="width:100%;justify-content:start;cursor:pointer;align-items:center;align-content:center;
             background-color:@Constants.ColorScheme["ComponentBackground"];padding:.5em"
      @onclick=@(() => OpenTray = !OpenTray)>
     <div class="flex-r" style="width:75%;justify-content:start;align-items:center;">
@@ -17,7 +17,7 @@
         }
     </div>
 
-    <div style="align-self:end;color:@Constants.GoodOrBad(BalanceTotal)">@Constants.Pretty(BalanceTotal)</div>
+    <h5 style="align-self:end;color:@Constants.GoodOrBad(BalanceTotal)">@Constants.Pretty(BalanceTotal)</h5>
 </div>
 <PopTray Id="@Id" @bind-ShowWorth=OpenTray ShowButton=false
          StartOpen=!Constants.Mobile>
