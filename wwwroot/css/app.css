@@ -140,7 +140,7 @@ a, .btn-link {
 }
 
 g.node text {
-    stroke: cyan !important;
+    fill: cyan;
 }
 g.link {
     opacity: 1;

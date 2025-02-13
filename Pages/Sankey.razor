@@ -57,7 +57,7 @@
         @if (links.Count > 0)
         {
                 <div class="nobar" style="width:100%;padding:1em 0;overflow-x:auto">
-                    <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "200vw" : "100%")" Height="@(Constants.Mobile ? Constants.MobileApp ? "80vh" : "90vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
+                    <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "250vw" : "100%")" Height="@(Constants.Mobile ? Constants.MobileApp ? "80vh" : "90vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
                 </div>
         }
         else
