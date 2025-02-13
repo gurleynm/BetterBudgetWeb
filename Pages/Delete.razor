@@ -18,7 +18,7 @@
     }
     @if (Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "STATIC") != null)
     {
-        <button class="tablinks tab-btn @StaticClass" @onclick="@ShowStaticGoal">One-time Monthly Charge</button>
+        <button class="tablinks tab-btn @StaticClass" @onclick="@ShowStaticGoal">1-time Monthly Charge</button>
     }
     @if(Constants.Envelopes.Count > 0)
     {
