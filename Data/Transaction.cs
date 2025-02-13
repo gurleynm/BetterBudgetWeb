@@ -15,23 +15,18 @@
         public DateTime DateOfTransaction { get; set; } = DateTime.Now;
 
         public Transaction() { }
-        public Transaction(string name, string expenseType, double person1, double person2 = 0)
+        public Transaction(SplitTrans split, Transaction other)
         {
-            Name = name;
-            ExpenseType = expenseType;
-            Person1Amount = person1;
-            Person2Amount = person2;
-            DateOfTransaction = DateTime.Now;
-        }
-        public Transaction(string name, string expenseType, double person1, double person2, string person1PaidWith, string person2PaidWith)
-        {
-            Name = name;
-            ExpenseType = expenseType;
-            Person1Amount = person1;
-            Person2Amount = person2;
-            PaidWithPerson1 = person1PaidWith;
-            PaidWithPerson2 = person2PaidWith;
-            DateOfTransaction = DateTime.Now;
+            ExpenseType = split.ExpenseType;
+            Person1Amount = split.Person1Amout;
+            Person2Amount = split.Person2Amout;
+
+            Name = other.Name;
+            PaidWithPerson1 = other.PaidWithPerson1;
+            PaidWithPerson2 = other.PaidWithPerson2;
+            DateOfTransaction = other.DateOfTransaction;
+            PaidOffPerson1 = other.PaidOffPerson1;
+            PaidOffPerson2 = other.PaidOffPerson2;
         }
         public Transaction(string name, string expenseType, double person1, double person2, string person1PaidWith, string person2PaidWith, string person1PaidOff, string person2PaidOff)
         {

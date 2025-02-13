@@ -257,7 +257,7 @@
             {
                 @*NavMan.BaseUri == NavMan.Uri*@
                 <main>
-                    <article class="content px-4">
+                    <article class="@ArticleClass">
                         @Body
                     </article>
                 </main>
@@ -424,7 +424,7 @@
                         </div>
                     }
 
-                    <article class="content px-4" style="@PaddingLeft">
+                    <article class="@ArticleClass" style="@PaddingLeft">
                         <CascadingValue Value=LogOff>
                             <CascadingValue Value=RunModal>
                                 <CascadingValue Value=this>
@@ -445,16 +445,18 @@
                                             <EditorModalDialog Title="@(string.Format("{0} (By: {1})","Test", "Deez Nuts"))"
                                             Text="Story"
                                             Transact="@SelectedTransaction"
-                                            OnClose="@CloseEditModal">
-
-                                            </EditorModalDialog>
+                                            OnClose="@CloseEditModal" />
+                                        }
+                                        else if (ShowSplitModal)
+                                        {
+                                            <SplitTransaction 
+                                            Transact="@SelectedTransaction"
+                                            OnClose="@CloseSplitModal" />
                                         }
                                         else if (ViewReports)
                                         {
                                             <Reports Title="@(string.Format("{0} (By: {1})","Stubname", "Deez Nuts"))"
-                                            Text="Story" OnClose=@ToggleReports>
-
-                                            </Reports>
+                                            Text="Story" OnClose=@ToggleReports />
                                         }
                                     </CascadingValue>
                                 </CascadingValue>
@@ -501,6 +503,8 @@
     private CustomErrorBoundary errBnd;
     private bool mobile => Constants.Mobile;
 
+    private string ArticleClass => Constants.MobileApp ? "content" : "content px-4";
+
     private bool AccountDelete { get; set; }
 
     private string LogTitle = "Logging in";
@@ -524,6 +528,7 @@
     private Transaction SelectedTransaction { get; set; }
     private bool ShowDeleteModal { get; set; }
     private bool ShowEditModal { get; set; }
+    private bool ShowSplitModal { get; set; }
     private bool ViewReports { get; set; }
 
     private bool ShowDelete => Constants.Balances != null && Constants.Balances.Count > 0;
@@ -641,6 +646,9 @@
             case "R":
                 ToggleReports();
                 break;
+            case "S":
+                ToggleSplit(t);
+                break;
             default:
                 ToggleEdit(t);
                 break;
@@ -669,6 +677,15 @@
         StateHasChanged();
     }
 
+    public async void ToggleSplit(Transaction t)
+    {
+        SelectedTransaction = new Transaction(t);
+        ShowSplitModal = !ShowSplitModal;
+
+        ToggleOverflow();
+        StateHasChanged();
+    }
+
     private async void ToggleReports(bool accepted = false)
     {
         ViewReports = !ViewReports;
@@ -682,9 +699,16 @@
         StateHasChanged();
 
     }
+
     private async void CloseEditModal(bool accepted)
     {
         ShowEditModal = !ShowEditModal;
+        ToggleOverflow();
+    }
+    
+    private async void CloseSplitModal(bool accepted)
+    {
+        ShowSplitModal = !ShowSplitModal;
         ToggleOverflow();
     }
 
