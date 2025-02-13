@@ -5,18 +5,18 @@
     <br />
     <br />
     <div>
-        <label>Transaction Name:</label>
+        <label>Expense Name:</label>
         <br />
-        <input type="text" placeholder="Transaction Name" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
+        <input type="text" placeholder="Expense Name" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
     </div>
     <br />
     <div>
-        <label>Type of Budget Category:</label>
+        <label>Type of Recurring Charge:</label>
         <br />
         <select @bind="Dyna">
             <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
-            <option value="DYNAMIC">Dynamic Monthly Expense</option>
-            <option value="STATIC">Set Monthly Expense</option>
+            <option value="DYNAMIC">Budget Category</option>
+            <option value="STATIC">One-time Monthly Charge</option>
         </select>
     </div>
     <br />
@@ -72,19 +72,19 @@ else
 {
     <div class="tabcontent">
         <div style="float:left; margin-right:10vw;">
-            <label>Transaction Name:</label>
+            <label>Expense Name:</label>
             <br />
-            <input type="text" placeholder="Transaction Name" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
+            <input type="text" placeholder="Expense Name" @bind-value="@StaticName" @oninput="@(async (ui) => { StaticName = (string) ui.Value;})" />
         </div>
         <br style="clear:both;" />
         <br />
         <div style="float:left;margin-right:10vw;">
-            <label>Type of Budget Category:</label>
+            <label>Type of Recurring Charge:</label>
             <br />
             <select @bind="Dyna">
                 <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
-                <option value="DYNAMIC">Dynamic Monthly Expense</option>
-                <option value="STATIC">Set Monthly Expense</option>
+                <option value="DYNAMIC">Budget Category</option>
+                <option value="STATIC">One-time Monthly Charge</option>
             </select>
         </div>
         <div style="float:left;margin-right:10vw;">

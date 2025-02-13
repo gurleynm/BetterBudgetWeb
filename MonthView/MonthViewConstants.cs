@@ -4,9 +4,9 @@ namespace BetterBudgetWeb.MonthView
 {
     public class MonthViewConstants
     {
-        public static List<DynamicCostItem> DynamicCostItems { get; set; }
+        public static List<Monthly> DynamicCostItems { get; set; }
         public static List<SavingsGoal> SavingsGoals { get; set; }
-        public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; }
+        public static List<Monthly> StaticMonthlyCosts { get; set; }
         public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public static List<Balance> Balances { get; set; } = new List<Balance>();
         public static List<ProjectedDatum> ProjectedData { get; set; }
@@ -81,9 +81,9 @@ namespace BetterBudgetWeb.MonthView
             Month = month;
             Year = year;
 
-            DynamicCostItems = new List<DynamicCostItem>();
+            DynamicCostItems = new List<Monthly>();
             SavingsGoals = new List<SavingsGoal>();
-            StaticMonthlyCosts = new List<StaticMonthlyCost>();
+            StaticMonthlyCosts = new List<Monthly>();
             ProjectedData = new List<ProjectedDatum>();
 
             foreach (var mon in Constants.Monthlies)
@@ -93,7 +93,7 @@ namespace BetterBudgetWeb.MonthView
                     if (CheckMonthYear(mon))
                     {
                         var DCIExists = DynamicCostItems.FirstOrDefault(d => d.Name == mon.Name);
-                        var NewDCI = new DynamicCostItem(mon.Name, mon.Person1Amount, mon.Person2Amount);
+                        var NewDCI = new Monthly(mon.Name, mon.Person1Amount, mon.Person2Amount, "DYNAMIC");
 
                         if (DCIExists == null)
                             DynamicCostItems.Add(NewDCI);
@@ -112,7 +112,7 @@ namespace BetterBudgetWeb.MonthView
                     if (CheckMonthYear(mon))
                     {
                         var SMCExists = StaticMonthlyCosts.FirstOrDefault(s => s.Name == mon.Name);
-                        var NewSMC = new StaticMonthlyCost(mon.Name, mon.Person1Amount, mon.Person2Amount);
+                        var NewSMC = new Monthly(mon.Name, mon.Person1Amount, mon.Person2Amount, "STATIC");
 
                         if (SMCExists == null)
                             StaticMonthlyCosts.Add(NewSMC);
@@ -142,7 +142,7 @@ namespace BetterBudgetWeb.MonthView
                 }
             }
 
-            DynamicCostItems = DynamicCostItems.OrderByDescending(dci => dci.Amount).ToList();
+            DynamicCostItems = DynamicCostItems.OrderByDescending(dci => dci.TotalAmount).ToList();
             StaticMonthlyCosts = StaticMonthlyCosts.OrderByDescending(smc => smc.TotalAmount).ToList();
             SavingsGoals = SavingsGoals.OrderByDescending(sg => sg.Goal).ToList();
         }
@@ -202,7 +202,7 @@ namespace BetterBudgetWeb.MonthView
                 else if (person == Constants.Person2)
                     total += dci.Person2Amount;
                 else
-                    total += dci.Amount;
+                    total += dci.TotalAmount;
             }
 
             return total;

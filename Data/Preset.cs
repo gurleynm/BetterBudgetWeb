@@ -17,19 +17,19 @@ namespace BetterBudgetWeb.Data
         public string TextColor { get; set; }
         public double TotalAmount => Person1Amount + Person2Amount;
 
-        private void SetSMC(StaticMonthlyCost smc)
+        private void SetSMC(Monthly smc)
         {
-            ExpenseType = "Static Cost";
+            ExpenseType = "1-Time Charge";
             Name = smc.Name;
             Person1Amount = smc.Person1Amount;
             Person2Amount = smc.Person2Amount;
         }
         public Preset() { }
-        public Preset(StaticMonthlyCost smc)
+        public Preset(Monthly smc)
         {
             SetSMC(smc);
         }
-        public Preset(StaticMonthlyCost smc, string hex, string text)
+        public Preset(Monthly smc, string hex, string text)
         {
             HexColor = hex;
             TextColor = text;

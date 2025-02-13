@@ -809,7 +809,7 @@ else
 
         foreach (var smc in Constants.StaticMonthlyCosts)
         {
-            if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "Static Cost") == 0)
+            if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "1-Time Charge") == 0)
                 if (!smc.Name.Contains("(EXAMPLE DATA)"))
                     Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
         }
@@ -823,7 +823,7 @@ else
         foreach (var dci in Constants.DynamicCostItems)
             dcis.Add(dci.Name);
 
-        others.Add("Static Cost");
+        others.Add("1-Time Charge");
         others.Add("Income");
         others.Add("Equity");
         others.Add("Transfer Between Accounts");

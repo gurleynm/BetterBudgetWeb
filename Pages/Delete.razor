@@ -14,11 +14,11 @@
     <button class="tablinks tab-btn @BalanceClass" @onclick="@ShowBalanceGoal">Account</button>
     @if(Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "DYNAMIC") != null)
     {
-        <button class="tablinks tab-btn @DynamicClass" @onclick="@ShowDynamicGoal">Dynamic Charge</button>
+        <button class="tablinks tab-btn @DynamicClass" @onclick="@ShowDynamicGoal">Budget Category</button>
     }
     @if (Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "STATIC") != null)
     {
-        <button class="tablinks tab-btn @StaticClass" @onclick="@ShowStaticGoal">Set Charge</button>
+        <button class="tablinks tab-btn @StaticClass" @onclick="@ShowStaticGoal">One-time Monthly Charge</button>
     }
     @if(Constants.Envelopes.Count > 0)
     {

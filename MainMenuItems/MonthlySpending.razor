@@ -92,6 +92,9 @@
     public string ExpenseType { get; set; }
 
     [Parameter]
+    public string Name { get; set; }
+
+    [Parameter]
     public bool ShowPerson { get; set; } = true;
 
     [Parameter]
@@ -164,7 +167,10 @@
 
         if (!string.IsNullOrEmpty(ExpenseType))
         {
-            transactions = transactions.Where(t => t.ExpenseType == ExpenseType).ToList();
+            var tempTransactions = transactions.Where(t => t.ExpenseType == ExpenseType).ToList();
+
+            transactions = tempTransactions.Count == 0 ?
+                transactions = transactions.Where(t => t.ExpenseType == "1-Time Charge" && t.Name == Name).ToList() : new(tempTransactions);
         }
         else if (!string.IsNullOrEmpty(TheBalance))
         {

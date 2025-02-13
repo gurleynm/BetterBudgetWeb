@@ -45,8 +45,7 @@ else
                     <div class="flex-r" style="margin-bottom:2vh;">
                         <div>
                             <!-- Savings Goals-->
-                            <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
-                            ActualStaticAmount=@ActualStatic
+                            <MonthlyGoalTracking ActualAmount=@ActualCost
                             ActualIncomeAmount=@ActualIncome
                             EnvelopeAmount=@EnvelopeExpenses />
                         </div>
@@ -61,7 +60,7 @@ else
                             </PopTray>
 
                             <!-- Dynamic Costs -->
-                            <ChartHorizontal DPs=@DynamicCostItems />
+                            <ChartHorizontal DPs=@CostItems />
                         </div>
                     </div>
                 </div>
@@ -115,9 +114,6 @@ else
                                 </div>
                             </PopTray>
                             <AddExpense OnAddConfirm="Add" Added="Added" @bind-Disabled=AddDisabled />
-                            <br style="clear:both;" />
-                            <!-- Set Monthly Expenses Goals-->
-                            <SetMonthlyTable />
                             <br style="clear:both;" />
                             <!-- Ideal Emergency Fund-->
                             <IdealEmergencyFund />
@@ -225,8 +221,7 @@ else
         <br />
 
         <!-- Savings Goals-->
-        <MonthlyGoalTracking ActualDynamicAmount=@ActualDynamic
-        ActualStaticAmount=@ActualStatic
+        <MonthlyGoalTracking ActualAmount=@ActualCost
         ActualIncomeAmount=@ActualIncome
         EnvelopeAmount=@EnvelopeExpenses />
 
@@ -238,16 +233,11 @@ else
             <table>
                 <tr>
                     <td colspan="4">
-                        <ChartHorizontal DPs=@DynamicCostItems />
+                        <ChartHorizontal DPs=@CostItems />
                     </td>
                 </tr>
             </table>
         </div>
-
-        <br />
-
-        <!-- Set Monthly Expenses Goals-->
-        <SetMonthlyTable />
 
         <br style="clear:both" />
         <br />
@@ -291,7 +281,7 @@ else
 
     private List<Transaction> Transactions;
     private List<Transaction> FilteredTransactions;
-    private List<DynamicCostItem> DynamicCostItems;
+    private List<Monthly> CostItems;
 
     private string SelectedBalance = "";
     private bool ValidChoice = true;
@@ -353,12 +343,11 @@ else
     }
 
     private List<Transaction> MonthlyTransactions => Constants.Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
-    private double ActualStatic => MonthlyTransactions.Where(ft => ft.ExpenseType == "Static Cost").Sum(ft => ft.TotalAmount);
     private double ActualIncome => MonthlyTransactions.Where(ft => ft.ExpenseType == "Income").Sum(ft => ft.TotalAmount);
-    private double ActualDynamic => DynamicCostItems.Sum(dci => dci.Amount) - DynamicCostItems.Sum(dci => dci.Left);
+    private double ActualCost => CostItems.Sum(dci => dci.TotalAmount) - CostItems.Sum(dci => dci.Left);
 
     private double ProjectedExpense => Constants.StaticMonthlyCosts.Sum(ta => ta.TotalAmount) +
-                                        DynamicCostItems.Sum(d => d.Amount);
+                                        CostItems.Sum(d => d.TotalAmount);
     private double ActualExpense => FilteredTransactions.Where(ft => CostMoney(ft)).Sum(ft => ft.TotalAmount);
     private double EnvelopeExpenses => FilteredTransactions.Where(ft => ft.ExpenseType == "Envelope").Sum(ft => ft.TotalAmount)
                                         + FilteredTransactions.Where(ft => IsAnEnvelope(ft)).Sum(ft => ft.TotalAmount);
@@ -373,7 +362,7 @@ else
     {
         List<string> retStr = new List<string>();
         retStr.Add("Income");
-        retStr.Add("Static Cost");
+        retStr.Add("1-Time Charge");
         retStr.Add("Envelope");
         retStr.Add("Equity");
         retStr.Add("Debt");
@@ -435,7 +424,12 @@ else
 
         Envelopes = Constants.Envelopes.OrderByDescending(e => e.TotalAmount / e.Goal).ToList();
 
-        DynamicCostItems = new List<DynamicCostItem>(Constants.DynamicCostItems);
+        CostItems = new List<Monthly>(Constants.DynamicCostItems);
+        foreach (var statics in Constants.StaticMonthlyCosts)
+        {
+            CostItems.Add(statics);
+        }
+        CostItems = CostItems.OrderByDescending(tt => tt.TotalAmount).ToList();
 
         /*
         * string TutorialSeen = await ReadCookies("TutorialSeen");
@@ -469,57 +463,6 @@ else
         return IndexRunner.GetYears();
     }
 
-    private void FilterDate(string filter) { Filter(filter, true); }
-    private void FilterBalance(string filter) { Filter(filter, false, true); }
-    private void Filter(string filter, bool date = false, bool balance = false)
-    {
-        if (filtered)
-            ResetFilters();
-
-        if (!string.IsNullOrEmpty(filter))
-        {
-            if (date)
-                FilteredTransactions = FilteredTransactions.Where(ft => ft.DateOfTransaction.ToShortDateString() == filter).ToList();
-            else if (balance)
-                FilteredTransactions = FilteredTransactions.Where(ft => ft.PaidWithPerson1 == filter ||
-                                                                        ft.PaidWithPerson2 == filter ||
-                                                                        ft.PaidOffPerson1 == filter ||
-                                                                        ft.PaidOffPerson2 == filter).ToList();
-            else
-                FilteredTransactions = FilteredTransactions.Where(ft => ft.ExpenseType == filter).ToList();
-
-            filtered = true;
-        }
-
-        StateHasChanged();
-    }
-
-    private void Filter(DynamicCostItem filter)
-    {
-        var catcher = IndexRunner.Filter(ref filter, Transactions, FilteredTransactions, ref filtered);
-        Transactions = catcher[0];
-        FilteredTransactions = catcher[1];
-
-        StateHasChanged();
-    }
-
-    private void ResetFilters(bool BtnPress = false)
-    {
-        FilteredTransactions = Transactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
-        filtered = false;
-
-        if (BtnPress)
-        {
-            string FilterIndicatorTxt = " (ON)";
-            for (int index = 0; index < DynamicCostItems.Count; index++)
-            {
-                if (DynamicCostItems[index].Name.Contains(FilterIndicatorTxt))
-                {
-                    DynamicCostItems[index].Name = DynamicCostItems[index].Name.Replace(FilterIndicatorTxt, "");
-                }
-            }
-        }
-    }
     private void SetDataPoints(bool UpdateState = false)
     {
         DataPoints = new List<DataPoint>();
@@ -669,7 +612,6 @@ else
     {
         if (!ShowChart)
         {
-            ResetFilters();
             FilteredTransactions = new List<Transaction>(Constants.catchAll.Transactions);
             FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
             SelectedBalance = "";
