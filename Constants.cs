@@ -451,7 +451,7 @@ namespace BetterBudgetWeb
                 values[5] = pres.Person2Amount.ToString();
                 values[6] = pres.PaidOffPerson1 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson1);
                 values[7] = pres.PaidOffPerson2 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson2);
-                values[8] = pres.TextColor.ToString().ToUpper() == "#FFFFFF" ? "white" : "black";
+                values[8] = pres.TextColor.ToString().ToUpper() == "#FFFFFF" ? "#FFFFFF" : "#000000";
                 values[9] = pres.HexColor.ToString();
             }
 
