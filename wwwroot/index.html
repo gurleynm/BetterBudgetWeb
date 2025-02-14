@@ -191,13 +191,13 @@
             //    window.location.reload();
         }
         function ScrollTo(id) {
-            var elm = document.getElementById(id);
+            var elm = document.getElementById(id,behave = 'smooth');
             if (elm) {
-                elm.scrollIntoView({ behavior: 'smooth' });
+                elm.scrollIntoView({ behavior: behave });
             }
         }
         function ScrollToTop() {
-            ScrollTo('top-piece');
+            ScrollTo('top-piece','instant');
         }
         function toggleExpand(id) {
             var element = document.getElementById(id);
