@@ -250,7 +250,6 @@
 </style>
 
 <div class="page @theView" style='background-color:@Constants.ColorScheme["Background"]'>
-    <span id="top-piece" class="top-piece" />
     <CustomErrorBoundary @ref=errBnd>
         <ChildContent>
             @if (CheckWhitelist())
@@ -330,6 +329,7 @@
                     <NavMenu />
                 }
                 <main>
+                    <span id="top-piece" class="top-piece"/>
                     @if (!mobile)
                     {
                         <div id="main-bar" class="flex-r" style="flex-wrap:wrap;background-color:indigo;justify-content:space-between;width:100%;position:sticky;top:0;align-items:center;z-index:10;padding:0">

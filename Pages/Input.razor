@@ -124,7 +124,14 @@ else if (ShowStatic)
             ShowBal = true;
 
         ShowTrans = !NoBalances;
+
         StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JSRuntime.InvokeAsync<string>("ScrollToTop");
     }
 
     private void ShowTransaction()

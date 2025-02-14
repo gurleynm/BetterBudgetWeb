@@ -1,4 +1,7 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@inject NavigationManager NavMan;
+@inject IJSRuntime JSRuntime
+
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(BetterBudgetWeb.Shared.General.MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -10,3 +13,15 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    protected override void OnInitialized() => NavMan.LocationChanged += OnLocationChanged;
+
+    private async void OnLocationChanged(object? sender, EventArgs e)
+    {
+        await JSRuntime.InvokeAsync<string>("ScrollToTop");
+
+    }
+
+    public void Dispose() => NavMan.LocationChanged -= OnLocationChanged;
+}
