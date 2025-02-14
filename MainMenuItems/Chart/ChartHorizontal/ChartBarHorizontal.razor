@@ -1,13 +1,16 @@
 ﻿<div class="text-color flex-c" style="background-color:transparent;width:100%;">
     <div class="chart-bar-hor__label flex-r" style="justify-content:start;border:none;width:100%;text-align:start;cursor:pointer" @onclick=OnClick>
         <h4 class="text-color" style="padding-right:1em">@Label </h4>
-        @if (Show)
+        @if (Value != MaxValue)
         {
-            <h4 class="oi oi-caret-bottom"></h4>
-        }
-        else
-        {
-            <h4 class="oi oi-caret-right"></h4>
+            if (Show)
+            {
+                <h4 class="oi oi-caret-bottom"></h4>
+            }
+            else
+            {
+                <h4 class="oi oi-caret-right"></h4>
+            }
         }
     </div>
     @if (Negative)
@@ -31,7 +34,7 @@
                  style="@FillColorAdjusted;width:@BarFillWidth"></div>
         }
     </div>
-    <div class="chart-bar-hor__label flex-c" style="border:none;width:100%;">
+    <div class="flex-c" style="border:none;width:100%;">
         @if (Negative)
         {
             <h5 @onclick=OnClick style="text-align:end;color:red;cursor:pointer">@(Constants.Pretty(MaxValue))</h5>
@@ -44,7 +47,7 @@
         @if (Show)
         {
             <div class="flex-r" style="flex-wrap:wrap;width:100%">
-                <MonthlySpending @ref="Child" ExpenseType=@ST RefreshParent="@RefreshMe" />
+                <MonthlySpending @ref="Child" ExpenseType=@ST Name=@Label RefreshParent="@RefreshMe" />
                 @if (BottomBorder)
                 {
                     <hr style="width:100%" />
@@ -59,6 +62,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public string Dynamic { get; set; }
     [Parameter]
     public string Label { get; set; }
     [Parameter]
@@ -133,7 +138,7 @@
 
     private void OnClick()
     {
-        Show = !Show;
+        Show = !Show && Value != MaxValue;
     }
 
     private void SetFillWidth()

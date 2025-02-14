@@ -35,7 +35,7 @@
             </tr>
             <tr style="background-color:transparent">
                 <td style="border:none;color:@Constants.GoodOrBad(ActualIncomeAmount)"><span>@Constants.Pretty(ActualIncomeAmount)</span></td>
-                <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ActualDynamicAmount + ActualStaticAmount + EnvelopeAmount))">@Constants.Pretty(ActualDynamicAmount + ActualStaticAmount + EnvelopeAmount)</span></td>
+                <td style="border:none"><span style="color:@Constants.GoodOrBad(-(ActualAmount + EnvelopeAmount))">@Constants.Pretty(ActualAmount + EnvelopeAmount)</span></td>
                 <td style="border:none"><span style="color:@Constants.GoodOrBad(ActualNetAmount)">@Constants.Pretty(ActualNetAmount)</span></td>
             </tr>
         </table>
@@ -63,10 +63,7 @@
     public double ActualIncomeAmount { get; set; }
 
     [Parameter]
-    public double ActualDynamicAmount { get; set; }
-
-    [Parameter]
-    public double ActualStaticAmount { get; set; }
+    public double ActualAmount { get; set; }
 
     [Parameter]
     public double EnvelopeAmount { get; set; }
@@ -100,7 +97,7 @@
     public double ProjectedDynamicAmount { get; set; }
     public double ProjectedStaticAmount { get; set; }
 
-    public double ActualNetAmount => ActualIncomeAmount - ActualDynamicAmount - ActualStaticAmount - EnvelopeAmount;
+    public double ActualNetAmount => ActualIncomeAmount - ActualAmount - EnvelopeAmount;
     public double ProjectedNetAmount => ProjectedIncomeAmount - ProjectedDynamicAmount - ProjectedStaticAmount;
 
     private List<SavingsGoal> ThisMonthSavingsGoals { get; set; } = new List<SavingsGoal>();
@@ -126,7 +123,7 @@
         var dciNames = Constants.DynamicCostItems.Select(d => d.Name);
         var smcs = Constants.StaticMonthlyCosts;
 
-        ProjectedDynamicAmount = dcis.Sum(dci => dci.Amount);
+        ProjectedDynamicAmount = dcis.Sum(dci => dci.TotalAmount);
         ProjectedStaticAmount = smcs.Sum(smc => smc.TotalAmount);
 
         if (Default1 == null || Default2 == null)

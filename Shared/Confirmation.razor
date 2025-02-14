@@ -15,23 +15,30 @@
                     <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
                     </button>
                 </div>
-                <div class="modal-body" style="width:fit-content;color:black;">
-                    <div>
-                        @ChildContent
-                    </div>
+                <div class="modal-body" style="min-width:100%;width:fit-content;color:black;">
+                    @ChildContent
                 </div>
                 <div class="modal-footer">
-                    @if (LeftBtnShow)
+                    @if (Disabled)
                     {
-                        <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
+                        <div style="width:100%">
+                            <LoadingDots />
+                        </div>
                     }
-                    @if (MidBtnShow)
+                    else
                     {
-                        <button type="button" disabled=@Disabled class="btn @MidBtnColor" data-dismiss="modal" @onclick="@MiddleClicked">@MidBtnTxt</button>
-                    }
-                    @if (RightBtnShow)
-                    {
-                        <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
+                        @if (LeftBtnShow)
+                        {
+                            <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="position:absolute;left:1vw;" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
+                        }
+                        @if (MidBtnShow)
+                        {
+                            <button type="button" disabled=@Disabled class="btn @MidBtnColor" data-dismiss="modal" @onclick="@MiddleClicked">@MidBtnTxt</button>
+                        }
+                        @if (RightBtnShow)
+                        {
+                            <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
+                        }
                     }
                 </div>
             </div>
@@ -54,13 +61,22 @@ else
                     @ChildContent
                 </div>
                 <div class="modal-footer flex-r" style="justify-content:space-around">
-                    @if (LeftBtnShow)
+                    @if (Disabled)
                     {
-                        <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="float:left" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
+                        <div style="width:100%">
+                            <LoadingDots />
+                        </div>
                     }
-                    @if (RightBtnShow)
+                    else
                     {
-                        <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
+                        @if (LeftBtnShow)
+                        {
+                            <button type="button" disabled=@Disabled class="btn @LeftBtnColor" style="float:left" data-dismiss="modal" @onclick="@LeftClicked">@LeftBtnTxt</button>
+                        }
+                        @if (RightBtnShow)
+                        {
+                            <button type="button" disabled=@Disabled class="btn @RightBtnColor" data-dismiss="modal" @onclick="@RightClicked">@RightBtnTxt</button>
+                        }
                     }
                 </div>
             </div>
@@ -130,39 +146,54 @@ else
     public EventCallback<bool> DisabledChanged { get; set; }
     private bool disabled;
 
-    private Task RightClicked()
+    private async Task RightClicked()
     {
+        Disabled = true;
+        await Task.Delay(100);
         if (!RightBtnClick.HasDelegate)
-            return ModalAccept();
+            await ModalAccept();
         else
-            return RightBtnClick.InvokeAsync(true);
+            await RightBtnClick.InvokeAsync(true);
+
+        Disabled = false;
+        await Task.Delay(100);
     }
 
-    private Task MiddleClicked()
+    private async Task MiddleClicked()
     {
+        Disabled = true;
+        await Task.Delay(100);
+
         if (!MidBtnClick.HasDelegate)
-            return ModalCancel();
+            await ModalCancel();
         else
-            return MidBtnClick.InvokeAsync(true);
+            await MidBtnClick.InvokeAsync(true);
+        
+        Disabled = false;
+        await Task.Delay(100);
     }
-    
-    private Task LeftClicked()
+
+    private async Task LeftClicked()
     {
+        Disabled = true;
+        await Task.Delay(100);
+
         if (!LeftBtnClick.HasDelegate)
-            return ModalCancel();
+            await ModalCancel();
         else
-            return LeftBtnClick.InvokeAsync(true);
+            await LeftBtnClick.InvokeAsync(true);
+
+        Disabled = true;
+        await Task.Delay(100);
     }
 
     private Task ModalCancel()
     {
-        Disabled = true;
         return OnClose.InvokeAsync(false);
     }
 
     private Task ModalAccept()
     {
-        Disabled = true;
         return OnClose.InvokeAsync(true);
     }
 }

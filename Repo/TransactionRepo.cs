@@ -154,6 +154,46 @@ namespace BetterBudgetWeb.Repo
 
             return tran;
         }
+        
+        // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
+        public static async Task<List<Transaction>> AddOrUpdateBatchAsync(Transaction[] MultiTrans)
+        {
+            if (Constants.Token == "DEMO")
+            {
+                List<Transaction> FullT = new();
+                foreach (var trans in MultiTrans)
+                    FullT = await AddOrUpdateAsync(trans);
+
+                return FullT;
+            }
+
+            foreach (var trans in MultiTrans)
+                trans.Name = trans.Name.Trim();
+
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI + "/Batch");
+
+            requestMessage.Content = JsonContent.Create(MultiTrans);
+
+            var response = await client.SendAsync(requestMessage);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+
+            if (string.IsNullOrEmpty(content))
+                return null;
+
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            var tran = catcher.Transactions;
+
+
+            Constants.AssignCatches(catcher);
+
+            return tran;
+        }
 
         // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
         public static async Task<List<Transaction>> RemoveAsync(string id)

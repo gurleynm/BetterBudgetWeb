@@ -1,4 +1,6 @@
-﻿namespace BetterBudgetWeb.Data
+﻿using Stripe.V2;
+
+namespace BetterBudgetWeb.Data
 {
     public class Monthly
     {
@@ -9,13 +11,26 @@
         public string Dynamic { get; set; }
         public string Month { get; set; }
         public string Year { get; set; }
+        public double SpentReport { get; set; }
         public double TotalAmount => Person1Amount + Person2Amount;
+        public double Left => TotalAmount -   Constants.Transactions.Where(d => 
+                                                                d.DateOfTransaction.Month == DateTime.Now.Month &&
+                                                                d.DateOfTransaction.Year == DateTime.Now.Year
+                                                                && ((Dynamic == "STATIC" && d.ExpenseType == "1-Time Charge" && d.Name == Name) || (Dynamic == "DYNAMIC" && d.ExpenseType == Name)))
+                                                                .Sum(c => c.Person1Amount + c.Person2Amount);
         public string MonthYear()
         {
             return Month + " " + Year;
         }
 
         public Monthly() { }
+        public Monthly(string name, double person1, double person2, string dyna)
+        {
+            Name = name;
+            Person1Amount = person1;
+            Person2Amount = person2;
+            Dynamic = dyna;
+        }
         public Monthly(string name, double person1Amount, double person2Amount, string dyna, string montYear)
         {
             string[] splitter = montYear.Split(' ');

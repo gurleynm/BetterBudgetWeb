@@ -110,10 +110,10 @@ namespace BetterBudgetWeb
                 }
             }
         }
-        public static EventHandler<List<DynamicCostItem>> DynamicCostItemsChanged = (sender, value) => { };
+        public static EventHandler<List<Monthly>> DynamicCostItemsChanged = (sender, value) => { };
 
-        private static List<DynamicCostItem> dynamicCostItems = new List<DynamicCostItem>();
-        public static List<DynamicCostItem> DynamicCostItems
+        private static List<Monthly> dynamicCostItems = new List<Monthly>();
+        public static List<Monthly> DynamicCostItems
         {
             get => dynamicCostItems;
             set
@@ -171,7 +171,7 @@ namespace BetterBudgetWeb
             }
         }
         public static List<SavingsGoal> SavingsGoals { get; set; } = new();
-        public static List<StaticMonthlyCost> StaticMonthlyCosts { get; set; } = new();
+        public static List<Monthly> StaticMonthlyCosts { get; set; } = new();
         public static List<ProjectedDatum> ProjectedData { get; set; } = new();
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
         public static List<Monthly> RelevantMonthlies => Monthlies.Where(mon => mon.Dynamic != "SAVINGS" && (mon.Year == DateTime.Now.Year.ToString() || mon.Year == "1")).ToList();
@@ -297,9 +297,9 @@ namespace BetterBudgetWeb
         {
             if (DynamicCostItems.Count == 0)
             {
-                DynamicCostItems.Add(new DynamicCostItem("Food\n(EXAMPLE DATA)", 600, 200));
-                DynamicCostItems.Add(new DynamicCostItem("Fun\n(EXAMPLE DATA)", 300, 300));
-                DynamicCostItems.Add(new DynamicCostItem("Gas\n(EXAMPLE DATA)", 80, 180));
+                DynamicCostItems.Add(new Monthly("Food\n(EXAMPLE DATA)", 600, 200, "DYNAMIC"));
+                DynamicCostItems.Add(new Monthly("Fun\n(EXAMPLE DATA)", 300, 300, "DYNAMIC"));
+                DynamicCostItems.Add(new Monthly("Gas\n(EXAMPLE DATA)", 80, 180, "DYNAMIC"));
             }
 
             if (SavingsGoals.Count == 0)
@@ -310,10 +310,10 @@ namespace BetterBudgetWeb
 
             if (StaticMonthlyCosts.Count == 0)
             {
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Rent\n(EXAMPLE DATA)", 820, 800));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Car\n(EXAMPLE DATA)", 399.03, 0));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Internet\n(EXAMPLE DATA)", 70, 0));
-                StaticMonthlyCosts.Add(new StaticMonthlyCost("Subs \n(EXAMPLE DATA)", 78, 0));
+                StaticMonthlyCosts.Add(new Monthly("Rent\n(EXAMPLE DATA)", 820, 800, "STATIC"));
+                StaticMonthlyCosts.Add(new Monthly("Car\n(EXAMPLE DATA)", 399.03, 0, "STATIC"));
+                StaticMonthlyCosts.Add(new Monthly("Internet\n(EXAMPLE DATA)", 70, 0,"STATIC"));
+                StaticMonthlyCosts.Add(new Monthly("Subs \n(EXAMPLE DATA)", 78, 0,"STATIC"));
             }
         }
         public static List<Monthly> GetMonthlies() { return Monthlies; }
@@ -324,9 +324,9 @@ namespace BetterBudgetWeb
         }
         public static void Redrive()
         {
-            DynamicCostItems = new List<DynamicCostItem>();
+            DynamicCostItems = new List<Monthly>();
             SavingsGoals = new List<SavingsGoal>();
-            StaticMonthlyCosts = new List<StaticMonthlyCost>();
+            StaticMonthlyCosts = new List<Monthly>();
             ProjectedData = new List<ProjectedDatum>();
             Plots = new List<LinePlot>();
 
@@ -337,7 +337,7 @@ namespace BetterBudgetWeb
                     if (CheckMonthYear(mon))
                     {
                         var DCIExists = DynamicCostItems.FirstOrDefault(d => d.Name == mon.Name);
-                        var NewDCI = new DynamicCostItem(mon.Name, mon.Person1Amount, mon.Person2Amount);
+                        var NewDCI = new Monthly(mon.Name, mon.Person1Amount, mon.Person2Amount, "DYNAMIC");
 
                         if (DCIExists == null)
                             DynamicCostItems.Add(NewDCI);
@@ -356,7 +356,7 @@ namespace BetterBudgetWeb
                     if (CheckMonthYear(mon))
                     {
                         var SMCExists = StaticMonthlyCosts.FirstOrDefault(s => s.Name == mon.Name);
-                        var NewSMC = new StaticMonthlyCost(mon.Name, mon.Person1Amount, mon.Person2Amount);
+                        var NewSMC = new Monthly(mon.Name, mon.Person1Amount, mon.Person2Amount, "STATIC");
 
                         if (SMCExists == null)
                             StaticMonthlyCosts.Add(NewSMC);
@@ -386,7 +386,7 @@ namespace BetterBudgetWeb
 
             LoadDefaults();
 
-            DynamicCostItems = DynamicCostItems.OrderByDescending(dci => dci.Amount).ToList();
+            DynamicCostItems = DynamicCostItems.OrderByDescending(dci => dci.TotalAmount).ToList();
             StaticMonthlyCosts = StaticMonthlyCosts.OrderByDescending(smc => smc.TotalAmount).ToList();
             SavingsGoals = SavingsGoals.OrderByDescending(sg => sg.Goal).ToList();
             Plots = IndexRunner.GeneratePlots();
@@ -451,7 +451,7 @@ namespace BetterBudgetWeb
                 values[5] = pres.Person2Amount.ToString();
                 values[6] = pres.PaidOffPerson1 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson1);
                 values[7] = pres.PaidOffPerson2 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson2);
-                values[8] = pres.TextColor.ToString().ToUpper() == "#FFFFFF" ? "white" : "black";
+                values[8] = pres.TextColor.ToString().ToUpper() == "#FFFFFF" ? "#FFFFFF" : "#000000";
                 values[9] = pres.HexColor.ToString();
             }
 

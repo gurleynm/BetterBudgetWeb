@@ -138,12 +138,10 @@
         <a href="" class="reload">Reload</a>
         <a href="" class="dismiss">🗙</a>
     </div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="js/custom.js"></script>
     <script>
         let IsMobile;
         window.onload = function () {
-            google.charts.load('current', { 'packages': ['sankey', 'corechart', 'line'] });
             IsMobile = document.URL.includes("mobile."); //resolves true/false
             const navUser = navigator.userAgent;
             const IsiPad = (navigator.userAgent.match(/Mac/) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
@@ -193,13 +191,13 @@
             //    window.location.reload();
         }
         function ScrollTo(id) {
-            var elm = document.getElementById(id);
+            var elm = document.getElementById(id,behave = 'smooth');
             if (elm) {
-                elm.scrollIntoView({ behavior: 'smooth' });
+                elm.scrollIntoView({ behavior: behave });
             }
         }
         function ScrollToTop() {
-            ScrollTo('top-piece');
+            ScrollTo('top-piece','instant');
         }
         function toggleExpand(id) {
             var element = document.getElementById(id);
@@ -219,159 +217,6 @@
         }
         function isDevice() {
             return IsMobile;
-        }
-        function drawLineChart(lineList, chartId) {
-            const cId = document.getElementById(chartId);
-            cId.innerHTML = "<div class=\"loading-holder\" style=\"height:100%;align-items:center;\"><span class=\"oi oi-media-record first-dot\"></span>" +
-                "<span class=\"oi oi-media-record second-dot\"></span>" +
-                "<span class=\"oi oi-media-record third-dot\"></span></div>"
-            var data = new google.visualization.DataTable();
-            lineList = JSON.parse(lineList);
-
-            const holder = [];
-            var temp = [];
-            var obj;
-
-            for (var i = 0; i < lineList.length; i++) {
-                temp = [];
-                obj = lineList[i];
-
-                temp.push(obj['Month']);
-                temp.push(obj['Amount']);
-                temp.push(obj['certainty']);
-                holder.push(temp);
-            }
-
-            data.addColumn('string', 'Month');
-            data.addColumn('number', 'Amount');
-            data.addColumn({ type: 'boolean', role: 'certainty' }); // certainty col.
-            data.addRows(
-                holder
-            );
-            var dataView = new google.visualization.DataView(data);
-            dataView.setColumns([
-                // reference existing columns by index
-                0, 1, 2,
-                // add function for line color
-                {
-                    calc: function (data, row) {
-                        var colorDown = '#00FF00';
-                        var colorUp = '#FF0000';
-
-                        if ((row === 0) && (data.getValue(row, 1) < data.getValue(row + 1, 1))) {
-                            return colorDown;
-                        } else if ((row > 0) && (data.getValue(row - 1, 1) < data.getValue(row, 1))) {
-                            return colorDown;
-                        }
-                        return colorUp;
-                    },
-                    type: 'string',
-                    role: 'style'
-                }
-            ]);
-
-            //data.addRows([
-            //    ['April', 1000, true],
-            //    ['May', 1170, true],
-            //    ['June', 660, true],
-            //    ['July', 1030, false]
-            //]);
-
-            var hAxisVar = {
-                title: null,
-                textStyle: {
-                    fontName: 'Imprint MT Shadow',
-                    color: '#00FFFF'
-                }
-            };
-
-            var vAxisVar = {
-                title: null,
-                format: 'currency',
-                textStyle: {
-                    fontName: 'Imprint MT Shadow',
-                    color: '#B9AFF8'
-                }
-            };
-
-            if (chartId == 'preview') {
-                hAxisVar = {
-                    textPosition: 'none'
-                };
-                vAxisVar = {
-                    textPosition: 'none'
-                };
-            }
-
-            var options = {
-                title: 'Net Worth (' + lineList.length + '-Month View)',
-                titleTextStyle: {
-                    color: '#FFFFFF',
-                    fontName: 'Imprint MT Shadow'
-                },
-                backgroundColor: 'transparent',
-                borderRadius: '50%',
-                legend: { position: 'none' },
-                hAxis: hAxisVar,
-                vAxis: vAxisVar,
-                pointSize: 10,
-                pointShape: { type: 'triangle' },
-                chartArea: { right: '10%' }
-            };
-
-            var chart = new google.visualization.LineChart(cId);
-            chart.draw(dataView, options);
-
-            //var chartLineWithDash = new google.visualization.LineChart(document.getElementById(chartId));
-            //chartLineWithDash.draw(data,options);
-        }
-        function drawCoreChart(coreList, chartId) {
-            var data = new google.visualization.DataTable();
-            coreList = JSON.parse(coreList);
-
-            const holder = [];
-            var temp = [];
-            var obj;
-            var colors = []
-
-            for (var i = 0; i < coreList.length; i++) {
-                temp = [];
-                obj = coreList[i];
-
-                temp.push(obj['ExpenseType']);
-                temp.push(obj['Amount']);
-                colors.push(obj['SegmentColor'])
-                //temp.push("<text style='font-family:Arial;font-size:16'>" + obj['From'] + ' -> ' + obj['To'] + '<br/>$' + obj['Amount'] +"</text>");
-                holder.push(temp);
-            }
-
-            data.addColumn('string', 'Expense Type');
-            data.addColumn('number', 'Amount');
-            //data.addColumn({ type: 'string', role: 'tooltip' });
-            data.addRows(
-                holder
-            );
-
-            //var data = google.visualization.arrayToDataTable(holder1);
-            //var data = google.visualization.arrayToDataTable([
-            //    ['Task', 'Hours per Day'],
-            //    ['Work', 11],
-            //    ['Eat', 2],
-            //    ['Commute', 2],
-            //    ['Watch TV', 2],
-            //    ['Sleep', 7]
-            //]);
-
-            var options = {
-                pieHole: 0.6,
-                backgroundColor: 'transparent',
-                legend: { position: 'none' },
-                pieSliceText: 'none',
-                colors: colors
-            };
-
-            var chart = new google.visualization.PieChart(document.getElementById(chartId));
-            chart.draw(data, options);
         }
         function CSVToArray(strData, strDelimiter) {
             // Check to see if the delimiter is defined. If not,
@@ -508,12 +353,10 @@
     </script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <!-- Add chart.js reference if chart components are used in your application. -->
+    <!--Add chart.js reference if chart components are used in your application.-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.umd.js" integrity="sha512-gQhCDsnnnUfaRzD8k1L5llCCV6O9HN09zClIzzeJ8OJ9MpGmIlCxm+pdCkqTwqJ4JcjbojFr79rl2F1mzcoLMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- Add chartjs-plugin-datalabels.min.js reference if chart components with data label feature is used in your application. -->
+    <!--Add chartjs-plugin-datalabels.min.js reference if chart components with data label feature is used in your application.-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js" integrity="sha512-JPcRR8yFa8mmCsfrw4TNte1ZvF1e3+1SdGMslZvmrzDYxS69J7J49vkFL8u6u8PlPJK+H3voElBtUCzaXj+6ig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- Add sortable.js reference if SortableList component is used in your application. -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
 </body>
 

@@ -1,0 +1,161 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+
+<Confirmation Title="Splitting Transaction" OnClose="ModalCancel"
+              LeftBtnClick="ModalCancel"
+              RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
+    <table class="side-to-side spaced-table" style="border-radius:0;width:100%">
+        <tr>
+            <td class="flex-r-100" style="justify-content:space-between;border:none">
+                <div class="flex-c" style="justify-content:space-between;align-items:start;padding:1em">
+                    <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                        @Transact.Name
+                    </div>
+                    <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                        @Transact.ExpenseType
+                    </div>
+                </div>
+                @if (Transact.Person1Amount > 0)
+                {
+                    <div class="flex-c-start" style="align-items:center;padding:1em">
+                        <div style="color:white;text-align:start">
+                            @Constants.Person1
+                        </div>
+                        <div style="text-align:start;color:@(ThisTransactionPerson1 < 0 ? "red" : Constants.ColorScheme["Text"])">
+                            @Constants.Pretty(ThisTransactionPerson1)
+                        </div>
+                    </div>
+                }
+                @if (Transact.Person2Amount > 0)
+                {
+                    <div class="flex-c-start" style="align-items:center;padding:1em">
+                        <div style="color:white;text-align:start">
+                            @Constants.Person2
+                        </div>
+                        <div style="text-align:start;color:@(ThisTransactionPerson2 < 0 ? "red" : Constants.ColorScheme["Text"])">
+                            @Constants.Pretty(ThisTransactionPerson2)
+                        </div>
+                    </div>
+                }
+                @if (ThisTransactionTotal != ThisTransactionPerson1 && ThisTransactionTotal != ThisTransactionPerson2)
+                {
+                    <div class="flex-c-start" style="align-items:center;padding:1em">
+                        <div style="color:white;text-align:start">
+                            Total
+                        </div>
+                        <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                            @Constants.Pretty(Transact.TotalAmount)
+                        </div>
+                    </div>
+                }
+            </td>
+        </tr>
+        @foreach (var split in Splits)
+        {
+            <tr>
+                <td>
+                    <div class="flex-r-100" style="justify-content:space-between;align-items:center;padding:1em">
+                        <div style="color:white;text-align:start">
+                            <ExpenseTypeInput @bind-NewExpense=@split.ExpenseType />
+                        </div>
+                        @if (Transact.Person1Amount > 0)
+                        {
+                            <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                                <span style="border:solid white 1px;">
+                                    <input type="number" min="0" style="width:5em;border:none;color:white" @bind=@split.Person1Amout>
+                                </span>
+                            </div>
+                        }
+                        @if (Transact.Person2Amount > 0)
+                        {
+                            <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                                <span style="border:solid white 1px;">
+                                    <input type="number" min="0" style="width:5em;border:none;color:white" @bind=@split.Person2Amout>
+                                </span>
+                            </div>
+                        }
+                        @if (ThisTransactionTotal != ThisTransactionPerson1 && ThisTransactionTotal != ThisTransactionPerson2)
+                        {
+                            <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                                @Constants.Pretty(split.TotalAmount)
+                            </div>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                <button class="btn-grad" style="width:98%" @onclick=AddSplit><span class="oi oi-plus" /> Add Split</button>
+            </td>
+        </tr>
+    </table>
+    <p style="color:red">@ErrorMsg</p>
+</Confirmation>
+
+@code {
+    [Parameter]
+    public Transaction Transact { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    private List<SplitTrans> Splits = new();
+
+    private double ThisTransactionPerson1 => Transact.Person1Amount - Splits.Sum(split => split.Person1Amout);
+    private double ThisTransactionPerson2 => Transact.Person2Amount - Splits.Sum(split => split.Person2Amout);
+
+    private double ThisTransactionTotal => ThisTransactionPerson1 + ThisTransactionPerson2;
+
+    private string ErrorMsg => ThisTransactionTotal < 0 ? "Cannot split more than total amount" : "";
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    private void AddSplit()
+    {
+        Splits.Add(new SplitTrans(Transact.ExpenseType));
+    }
+
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalDecline()
+    {
+        await OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalAccept()
+    {
+        if (!string.IsNullOrEmpty(ErrorMsg))
+            return;
+
+        List<Transaction> AllTrans = new();
+
+        foreach (var split in Splits)
+        {
+            if (split.TotalAmount <= 0)
+            {
+                split.Person1Amout = 0;
+                split.Person2Amout = 0;
+                continue;
+            }
+
+            AllTrans.Add(new Transaction(split, Transact));
+        }
+
+        if (Transact.Person1Amount != ThisTransactionPerson1 || Transact.Person2Amount != ThisTransactionPerson2)
+        {
+            Transact.Person1Amount = ThisTransactionPerson1;
+            Transact.Person2Amount = ThisTransactionPerson2;
+
+            AllTrans.Add(new Transaction(Transact));
+            await TransactionRepo.AddOrUpdateBatchAsync(AllTrans.ToArray());
+        }
+        await OnClose.InvokeAsync(true);
+    }
+}

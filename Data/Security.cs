@@ -49,5 +49,9 @@
             return Math.Round((Value - AvgCost * NumShares) /
                                                 (NumShares * AvgCost) * 100, 2);
         }
+        public override string ToString()
+        {
+            return string.Join(",", Name, Value, BalanceFrom);
+        }
     }
 }

@@ -11,11 +11,11 @@
 
 <style>
     button {
-    color: black;
+        color: black;
     }
 
     th {
-    padding: 1em;
+        padding: 1em;
     }
 </style>
 
@@ -23,9 +23,16 @@
 
 <PageTitle>Forecast</PageTitle>
 
-<div class="flex-r-100">
-    <MyLineChart Plots="Plots" Height=@(Constants.Mobile ? 300 : null) />
-</div>
+@if (Constants.Mobile)
+{
+    <div class="flex-r-100">
+        <MyLineChart Plots="Plots" Height=300 />
+    </div>
+}
+else
+{
+    <MyLineChart Plots="Plots" />
+}
 <div class="flex-r-100 nobar" style="overflow-x:auto;justify-content:flex-start">
     @foreach (var mr in MonthRels)
     {
@@ -55,7 +62,7 @@
             </div>
 
             <MonthView MR=mr @bind-Person1Overflow=mr.ProjectPerson1Income
-            @bind-Person2Overflow=mr.ProjectPerson2Income />
+                       @bind-Person2Overflow=mr.ProjectPerson2Income />
         }
     }
 </div>
@@ -106,7 +113,7 @@
             MonthViewConstants.SetMonthlies(nextOne.Month, nextOne.Year);
 
             foreach (var dcin in MonthViewConstants.DynamicCostItems)
-                Expenses.Add(new ExpenseAmount(dcin.Name, dcin.Amount));
+                Expenses.Add(new ExpenseAmount(dcin.Name, dcin.TotalAmount));
 
             foreach (var stat in MonthViewConstants.StaticMonthlyCosts)
                 Expenses.Add(new ExpenseAmount(stat.Name, stat.TotalAmount));

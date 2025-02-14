@@ -3,13 +3,11 @@
 <div class="chart-back-hor">
     <div class="flex-c">
 
-        <span style="color:@Constants.ColorScheme["Text"];">
-            <h4 class="text-color">
-                <strong>
-                    Dynamic Monthly Expenses
-                </strong>
-            </h4>
-        </span>
+        <h4 class="text-color">
+            <strong>
+                Recurring Expenses
+            </strong>
+        </h4>
 
         <span style="color:@Constants.ColorScheme["Text"];">
             <strong>
@@ -27,18 +25,20 @@
                 {
                     <ChartBarHorizontal Value=@(dp.Left)
                                         Label=@dp.Name
-                                        Negative=@(dp.Left < 0)
-                                        MaxValue=@dp.Amount
+                                        Negative=@(dp.Left < 0.009)
+                                        MaxValue=@dp.TotalAmount
                                         BottomBorder=false
+                                        Dynamic=@dp.Dynamic
                                         DateBarClicked=BarClicked />
                 }
                 else
                 {
                     <ChartBarHorizontal Value=@(dp.Left)
                                         Label=@dp.Name
-                                        Negative=@(dp.Left < 0)
-                                        MaxValue=@dp.Amount
+                                        Negative=@(dp.Left < 0.009)
+                                        MaxValue=@dp.TotalAmount
                                         BottomBorder=true
+                                        Dynamic=@dp.Dynamic
                                         DateBarClicked=BarClicked />
                 }
 
@@ -54,18 +54,20 @@
                 {
                     <ChartBarHorizontal Value=@(dp.Left)
                                         Label=@dp.Name
-                                        Negative=@(dp.Left < 0)
-                                        MaxValue=@dp.Amount
+                                        Negative=@(dp.Left < 0.009)
+                                        MaxValue=@dp.TotalAmount
                                         BottomBorder=false
+                                        Dynamic=@dp.Dynamic
                                         DateBarClicked=BarClicked />
                 }
                 else
                 {
                     <ChartBarHorizontal Value=@(dp.Left)
                                         Label=@dp.Name
-                                        Negative=@(dp.Left < 0)
-                                        MaxValue=@dp.Amount
+                                        Negative=@(dp.Left < 0.009)
+                                        MaxValue=@dp.TotalAmount
                                         BottomBorder=true
+                                        Dynamic=@dp.Dynamic
                                         DateBarClicked=BarClicked />
                 }
             }
@@ -75,7 +77,7 @@
 
 @code {
     [Parameter]
-    public List<DynamicCostItem> DPs { get; set; } = new List<DynamicCostItem>();
+    public List<Monthly> DPs { get; set; } = new List<Monthly>();
 
     [Parameter]
     public EventCallback<string> BarClicked { get; set; }
@@ -84,7 +86,7 @@
     public bool Horizontal { get; set; }
 
     private double Left => DPs.Sum(d => d.Left);
-    private double Amount => DPs.Sum(d => d.Amount);
+    private double Amount => DPs.Sum(d => d.TotalAmount);
     private string BudgetColor => Left > 0 ? Constants.ColorScheme["IncomeGood"] : "red";
 
     public bool Mobile => Constants.Mobile;

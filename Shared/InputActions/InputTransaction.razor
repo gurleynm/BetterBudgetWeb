@@ -361,8 +361,8 @@
                         <div class="flex-c" style="justify-content:start;width:fit-content">
                             <label style="float:left;margin-right:1vw">Text Color:</label>
                             <select class="custom-select" @bind=TextColor title="Balance color is required ">
-                                <option value="white">White</option>
-                                <option value="black">Black</option>
+                                <option value="#FFFFFF">White</option>
+                                <option value="#000000">Black</option>
                             </select>
                         </div>
                         <br />
@@ -684,8 +684,8 @@ else
                             <div class="flex-r" style="justify-content:end">
                                 <label style="float:left;margin-right:1vw">Text Color:</label>
                                 <select class="custom-select" @bind=TextColor title="Balance color is required ">
-                                    <option value="white">White</option>
-                                    <option value="black">Black</option>
+                                    <option value="#FFFFFF">White</option>
+                                    <option value="#000000">Black</option>
                                 </select>
                             </div>
                             <br />
@@ -809,7 +809,7 @@ else
 
         foreach (var smc in Constants.StaticMonthlyCosts)
         {
-            if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "Static Cost") == 0)
+            if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "1-Time Charge") == 0)
                 if (!smc.Name.Contains("(EXAMPLE DATA)"))
                     Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
         }
@@ -823,7 +823,7 @@ else
         foreach (var dci in Constants.DynamicCostItems)
             dcis.Add(dci.Name);
 
-        others.Add("Static Cost");
+        others.Add("1-Time Charge");
         others.Add("Income");
         others.Add("Equity");
         others.Add("Transfer Between Accounts");

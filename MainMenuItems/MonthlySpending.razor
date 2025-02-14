@@ -48,6 +48,7 @@
                         <div class="flex-r">
                             @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                             {
+                                <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => SplitModal(transaction))"><span class="oi oi-pie-chart"></span></button>
                                 <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
                             }
                             <button class="btn" disabled=@Disabled style="background-color:transparent;color:red;border:none;margin:.5vh;height:5vh;" @onclick="(() => DelBtn(transaction))"><span class="bi bi-trash" style="color:red"></span></button>
@@ -59,13 +60,13 @@
                     @if (transaction.Person1Amount == transaction.TotalAmount)
                     {
                         <td style="height:100%;border:none">
-                            <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))">@Pretty(transaction.Person1Amount)</div>
+                            <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))" style="text-align:end;padding-right:.5em;">@Pretty(transaction.Person1Amount)</div>
                         </td>
                     }
                     else if (transaction.Person2Amount == transaction.TotalAmount)
                     {
                         <td style="height:100%;border:none">
-                            <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))">@Pretty(transaction.Person2Amount)</div>
+                            <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))" style="text-align:end;padding-right:.5em;">@Pretty(transaction.Person2Amount)</div>
                         </td>
                     }
                 }
@@ -90,6 +91,9 @@
 
     [Parameter]
     public string ExpenseType { get; set; }
+
+    [Parameter]
+    public string Name { get; set; }
 
     [Parameter]
     public bool ShowPerson { get; set; } = true;
@@ -152,6 +156,12 @@
         }
         MainLayout.ToggleOverflow("auto");
     }
+    private async void SplitModal(Transaction trans)
+    {
+        MainLayout.ModalType = "S";
+        await RunModal.InvokeAsync(trans);
+        StateHasChanged();
+    }
     private async void OpenModal(Transaction trans)
     {
         MainLayout.ModalType = "E";
@@ -164,7 +174,10 @@
 
         if (!string.IsNullOrEmpty(ExpenseType))
         {
-            transactions = transactions.Where(t => t.ExpenseType == ExpenseType).ToList();
+            var tempTransactions = transactions.Where(t => t.ExpenseType == ExpenseType).ToList();
+
+            transactions = tempTransactions.Count == 0 ?
+                transactions = transactions.Where(t => t.ExpenseType == "1-Time Charge" && t.Name == Name).ToList() : new(tempTransactions);
         }
         else if (!string.IsNullOrEmpty(TheBalance))
         {

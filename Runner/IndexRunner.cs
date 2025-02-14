@@ -250,7 +250,7 @@ namespace BetterBudgetWeb.Runner
 
             return ret_years;
         }
-        public static List<Transaction>[] Filter(ref DynamicCostItem filter, List<Transaction> Transactions,
+        public static List<Transaction>[] Filter(ref Monthly filter, List<Transaction> Transactions,
                                                     List<Transaction> FilteredTransactions, ref bool filtered)
         {
             List<Transaction>[] catcher = new List<Transaction>[2];

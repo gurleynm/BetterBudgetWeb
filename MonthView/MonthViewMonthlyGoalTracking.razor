@@ -11,7 +11,7 @@
         </div>
         <div class="flex-c-start">
             <span>EXPENSES</span>
-            <span style="color:@Constants.GoodOrBad(-(DynamicCostAmount + StaticCostAmount))">@Constants.Pretty(DynamicCostAmount + StaticCostAmount)</span>
+            <span style="color:@Constants.GoodOrBad(-(CostAmount))">@Constants.Pretty(CostAmount)</span>
         </div>
         <div class="flex-c-start">
             <span>NET</span>
@@ -34,33 +34,19 @@
 
     private MyDoughnutChart Donut;
     public bool Mobile => Constants.Mobile;
-    private double dynamicCostAmount { get; set; }
-    private double staticCostAmount { get; set; }
+    private double costAmount { get; set; }
     [Parameter]
     public int Month { get; set; }
     [Parameter]
-    public double DynamicCostAmount
+    public double CostAmount
     {
-        get { return dynamicCostAmount; }
+        get { return costAmount; }
         set
         {
-            if (value == dynamicCostAmount)
+            if (value == costAmount)
                 return;
 
-            dynamicCostAmount = value;
-            Donut?.Redrive(Expenses);
-        }
-    }
-    [Parameter]
-    public double StaticCostAmount
-    {
-        get { return staticCostAmount; }
-        set
-        {
-            if (value == staticCostAmount)
-                return;
-
-            staticCostAmount = value;
+            costAmount = value;
             Donut?.Redrive(Expenses);
         }
     }
@@ -105,7 +91,7 @@
     [Parameter]
     public double ProjectedIncomeAmount { get; set; }
 
-    public double ProjectedNetAmount => ProjectedIncomeAmount - DynamicCostAmount - StaticCostAmount;
+    public double ProjectedNetAmount => ProjectedIncomeAmount - CostAmount;
 
     private List<SavingsGoal> ThisMonthSavingsGoals { get; set; } = new List<SavingsGoal>();
 

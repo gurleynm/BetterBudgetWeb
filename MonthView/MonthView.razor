@@ -14,8 +14,7 @@
         <div class="flex-c">
             <!-- Monthly Goal Tracking -->
             <CascadingValue Value="MR">
-                <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
-                                              StaticCostAmount="@StaticCostAmount" @bind-IncomeOverflow="IncomeOverflow" />
+                <MonthViewMonthlyGoalTracking Month="@Month" CostAmount="@CostAmount" @bind-IncomeOverflow="IncomeOverflow" />
             </CascadingValue>
 
         </div>
@@ -25,7 +24,7 @@
             <div style="width:100%;margin-bottom:1em">
                 <table class="toggle-table">
                     <tr>
-                        <th colspan="2" style="background-color:magenta;color:white;"><i>Dynamic Monthly Expenses</i></th>
+                        <th colspan="2" style="background-color:magenta;color:white;"><i>Budget Categories</i></th>
                     </tr>
                     <tr>
                         <th>
@@ -39,7 +38,7 @@
                         {
                             <tr>
                                 <td style="padding:.5vw 1vw;"><i>@dci.Name</i></td>
-                                <td>@Pretty(dci.Amount)</td>
+                                <td>@Pretty(dci.TotalAmount)</td>
                             </tr>
                         }
                         else
@@ -48,7 +47,7 @@
                                 <td style="padding:.5vw 1vw;">
                                     <span style="align-self:start">@dci.Name</span>
                                 </td>
-                                <td>@Pretty(dci.Amount)</td>
+                                <td>@Pretty(dci.TotalAmount)</td>
                             </tr>
                         }
                     }
@@ -57,7 +56,7 @@
                     </tr>
                     <tr>
                         <td><strong>Total</strong></td>
-                        <td>@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+                        <td>@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.TotalAmount))</td>
                     </tr>
                 </table>
             </div>
@@ -74,15 +73,14 @@ else
 
     <!-- Monthly Goal Tracking -->
     <CascadingValue Value="MR">
-        <MonthViewMonthlyGoalTracking Month="@Month" DynamicCostAmount="@DynamicCostAmount"
-                                      StaticCostAmount="@StaticCostAmount" @bind-IncomeOverflow="IncomeOverflow" />
+        <MonthViewMonthlyGoalTracking Month="@Month" CostAmount="@CostAmount" @bind-IncomeOverflow="IncomeOverflow" />
     </CascadingValue>
 
     <!-- Dynamic Costs -->
     <div style="width:100%;">
         <table class="toggle-table">
             <tr>
-                <th colspan="2" style="background-color:magenta;color:white"><i>Dynamic Monthly Expenses</i></th>
+                <th colspan="2" style="background-color:magenta;color:white"><i>Budget Categories</i></th>
             </tr>
             <tr>
                 <th>Expense</th>
@@ -94,7 +92,7 @@ else
                 {
                     <tr>
                         <td style="padding:.5vw 1vw;"><i>@dci.Name</i></td>
-                        <td>@Pretty(dci.Amount)</td>
+                        <td>@Pretty(dci.TotalAmount)</td>
                     </tr>
                 }
                 else
@@ -103,7 +101,7 @@ else
                         <td style="padding:.5vw 1vw;">
                             <span style="align-self:start">@dci.Name</span>
                         </td>
-                        <td>@Pretty(dci.Amount)</td>
+                        <td>@Pretty(dci.TotalAmount)</td>
                     </tr>
                 }
             }
@@ -112,7 +110,7 @@ else
             </tr>
             <tr>
                 <td><strong>Total</strong></td>
-                <td>@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.Amount))</td>
+                <td>@Pretty(MonthViewConstants.DynamicCostItems.Sum(d => d.TotalAmount))</td>
             </tr>
         </table>
     </div>
@@ -186,8 +184,7 @@ else
     private Dictionary<string, (string, string)> StaticMonthMap { get; set; } = new Dictionary<string, (string, string)>();
     private Dictionary<string, (string, string)> DynaMonthMap { get; set; } = new Dictionary<string, (string, string)>();
 
-    private double DynamicCostAmount => MonthViewConstants.DynamicCostItems.Sum(d => d.Amount);
-    private double StaticCostAmount => MonthViewConstants.StaticMonthlyCosts.Sum(smc => smc.TotalAmount);
+    private double CostAmount => MonthViewConstants.DynamicCostItems.Sum(d => d.TotalAmount) + MonthViewConstants.StaticMonthlyCosts.Sum(smc => smc.TotalAmount);
 
     private List<ExpenseAmount> Expenses => MR.Expenses;
 

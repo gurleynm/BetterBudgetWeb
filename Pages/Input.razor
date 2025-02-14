@@ -124,7 +124,14 @@ else if (ShowStatic)
             ShowBal = true;
 
         ShowTrans = !NoBalances;
+
         StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JSRuntime.InvokeAsync<string>("ScrollToTop");
     }
 
     private void ShowTransaction()
@@ -183,7 +190,7 @@ else if (ShowStatic)
         if (vals.All(v => string.IsNullOrEmpty(v)))
         {
             TransactionName = pre.Name;
-            ExpenseType = "Static Cost";
+            ExpenseType = "1-Time Charge";
             Person1Amount = pre.Person1Amount.ToString();
             Person2Amount = pre.Person2Amount.ToString();
         }
