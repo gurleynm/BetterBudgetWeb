@@ -23,10 +23,13 @@
             </div>
             @* </AdvancedWrapper> *@
         }
-        <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Chart" ? "cyan" : "white")" @onclick=@(() => NavMan.NavigateTo("/chart"))>
-            <h4 class="oi oi-bar-chart" aria-hidden="true"></h4>
-            <span style="color:inherit">Chart</span>
-        </div>
+        @if (ShowChart)
+        {
+            <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Chart" ? "cyan" : "white")" @onclick=@(() => NavMan.NavigateTo("/chart"))>
+                <h4 class="oi oi-bar-chart" aria-hidden="true"></h4>
+                <span style="color:inherit">Chart</span>
+            </div>
+        }
         @if (ShowForecast)
         {
             @* <AdvancedWrapper> *@
