@@ -206,9 +206,8 @@ else{
                     }
                     else
                     {
-                        Constants.CUR_USER_NAME = username;
-                        await sessionStorage.SetItemAsync("CUR_USER_NAME", Constants.CUR_USER_NAME);
                         await Constants.Init(true);
+                        await sessionStorage.SetItemAsync("CUR_USER_NAME", Constants.CUR_USER_NAME);
                         NavMan.NavigateTo("home");
                     }
                 }

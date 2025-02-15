@@ -246,6 +246,8 @@ namespace BetterBudgetWeb
         {
             Person1 = catchAll.Token.Name;
             Person2 = catchAll.Token.Person2;
+            CUR_USER_EMAIL = catchAll.Token.Email;
+            CUR_USER_NAME = catchAll.Token.Name;
 
             // Needed for Ideal Emergency Amount
             await MonthViewConstants.Init();
