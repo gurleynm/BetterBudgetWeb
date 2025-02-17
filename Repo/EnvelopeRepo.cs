@@ -30,6 +30,7 @@ namespace BetterBudgetWeb.Repo
 
             CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
             Envelopes = catcher.Envelopes;
+            Constants.Envelopes = new(catcher.Envelopes);
             return catcher.Envelopes;
         }
         public static async Task<List<Envelope>> AddOrUpdateAsync(Envelope small)
@@ -67,6 +68,7 @@ namespace BetterBudgetWeb.Repo
 
             CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
             Envelopes = catcher.Envelopes;
+            Constants.Envelopes = new(catcher.Envelopes);
             return catcher.Envelopes;
         }
         public static async Task<List<Envelope>> RemoveAsync(Envelope small)
@@ -95,6 +97,7 @@ namespace BetterBudgetWeb.Repo
 
             CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
             Envelopes = catcher.Envelopes;
+            Constants.Envelopes = new(catcher.Envelopes);
             return catcher.Envelopes;
         }
     }
