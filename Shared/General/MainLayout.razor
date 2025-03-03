@@ -33,7 +33,7 @@
     }
 
     table.toggle-table tr td {
-        border:none;
+    border:none;
     }
 
     table.side-to-side td:nth-child(even) {
@@ -562,6 +562,7 @@
     protected override async Task OnInitializedAsync()
     {
         Constants.BalancesChanged += BalancesUpdated;
+        Constants.TokenInvalidatedChanged += TokenSetInvalid;
         try
         {
             DeviceCheck = jsRuntime.InvokeAsync<bool>("isDevice");
@@ -705,7 +706,7 @@
         ShowEditModal = !ShowEditModal;
         ToggleOverflow();
     }
-    
+
     private async void CloseSplitModal(bool accepted)
     {
         ShowSplitModal = !ShowSplitModal;
@@ -765,8 +766,22 @@
     {
         StateHasChanged();
     }
+    private void TokenSetInvalid(object sender, bool e)
+    {
+        if (e)
+        {
+            Constants.WeIn = false;
+            Constants.Token = "";
+            sessionStorage.SetItemAsync("token", "");
+            sessionStorage.SetItemAsync("CUR_USER_NAME", "");
+            NavMan.NavigateTo("home");
+            StateHasChanged();
+        }
+    }
+
     public void Dispose()
     {
+        Constants.TokenInvalidatedChanged -= TokenSetInvalid;
         Constants.BalancesChanged -= BalancesUpdated;
     }
 }

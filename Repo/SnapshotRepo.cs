@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using BetterBudgetWeb.Shared;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
@@ -11,29 +12,25 @@ namespace BetterBudgetWeb.Repo
     {
         private static string baseURI => Constants.BaseUri + "Snapshot";
         public static List<Snapshot> Snapshots { get; set; } = new List<Snapshot>();
+        public static async Task<List<Snapshot>> CallAPI(string method, Snapshot small = null)
+        {
+            string content = await APIHandler.PingAPI(baseURI, method, small);
+
+            if (content == null)
+                return new List<Snapshot>();
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
+
+            Snapshots = catcher.Snapshots;
+            return Snapshots;
+        }
         public static async Task<List<Snapshot>> GetSnapshotsAsync()
         {
             if (Constants.Token == "DEMO")
                 return Constants.catchAll.Snapshots;
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var response = await client.GetAsync(baseURI);
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
-
-            Snapshots = catcher.Snapshots;
-            return Snapshots;
+            return await CallAPI("GET");
         }
         public static void SetDemoSnap()
         {

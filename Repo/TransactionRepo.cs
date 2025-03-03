@@ -8,34 +8,31 @@ namespace BetterBudgetWeb.Repo
     public class TransactionRepo
     {
         private static string baseURI => Constants.BaseUri + "Transaction";
-        public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public static List<Transaction> Transactions { get; set; } = new List<Transaction>(); 
+        public static async Task<List<Transaction>> CallAPI(string method, string URI = "", object small = null)
+        {
+            if (string.IsNullOrEmpty(URI))
+                URI = baseURI;
+
+            string content = await APIHandler.PingAPI(URI, method, small);
+
+            if (content == null)
+                return new List<Transaction>();
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
+            Constants.AssignCatches(catcher);
+
+            Transactions = new List<Transaction>(catcher.Transactions);
+
+            return Transactions;
+        }
         public static async Task<List<Transaction>> GetTransactionsAsync(string start = "3")
         {
             if (Constants.Token == "DEMO")
                 return Constants.Transactions;
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-            string url = baseURI + "?duration=" + start;
-            var response = await client.GetAsync(url);
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var m = response.ReasonPhrase;
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
-
-            Transactions = new List<Transaction>(catcher.Transactions);
-
-            return Transactions;
+            return await CallAPI("GET", baseURI + "?duration=" + start);
         }
 
         // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
@@ -130,29 +127,7 @@ namespace BetterBudgetWeb.Repo
 
             trans.Name = trans.Name.Trim();
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
-
-            requestMessage.Content = JsonContent.Create(trans);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var tran = catcher.Transactions;
-
-
-            Constants.AssignCatches(catcher);
-
-            return tran;
+            return await CallAPI("POST", baseURI, trans);
         }
         
         // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
@@ -170,29 +145,7 @@ namespace BetterBudgetWeb.Repo
             foreach (var trans in MultiTrans)
                 trans.Name = trans.Name.Trim();
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI + "/Batch");
-
-            requestMessage.Content = JsonContent.Create(MultiTrans);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var tran = catcher.Transactions;
-
-
-            Constants.AssignCatches(catcher);
-
-            return tran;
+            return await CallAPI("POST", baseURI + "/Batch", MultiTrans);
         }
 
         // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
@@ -208,26 +161,8 @@ namespace BetterBudgetWeb.Repo
                 return Constants.Transactions;
             }
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-
             var trans = Transactions.FirstOrDefault(t => t.Id == id);
-
-            requestMessage.Content = JsonContent.Create(trans);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var tran = catcher.Transactions;
-
-            Constants.AssignCatches(catcher);
-            return tran;
+            return await CallAPI("DELETE", baseURI, trans);
         }
 
         // NEEDED FOR DEMO

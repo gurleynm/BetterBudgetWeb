@@ -2,10 +2,10 @@
 @inject NavigationManager NavMan
 
 <div class="flex-c" style="width:100vw;height:100%;align-items:center;padding-top:0%">
+    <div>
+        <h2 style="text-align:center;color:white;font-family:'CBB Default';">@WelcomeTxt</h2>
+    </div>
     <div style="display:block;background-color:transparent;border-radius:1vw;width:auto;padding:1em;padding-bottom:2vw">
-        <div>
-            <h2 style="text-align:center;color:white;font-family:'CBB Default';">@($"Welcome")</h2>
-        </div>
         @if (NavMan.BaseUri.Contains("mobile.") && NavMan.Uri.Contains("user="))
         {
             <LoadingDots />
@@ -234,6 +234,8 @@
     public bool Hide { get; set; }
 
     public bool ForgotPassword { get; set; }
+
+    string WelcomeTxt => Constants.TokenInvalidated ? "Your session expired, please log in again" : "Welcome";
 
     private string email;
     private string email2;

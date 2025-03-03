@@ -9,29 +9,26 @@ namespace BetterBudgetWeb.Repo
     {
         private static string baseURI => Constants.BaseUri + "Balance";
         public static List<Balance> Balances { get; set; }
+        public static async Task<List<Balance>> CallAPI(string method, Balance small = null)
+        {
+            string content = await APIHandler.PingAPI(baseURI, method, small);
+
+            if (content == null)
+                return new List<Balance>();
+
+            var catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            Balances = new(catcher.Balances);
+            Constants.Balances = new(Balances);
+            Constants.catchAll.Balances = new(Balances);
+
+            return Balances;
+        }
         public static async Task<List<Balance>> GetBalancesAsync()
         {
             if (Constants.Token == "DEMO")
                 return Constants.Balances;
 
-            HttpClient client = new HttpClient();
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            var response = await client.GetAsync(baseURI);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
-            Balances = catcher.Balances;
-            Constants.Balances = new List<Balance>(Balances);
-
-            return Balances;
+            return await CallAPI("GET");
         }
         public static List<Balance> GetBalances()
         {
@@ -81,27 +78,7 @@ namespace BetterBudgetWeb.Repo
 
             bal.Name = bal.Name.Trim();
 
-            HttpClient client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-
-            requestMessage.Content = JsonContent.Create(bal);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            Balances = catcher.Balances;
-            Constants.Balances = new List<Balance>(Balances);
-            Constants.catchAll.Balances = Balances;
-            return Balances;
+            return await CallAPI("POST", bal);
         }
         public static async Task<List<Balance>> RemoveAsync(Balance bal)
         {
@@ -111,27 +88,8 @@ namespace BetterBudgetWeb.Repo
                 Constants.Balances = new List<Balance>(Constants.catchAll.Balances);
                 return Constants.Balances;
             }
-            HttpClient client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
 
-            requestMessage.Content = JsonContent.Create(bal);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            Balances = catcher.Balances;
-            Constants.Balances = new List<Balance>(Balances);
-            Constants.catchAll.Balances = Balances;
-            return Balances;
+            return await CallAPI("DELETE", bal);
         }
         public static Balance GetBalanceFromName(string name, bool IgnoreCase = false)
         {

@@ -12,15 +12,21 @@ namespace BetterBudgetWeb.Repo
         private static string baseChkURI => Constants.BaseUri + "User/CheckEmailUser";
         private static string baseURI => Constants.BaseUri + "User";
         private static string baseTokenURI => Constants.BaseUri + "User/Token";
+        public static async Task<string> CallAPI(string method, string URI = "", object small = null)
+        {
+            if (string.IsNullOrEmpty(URI))
+                URI = baseURI;
+
+            string content = await APIHandler.PingAPI(URI, method, small);
+
+            if (content == null)
+                return null;
+
+            return content;
+        }
         public static async Task<string> CheckUserEmail(string username, string email)
         {
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(baseChkURI + "?user=" + username + "&email=" + email);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-                return "404";
+            string content = await CallAPI("GET", baseChkURI + "?user=" + username + "&email=" + email);
 
             if (string.IsNullOrEmpty(content))
                 return "404";
@@ -43,13 +49,7 @@ namespace BetterBudgetWeb.Repo
 
         public static async Task<bool> VerifyUserAsync(string user, string pass)
         {
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-            HttpClient client = new HttpClient();
-            var response = await client.GetAsync(baseURI + "?user=" + user + "&pass=" + pass);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-                return false;
+            string content = await CallAPI("GET", baseURI + "?user=" + user + "&pass=" + pass);
 
             if (string.IsNullOrEmpty(content))
                 return false;
@@ -68,18 +68,15 @@ namespace BetterBudgetWeb.Repo
                 return false;
             }
 
+            Constants.TokenInvalidated = false;
             return true;
         }
         public static async Task<bool> VerifyUserAsync(string token)
         {
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-            var response = await client.GetAsync(baseTokenURI);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-                return false;
+            string CurrentToken = "" + Constants.Token;
+            Constants.Token = token;
+            string content = await CallAPI("GET", baseTokenURI);
+            Constants.Token = CurrentToken;
 
             if (string.IsNullOrEmpty(content))
                 return false;
@@ -98,6 +95,7 @@ namespace BetterBudgetWeb.Repo
                 return false;
             }
 
+            Constants.TokenInvalidated = false;
             return true;
         }
         public static async Task<bool> AddUser(User user)
@@ -105,24 +103,7 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return true;
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = baseURI;
-
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
-
-            requestMessage.Content = JsonContent.Create(user);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode)
-                return false;
+            string content = await CallAPI("POST","",user);
 
             if (string.IsNullOrEmpty(content))
                 return false;
@@ -130,46 +111,7 @@ namespace BetterBudgetWeb.Repo
             if (content.Contains("message"))
                 return false;
 
-            CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
-
-            Constants.Person1 = CA.Token.Name;
-            Constants.Token = CA.Token.Token;
-
-            return true;
-        }
-        public static async Task<bool> AddUser(string user, string user2, string email, string email2, string pass, string pass2)
-        {
-            if (Constants.Token == "DEMO")
-                return true;
-
-            User[] Users = new User[] { new User(user,email,pass),
-                                        new User(user2,email2,pass2) };
-
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = baseURI;
-
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
-
-            requestMessage.Content = JsonContent.Create(Users);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode)
-                return false;
-
-            if (string.IsNullOrEmpty(content))
-                return false;
-
-            if (content.Contains("message"))
-                return false;
-
             CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
             Constants.Person1 = CA.Token.Name;
@@ -182,24 +124,7 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return "Success";
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = baseURI + $"?token={Constants.Token}";
-
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Put, adjustedUrl);
-
-            requestMessage.Content = JsonContent.Create(UpdatedUser);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode)
-                return "Invalid response";
+            string content = await CallAPI("PUT", baseURI + $"?token={Constants.Token}", UpdatedUser);
 
             if (string.IsNullOrEmpty(content))
                 return "No content";
@@ -210,6 +135,7 @@ namespace BetterBudgetWeb.Repo
                 return json["message"].ToString(); ;
             }
 
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
             Constants.Person1 = CA.Token.Name;
@@ -222,24 +148,7 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return true;
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = baseURI + $"?user={user}&user2={user2}&pass={pass}&pass2={pass2}";
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, adjustedUrl);
-
-            requestMessage.Content = JsonContent.Create("");
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode)
-                return false;
+            string content = await CallAPI("DELETE", baseURI + $"?user={user}&user2={user2}&pass={pass}&pass2={pass2}");
 
             if (string.IsNullOrEmpty(content))
                 return false;
@@ -247,6 +156,7 @@ namespace BetterBudgetWeb.Repo
             if (content.Contains("message"))
                 return false;
 
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
             Constants.Person1 = CA.Token.Name;
@@ -259,20 +169,7 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return true;
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = Constants.BaseUri + "Password" + $"?email={email}";
-
-            HttpClient client = new HttpClient();
-
-            var response = await client.GetAsync(adjustedUrl);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode)
-                return false;
+            string content = await CallAPI("GET", Constants.BaseUri + "Password" + $"?email={email}");
 
             if (string.IsNullOrEmpty(content))
                 return false;
@@ -284,22 +181,9 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return "";
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = baseURI + "/SignUp" + $"?email={email1}&email2={email2}";
+            string content = await CallAPI("POST", baseURI + "/SignUp" + $"?email={email1}&email2={email2}");
 
-            HttpClient client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
-
-            requestMessage.Content = JsonContent.Create("");
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(content))
+            if (string.IsNullOrEmpty(content))
                 return "both";
 
             if (content.Contains("Success"))
@@ -318,25 +202,7 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return "";
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = baseURI + "/Create" + $"?createToken={token}";
-
-
-            HttpClient client = new HttpClient();
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Put, adjustedUrl);
-
-            requestMessage.Content = JsonContent.Create("");
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode)
-                return "";
+            string content = await CallAPI("PUT", baseURI + "/Create" + $"?createToken={token}");
 
             if (string.IsNullOrEmpty(content))
                 return "";
@@ -355,24 +221,7 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return true;
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = Constants.BaseUri + "Password/" + $"?resetToken={token}";
-
-            HttpClient client = new HttpClient();
-
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Put, adjustedUrl);
-
-            requestMessage.Content = JsonContent.Create("");
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode)
-                return false;
+            string content = await CallAPI("PUT", Constants.BaseUri + "Password/" + $"?resetToken={token}");
 
             if (string.IsNullOrEmpty(content))
                 return false;
@@ -384,28 +233,13 @@ namespace BetterBudgetWeb.Repo
             if (Constants.Token == "DEMO")
                 return true;
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string adjustedUrl = Constants.BaseUri + "Password/" + $"?resetToken={token}&newPass={pass}";
-
-            HttpClient client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, adjustedUrl);
-
-            requestMessage.Content = JsonContent.Create("");
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (!response.IsSuccessStatusCode)
-                return false;
+            string content = await CallAPI("POST", Constants.BaseUri + "Password/" + $"?resetToken={token}&newPass={pass}");
 
             if (string.IsNullOrEmpty(content))
                 return false;
             try
             {
+                JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 CatchAll CA = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
 
                 Constants.Person1 = CA.Token.Name;

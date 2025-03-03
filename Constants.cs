@@ -15,6 +15,20 @@ namespace BetterBudgetWeb
         public static bool AllFree = false; // true false
         public static string Device { get; set; } = "WEB"; // true false
         public static string SignUpText => AllFree ? "Sign Up" : "Start 45-Day Trial"; // true false
+        public static bool tokenInvalidated { get; set; } = new();
+        public static bool TokenInvalidated
+        {
+            get => tokenInvalidated;
+            set
+            {
+                if (tokenInvalidated != value)
+                {
+                    tokenInvalidated = value;
+                    TokenInvalidatedChanged?.Invoke(typeof(Constants), tokenInvalidated);
+                }
+            }
+        }
+        public static EventHandler<bool> TokenInvalidatedChanged = (sender, value) => { };
         public static string DeviceSubscribed { get; set; } = "WEB"; // true false
         public static bool HideCookieBanner = true;
         public static EventHandler<bool> WeInChanged = (sender, value) => { };

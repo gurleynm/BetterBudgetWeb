@@ -8,6 +8,18 @@ namespace BetterBudgetWeb.Repo
     public class SubscriptionRepo
     {
         private static string baseURI => Constants.BaseUri + "Subscription?usersid=" + Constants.catchAll.Token.Id;
+        public static async Task<string> CallAPI(string method, string URI = "", object small = null)
+        {
+            if (string.IsNullOrEmpty(URI))
+                URI = baseURI;
+
+            string content = await APIHandler.PingAPI(URI, method, small);
+
+            if (content == null)
+                return null;
+
+            return content;
+        }
         public static async Task<string> GetSubscriptionAsync()
         {
             if (Constants.Token == "DEMO")
@@ -16,16 +28,7 @@ namespace BetterBudgetWeb.Repo
                 return "GOD_TIER";
             }
 
-            HttpClient client = new HttpClient();
-
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var response = await client.GetAsync(baseURI);
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
+            string content = await CallAPI("GET");
 
             if (string.IsNullOrEmpty(content))
                 return null;
@@ -49,18 +52,8 @@ namespace BetterBudgetWeb.Repo
                 return ("active","GOD_TIER",Constants.Device);
             }
 
-            HttpClient client = new HttpClient();
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            string url = Constants.BaseUri + $"Subscription/Token?token={Constants.Token}";
-
-            var response = await client.GetAsync(url);
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
+            string content = await CallAPI("GET",Constants.BaseUri + $"Subscription/Token?token={Constants.Token}");
 
             if (string.IsNullOrEmpty(content))
                 return ("inactive","","");

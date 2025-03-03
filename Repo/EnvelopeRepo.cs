@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using Stripe;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -9,29 +10,26 @@ namespace BetterBudgetWeb.Repo
     {
         private static string baseURI => Constants.BaseUri + "Envelope";
         public static List<Envelope> Envelopes { get; set; } = new List<Envelope>();
+        public static async Task<List<Envelope>> CallAPI(string method, Envelope small = null)
+        {
+            string content = await APIHandler.PingAPI(baseURI, method, small);
+
+            if (content == null)
+                return new List<Envelope>();
+
+            var catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+            Envelopes = new(catcher.Envelopes);
+            Constants.Envelopes = new(Envelopes);
+            Constants.catchAll.Envelopes = new(Envelopes);
+
+            return Envelopes;
+        }
         public static async Task<List<Envelope>> GetEnvelopesAsync()
         {
             if (Constants.Token == "DEMO")
                 return Constants.Envelopes;
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var response = await client.GetAsync(baseURI);
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
-            Envelopes = catcher.Envelopes;
-            Constants.Envelopes = new(catcher.Envelopes);
-            return catcher.Envelopes;
+            return await CallAPI("GET");
         }
         public static async Task<List<Envelope>> AddOrUpdateAsync(Envelope small)
         {
@@ -50,26 +48,8 @@ namespace BetterBudgetWeb.Repo
                 Constants.Envelopes = new List<Envelope>(Constants.catchAll.Envelopes);
                 return Constants.Envelopes;
             }
-            HttpClient client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
 
-            requestMessage.Content = JsonContent.Create(small);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            Envelopes = catcher.Envelopes;
-            Constants.Envelopes = new(catcher.Envelopes);
-            return catcher.Envelopes;
+            return await CallAPI("POST",small);
         }
         public static async Task<List<Envelope>> RemoveAsync(Envelope small)
         {
@@ -79,26 +59,8 @@ namespace BetterBudgetWeb.Repo
                 Constants.Envelopes = new List<Envelope>(Constants.catchAll.Envelopes);
                 return Constants.Envelopes;
             }
-            HttpClient client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
 
-            requestMessage.Content = JsonContent.Create(small);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            Envelopes = catcher.Envelopes;
-            Constants.Envelopes = new(catcher.Envelopes);
-            return catcher.Envelopes;
+            return await CallAPI("DELETE", small);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using BetterBudgetWeb.Shared;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -10,29 +11,28 @@ namespace BetterBudgetWeb.Repo
         private static string baseURI => Constants.BaseUri + "Security?ticker={0}&SecType={1}";
         public static string otherURI => Constants.BaseUri + "Security";
         public static List<Security> Securities { get; set; } = new List<Security>();
+        public static async Task<List<Security>> CallAPI(string method, string URI = "", Security small = null)
+        {
+            if (string.IsNullOrEmpty(URI))
+                URI = baseURI;
+
+            string content = await APIHandler.PingAPI(URI, method, small);
+
+            if (content == null)
+                return new List<Security>();
+
+            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
+
+            Securities = new List<Security>(catcher.Securities);
+            return Securities;
+        }
         public static async Task<List<Security>> GetSecuritiesAsync()
         {
             if (Constants.Token == "DEMO")
                 return Constants.Securities;
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var response = await client.GetAsync(string.Format(baseURI, "BLACKAPPELA", "STOCK"));
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
-
-            Securities = new List<Security>(catcher.Securities);
-            return Securities;
+            return await CallAPI("GET", string.Format(baseURI, "BLACKAPPELA", "STOCK"));
         }
         public static List<Security> GetSecurities()
         {
@@ -62,29 +62,7 @@ namespace BetterBudgetWeb.Repo
                 return Constants.Securities;
             }
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, otherURI);
-
-            requestMessage.Content = JsonContent.Create(small);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-            var secs = catcher.Securities;
-            Constants.Securities = new List<Security>(secs);
-
-            Securities = secs;
-
-            return secs;
+            return await CallAPI("POST", otherURI, small);
         }
         public static async Task<List<Security>> RemoveAsync(Security small)
         {
@@ -95,30 +73,7 @@ namespace BetterBudgetWeb.Repo
                 return Constants.Securities;
             }
 
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, otherURI);
-
-            requestMessage.Content = JsonContent.Create(small);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-
-            var secs = catcher.Securities;
-            Constants.Securities = new List<Security>(secs);
-
-            Securities = secs;
-
-            return secs;
+            return await CallAPI("DELETE", otherURI, small);
         }
     }
 }

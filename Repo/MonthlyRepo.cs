@@ -1,4 +1,5 @@
 ﻿using BetterBudgetWeb.Data;
+using BetterBudgetWeb.Shared;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -9,30 +10,26 @@ namespace BetterBudgetWeb.Repo
     {
         private static string baseURI => Constants.BaseUri + "Monthly";
         public static List<Monthly> Monthlies { get; set; } = new List<Monthly>();
+        public static async Task<List<Monthly>> CallAPI(string method, Monthly small = null)
+        {
+            string content = await APIHandler.PingAPI(baseURI, method, small);
+
+            if (content == null)
+                return new List<Monthly>();
+
+            var catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
+
+            Monthlies = catcher.Monthlies;
+            Constants.SetMonthlies(catcher.Monthlies);
+
+            return Monthlies;
+        }
         public static async Task<List<Monthly>> GetMonthliesAsync()
         {
             if (Constants.Token == "DEMO")
                 return Constants.Monthlies;
 
-            JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            HttpClient client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
-            var response = await client.GetAsync(baseURI);
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content, _options);
-
-            Monthlies = catcher.Monthlies;
-            Constants.SetMonthlies(catcher.Monthlies);
-            return catcher.Monthlies;
+            return await CallAPI("GET");
         }
         public static List<Monthly> GetMonthlies()
         {
@@ -50,27 +47,8 @@ namespace BetterBudgetWeb.Repo
                 Constants.Monthlies = new List<Monthly>(Constants.catchAll.Monthlies);
                 return Constants.Monthlies;
             }
-            HttpClient client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Delete, baseURI);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
 
-            requestMessage.Content = JsonContent.Create(trans);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-
-            Monthlies = catcher.Monthlies;
-            Constants.SetMonthlies(catcher.Monthlies);
-            return catcher.Monthlies;
+            return await CallAPI("DELETE",trans);
         }
         public static async Task<List<Monthly>> AddOrUpdateAsync(string name, double person1Amount, double person2Amount, string dyna, string monYear)
         {
@@ -91,29 +69,10 @@ namespace BetterBudgetWeb.Repo
 
                 return Constants.Monthlies;
             }
-            HttpClient client = new HttpClient();
-            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, baseURI);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Constants.Token);
 
             Monthly month = new Monthly(name, person1Amount, person2Amount, dyna, monYear);
 
-            requestMessage.Content = JsonContent.Create(month);
-
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
-
-            if (string.IsNullOrEmpty(content))
-                return null;
-
-            CatchAll catcher = System.Text.Json.JsonSerializer.Deserialize<CatchAll>(content);
-
-            Monthlies = catcher.Monthlies;
-            Constants.SetMonthlies(catcher.Monthlies);
-            return catcher.Monthlies;
+            return await CallAPI("POST",month);
         }
     }
 }
