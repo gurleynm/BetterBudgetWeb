@@ -1,0 +1,36 @@
+﻿@if (Loading)
+{
+    <h4 class="spinner" aria-hidden="true"></h4>
+}
+else
+{
+    <h4 class="oi @ClassName" aria-hidden="true"></h4>
+    <span style="color:inherit">@Title</span>
+}
+
+@code {
+    [Parameter]
+    public string ClassName { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public bool Loading
+    {
+        get { return loading; }
+        set
+        {
+            if (loading == value)
+                return;
+
+            loading = value;
+            LoadingChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> LoadingChanged { get; set; }
+
+    private bool loading { get; set; }
+}
