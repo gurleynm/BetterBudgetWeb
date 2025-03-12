@@ -140,9 +140,9 @@ a, .btn-link {
 }
 
 .spinner {
-    border: 16px solid #f3f3f3;
+    border: 10px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 16px solid cyan;
+    border-top: 10px solid cyan;
     -webkit-animation: spin 2s linear infinite; /* Safari */
     animation: spin 2s linear infinite;
 }

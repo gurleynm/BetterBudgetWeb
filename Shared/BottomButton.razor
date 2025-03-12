@@ -1,12 +1,12 @@
 ﻿@if (Loading)
 {
-    <h4 class="spinner" aria-hidden="true"></h4>
+    <h6 class="spinner" aria-hidden="true"></h6>
 }
 else
 {
     <h4 class="oi @ClassName" aria-hidden="true"></h4>
-    <span style="color:inherit">@Title</span>
 }
+<span style="color:inherit">@Title</span>
 
 @code {
     [Parameter]
