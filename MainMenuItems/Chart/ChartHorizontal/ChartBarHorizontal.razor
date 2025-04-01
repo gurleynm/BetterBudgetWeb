@@ -19,7 +19,21 @@
     }
     else
     {
-        <h5 style="cursor:pointer;color:@Constants.ColorScheme["IncomeGood"];padding-left:calc(@BarFillWidth - 1em);text-align:start">@(Constants.Pretty(Value))</h5>
+        @if (Value > MaxValue)
+        {
+            <h5 style="cursor:pointer;color:@Constants.ColorScheme["IncomeGood"];text-align:center">@(Constants.Pretty(Value))</h5>
+        }
+        else
+        {
+            string tempPercent = Percentage + "%";
+            if (Percentage > 50)
+            {
+                tempPercent = (100 - Percentage) + "%";
+                padding = "right";
+                tAlign = "end";
+            }
+            <h5 style="cursor:pointer;color:@Constants.ColorScheme["IncomeGood"];padding-@(padding):calc(@tempPercent - 1em);text-align:@(tAlign)">@(Constants.Pretty(Value))</h5>
+        }
     }
     <div class="chart-bar-hor__inner flex-r" style="@BackgroundColorAdjusted;justify-content:start;cursor:pointer" @onclick=OnClick>
         @if (Negative)
@@ -92,6 +106,11 @@
     public double val = 0;
     public double maxVal = 0;
 
+    string padding = "left";
+    string tAlign = "start";
+    double Percentage = 0;
+
+
     [Parameter]
     public double Value
     {
@@ -144,9 +163,11 @@
     private void SetFillWidth()
     {
         if (Reverse)
-            BarFillWidth = (100 - Math.Round(((MaxValue - val) / MaxValue) * 100)) + "%";
+            Percentage = (100 - Math.Round(((MaxValue - val) / MaxValue) * 100));
         else
-            BarFillWidth = (100 - Math.Round((val / MaxValue) * 100)) + "%";
+            Percentage = (100 - Math.Round((val / MaxValue) * 100));
+
+        BarFillWidth = Percentage + "%";
     }
 
     private void RefreshMe()
