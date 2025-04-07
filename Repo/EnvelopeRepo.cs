@@ -21,6 +21,7 @@ namespace BetterBudgetWeb.Repo
             Envelopes = new(catcher.Envelopes);
             Constants.Envelopes = new(Envelopes);
             Constants.catchAll.Envelopes = new(Envelopes);
+            Constants.BalancesChanged.Invoke(null, Constants.Balances);
 
             return Envelopes;
         }
