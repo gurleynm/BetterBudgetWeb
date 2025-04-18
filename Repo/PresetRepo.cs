@@ -50,6 +50,21 @@ namespace BetterBudgetWeb.Repo
             }
             press.Name = press.Name.Trim();
 
+            if (Constants.IsSecondPerson)
+            {
+                string tempStr = press.PaidWithPerson1;
+                press.PaidWithPerson1 = press.PaidWithPerson2;
+                press.PaidWithPerson2 = tempStr;
+
+                tempStr = press.PaidOffPerson1;
+                press.PaidOffPerson1 = press.PaidOffPerson2;
+                press.PaidOffPerson2 = tempStr;
+
+                double tempDub = press.Person1Amount;
+                press.Person1Amount = press.Person2Amount;
+                press.Person2Amount = tempDub;
+            }
+
             return await CallAPI("POST",press);
         }
         public static async Task<List<Preset>> RemoveAsync(Preset press)

@@ -185,7 +185,7 @@ else if (ShowStatic)
         // 8 - Text Color
         // 9 - Background Color
 
-        string[] vals = Constants.HandlePresets(pre.Name);
+        string[] vals = Constants.HandlePresets(pre.Id);
 
         if (vals.All(v => string.IsNullOrEmpty(v)))
         {

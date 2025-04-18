@@ -10,6 +10,7 @@
         public string Status { get; set; }
         public string Tier { get; set; }
         public string Device { get; set; }
+        public bool IsSecondPerson { get; set; }
         public TokenHolder() { }
         public TokenHolder(User user)
         {
@@ -29,6 +30,7 @@
             Status = other.Status;
             Tier = other.Tier;
             Device = other.Device;
+            IsSecondPerson = other.IsSecondPerson;
         }
     }
 }

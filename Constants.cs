@@ -13,6 +13,7 @@ namespace BetterBudgetWeb
 
         public static bool Test = false; // true false
         public static bool AllFree = false; // true false
+        public static bool IsSecondPerson;
         public static string Device { get; set; } = "WEB"; // true false
         public static string SignUpText => AllFree ? "Sign Up" : "Start 45-Day Trial"; // true false
         public static bool tokenInvalidated { get; set; } = new();
@@ -262,6 +263,7 @@ namespace BetterBudgetWeb
             Person2 = catchAll.Token.Person2;
             CUR_USER_EMAIL = catchAll.Token.Email;
             CUR_USER_NAME = catchAll.Token.Name;
+            IsSecondPerson = catchAll.Token.IsSecondPerson;
 
             // Needed for Ideal Emergency Amount
             await MonthViewConstants.Init();
@@ -443,7 +445,7 @@ namespace BetterBudgetWeb
         }
         public static string[] HandlePresets(string preset)
         {
-            Preset pres = Presets.FirstOrDefault(p => p.Name == preset);
+            Preset pres = Presets.FirstOrDefault(p => p.Id == preset);
             // 0 - Trans Name
             // 1 - ExpenseType
             // 2 - Paid With Person1
@@ -469,9 +471,24 @@ namespace BetterBudgetWeb
                 values[7] = pres.PaidOffPerson2;
                 values[8] = pres.TextColor.ToString().ToUpper() == "#FFFFFF" ? "#FFFFFF" : "#000000";
                 values[9] = pres.HexColor.ToString();
+
+                if (IsSecondPerson)
+                {
+                    for(int index = 2; index <= 6; index += 2)
+                    {
+                        Swap(ref values[index], ref values[index + 1]);
+                    }
+                }
             }
 
             return values;
+        }
+
+        private static void Swap(ref string one, ref string two)
+        {
+            string temp = one;
+            one = two;
+            two = temp;
         }
 
         public static double GetBudgetedAmount(string ExpType, string Month = "All", string Year = "1")
