@@ -960,7 +960,7 @@ else
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
-            await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2), Hex, TextColor));
+            await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, PaidWithPerson1, PaidWithPerson2, PaidOffPerson1, PaidOffPerson2, Hex, TextColor));
             PresetsForDel = new List<Preset>(Presets);
 
             Presets.Sort();

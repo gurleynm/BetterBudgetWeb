@@ -461,12 +461,12 @@ namespace BetterBudgetWeb
             {
                 values[0] = pres.Name;
                 values[1] = pres.ExpenseType;
-                values[2] = pres.PaidWithPerson1 == null ? null : BalanceRepo.GetId(pres.PaidWithPerson1);
-                values[3] = pres.PaidWithPerson2 == null ? null : BalanceRepo.GetId(pres.PaidWithPerson2);
+                values[2] = pres.PaidWithPerson1;
+                values[3] = pres.PaidWithPerson2;
                 values[4] = pres.Person1Amount.ToString();
                 values[5] = pres.Person2Amount.ToString();
-                values[6] = pres.PaidOffPerson1 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson1);
-                values[7] = pres.PaidOffPerson2 == null ? null : BalanceRepo.GetId(pres.PaidOffPerson2);
+                values[6] = pres.PaidOffPerson1;
+                values[7] = pres.PaidOffPerson2;
                 values[8] = pres.TextColor.ToString().ToUpper() == "#FFFFFF" ? "#FFFFFF" : "#000000";
                 values[9] = pres.HexColor.ToString();
             }
