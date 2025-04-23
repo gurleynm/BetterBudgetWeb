@@ -19,11 +19,19 @@
         </div>
     </div>
     <div class="flex-r">
-        <button class="btn btn-primary" disabled=@(string.IsNullOrEmpty(Email1) && string.IsNullOrEmpty(Email2)) @onclick=SendEmail>Submit</button>
+        @if (Disabled)
+        {
+            <LoadingDots />
+        }
+        else
+        {
+            <button class="btn btn-primary" disabled=@(string.IsNullOrEmpty(Email1) && string.IsNullOrEmpty(Email2)) @onclick=@(async () => await SendEmail())>Submit</button>
+        }
     </div>
 </div>
 
 @code {
+    bool Disabled;
     string Email1 = "";
     string Email2 = "";
     string EmailErrorMsg1 = "";
@@ -37,12 +45,14 @@
             SendEmail();
     }
 
-    private async void SendEmail()
+    private async Task SendEmail()
     {
+        Disabled = true;
         EmailErrorMsgColor1 = "red";
         EmailErrorMsgColor2 = "red";
         EmailErrorMsg1 = "";
         EmailErrorMsg2 = "";
+        await Task.Delay(200);
 
         Email1 = Email1.Trim();
         Email2 = Email2.Trim();
@@ -75,5 +85,8 @@
 
             StateHasChanged();
         }
+
+        Disabled = false;
+        StateHasChanged();
     }
 }
