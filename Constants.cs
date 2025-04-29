@@ -11,7 +11,7 @@ namespace BetterBudgetWeb
     public class Constants
     {
 
-        public static bool Test = true; // true false
+        public static bool Test = false; // true false
         public static bool AllFree = false; // true false
         public static bool IsSecondPerson;
         public static string Device { get; set; } = "WEB"; // true false
