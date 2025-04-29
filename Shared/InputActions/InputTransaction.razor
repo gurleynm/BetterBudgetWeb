@@ -752,27 +752,27 @@ else
 
 @code {
     [Parameter]
-    public string TransactionName { get; set; }
+    public string TransactionName { get; set; } = "";
     [Parameter]
-    public string ExpenseType { get; set; }
+    public string ExpenseType { get; set; } = "";
     [Parameter]
-    public string PaidOffPerson1 { get; set; }
+    public string PaidOffPerson1 { get; set; } = "";
     [Parameter]
-    public string PaidOffPerson2 { get; set; }
+    public string PaidOffPerson2 { get; set; } = "";
     [Parameter]
-    public string PaidWithPerson1 { get; set; }
+    public string PaidWithPerson1 { get; set; } = "";
     [Parameter]
-    public string PaidWithPerson2 { get; set; }
+    public string PaidWithPerson2 { get; set; } = "";
     [Parameter]
-    public string Person1Amount { get; set; }
+    public string Person1Amount { get; set; } = "";
     [Parameter]
-    public string Person2Amount { get; set; }
+    public string Person2Amount { get; set; } = "";
     [Parameter]
     public Action<Preset> Preset { get; set; }
     [Parameter]
-    public string Hex { get; set; }
+    public string Hex { get; set; } = "#FFFFFF";
     [Parameter]
-    public string TextColor { get; set; }
+    public string TextColor { get; set; } = "";
 
     private List<Preset> Presets => Constants.Presets;
     public List<Preset> PresetsForDel { get; set; }
@@ -965,6 +965,13 @@ else
 
             Presets.Sort();
             PresetsForDel.Sort();
+
+            foreach (var smc in Constants.StaticMonthlyCosts)
+            {
+                if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "1-Time Charge") == 0)
+                    if (!smc.Name.Contains("(EXAMPLE DATA)"))
+                        Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
+            }
 
             ErrorColor = "green";
             ErrorMsg = TransactionName + " preset was added!";
