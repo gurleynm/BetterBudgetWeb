@@ -63,22 +63,6 @@ a, .btn-link {
         content: "An error has occurred."
     }
 
-.transactions-table{
-    font-family: 'GTS Default';
-}
-
-.filter-table tr td{
-    padding:1em;
-}
-
-.filter-table tr td:nth-child(2n+1){
-    text-align:right;
-}
-
-.filter-table tr td:nth-child(2n){
-    text-align:left;
-}
-
 .expense-date {
     display: flex;
     margin: 1vw auto;
