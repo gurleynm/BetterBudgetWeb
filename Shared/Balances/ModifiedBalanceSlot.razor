@@ -8,13 +8,13 @@
 
 <div class="flex-c-start" style="align-items:center;border:2px solid @NetColor(TheBalance.BalanceType, TheBalance.Value);
                                      background-image: linear-gradient(to left,indigo,@TheBalance.HexColor);height:100%;width:100%;
-                                    color:@TheBalance.TextColor;border-radius:1em;padding:1em">
-    <div style="align-self:flex-start">
+                                    color:@TheBalance.TextColor;border-radius:1em;padding:1em;justify-content:space-between">
+    <div>
         <div class="flex-c" style="justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
             <label style="cursor:pointer;font-size:medium;align-self:flex-start;margin:0;"><strong>@TheBalance.Name</strong><span style="color:@TheBalance.TextColor">@(" (" + TheBalance.Person + ")")</span></label>
         </div>
     </div>
-    <div class="slot-background" style="align-self:flex-end;padding:0; margin: 0;width:100%">
+    <div class="slot-background" style="align-self:flex-end;padding:1em;width:100%">
         <div class="flex-c" style="justify-content:space-between;padding:0 .5vw 0 0; margin: 0">
             <label class="@ColorClass()" style="cursor:pointer;font-size:medium;align-self:flex-end;margin:0">@Constants.Pretty(Amount)</label>
         </div>

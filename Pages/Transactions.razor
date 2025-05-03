@@ -8,7 +8,22 @@
 @inject IJSRuntime JSRuntime
 
 <style>
-    
+    .transactions-table {
+        font-family: 'CBB Default';
+    }
+
+    .filter-table tr td {
+        padding: 1em;
+    }
+
+        .filter-table tr td:nth-child(2n+1) {
+            text-align: right;
+        }
+
+        .filter-table tr td:nth-child(2n) {
+            text-align: left;
+        }
+
 </style>
 <div class="flex-c-start" style="justify-content:space-between">
     <div class="flex-r" style="justify-content:start">
@@ -203,7 +218,7 @@
                         <td>Expense Type</td>
                         <td>
                             <select @bind=ExpenseTypeFilter>
-                                <option disabled value="">(Select Expense Type)</option>
+                                <option disabled value="">(Select Expense)</option>
                                 @foreach (string et in UniqueExpenseTypes.Where(e =>
                                !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
                                 {
@@ -213,22 +228,22 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Total Amount</td>
-                        <td class="flex-r">
-                            <select @bind=TotalAmountFilter style="width:fit-content">
-                                <option>&lt;</option>
-                                <option>&gt;</option>
-                                <option>=</option>
-                                <option>&le;</option>
-                                <option>&ge;</option>
-                            </select>
-                            <input @bind-value=TotalAmountNumFilter type="number" style="width:5em" placeholder="$" />
-                            <div>
-                                <button disabled="@string.IsNullOrEmpty(TotalAmountNumFilter)" class="btn-grad btn-primary"
-                                        @onclick=@(() => AddFilter(new FilterHelper("Total Amount",TotalAmountFilter + TotalAmountNumFilter)))>
-                                    Add
-                                </button>
+                        <td style="vertical-align:top">Total Amount</td>
+                        <td>
+                            <div class="flex-r-100">
+                                <select @bind=TotalAmountFilter style="width:fit-content">
+                                    <option>&lt;</option>
+                                    <option>&gt;</option>
+                                    <option>=</option>
+                                    <option>&le;</option>
+                                    <option>&ge;</option>
+                                </select>
+                                <input @bind-value=TotalAmountNumFilter type="number" style="width:5em" placeholder="$" />
                             </div>
+                            <button disabled="@string.IsNullOrEmpty(TotalAmountNumFilter)" class="btn-grad btn-primary" style="width:100%"
+                                    @onclick=@(() => AddFilter(new FilterHelper("Total Amount",TotalAmountFilter + TotalAmountNumFilter)))>
+                                Add
+                            </button>
                         </td>
                     </tr>
                 </tbody>
