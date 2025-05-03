@@ -6,8 +6,8 @@
 @inject IJSRuntime JSRuntime
 @implements IDisposable
 
-<div class="flex-r" @onmouseover="MouseOver" @onmouseout="MouseOut" style="flex-wrap:wrap;justify-content:space-between;
-                                padding:0; margin: 0;cursor:auto;
+<div class="flex-r" style="flex-wrap:wrap;justify-content:space-between;
+                                padding:0; margin: 0;cursor:auto;height:100%;
                                 width:100%;border: 1px gray solid;background-image: linear-gradient(to left,indigo,@TheBalance.HexColor);
                                     color:@TheBalance.TextColor">
     <div style="align-self:flex-start">
@@ -92,14 +92,6 @@
         return returnStr;
     }
 
-    void MouseOver(MouseEventArgs e)
-    {
-        ShowPerson = true;
-    }
-    void MouseOut(MouseEventArgs e)
-    {
-        ShowPerson = false;
-    }
     private void BalancesUpdated(object sender, List<Balance> e)
     {
         Show = false;
