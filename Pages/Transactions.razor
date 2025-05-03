@@ -20,7 +20,7 @@
                 Balance balance = UniqueBalances[index];
                 <tr>
                     <td>
-                        <div class="flex-c-start" style="background-image: linear-gradient(to left,indigo,@balance.HexColor);
+                        <div class="flex-c-start" style="background-image: linear-gradient(to left,indigo,@balance.HexColor);height:100%;
                                     align-items:center;margin:.5em;border:2px solid @NetColor(balance.BalanceType, balance.Value);border-radius:1em;padding:1em">
                             <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
                         </div>
@@ -31,7 +31,7 @@
                         <td>
 
                             <div class="flex-c-start" style="align-items:center;margin:.5em;border:2px solid @NetColor(balance.BalanceType, balance.Value);
-                                     background-image: linear-gradient(to left,indigo,@balance.HexColor);
+                                     background-image: linear-gradient(to left,indigo,@balance.HexColor);height:100%;
                                     color:@balance.TextColor;border-radius:1em;padding:1em">
                                 <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
                             </div>
@@ -58,7 +58,6 @@
     </PopTray>
     <div class="flex-c-start">
         <div class="flex-r-100" style="justify-content:start;align-items:center">
-            <h3 style="font-family:'CBB Default';margin:1em">Filters:</h3>
             <button class="btn-grad" @onclick=OpenFilters><img src="https://static-00.iconduck.com/assets.00/slider-horizontal-3-icon-256x216-nmsauigo.png" style="height:1.5em" /> Filters</button>
         </div>
         <div class="flex-r" style="flex-wrap:wrap;width:fit-content;align-items:center">
