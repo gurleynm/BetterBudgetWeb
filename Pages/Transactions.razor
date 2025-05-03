@@ -35,7 +35,7 @@ BottomButton=false>
                 <td>
                     <div class="flex-c-start" style="background-image: linear-gradient(to left,indigo,@balance.HexColor);
                                     align-items:center;margin:.5em;border:2px solid @NetColor(balance.BalanceType, balance.Value);border-radius:1em;padding:1em">
-                        <BalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
+                        <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
                     </div>
                 </td>
                 @if (index + 1 < UniqueBalances.Count)
@@ -46,7 +46,7 @@ BottomButton=false>
                         <div class="flex-c-start" style="align-items:center;margin:.5em;border:2px solid @NetColor(balance.BalanceType, balance.Value);
                                      background-image: linear-gradient(to left,indigo,@balance.HexColor);
                                     color:@balance.TextColor;border-radius:1em;padding:1em">
-                            <BalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
+                            <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
                         </div>
                     </td>
                 }
