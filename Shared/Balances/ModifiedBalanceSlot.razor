@@ -48,7 +48,7 @@
 
     private string ColorClass()
     {
-        int LoanMultiplier = TheBalance.BalanceType == "Loan" ? -1 : 1;
+        int LoanMultiplier = 1;
 
         return TheBalance.Value * LoanMultiplier < 0 ? "income-bad" : "income-good";
     }
