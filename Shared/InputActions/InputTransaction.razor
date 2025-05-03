@@ -753,24 +753,17 @@ else
 
 @code {
     [Parameter]
+    public string ParentId { get; set; } = "";
+
     public string TransactionName { get; set; } = "";
-    [Parameter]
     public string ExpenseType { get; set; } = "";
-    [Parameter]
     public string PaidOffPerson1 { get; set; } = "";
-    [Parameter]
     public string PaidOffPerson2 { get; set; } = "";
-    [Parameter]
     public string PaidWithPerson1 { get; set; } = "";
-    [Parameter]
     public string PaidWithPerson2 { get; set; } = "";
-    [Parameter]
     public string Person1Amount { get; set; } = "";
-    [Parameter]
     public string Person2Amount { get; set; } = "";
-    [Parameter]
     public string Hex { get; set; } = "#28A745";
-    [Parameter]
     public string TextColor { get; set; } = "#FFFFFF";
 
     private List<Preset> Presets => Constants.Presets;
@@ -1024,6 +1017,8 @@ else
             Hex = vals[9];
         }
         await JSRuntime.InvokeAsync<string>("ScrollTo", "tran-name");
+        StateHasChanged();
+        await JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
         StateHasChanged();
     }
 }

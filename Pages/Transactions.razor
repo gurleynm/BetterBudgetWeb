@@ -54,8 +54,7 @@
              HideTxt="Nevermind"
              TopButton=true
              BottomButton=false>
-        <BetterBudgetWeb.Shared.InputActions.InputTransaction />
-        <div style="height:10em"></div>
+        <BetterBudgetWeb.Shared.InputActions.InputTransaction ParentId="add" />
     </PopTray>
     <div class="flex-c-start">
         <div class="flex-r-100" style="justify-content:start;align-items:center">
@@ -357,19 +356,16 @@
 
         foreach (string tb in TBSorted)
         {
-            double sum = TotalForBalance(tb);
-            string BalType = "Loan";
-            string BalColorType = "transparent";
-            string BalTextColorType = Constants.ColorScheme["IncomeGood"];
-
+            
             if (Constants.Balances.FirstOrDefault(b => b.Name == tb) is Balance balance)
             {
-                BalType = balance.BalanceType;
-                BalColorType = balance.HexColor;
-                BalTextColorType = balance.TextColor;
+                UniqueBalances.Add(new Balance { Name = tb,
+                                                 Value = TotalForBalance(tb), 
+                                                 BalanceType = balance.BalanceType, 
+                                                 Person = balance.Person,
+                                                 HexColor = balance.HexColor, 
+                                                 TextColor = balance.TextColor });
             }
-
-            UniqueBalances.Add(new Balance { Name = tb, Value = sum, BalanceType = BalType, HexColor = BalColorType, TextColor = BalTextColorType });
         }
 
         UniqueBalances.Sort(Constants.CompareBalance);
