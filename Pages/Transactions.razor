@@ -19,22 +19,14 @@
             {
                 Balance balance = UniqueBalances[index];
                 <tr>
-                    <td>
-                        <div class="flex-c-start" style="background-image: linear-gradient(to left,indigo,@balance.HexColor);height:100%;
-                                    align-items:center;margin:.5em;border:2px solid @NetColor(balance.BalanceType, balance.Value);border-radius:1em;padding:1em">
-                            <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
-                        </div>
+                    <td style="height:1px;padding:1em;">
+                        <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
                     </td>
                     @if (index + 1 < UniqueBalances.Count)
                     {
                         balance = UniqueBalances[index + 1];
-                        <td>
-
-                            <div class="flex-c-start" style="align-items:center;margin:.5em;border:2px solid @NetColor(balance.BalanceType, balance.Value);
-                                     background-image: linear-gradient(to left,indigo,@balance.HexColor);height:100%;
-                                    color:@balance.TextColor;border-radius:1em;padding:1em">
-                                <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
-                            </div>
+                        <td style="height:1px;padding:1em;">
+                            <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
                         </td>
                     }
                     else
@@ -355,15 +347,18 @@
 
         foreach (string tb in TBSorted)
         {
-            
+
             if (Constants.Balances.FirstOrDefault(b => b.Name == tb) is Balance balance)
             {
-                UniqueBalances.Add(new Balance { Name = tb,
-                                                 Value = TotalForBalance(tb), 
-                                                 BalanceType = balance.BalanceType, 
-                                                 Person = balance.Person,
-                                                 HexColor = balance.HexColor, 
-                                                 TextColor = balance.TextColor });
+                UniqueBalances.Add(new Balance
+                    {
+                        Name = tb,
+                        Value = TotalForBalance(tb),
+                        BalanceType = balance.BalanceType,
+                        Person = balance.Person,
+                        HexColor = balance.HexColor,
+                        TextColor = balance.TextColor
+                    });
             }
         }
 
@@ -374,20 +369,7 @@
 
         return base.OnInitializedAsync();
     }
-    private string NetColor(string bt, double net)
-    {
-        string pos = Constants.ColorScheme["IncomeGood"];
-        string neg = "red";
 
-        if (bt == "Loan")
-        {
-            string temp = "" + pos;
-            pos = neg;
-            neg = pos;
-        }
-
-        return net < 0 ? neg : pos;
-    }
     private string TranColor(string et, double amount)
     {
         return IndexRunner.TranColor(et, amount);
