@@ -9,8 +9,8 @@
         <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Home" ? "cyan" : "white")" @onclick=@(async () => await ButtonClicked("home"))>
             <BottomButton ClassName="oi-home" Title="Home" @bind-Loading=@DictionaryLoading["home"] />
         </div>
-        <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Input" ? "cyan" : "white")" @onclick=@(async () => await ButtonClicked("input"))>
-            <BottomButton ClassName="oi-plus" Title="Input" @bind-Loading=@DictionaryLoading["input"] />
+        <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Transactions" ? "cyan" : "white")" @onclick=@(async () => await ButtonClicked("transactions"))>
+            <BottomButton ClassName="oi-credit-card" Title="Transactions" @bind-Loading=@DictionaryLoading["transactions"] />
         </div>
         @if (ShowPortfolio)
         {
@@ -50,7 +50,7 @@
     private Dictionary<string,bool> DictionaryLoading = new()
     {
         {"home", false }
-        ,{"input", false }
+        ,{"transactions", false }
         ,{"portfolio", false }
         ,{"chart", false }
         ,{"forecast", false }

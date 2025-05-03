@@ -1,0 +1,649 @@
+﻿@page "/transactions"
+@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.MainMenuItems
+@using BetterBudgetWeb.Repo;
+@using BetterBudgetWeb.Runner;
+@using BetterBudgetWeb.Shared.Balances
+@using BetterBudgetWeb.Shared.General
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+
+<div class="flex-r-100" style="justify-content:space-between">
+    <div class="flex-c-start">
+        <h2 style="font-family:'CBB Default'">Last 90 Days</h2>
+        <h4 style="font-family:'CBB Default'">@($"{Start} - {End}")</h4>
+    </div>
+</div>
+<PopTray Id="add" @bind-ShowWorth=AddTransaction
+ShowTxt="Add Transaction"
+HideTxt="Nevermind"
+TopButton=true
+BottomButton=false>
+    <BetterBudgetWeb.Shared.InputActions.InputTransaction />
+</PopTray>
+<div class="flex-r" style="justify-content:start">
+    <h2 style="font-family:'CBB Default'">Total Net:&nbsp;</h2>
+    <h2 style="font-family:'CBB Default';color:@(NetTotal < 0 ? "red" : Constants.ColorScheme["IncomeGood"])">@Pretty(NetTotal)</h2>
+</div>
+<div class="flex-r-100" style="justify-content:space-around;flex-wrap:wrap">
+    <table style="table-layout:fixed">
+        @for (int index = 0; index < UniqueBalances.Count; index += 2)
+        {
+            Balance balance = UniqueBalances[index];
+            <tr>
+                <td>
+                    <div class="flex-c-start" style="background-image: linear-gradient(to left,indigo,@balance.HexColor);
+                                    align-items:center;margin:.5em;border:2px solid @NetColor(balance.BalanceType, balance.Value);border-radius:1em;padding:1em">
+                        <BalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
+                    </div>
+                </td>
+                @if (index + 1 < UniqueBalances.Count)
+                {
+                    balance = UniqueBalances[index + 1];
+                    <td>
+
+                        <div class="flex-c-start" style="align-items:center;margin:.5em;border:2px solid @NetColor(balance.BalanceType, balance.Value);
+                                     background-image: linear-gradient(to left,indigo,@balance.HexColor);
+                                    color:@balance.TextColor;border-radius:1em;padding:1em">
+                            <BalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
+                        </div>
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+            </tr>
+        }
+    </table>
+</div>
+<div class="flex-c-start">
+    <div class="flex-r-100" style="justify-content:start;align-items:center">
+        <h3 style="font-family:'CBB Default';margin:1em">Filters:</h3>
+        <button class="btn-grad" @onclick=OpenFilters><img src="https://static-00.iconduck.com/assets.00/slider-horizontal-3-icon-256x216-nmsauigo.png" style="height:1.5em" /> Filters</button>
+    </div>
+    <div class="flex-r" style="flex-wrap:wrap;width:fit-content;align-items:center">
+        @foreach (var filter in Filters)
+        {
+            <div class="flex-r" style="padding:.5em;margin:.5em;border:1px dotted white;border-radius:1em;width:fit-content">
+                @filter
+                <span class="oi oi-circle-x" style="color:white;margin-left:1em;cursor:pointer" @onclick=@(() => RemoveFilter(filter)) />
+            </div>
+        }
+    </div>
+</div>
+@if (FilteredTransactions != null)
+{
+    string PrevMonth = DateTime.Now.AddMonths(1).ToString("dd MMM");
+    <h3 style="font-family:'GTS Default';text-align:left">Total Transactions: @FilteredTransactions.Count</h3>
+    <table class="transactions-table" style="width:100%;margin-bottom:1vh">
+        @foreach (var transaction in FilteredTransactions)
+        {
+            @if (!PrevMonth.EndsWith(transaction.DateOfTransaction.ToString("MMM")))
+            {
+                string month = transaction.DateOfTransaction.ToString("MMMM");
+                double total = TotalForMonth(month);
+
+                <tr>
+                    <td colspan="100%" style="border:1px black solid;background-color: @Constants.ColorScheme["TableEven"];">
+                        <div class="flex-r" style="justify-content:start;padding:1em">
+                            <h2 style="font-family:'GTS Default';margin-right:.5em">@month Net:</h2>
+                            <h2 style="color:@(total < 0 ? "red" : Constants.ColorScheme["IncomeGood"])">@($"{Pretty(total)}")</h2>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (PrevMonth != transaction.DateOfTransaction.ToString("dd MMM"))
+            {
+                PrevMonth = transaction.DateOfTransaction.ToString("dd MMM");
+                double total = TotalForDay(PrevMonth);
+                <tr style="border:1px black solid;background-color: @Constants.ColorScheme["TableEven"];">
+                    <td colspan="100%">
+                        <div class="flex-r" style="justify-content:start">
+                            <div style="padding:0 .5em;">@PrevMonth:</div>
+                            <div style="text-align:left;color:@(total < 0 ? "red" : Constants.ColorScheme["IncomeGood"])">@($"{Pretty(total)}")</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr style="cursor:pointer;border:1px black solid;background-color: @Constants.ColorScheme["TableOdd"];" @onclick=@(() => TransEdits[transaction.Id] = !TransEdits[transaction.Id])>
+                <td class="flex-r" style="justify-content:start;border:none">
+                    <div class="flex-c" style="justify-content:space-between;align-items:start;padding:1em">
+                        <div style="color:white;text-align:start">
+                            @transaction.Name
+                        </div>
+                        <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                            @transaction.ExpenseType
+                        </div>
+                    </div>
+                </td>
+                @if (TransEdits[transaction.Id])
+                {
+                    <td>
+                        <div class="flex-r">
+                            @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
+                            {
+                                <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => SplitModal(transaction))"><span class="oi oi-pie-chart"></span></button>
+                                <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                            }
+                            <button class="btn" disabled=@Disabled style="background-color:transparent;color:red;border:none;margin:.5vh;height:5vh;" @onclick="(() => DelBtn(transaction))"><span class="bi bi-trash" style="color:red"></span></button>
+                        </div>
+                    </td>
+                }
+                else
+                {
+                    @if (transaction.Person1Amount == transaction.TotalAmount)
+                    {
+                        <td style="height:100%;border:none">
+                            <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))" style="text-align:end;padding-right:.5em;">@Pretty(transaction.Person1Amount)</div>
+                        </td>
+                    }
+                    else if (transaction.Person2Amount == transaction.TotalAmount)
+                    {
+                        <td style="height:100%;border:none">
+                            <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))" style="text-align:end;padding-right:.5em;">@Pretty(transaction.Person2Amount)</div>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </table>
+}
+
+@if (ShowFilters)
+{
+    <Confirmation OnClose="Close" RightBtnClick="@(() => SaveFilters(TempFilters))" LeftBtnTxt="Cancel"
+    RightBtnTxt="Save"
+    LeftBtnColor="btn-secondary"
+    RightBtnColor="btn-success">
+        <div class="flex-c-start" style="color:white">
+            <h3>Filters:</h3>
+            <div class="flex-r-100" style="flex-wrap:wrap">
+                @foreach (var filter in TempFilters)
+                {
+                    <div class="flex-r" style="padding:1em;margin:1em;border:1px dotted white;border-radius:1em;width:fit-content">
+                        @filter
+                        <span class="oi oi-circle-x" style="color:white;margin-left:1em;cursor:pointer" @onclick=@(() => RemoveTempFilter(filter)) />
+                    </div>
+                }
+            </div>
+            <hr style="width:100%" />
+            <table class="filter-table">
+                <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Balance</td>
+                        <td>
+                            <select @bind=BalanceFilter>
+                                <option disabled value="">(Select Balance)</option>
+                                @foreach (Balance balance in UniqueBalances.Where(b =>
+                              !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
+                                {
+                                    <option>@balance.Name</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Person</td>
+                        <td>
+                            <select @bind=PersonFilter>
+                                <option disabled value="">(Select Person)</option>
+                                @if (!TempFilters.Any(t => t.Field == "Person" && t.Value == Constants.Person1))
+                                {
+                                    <option>@Constants.Person1</option>
+                                }
+                                @if (!TempFilters.Any(t => t.Field == "Person" && t.Value == Constants.Person2))
+                                {
+                                    <option>@Constants.Person2</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Expense Type</td>
+                        <td>
+                            <select @bind=ExpenseTypeFilter>
+                                <option disabled value="">(Select Expense Type)</option>
+                                @foreach (string et in UniqueExpenseTypes.Where(e =>
+                              !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
+                                {
+                                    <option>@et</option>
+                                }
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Total Amount</td>
+                        <td class="flex-r">
+                            <select @bind=TotalAmountFilter style="width:fit-content">
+                                <option>&lt;</option>
+                                <option>&gt;</option>
+                                <option>=</option>
+                                <option>&le;</option>
+                                <option>&ge;</option>
+                            </select>
+                            <input @bind-value=TotalAmountNumFilter type="number" style="width:5em" placeholder="$" />
+                            <div>
+                                <button disabled="@string.IsNullOrEmpty(TotalAmountNumFilter)" class="btn-grad btn-primary"
+                                @onclick=@(() => AddFilter(new FilterHelper("Total Amount",TotalAmountFilter + TotalAmountNumFilter)))>
+                                    Add
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </Confirmation>
+}
+
+@code {
+    private string balanceFilter = "";
+    public string BalanceFilter
+    {
+        get { return balanceFilter; }
+        set
+        {
+            if (balanceFilter == value)
+                return;
+
+            balanceFilter = value;
+            if (!string.IsNullOrEmpty(balanceFilter))
+            {
+                AddFilter(new FilterHelper("Balance", balanceFilter));
+            }
+        }
+    }
+
+    private string personFilter = "";
+    public string PersonFilter
+    {
+        get { return personFilter; }
+        set
+        {
+            if (personFilter == value)
+                return;
+
+            personFilter = value;
+            if (!string.IsNullOrEmpty(personFilter))
+            {
+                AddFilter(new FilterHelper("Person", personFilter));
+            }
+        }
+    }
+
+    private string expenseTypeFilter = "";
+    public string ExpenseTypeFilter
+    {
+        get { return expenseTypeFilter; }
+        set
+        {
+            if (expenseTypeFilter == value)
+                return;
+
+            expenseTypeFilter = value;
+            if (!string.IsNullOrEmpty(expenseTypeFilter))
+            {
+                AddFilter(new FilterHelper("Expense Type", expenseTypeFilter));
+            }
+        }
+    }
+    private string TotalAmountFilter = "<";
+    private string TotalAmountNumFilter = "";
+
+    private bool AddTransaction { get; set; }
+    private bool Added { get; set; }
+    private bool AddDisabled { get; set; }
+
+    private bool ShowFilters { get; set; }
+    List<FilterHelper> TempFilters = new();
+    List<FilterHelper> Filters = new();
+
+    private double NetTotal => UniqueBalances.Sum(b => b.Value);
+
+    string End => (FilteredTransactions == null || FilteredTransactions.Count == 0 ? DateTime.Now : FilteredTransactions.FirstOrDefault().DateOfTransaction).ToString("MMM d");
+    string Start => (FilteredTransactions == null || FilteredTransactions.Count == 0 ? DateTime.Now : FilteredTransactions.LastOrDefault().DateOfTransaction).ToString("MMM d");
+    List<Balance> UniqueBalances = new();
+    List<string> UniqueExpenseTypes = new();
+
+    [CascadingParameter]
+    public BalanceTray GlobalBT { get; set; }
+    [CascadingParameter]
+    public EventCallback<Transaction> RunModal { get; set; }
+    [CascadingParameter]
+    public MainLayout MainLayout { get; set; }
+
+    [Parameter]
+    public string Title { get; set; } = "Transactions";
+
+    [Parameter]
+    public EventCallback<bool> OnEditConfirm { get; set; }
+
+    [Parameter]
+    public EventCallback RefreshParent { get; set; }
+
+    public List<Transaction> TotalTransactions { get; set; }
+    public List<Transaction> FilteredTransactions { get; set; }
+
+    private bool Disabled { get; set; }
+
+    private Dictionary<string, bool> TransEdits { get; set; } = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        Constants.CurPage = "Transactions";
+        MainLayout.ToggleOverflow("auto");
+
+        FilteredTransactions = GetTransactions();
+        HashSet<string> TempBals = new();
+        foreach (Transaction transaction in FilteredTransactions)
+        {
+            if (!string.IsNullOrEmpty(transaction.PaidWithPerson1) && transaction.PaidWithPerson1 != "none")
+                TempBals.Add(transaction.PaidWithPerson1);
+
+            if (!string.IsNullOrEmpty(transaction.PaidWithPerson2) && transaction.PaidWithPerson2 != "none")
+                TempBals.Add(transaction.PaidWithPerson2);
+        }
+
+        var TBSorted = TempBals.ToList();
+        TBSorted.Sort();
+
+        foreach (string tb in TBSorted)
+        {
+            double sum = TotalForBalance(tb);
+            string BalType = "Loan";
+            string BalColorType = "transparent";
+            string BalTextColorType = Constants.ColorScheme["IncomeGood"];
+
+            if (Constants.Balances.FirstOrDefault(b => b.Name == tb) is Balance balance)
+            {
+                BalType = balance.BalanceType;
+                BalColorType = balance.HexColor;
+                BalTextColorType = balance.TextColor;
+            }
+
+            UniqueBalances.Add(new Balance { Name = tb, Value = sum, BalanceType = BalType, HexColor = BalColorType, TextColor = BalTextColorType });
+        }
+
+        UniqueBalances.Sort(Constants.CompareBalance);
+
+        UniqueExpenseTypes = FilteredTransactions.Select(ft => ft.ExpenseType).Distinct().ToList();
+        UniqueExpenseTypes.Sort();
+
+        Constants.TransactionsChanged += TransactionsUpdated;
+        return base.OnInitializedAsync();
+    }
+    private string NetColor(string bt, double net)
+    {
+        string pos = Constants.ColorScheme["IncomeGood"];
+        string neg = "red";
+
+        if (bt == "Loan")
+        {
+            string temp = "" + pos;
+            pos = neg;
+            neg = pos;
+        }
+
+        return net < 0 ? neg : pos;
+    }
+    private string TranColor(string et, double amount)
+    {
+        return IndexRunner.TranColor(et, amount);
+    }
+
+    private string Pretty(double num)
+    {
+        return Constants.Pretty(num);
+    }
+    private async void Add(NewTransaction addIt)
+    {
+        if (addIt == null)
+            return;
+
+        var nt = IndexRunner.Add(addIt);
+
+        if (nt != null)
+        {
+            // TransactionRepo sets everything in Constants
+            var transactions = await TransactionRepo.AddOrUpdateAsync(nt);
+            FilteredTransactions = transactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+
+            AddConfirm();
+        }
+
+        Disabled = false;
+        StateHasChanged();
+    }
+    private async void AddConfirm()
+    {
+        Added = true;
+        AddDisabled = false;
+        await Task.Delay(2000);
+        Added = false;
+        StateHasChanged();
+    }
+    private async void DelBtn(Transaction transaction)
+    {
+        MainLayout.ModalType = "D";
+        await RunModal.InvokeAsync(transaction);
+    }
+    private async void CloseModal(bool accepted)
+    {
+        if (accepted)
+        {
+            await OnEditConfirm.InvokeAsync(accepted);
+            await RefreshParent.InvokeAsync();
+            StateHasChanged();
+        }
+        MainLayout.ToggleOverflow("auto");
+    }
+    private async void SplitModal(Transaction trans)
+    {
+        MainLayout.ModalType = "S";
+        await RunModal.InvokeAsync(trans);
+        StateHasChanged();
+    }
+    private async void OpenModal(Transaction trans)
+    {
+        MainLayout.ModalType = "E";
+        await RunModal.InvokeAsync(trans);
+        StateHasChanged();
+    }
+    private List<Transaction> GetTransactions()
+    {
+        TotalTransactions = Constants.catchAll.Transactions;
+
+        TotalTransactions = TotalTransactions.OrderByDescending(t => t.DateOfTransaction).ToList();
+
+        TransEdits.Clear();
+
+        foreach (var tt in TotalTransactions)
+            TransEdits[tt.Id] = false;
+
+        return TotalTransactions;
+    }
+
+    private void OpenFilters()
+    {
+        TempFilters = new(Filters);
+        ShowFilters = true;
+    }
+
+    private void RemoveFilter(FilterHelper filter)
+    {
+        int filterCnt = Filters.Count;
+        for (int index = Filters.Count - 1; index >= 0; index--)
+            if (Filters[index].ToString() == filter.ToString())
+                Filters.RemoveAt(index);
+
+        SaveFilters();
+    }
+
+    private void RemoveTempFilter(FilterHelper filter)
+    {
+        for (int index = TempFilters.Count - 1; index >= 0; index--)
+            if (TempFilters[index].ToString() == filter.ToString())
+                TempFilters.RemoveAt(index);
+    }
+
+    private void AddFilter(FilterHelper filter)
+    {
+        TempFilters.Add(filter);
+        ResetFields();
+    }
+
+    private void SaveFilters(List<FilterHelper> temps = null)
+    {
+        if (temps != null)
+            Filters = new(temps);
+
+        FilteredTransactions = GetTransactions();
+        if (Filters.Count > 0)
+        {
+            var BalanceFilters = Filters.Where(filter => filter.Field == "Balance");
+            var PersonFilters = Filters.Where(filter => filter.Field == "Person");
+            var ExpenseTypeFilters = Filters.Where(filter => filter.Field == "Expense Type");
+            var TotalAmountFilters = Filters.Where(filter => filter.Field == "Total Amount");
+
+            if (BalanceFilters != null && BalanceFilters.Count() > 0)
+            {
+                var balances = BalanceFilters.Select(b => b.Value);
+                FilteredTransactions = FilteredTransactions.Where(ft =>
+                    balances.Contains(ft.PaidWithPerson1) ||
+                    balances.Contains(ft.PaidWithPerson2) ||
+                    balances.Contains(ft.PaidOffPerson1) ||
+                    balances.Contains(ft.PaidOffPerson2)
+                                ).ToList();
+            }
+
+            if (PersonFilters != null && PersonFilters.Count() > 0)
+            {
+                var persons = PersonFilters.Select(p => p.Value);
+                FilteredTransactions = FilteredTransactions.Where(ft =>
+                    ft.Person1Amount != 0 && persons.Contains(Constants.Person1) ||
+                    ft.Person2Amount != 0 && persons.Contains(Constants.Person2)
+                                ).ToList();
+            }
+
+            if (ExpenseTypeFilters != null && ExpenseTypeFilters.Count() > 0)
+            {
+                var ets = ExpenseTypeFilters.Select(p => p.Value);
+                FilteredTransactions = FilteredTransactions.Where(ft =>
+                    ets.Contains(ft.ExpenseType)
+                                ).ToList();
+            }
+
+            if (TotalAmountFilters != null && TotalAmountFilters.Count() > 0)
+            {
+                foreach (FilterHelper filter in TotalAmountFilters)
+                {
+                    if (filter != null)
+                    {
+                        string oper = filter.Value.Substring(0, 1);
+                        string am = filter.Value.Substring(1);
+
+                        if (double.TryParse(am, out double amount))
+                        {
+                            FilteredTransactions = FilteredTransactions.Where(ft =>
+                                CheckAmount(ft.TotalAmount, oper, amount)
+                                ).ToList();
+                        }
+                    }
+                }
+            }
+        }
+        UniqueExpenseTypes = FilteredTransactions.Select(ft => ft.ExpenseType).Distinct().ToList();
+        Close();
+    }
+
+    private bool CheckAmount(double leftSide, string GtOrLt, double rightSide)
+    {
+        bool CheckSatisfied = false;
+
+        if (GtOrLt.Contains(">"))
+            CheckSatisfied = leftSide > rightSide;
+        else if (GtOrLt.Contains("<"))
+            CheckSatisfied = leftSide < rightSide;
+        else if (GtOrLt.Contains("≤"))
+            CheckSatisfied = leftSide <= rightSide;
+        else
+            CheckSatisfied = leftSide >= rightSide;
+
+        return CheckSatisfied;
+    }
+
+    private void Close()
+    {
+        TempFilters.Clear();
+        ShowFilters = false;
+        ResetFields();
+    }
+
+    private void ResetFields()
+    {
+        PersonFilter = "";
+        BalanceFilter = "";
+        ExpenseTypeFilter = "";
+        TotalAmountFilter = "<";
+        TotalAmountNumFilter = "";
+    }
+
+    private double TotalForDay(string day)
+    {
+        return TotalFor(t => t.DateOfTransaction.ToString("dd MMM") == day);
+    }
+
+    private double TotalForMonth(string month)
+    {
+        return TotalFor(t => t.DateOfTransaction.ToString("MMMM") == month);
+    }
+
+    private double TotalForBalance(string balance)
+    {
+        return TotalFor(t => (t.PaidWithPerson1 == balance || t.PaidWithPerson2 == balance));
+    }
+
+    private double TotalFor(Func<Transaction, bool> ParamCheck)
+    {
+        var TransfersOutOf = FilteredTransactions.Where(t => ParamCheck(t) && "Debt Transfer".Contains(t.ExpenseType)).Sum(t => t.TotalAmount);
+        var TransfersInto = FilteredTransactions.Where(t => ParamCheck(t) && "Debt Transfer".Contains(t.ExpenseType)).Sum(t => t.TotalAmount);
+        var OtherTotals = FilteredTransactions.Where(t => ParamCheck(t) && !"Debt Transfer".Contains(t.ExpenseType)).Sum(t => "Income Equity".Contains(t.ExpenseType) ? t.TotalAmount : -t.TotalAmount);
+        return OtherTotals + TransfersInto - TransfersOutOf;
+    }
+
+    private void TransactionsUpdated(object sender, List<Transaction> e)
+    {
+        FilteredTransactions = GetTransactions();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.TransactionsChanged -= TransactionsUpdated;
+    }
+
+    public class FilterHelper
+    {
+        public string Field { get; set; }
+        public string Value { get; set; }
+
+        public FilterHelper(string field, string value)
+        {
+            Field = field;
+            Value = value;
+        }
+
+        public override string ToString()
+        {
+            return Field + ": " + Value;
+        }
+    }
+}

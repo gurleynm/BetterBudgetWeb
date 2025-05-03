@@ -1,6 +1,7 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 @using BetterBudgetWeb.Shared.PresetSections
+@inject IJSRuntime JSRuntime
 
 @if (Mobile)
 {
@@ -768,11 +769,9 @@ else
     [Parameter]
     public string Person2Amount { get; set; } = "";
     [Parameter]
-    public Action<Preset> Preset { get; set; }
+    public string Hex { get; set; } = "#28A745";
     [Parameter]
-    public string Hex { get; set; } = "#FFFFFF";
-    [Parameter]
-    public string TextColor { get; set; } = "";
+    public string TextColor { get; set; } = "#FFFFFF";
 
     private List<Preset> Presets => Constants.Presets;
     public List<Preset> PresetsForDel { get; set; }
@@ -987,6 +986,44 @@ else
         }
 
         Disabled = false;
+        StateHasChanged();
+    }
+    private async void Preset(Preset pre)
+    {
+        // 0 - Trans Name
+        // 1 - ExpenseType
+        // 2 - Paid With Person1
+        // 3 - Paid With Person2
+        // 4 - Person1Amount
+        // 5 - Person2Amount
+        // 6 - Paid Off Person1
+        // 7 - Paid Off Person2
+        // 8 - Text Color
+        // 9 - Background Color
+
+        string[] vals = Constants.HandlePresets(pre.Id);
+
+        if (vals.All(v => string.IsNullOrEmpty(v)))
+        {
+            TransactionName = pre.Name;
+            ExpenseType = "1-Time Charge";
+            Person1Amount = pre.Person1Amount.ToString();
+            Person2Amount = pre.Person2Amount.ToString();
+        }
+        else
+        {
+            TransactionName = vals[0];
+            ExpenseType = vals[1];
+            PaidWithPerson1 = vals[2];
+            PaidWithPerson2 = vals[3];
+            Person1Amount = vals[4];
+            Person2Amount = vals[5];
+            PaidOffPerson1 = vals[6];
+            PaidOffPerson2 = vals[7];
+            TextColor = vals[8];
+            Hex = vals[9];
+        }
+        await JSRuntime.InvokeAsync<string>("ScrollTo", "tran-name");
         StateHasChanged();
     }
 }
