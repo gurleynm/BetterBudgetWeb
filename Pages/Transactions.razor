@@ -64,6 +64,7 @@
              TopButton=true
              BottomButton=false>
         <BetterBudgetWeb.Shared.InputActions.InputTransaction ParentId="add" />
+        <div style="height:5em" />
     </PopTray>
     <div class="flex-c-start">
         <div class="flex-r-100" style="justify-content:start;align-items:center">
@@ -385,6 +386,8 @@
         UniqueExpenseTypes = FilteredTransactions.Select(ft => ft.ExpenseType).Distinct().ToList();
         UniqueExpenseTypes.Sort();
 
+        Constants.TransactionsChanged += TransactionsUpdated;
+
         return base.OnInitializedAsync();
     }
 
@@ -611,6 +614,17 @@
         var TransfersInto = FilteredTransactions.Where(t => ParamCheck(t) && "Debt Transfer".Contains(t.ExpenseType)).Sum(t => t.TotalAmount);
         var OtherTotals = FilteredTransactions.Where(t => ParamCheck(t) && !"Debt Transfer".Contains(t.ExpenseType)).Sum(t => "Income Equity".Contains(t.ExpenseType) ? t.TotalAmount : -t.TotalAmount);
         return OtherTotals + TransfersInto - TransfersOutOf;
+    }
+
+    private void TransactionsUpdated(object sender, List<Transaction> e)
+    {
+        FilteredTransactions = GetTransactions();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.TransactionsChanged -= TransactionsUpdated;
     }
 
     public class FilterHelper
