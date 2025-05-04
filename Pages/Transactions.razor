@@ -9,20 +9,20 @@
 
 <style>
     .transactions-table {
-        font-family: 'CBB Default';
+    font-family: 'CBB Default';
     }
 
     .filter-table tr td {
-        padding: 1em;
+    padding: 1em;
     }
 
-        .filter-table tr td:nth-child(2n+1) {
-            text-align: right;
-        }
+    .filter-table tr td:nth-child(2n+1) {
+    text-align: right;
+    }
 
-        .filter-table tr td:nth-child(2n) {
-            text-align: left;
-        }
+    .filter-table tr td:nth-child(2n) {
+    text-align: left;
+    }
 
 </style>
 <div class="flex-c-start" style="justify-content:space-between">
@@ -59,12 +59,11 @@
 {
     string PrevMonth = DateTime.Now.AddMonths(1).ToString("dd MMM");
     <PopTray Id="add" @bind-ShowWorth=AddTransaction
-             ShowTxt="Add Transaction"
-             HideTxt="Nevermind"
-             TopButton=true
-             BottomButton=false>
+    ShowTxt="Add Transaction"
+    HideTxt="Nevermind"
+    TopButton=true
+    BottomButton=false>
         <BetterBudgetWeb.Shared.InputActions.InputTransaction ParentId="add" />
-        <div style="height:5em" />
     </PopTray>
     <div class="flex-c-start">
         <div class="flex-r-100" style="justify-content:start;align-items:center">
@@ -162,10 +161,10 @@
 @if (ShowFilters)
 {
     <Confirmation OnClose="Close" RightBtnClick="@(() => SaveFilters(TempFilters))" LeftBtnTxt="Cancel"
-                  RightBtnTxt="Save"
-                  Title="Set Filters"
-                  LeftBtnColor="btn-secondary"
-                  RightBtnColor="btn-success">
+    RightBtnTxt="Save"
+    Title="Set Filters"
+    LeftBtnColor="btn-secondary"
+    RightBtnColor="btn-success">
         <div class="flex-c-start" style="color:white">
             <h3>Filters:</h3>
             <div class="flex-r-100" style="flex-wrap:wrap">
@@ -192,7 +191,7 @@
                             <select @bind=BalanceFilter>
                                 <option disabled value="">(Select Balance)</option>
                                 @foreach (Balance balance in UniqueBalances.Where(b =>
-                               !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
+                            !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
                                 {
                                     <option>@balance.Name</option>
                                 }
@@ -221,7 +220,7 @@
                             <select @bind=ExpenseTypeFilter>
                                 <option disabled value="">(Select Expense)</option>
                                 @foreach (string et in UniqueExpenseTypes.Where(e =>
-                               !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
+                            !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
                                 {
                                     <option>@et</option>
                                 }
@@ -242,7 +241,7 @@
                                 <input @bind-value=TotalAmountNumFilter type="number" style="width:5em" placeholder="$" />
                             </div>
                             <button disabled="@string.IsNullOrEmpty(TotalAmountNumFilter)" class="btn-grad btn-primary" style="width:100%"
-                                    @onclick=@(() => AddFilter(new FilterHelper("Total Amount",TotalAmountFilter + TotalAmountNumFilter)))>
+                            @onclick=@(() => AddFilter(new FilterHelper("Total Amount",TotalAmountFilter + TotalAmountNumFilter)))>
                                 Add
                             </button>
                         </td>
@@ -350,7 +349,16 @@
         Constants.CurPage = "Transactions";
         MainLayout.ToggleOverflow("auto");
 
+        LoadData();
+
+        Constants.TransactionsChanged += TransactionsUpdated;
+
+        return base.OnInitializedAsync();
+    }
+    private void LoadData()
+    {
         FilteredTransactions = GetTransactions();
+        UniqueBalances.Clear();
         HashSet<string> TempBals = new();
         foreach (Transaction transaction in FilteredTransactions)
         {
@@ -385,12 +393,7 @@
 
         UniqueExpenseTypes = FilteredTransactions.Select(ft => ft.ExpenseType).Distinct().ToList();
         UniqueExpenseTypes.Sort();
-
-        Constants.TransactionsChanged += TransactionsUpdated;
-
-        return base.OnInitializedAsync();
     }
-
     private string TranColor(string et, double amount)
     {
         return IndexRunner.TranColor(et, amount);
@@ -618,7 +621,7 @@
 
     private void TransactionsUpdated(object sender, List<Transaction> e)
     {
-        FilteredTransactions = GetTransactions();
+        LoadData();
         StateHasChanged();
     }
 
