@@ -186,10 +186,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Balance</td>
+                        <td>Account</td>
                         <td>
                             <select @bind=BalanceFilter>
-                                <option disabled value="">(Select Balance)</option>
+                                <option disabled value="">(Select Account)</option>
                                 @foreach (Balance balance in UniqueBalances.Where(b =>
                             !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
                                 {
@@ -622,6 +622,7 @@
     private void TransactionsUpdated(object sender, List<Transaction> e)
     {
         LoadData();
+        SaveFilters();
         StateHasChanged();
     }
 
