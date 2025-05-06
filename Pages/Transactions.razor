@@ -26,6 +26,7 @@
 
 </style>
 <div class="flex-c-start" style="justify-content:space-between">
+    <h2 style="font-family:'CBB Default'">Last 90 Days</h2>
     <div class="flex-r" style="justify-content:start">
         <h2 style="font-family:'CBB Default'">Total Net:&nbsp;</h2>
         <h2 style="font-family:'CBB Default';color:@(NetTotal < 0 ? "red" : Constants.ColorScheme["IncomeGood"])">@Pretty(NetTotal)</h2>
@@ -65,11 +66,24 @@
     BottomButton=false>
         <BetterBudgetWeb.Shared.InputActions.InputTransaction ParentId="add" />
     </PopTray>
-    <div class="flex-c-start">
-        <div class="flex-r-100" style="justify-content:start;align-items:center">
+    <div class="flex-r-100" style="justify-content:space-between;align-items:center">
+        <div class="flex-c-start" style="margin-right:1em">
+            <h3 style="font-family:'CBB Default';text-align:left">Total Transactions: @FilteredTransactions.Count</h3>
+            <h4 style="font-family:'CBB Default'">@($"Transactions recorded from: {StartShow} - Present")</h4>
+        </div>
+        <div>
             <button class="btn-grad" @onclick=OpenFilters><img src="https://static-00.iconduck.com/assets.00/slider-horizontal-3-icon-256x216-nmsauigo.png" style="height:1.5em" /> Filters</button>
         </div>
+    </div>
+    <div class="flex-c-start">
         <div class="flex-r" style="flex-wrap:wrap;width:fit-content;align-items:center">
+            @if (Filters != null && Filters.Count > 0)
+            {
+                <div class="flex-r" style="padding:.5em;margin:.5em;border:1px dotted white;border-radius:1em;width:fit-content">
+                    Clear All
+                    <span class="oi oi-circle-x" style="color:white;margin-left:1em;cursor:pointer" @onclick=@(() => RemoveAllFilters()) />
+                </div>
+            }
             @foreach (var filter in Filters)
             {
                 <div class="flex-r" style="padding:.5em;margin:.5em;border:1px dotted white;border-radius:1em;width:fit-content">
@@ -79,11 +93,6 @@
             }
         </div>
     </div>
-    <div class="flex-c-start">
-        <h2 style="font-family:'CBB Default'">Last 90 Days</h2>
-        <h4 style="font-family:'CBB Default'">@($"{Start} - {End}")</h4>
-    </div>
-    <h3 style="font-family:'CBB Default';text-align:left">Total Transactions: @FilteredTransactions.Count</h3>
     <table class="transactions-table" style="width:100%;margin-bottom:1vh">
         @foreach (var transaction in FilteredTransactions)
         {
@@ -168,6 +177,13 @@
         <div class="flex-c-start" style="color:white">
             <h3>Filters:</h3>
             <div class="flex-r-100" style="flex-wrap:wrap">
+                @if (TempFilters != null && TempFilters.Count > 0)
+                {
+                    <div class="flex-r" style="padding:1em;margin:1em;border:1px dotted white;border-radius:1em;width:fit-content">
+                        Clear All
+                        <span class="oi oi-circle-x" style="color:white;margin-left:1em;cursor:pointer" @onclick=@(() => RemoveAllTempFilters()) />
+                    </div>
+                }
                 @foreach (var filter in TempFilters)
                 {
                     <div class="flex-r" style="padding:1em;margin:1em;border:1px dotted white;border-radius:1em;width:fit-content">
@@ -180,8 +196,8 @@
             <table class="filter-table">
                 <thead>
                     <tr>
-                        <th>Field</th>
-                        <th>Value</th>
+                        <th style="text-decoration:underline">Field</th>
+                        <th style="text-decoration:underline">Value</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -191,7 +207,7 @@
                             <select @bind=BalanceFilter>
                                 <option disabled value="">(Select Account)</option>
                                 @foreach (Balance balance in UniqueBalances.Where(b =>
-                            !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
+                              !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
                                 {
                                     <option>@balance.Name</option>
                                 }
@@ -220,7 +236,7 @@
                             <select @bind=ExpenseTypeFilter>
                                 <option disabled value="">(Select Expense)</option>
                                 @foreach (string et in UniqueExpenseTypes.Where(e =>
-                            !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
+                              !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
                                 {
                                     <option>@et</option>
                                 }
@@ -238,12 +254,8 @@
                                     <option>&le;</option>
                                     <option>&ge;</option>
                                 </select>
-                                <input @bind-value=TotalAmountNumFilter type="number" style="width:5em" placeholder="$" />
+                                <input type="number" style="width:5em" placeholder="$" @oninput="@(async (ui) => { TotalAmountNumFilter = (string) ui.Value;})" @onkeydown="@Enter" />
                             </div>
-                            <button disabled="@string.IsNullOrEmpty(TotalAmountNumFilter)" class="btn-grad btn-primary" style="width:100%"
-                            @onclick=@(() => AddFilter(new FilterHelper("Total Amount",TotalAmountFilter + TotalAmountNumFilter)))>
-                                Add
-                            </button>
                         </td>
                     </tr>
                 </tbody>
@@ -315,6 +327,8 @@
     List<FilterHelper> Filters = new();
 
     private double NetTotal => UniqueBalances.Sum(b => b.Value);
+
+    string StartShow => DateTime.Now.AddDays(-90).ToString("MMM d");
 
     string End => (FilteredTransactions == null || FilteredTransactions.Count == 0 ? DateTime.Now : FilteredTransactions.FirstOrDefault().DateOfTransaction).ToString("MMM d");
     string Start => (FilteredTransactions == null || FilteredTransactions.Count == 0 ? DateTime.Now : FilteredTransactions.LastOrDefault().DateOfTransaction).ToString("MMM d");
@@ -393,6 +407,17 @@
 
         UniqueExpenseTypes = FilteredTransactions.Select(ft => ft.ExpenseType).Distinct().ToList();
         UniqueExpenseTypes.Sort();
+    }
+    private async void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!string.IsNullOrEmpty(TotalAmountFilter) && !string.IsNullOrEmpty(TotalAmountNumFilter))
+            {
+                AddFilter(new FilterHelper("Total Amount", TotalAmountFilter + TotalAmountNumFilter));
+                TotalAmountNumFilter = "";
+            }
+        }
     }
     private string TranColor(string et, double amount)
     {
@@ -487,11 +512,22 @@
         SaveFilters();
     }
 
+    private void RemoveAllFilters()
+    {
+        Filters.Clear();
+        SaveFilters();
+    }
+
     private void RemoveTempFilter(FilterHelper filter)
     {
         for (int index = TempFilters.Count - 1; index >= 0; index--)
             if (TempFilters[index].ToString() == filter.ToString())
                 TempFilters.RemoveAt(index);
+    }
+
+    private void RemoveAllTempFilters()
+    {
+        TempFilters.Clear();
     }
 
     private void AddFilter(FilterHelper filter)

@@ -41,6 +41,9 @@
         <br />
         <div id="tran-name" class="flex-r" style="justify-content:start;flex-wrap:wrap">
             <div style="width:100%;">
+                <label>Date:</label>
+                <input type="date" placeholder="Date" @bind-value="@TransactionDate" />
+                <br />
                 <div>
                     @if (ExpenseType != "Transfer")
                     {
@@ -400,6 +403,10 @@ else
             <div class="flex-r" style="justify-content:space-between;align-items:start;width:100%">
                 <div class="flex-r" style="justify-content:space-between;align-items:start;flex-wrap:wrap;width:75%;padding-right:5%">
                     <div class="flex-r" style="width:100%;justify-content:start;margin-top:1em;flex-wrap:wrap">
+                        <div class="flex-c" style="margin:0 1em">
+                            <label style="margin-right:1em">Date:</label>
+                            <input type="date" placeholder="Date" @bind-value="@TransactionDate" />
+                        </div>
                         <div id="tran-name" class="flex-c" style="margin:0 1em">
                             @if (ExpenseType != "Transfer")
                             {
@@ -774,6 +781,7 @@ else
         }
     }
 
+    public DateTime TransactionDate { get; set; } = DateTime.Now;
     public string ExpenseType { get; set; } = "";
     public string PaidOffPerson1 { get; set; } = "";
     public string PaidOffPerson2 { get; set; } = "";
@@ -937,7 +945,7 @@ else
                 TransName = TransactionName;
 
             var nt = new Transaction(TransName, ExpenseType, nam, lam, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2));
-            nt.DateOfTransaction = DateTime.Now;
+            nt.DateOfTransaction = TransactionDate;
             var tr = await TransactionRepo.AddOrUpdateAsync(nt);
 
             ErrorColor = "green";
@@ -954,6 +962,7 @@ else
         }
 
         Disabled = false;
+        await JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
         StateHasChanged();
     }
     public async void AddPreset()
@@ -1035,7 +1044,6 @@ else
             Hex = vals[9];
         }
         await JSRuntime.InvokeAsync<string>("ScrollTo", "tran-name");
-        StateHasChanged();
         await JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
         StateHasChanged();
     }
