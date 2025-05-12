@@ -38,13 +38,13 @@
                 Balance balance = UniqueBalances[index];
                 <tr>
                     <td style="height:1px;padding:1em;">
-                        <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
+                        <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile OnClick=BalanceClicked />
                     </td>
                     @if (index + 1 < UniqueBalances.Count)
                     {
                         balance = UniqueBalances[index + 1];
                         <td style="height:1px;padding:1em;">
-                            <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile />
+                            <ModifiedBalanceSlot TheBalance="balance" ShowPersonInMonthly=Constants.Mobile OnClick=BalanceClicked />
                         </td>
                     }
                     else
@@ -207,7 +207,7 @@
                             <select @bind=BalanceFilter>
                                 <option disabled value="">(Select Account)</option>
                                 @foreach (Balance balance in UniqueBalances.Where(b =>
-                              !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
+                            !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
                                 {
                                     <option>@balance.Name</option>
                                 }
@@ -236,7 +236,7 @@
                             <select @bind=ExpenseTypeFilter>
                                 <option disabled value="">(Select Expense)</option>
                                 @foreach (string et in UniqueExpenseTypes.Where(e =>
-                              !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
+                            !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
                                 {
                                     <option>@et</option>
                                 }
@@ -653,6 +653,21 @@
         var TransfersInto = FilteredTransactions.Where(t => ParamCheck(t) && "Debt Transfer".Contains(t.ExpenseType)).Sum(t => t.TotalAmount);
         var OtherTotals = FilteredTransactions.Where(t => ParamCheck(t) && !"Debt Transfer".Contains(t.ExpenseType)).Sum(t => "Income Equity".Contains(t.ExpenseType) ? t.TotalAmount : -t.TotalAmount);
         return OtherTotals + TransfersInto - TransfersOutOf;
+    }
+
+    private void BalanceClicked(Balance balance)
+    {
+        var BalanceFilters = Filters.Where(filter => filter.Field == "Balance");
+        if (BalanceFilters.FirstOrDefault(bf => bf.Value == balance.Name) is FilterHelper balF)
+        {
+            RemoveFilter(balF);
+        }
+        else
+        {
+            Filters.Add(new FilterHelper("Balance", balance.Name));
+            SaveFilters();
+        }
+        StateHasChanged();
     }
 
     private void TransactionsUpdated(object sender, List<Transaction> e)

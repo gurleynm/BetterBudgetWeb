@@ -8,7 +8,7 @@
 
 <div class="flex-c-start" style="align-items:center;border:2px solid @NetColor(TheBalance.BalanceType, TheBalance.Value);
                                      background-image: linear-gradient(to left,indigo,@TheBalance.HexColor);height:100%;width:100%;
-                                    color:@TheBalance.TextColor;border-radius:1em;padding:1em;justify-content:space-between">
+                                    color:@TheBalance.TextColor;border-radius:1em;padding:1em;justify-content:space-between" @onclick=ActivateClick>
     <div>
         <div class="flex-c" style="justify-content:space-between;padding:0 0 0 .5vw; margin: 0">
             <label style="cursor:pointer;font-size:medium;align-self:flex-start;margin:0;"><strong>@TheBalance.Name</strong><span style="color:@TheBalance.TextColor">@(" (" + TheBalance.Person + ")")</span></label>
@@ -27,6 +27,8 @@
     public Balance TheBalance { get; set; } = new Balance();
     [Parameter]
     public bool ShowPersonInMonthly { get; set; } = true;
+    [Parameter]
+    public Action<Balance> OnClick { get; set; }
 
     private List<Transaction> FilteredTransactions => Constants.catchAll.Transactions.Where(t =>
                                 t.MonthYear() == Constants.MonthYear() && ThisBalance(t)).OrderByDescending(t => t.DateOfTransaction).ToList();
@@ -103,6 +105,11 @@
         }
 
         return net < 0 ? neg : pos;
+    }
+    private void ActivateClick()
+    {
+        if (OnClick != null)
+            OnClick.Invoke(TheBalance);
     }
     private void BalancesUpdated(object sender, List<Balance> e)
     {
