@@ -17,52 +17,62 @@
                                 overflow-x:clip;overflow-y:auto;padding:1em;margin: 1em 0 1em 0;"></div> *@
     <div class="flex-r">
         <div class="flex-c">
-            <input style="padding:.5em" type="month" min=@(MinMonYear.ToString("yyyy-MM")) max=@(MaxMonYear.ToString("yyyy-MM")) @bind=@MonYear />
+            @if (ShowingYear)
+            {
+                <label>@(SelectedLevel + " for " + SelectedYear)</label>
+            }
+            else
+            {
+                <input style="padding:.5em" type="month" min=@(MinMonYear.ToString("yyyy-MM")) max=@(MaxMonYear.ToString("yyyy-MM")) @bind=@MonYear />
+            }
         </div>
-
         <div class="flex-r" style="margin:1em">
-            <button class="btn-grad" @onclick=DrawChartEnter>@(SelectedLevel == "All" ? "Enter" : "Reset")</button>
+            @if (!ShowingYear)
+            {
+                <button class="btn-grad" @onclick=DrawAllChartEnter>View All Year</button>
+            }
+            <button class="btn-grad" @onclick=@(() => DrawChartEnter(ShowingYear))>@(SelectedLevel == "All" && !ShowingYear ? "Enter" : "Reset")</button>
         </div>
     </div>
     @if (Levels == null || Levels.Count == 0)
     {
-            <br />
-            <label style="color:red">No values for this combination.</label>
+        <br />
+        <label style="color:red">No values for this combination.</label>
     }
     else
     {
         <div class="flex-r-100" style="justify-content:space-between;flex-wrap:wrap;align-content:center">
             <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                    background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid;">
+                                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid;">
                 <span>Total Income</span>
                 <span style="padding:0;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</span>
             </div>
             <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                            background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
                 <span>Total Expenses</span>
                 <span style="padding:0;color:red">@Constants.Pretty(TotalOut)</span>
             </div>
             <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                            background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
                 <span>Total Net</span>
-                <span style="padding:0;color:@Constants.GoodOrBad(TotalIn-TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</span>
+                <span style="padding:0;color:@Constants.GoodOrBad(TotalIn - TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</span>
             </div>
             <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                            background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
                 <span>Savings Rate</span>
-                <span style="padding:0;color:@Constants.GoodOrBad((TotalIn-TotalOut)/TotalIn)">@(Math.Round(TotalIn == 0 ? 0 : (TotalIn - TotalOut) / TotalIn * 100, 1) + "%")</span>
+                <span style="padding:0;color:@Constants.GoodOrBad((TotalIn - TotalOut) / TotalIn)">@(Math.Round(TotalIn == 0 ? 0 : (TotalIn - TotalOut) / TotalIn * 100, 1) + "%")</span>
             </div>
         </div>
 
         @if (links.Count > 0)
         {
-                <div class="nobar" style="width:100%;padding:1em 0;overflow-x:auto">
-                    <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "250vw" : "100%")" Height="@(Constants.Mobile ? Constants.MobileApp ? "80vh" : "90vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
-                </div>
+            <div class="nobar" style="width:100%;padding:1em 0;overflow-x:auto">
+                <SankeyDiagram OnNodeClicked="NodeClicked" OnLinkClicked="LinkClicked" Width="@(Constants.Mobile ? "250vw" : "100%")" Height="@(Constants.Mobile? Constants.MobileApp ? "80vh" : "90vh" : "100vh")" Nodes=@nodes.Values.ToList() Links=@links />
+            </div>
         }
         else
         {
-                <LoadingDots />
+            <LoadingDots />
         }
     }
 </div>
@@ -72,6 +82,8 @@
     Dictionary<string, int> nodeIds = new();
     Dictionary<string, string> nodeColors = new();
     int nodeCnt = 0;
+
+    bool ShowingYear => SelectedMonth == "All";
 
     private Dictionary<string, Node> nodes = new Dictionary<string, Node>();
     private List<Link> links = new List<Link>();
@@ -192,8 +204,19 @@
         return years;
     }
 
-    public async void DrawChartEnter()
+    public async void DrawAllChartEnter()
     {
+        SelectedMonth = "All";
+        DrawChartEnter();
+    }
+    public async void DrawChartEnter(bool Reset = false)
+    {
+        if (Reset)
+        {
+            var Now = DateTime.Now;
+            SelectedMonth = Now.ToString("MMMM");
+            SelectedYear = Now.Year.ToString();
+        }
         SelectedLevel = "All";
         DecideDesired();
         if (Levels == null || Levels.Count == 0)
