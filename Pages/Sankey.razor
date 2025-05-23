@@ -23,14 +23,11 @@
             }
             else
             {
+                <button class="btn-grad" @onclick=DrawAllChartEnter>View All Year</button>
                 <input style="padding:.5em" type="month" min=@(MinMonYear.ToString("yyyy-MM")) max=@(MaxMonYear.ToString("yyyy-MM")) @bind=@MonYear />
             }
         </div>
         <div class="flex-r" style="margin:1em">
-            @if (!ShowingYear)
-            {
-                <button class="btn-grad" @onclick=DrawAllChartEnter>View All Year</button>
-            }
             <button class="btn-grad" @onclick=@(() => DrawChartEnter(ShowingYear))>@(SelectedLevel == "All" && !ShowingYear ? "Enter" : "Reset")</button>
         </div>
     </div>
@@ -43,22 +40,22 @@
     {
         <div class="flex-r-100" style="justify-content:space-between;flex-wrap:wrap;align-content:center">
             <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid;">
+                                    background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid;">
                 <span>Total Income</span>
                 <span style="padding:0;color:@Constants.ColorScheme["IncomeGood"]">@Constants.Pretty(TotalIn)</span>
             </div>
             <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                            background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
                 <span>Total Expenses</span>
                 <span style="padding:0;color:red">@Constants.Pretty(TotalOut)</span>
             </div>
             <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                            background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
                 <span>Total Net</span>
                 <span style="padding:0;color:@Constants.GoodOrBad(TotalIn - TotalOut)">@Constants.Pretty(TotalIn - TotalOut)</span>
             </div>
             <div class="flex-c" style="align-items:center;padding:0 1em;border-radius:10px;
-                            background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
+                                background-color:@Constants.ColorScheme["ComponentBackground"];width:11em;border:1px silver solid">
                 <span>Savings Rate</span>
                 <span style="padding:0;color:@Constants.GoodOrBad((TotalIn - TotalOut) / TotalIn)">@(Math.Round(TotalIn == 0 ? 0 : (TotalIn - TotalOut) / TotalIn * 100, 1) + "%")</span>
             </div>
