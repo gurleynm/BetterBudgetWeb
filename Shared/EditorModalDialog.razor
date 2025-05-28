@@ -19,10 +19,10 @@
                         <label>Name</label>
                     </td>
                     <td>
-                        <label>@(Constants.Person1)</label>
+                        <label>@(Person1)</label>
                     </td>
                     <td>
-                        <label>@(Constants.Person2)</label>
+                        <label>@(Person2)</label>
                     </td>
                     <td>
                         <label>Total</label>
@@ -42,13 +42,13 @@
                         <span style="border:solid white 1px;padding-left:1em">
                             $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
                         </span>
-                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Constants.Person1" />
+                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
                     </td>
                     <td style="padding:1vw">
                         <span style="border:solid white 1px;padding-left:1em">
                             $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
                         </span>
-                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Constants.Person2" />
+                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
                     </td>
                     <td style="padding:1vw">
                         <label>@Transact.TotalAmount</label>
@@ -64,67 +64,67 @@ else
     <Confirmation Title="Editting Transaction" OnClose="ModalCancel"
                   LeftBtnClick="ModalCancel"
                   RightBtnClick="ModalAccept" RightBtnTxt="Accept" RightBtnColor="btn-success">
-            <EditForm Model="@Transact">
+        <EditForm Model="@Transact">
             <table class="side-to-side spaced-table" style="border-radius:0;width:100%">
-                    <tr>
-                        <td style="padding:1em 0">
-                            <label>Name</label>
-                        </td>
-                        <td>
-                            <InputText @bind-Value="Transact.Name" style="color:white" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Date</label>
-                        </td>
-                        <td>
-                            <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:1em 0">
-                            <label>Expense Type</label>
-                        </td>
-                        <td>
-                            <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:1em 0">
-                            <label>@(Constants.Person1 + " Values")</label>
-                        </td>
-                        <td>
-                            <span style="border:solid white 1px;padding-left:1em">
-                                $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
-                            </span>
-                            <br />
-                            <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Constants.Person1" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:1em 0">
-                            <label>@(Constants.Person2 + " Values")</label>
-                        </td>
-                        <td>
-                            <span style="border:solid white 1px;padding-left:1em">
-                                $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
-                            </span>
-                            <br />
-                            <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Constants.Person2" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:1em 0">
-                            <label>Total</label>
-                        </td>
-                        <td>
-                            <label>@Transact.TotalAmount</label>
-                        </td>
-                    </tr>
-                </table>
-            </EditForm>
-            <p style="color:red">@ErrorMsg</p>
+                <tr>
+                    <td style="padding:1em 0">
+                        <label>Name</label>
+                    </td>
+                    <td>
+                        <InputText @bind-Value="Transact.Name" style="color:white" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>Date</label>
+                    </td>
+                    <td>
+                        <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:1em 0">
+                        <label>Expense Type</label>
+                    </td>
+                    <td>
+                        <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:1em 0">
+                        <label>@(Person1 + " Values")</label>
+                    </td>
+                    <td>
+                        <span style="border:solid white 1px;padding-left:1em">
+                            $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
+                        </span>
+                        <br />
+                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:1em 0">
+                        <label>@(Person2 + " Values")</label>
+                    </td>
+                    <td>
+                        <span style="border:solid white 1px;padding-left:1em">
+                            $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
+                        </span>
+                        <br />
+                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:1em 0">
+                        <label>Total</label>
+                    </td>
+                    <td>
+                        <label>@Transact.TotalAmount</label>
+                    </td>
+                </tr>
+            </table>
+        </EditForm>
+        <p style="color:red">@ErrorMsg</p>
     </Confirmation>
 }
 
@@ -140,6 +140,9 @@ else
 
     [Parameter]
     public EventCallback<bool> OnClose { get; set; }
+
+    string Person1 = Constants.Person1;
+    string Person2 = Constants.Person2;
 
     public List<Data.Envelope> Person1Envelopes;
     public List<Data.Envelope> Person2Envelopes;
@@ -169,8 +172,15 @@ else
 
     protected override Task OnInitializedAsync()
     {
-        Person1Balances = Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
-        Person2Balances = Constants.Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
+        if (Constants.Balances.Any(b => b.Name == Transact.PaidWithPerson1 && b.Person == Constants.Person2) ||
+            Constants.Balances.Any(b => b.Name == Transact.PaidWithPerson2 && b.Person == Constants.Person1))
+        {
+            Person1 = Constants.Person2;
+            Person2 = Constants.Person1;
+        }
+
+        Person1Balances = Constants.Balances.Where(b => b.Person == Person1 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
+        Person2Balances = Constants.Balances.Where(b => b.Person == Person2 || b.Person.ToUpper() == "JOINT").OrderBy(ba => ba.Name).ToList();
 
         return base.OnInitializedAsync();
     }
