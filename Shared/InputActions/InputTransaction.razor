@@ -60,7 +60,7 @@
                         <option value="@string.Empty" selected disabled="disabled">Expense</option>
                         @foreach (var et in ExpenseTypes)
                         {
-                            @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --"))
+                            @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --") || et.Contains("-- Envelopes --"))
                             {
                                 <option value="et" disabled>@et</option>
                             }
@@ -420,7 +420,7 @@ else
                                 <option value="@string.Empty" selected disabled="disabled">Expense</option>
                                 @foreach (var et in ExpenseTypes)
                                 {
-                                    @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --"))
+                                    @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --") || et.Contains("-- Envelopes --"))
                                     {
                                         <option value="et" disabled>@et</option>
                                     }
@@ -865,6 +865,25 @@ else
 
         foreach (var str in dcis)
             ExpenseTypes.Add(str);
+
+        ExpenseTypes.Add(Constants.CENTER(" Envelopes ", longestOfEach, '-'));
+
+        // Add Envelopes
+        var Person1Envelopes = Constants.Envelopes.Where(e => e.Person1Amount > 0).ToList();
+        var Person2Envelopes = Constants.Envelopes.Where(e => e.Person2Amount > 0).ToList();
+        var TempEnv = new List<string>();
+
+        foreach (var p1e in Person1Envelopes)
+            TempEnv.Add(p1e.Name);
+
+        foreach (var p2e in Person2Envelopes)
+            if (!TempEnv.Contains(p2e.Name))
+                TempEnv.Add(p2e.Name);
+
+        TempEnv.Sort();
+
+        foreach (var d in TempEnv)
+            ExpenseTypes.Add(d);
 
         ExpenseTypes.Add(Constants.CENTER(" Others ", DynaText.Length, '-'));
 

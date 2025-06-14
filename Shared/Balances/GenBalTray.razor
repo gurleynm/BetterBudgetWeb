@@ -31,11 +31,26 @@
 </PopTray>
 
 @code {
+    private bool goals;
+    [Parameter]
+    public bool Goals
+    {
+        get { return goals; }
+        set
+        {
+            if (goals == value)
+                return;
+
+            goals = value;
+            GoalsChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<bool> GoalsChanged { get; set; }
+
     [Parameter]
     public string ExpenseType { get; set; }
-
-    [CascadingParameter]
-    public bool Goals { get; set; }
 
     [Parameter]
     public string SearchTerm { get; set; }
