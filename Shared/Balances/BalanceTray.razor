@@ -3,58 +3,55 @@
 @using BetterBudgetWeb.Shared.General
 @implements IDisposable
 
-@if (Balances != null)
-{
-    <div id="balance-tray" class="flex-c-start" style="width:100%">
-        <PopTray Id="wor">
-            <div class="chart-hor" style="height:fit-content;padding-bottom:3em">
-                <div class="flex-r-100">
-                    <MyLineChart Plots="Plots" Height="300" />
+<div id="balance-tray" class="flex-c-start" style="width:100%">
+    <PopTray Id="wor">
+        <div class="chart-hor" style="height:fit-content;padding-bottom:3em">
+            <div class="flex-r-100">
+                <MyLineChart Plots="Plots" Height="300" />
+            </div>
+            <table class="borderless-table">
+                <tr>
+                    <td style="text-align:start">
+                        @($"{Constants.Person1}'s Net Worth")
+                    </td>
+                    <td style="text-align:end;">
+                        <span style="color:@Constants.GoodOrBad(Constants.Person1NetWorth)">@(Constants.Pretty(Constants.Person1NetWorth))</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:end;text-align:start">
+                        @($"{Constants.Person2}'s Net Worth")
+                    </td>
+                    <td style="text-align:end;text-align:end">
+                        <span style="color:@Constants.GoodOrBad(Constants.Person2NetWorth)">@(Constants.Pretty(Constants.Person2NetWorth))</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align:start">
+                        Total Net Worth
+                    </td>
+                    <td style="text-align:end;color:@Constants.GoodOrBad(Constants.TotalNetWorth)">
+                        @(Constants.Pretty(Constants.TotalNetWorth))
+                    </td>
+                </tr>
+            </table>
+            @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
+            {
+                <div class="flex-c" style="padding-top:1em;width:100%">
+                    <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
                 </div>
-                <table class="borderless-table">
-                    <tr>
-                        <td style="text-align:start">
-                            @($"{Constants.Person1}'s Net Worth")
-                        </td>
-                        <td style="text-align:end;">
-                            <span style="color:@Constants.GoodOrBad(Constants.Person1NetWorth)">@(Constants.Pretty(Constants.Person1NetWorth))</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:end;text-align:start">
-                            @($"{Constants.Person2}'s Net Worth")
-                        </td>
-                        <td style="text-align:end;text-align:end">
-                            <span style="color:@Constants.GoodOrBad(Constants.Person2NetWorth)">@(Constants.Pretty(Constants.Person2NetWorth))</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align:start">
-                            Total Net Worth
-                        </td>
-                        <td style="text-align:end;color:@Constants.GoodOrBad(Constants.TotalNetWorth)">
-                            @(Constants.Pretty(Constants.TotalNetWorth))
-                        </td>
-                    </tr>
-                </table>
-                @if (Constants.Transactions != null && Constants.Transactions.Count > 0)
-                {
-                    <div class="flex-c" style="padding-top:1em;width:100%">
-                        <button class="btn btn-secondary" @onclick=@(() => ToggleReports())>View Reports</button>
-                    </div>
-                }
-            </div>
-        </PopTray>
-        <div style="padding-bottom:2vh">
-            <div class="flex-c-start">
-                <GenBalTray ExpenseType="Equity" />
-                <GenBalTray @ref=IncomeTray ExpenseType="Income" @bind-Goals=Goals />
-                <GenBalTray ExpenseType="Stocks" />
-                <GenBalTray ExpenseType="Credit Cards/Loans" SearchTerm="Loan" />
-            </div>
+            }
+        </div>
+    </PopTray>
+    <div style="padding-bottom:2vh">
+        <div class="flex-c-start">
+            <GenBalTray ExpenseType="Equity" />
+            <GenBalTray ExpenseType="Income" @bind-Goals=Goals />
+            <GenBalTray ExpenseType="Stocks" />
+            <GenBalTray ExpenseType="Credit Cards/Loans" SearchTerm="Loan" />
         </div>
     </div>
-}
+</div>
 
 @code {
     [Parameter]
@@ -69,13 +66,12 @@
     public EventCallback<Transaction> RunModal { get; set; }
 
     public bool ViewReports { get; set; }
-    private GenBalTray IncomeTray { get; set; }
 
     private bool FirstToggle = true;
     private bool ShowWorth = true;
     private string WorthTxt => ShowWorth ? "Show Worth" : "Hide Worth";
     private List<LinePlot> Plots => Constants.Mobile ? Constants.Plots : new();
-    public bool Goals;
+    public bool Goals { get; set; }
 
     protected override Task OnInitializedAsync()
     {

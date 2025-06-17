@@ -167,6 +167,9 @@
         else
             Percentage = (100 - Math.Round((val / MaxValue) * 100));
 
+        if (Percentage < 0)
+            Percentage = 0;
+
         BarFillWidth = Percentage + "%";
     }
 
