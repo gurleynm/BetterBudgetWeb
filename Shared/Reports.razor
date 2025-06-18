@@ -110,11 +110,45 @@
                         </tr>
                     </table>
                     <br style="clear:both;" />
+                    <div class="flex-c-start"  style="margin-left:1vw;">
                     <ReportDynamic SFDs=@SFDs Rebalancing=@(Rebalancing &&
-                           SelectedMonth == "All")
-                                   NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye =>
-                           ye.MyClass == "active").MyYear).Count() - 1) />
+                                                                         SelectedMonth == "All")
+                           NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye =>
+                                                      ye.MyClass == "active").MyYear).Count() - 1) />
+                        @if (OrderedEnvelopes.Count > 0)
+                        {
+                            <br style="clear:both;" />
+                            <table class="toggle-table">
+                                <tr>
+                                    <th colspan="2" style="background-color:darkblue;color:white;"><i>Envelopes</i></th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Envelope
+                                    </th>
+                                    <th>
+                                        Spent
+                                    </th>
+                                </tr>
+                                @foreach (var envelope in OrderedEnvelopes)
+                                {
+                                    <tr>
+                                        <td>@envelope.Name</td>
+                                        <td>@Constants.Pretty(envelope.Goal)</td>
+                                    </tr>
+                                }                                
+                                <tr>
+                                    <td colspan="2">=</td>
+                                </tr>
+                                <tr>
+                                    <td>Total</td>
+                                    <td>@Constants.Pretty(Envelopes.Values.Sum())</td>
+                                </tr>
+                            </table>
+                        }
+                    </div>
                 </div>
+
             }
             else
             {
@@ -167,6 +201,37 @@ else
                     </table>
                     <div style="margin-bottom:2em">
                         <ReportDynamic SFDs=@SFDs />
+                        @if (OrderedEnvelopes.Count > 0)
+                        {
+                            <br style="clear:both;" />
+                            <table class="toggle-table">
+                                <tr>
+                                    <th colspan="2" style="background-color:darkblue;color:white;"><i>Envelopes</i></th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        Envelope
+                                    </th>
+                                    <th>
+                                        Spent
+                                    </th>
+                                </tr>
+                                @foreach (var envelope in OrderedEnvelopes)
+                                {
+                                    <tr>
+                                        <td>@envelope.Name</td>
+                                        <td>@Constants.Pretty(envelope.Goal)</td>
+                                    </tr>
+                                }                                                             
+                                <tr>
+                                    <td colspan="2">=</td>
+                                </tr>
+                                <tr>
+                                    <td>Total</td>
+                                    <td>@Constants.Pretty(Envelopes.Values.Sum())</td>
+                                </tr>
+                            </table>
+                        }
                     </div>
                 </div>
             }
@@ -221,6 +286,8 @@ else
     private List<Transaction> Transactions = new List<Transaction>();
     private List<SnapForDynamic> SFDs = new List<SnapForDynamic>();
 
+    Dictionary<string, double> Envelopes = new();
+    List<Envelope> OrderedEnvelopes = new();
     private List<Monthly> DCIs = new List<Monthly>();
     private List<Monthly> SMCs = new List<Monthly>();
     private List<Snapshot> snaps = new List<Snapshot>();
@@ -265,23 +332,23 @@ else
         /*        int highest_month = 0;
         foreach (var sn in snaps)
         {
-        if (Constants.Months.IndexOf(sn.Month) >= highest_month && sn.Year == DateTime.Now.Year)
-            highest_month = Constants.Months.IndexOf(sn.Month);
-        }
+            if (Constants.Months.IndexOf(sn.Month) >= highest_month && sn.Year == DateTime.Now.Year)
+                highest_month = Constants.Months.IndexOf(sn.Month);
+            }
         */
 
         /* Line below used to be in if that said:
-         *       if ((Constants.Months.IndexOf(DateTime.Now.ToString("MMMM")) > highest_month) || (highest_month == 0 && DateTime.Now.Month == 1))
-         *
-         * Now: Always set Previous Month in case updates are made up to 1 month later
+        *       if ((Constants.Months.IndexOf(DateTime.Now.ToString("MMMM")) > highest_month) || (highest_month == 0 && DateTime.Now.Month == 1))
+            *
+            * Now: Always set Previous Month in case updates are made up to 1 month later
         */
 
-        if (Years.Count == 1 && Years[0].MyClass != "active")
-            Years[0].MyClass = "active";
-        snaps = await SnapshotRepo.GetSnapshotsAsync();
+    if (Years.Count == 1 && Years[0].MyClass != "active")
+                Years[0].MyClass = "active";
+            snaps = await SnapshotRepo.GetSnapshotsAsync();
 
-        await LoadTable();
-    }
+            await LoadTable();
+        }
 
     private async Task LoadTable()
     {
@@ -354,11 +421,11 @@ else
                 foreach (JObject key in dyna.DynamicCosts)
                 {
                     sfd = new SnapForDynamic
-                        {
-                            Name = key["Name"].ToString(),
-                            Projected = double.TryParse(key["Projected"].ToString(), out double pro) ? pro : 0,
-                            Actual = double.TryParse(key["Actual"].ToString(), out double act) ? act : 0
-                        };
+                    {
+                        Name = key["Name"].ToString(),
+                        Projected = double.TryParse(key["Projected"].ToString(), out double pro) ? pro : 0,
+                        Actual = double.TryParse(key["Actual"].ToString(), out double act) ? act : 0
+                    };
 
                     exists = SFDs.FirstOrDefault(s => s.Name.Trim() == sfd.Name.Trim());
 
@@ -396,11 +463,11 @@ else
             foreach (JObject key in dyna.DynamicCosts)
             {
                 sfd = new SnapForDynamic
-                    {
-                        Name = key["Name"].ToString(),
-                        Projected = double.TryParse(key["Projected"].ToString(), out double pro) ? pro : 0,
-                        Actual = double.TryParse(key["Actual"].ToString(), out double act) ? act : 0
-                    };
+                {
+                    Name = key["Name"].ToString(),
+                    Projected = double.TryParse(key["Projected"].ToString(), out double pro) ? pro : 0,
+                    Actual = double.TryParse(key["Actual"].ToString(), out double act) ? act : 0
+                };
 
                 SFDs.Add(sfd);
             }
@@ -418,6 +485,33 @@ else
 
             DCIs = ReportRunner.DynamicCostItems;
         }
+
+        Envelopes.Clear();
+        OrderedEnvelopes.Clear();
+        List<string> ExpenseNames = SFDs.Select(d => d.Name).ToList();
+        ExpenseNames.Add("1-Time Charge");
+        ExpenseNames.Add("Equity");
+        ExpenseNames.Add("Debt");
+        ExpenseNames.Add("Transfer");
+        ExpenseNames.Add("Income");
+
+        foreach (Transaction transaction in Trans)
+        {
+            if (!ExpenseNames.Contains(transaction.ExpenseType))
+            {
+                if (!Envelopes.ContainsKey(transaction.ExpenseType))
+                    Envelopes[transaction.ExpenseType] = 0;
+
+                Envelopes[transaction.ExpenseType] += transaction.TotalAmount;
+            }
+        }
+
+        foreach(string key in Envelopes.Keys)
+        {
+            OrderedEnvelopes.Add(new Envelope { Name = key, Goal = Envelopes[key] });
+        }
+
+        OrderedEnvelopes = OrderedEnvelopes.OrderByDescending(env => env.Goal).ToList();
 
         TotalActual = Person1Actual + Person2Actual;
         TotalProjected = Person1Projected + Person2Projected;
