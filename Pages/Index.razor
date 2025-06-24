@@ -27,10 +27,10 @@ else
         @if (DataPoints != null && DataPoints.Count > 0)
         {
             <PopTray Id="spend" @bind-ShowWorth=ShowChart
-            ShowTxt="Show Spending"
-            HideTxt="Hide Spending"
-            TopButton=true
-            BottomButton=false>
+                     ShowTxt="Show Spending"
+                     HideTxt="Hide Spending"
+                     TopButton=true
+                     BottomButton=false>
                 <Chart DPs=DataPoints />
             </PopTray>
         }
@@ -44,8 +44,8 @@ else
                         <div>
                             <!-- Savings Goals-->
                             <MonthlyGoalTracking ActualAmount=@ActualCost
-                            ActualIncomeAmount=@ActualIncome
-                            EnvelopeAmount=@EnvelopeExpenses />
+                                                 ActualIncomeAmount=@ActualIncome
+                                                 EnvelopeAmount=@EnvelopeExpenses />
                         </div>
                         <br />
 
@@ -53,7 +53,7 @@ else
                             <PopTray Id="char" ShowWorth=ShowChart ShowButton=false>
                                 <div style="margin-bottom:2em">
                                     <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                                    TheBalance="@SelectedBalance" />
+                                                     TheBalance="@SelectedBalance" />
                                 </div>
                             </PopTray>
 
@@ -102,12 +102,12 @@ else
                                     @foreach (var env in Envelopes)
                                     {
                                         <Envelope Name="@env.Name" Scale=11 Font_Size=1.375
-                                        Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)
-                                        Saved=@env.TotalAmount FlipClick="true"
-                                        Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
-                                        Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
-                                        Person1Amount="@env.Person1Amount"
-                                        Person2Amount="@env.Person2Amount" />
+                                                  Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)
+                                                  Saved=@env.TotalAmount FlipClick="true"
+                                                  Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
+                                                  Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
+                                                  Person1Amount="@env.Person1Amount"
+                                                  Person2Amount="@env.Person2Amount" />
                                     }
                                 </div>
                             </PopTray>
@@ -118,34 +118,37 @@ else
                         </div>
                     </div>
                     <br />
-                    <div class="flex-r-100" style="height:fit-content">
-                        <div>
-                            <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
-                                <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                                <option value="All">All</option>
-                                @foreach (var dt in FoundMonths)
+                    @if (Transactions.Count > 0)
+                    {
+                        <div class="flex-r-100" style="height:fit-content">
+                            <div>
+                                <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
+                                    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                                    <option value="All">All</option>
+                                    @foreach (var dt in FoundMonths)
+                                    {
+                                        <option value="@dt">@dt</option>
+                                    }
+                                </select>
+                                <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
+                                    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                                    <option value="All">All</option>
+                                    @foreach (var dt in FoundYears)
+                                    {
+                                        <option value="@dt">@dt</option>
+                                    }
+                                </select>
+                                @if (ValidChoice)
                                 {
-                                    <option value="@dt">@dt</option>
+                                    <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
                                 }
-                            </select>
-                            <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
-                                <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                                <option value="All">All</option>
-                                @foreach (var dt in FoundYears)
+                                else
                                 {
-                                    <option value="@dt">@dt</option>
+                                    <label style="color:red">No values for this combination.</label>
                                 }
-                            </select>
-                            @if (ValidChoice)
-                            {
-                                <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
-                            }
-                            else
-                            {
-                                <label style="color:red">No values for this combination.</label>
-                            }
+                            </div>
                         </div>
-                    </div>
+                    }
                 </div>
 
             </div>
@@ -188,11 +191,11 @@ else
                 <div class="flex-r" style="flex-wrap:wrap;align-items:center;align-content:center">
                     @foreach (var env in Envelopes)
                     {
-                        <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)
-                        Saved=@env.TotalAmount FlipClick="true"
-                        Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
-                        Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
-                        Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
+                        <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@Math.Max(env.Goal, env.Person1Amount + env.Person2Amount)
+                                  Saved=@env.TotalAmount FlipClick="true"
+                                  Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
+                                  Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
+                                  Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
                     }
                 </div>
                 <br style="clear:both" />
@@ -210,7 +213,7 @@ else
                 <br />
                 <br />
                 <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                TheBalance="@SelectedBalance" />
+                                 TheBalance="@SelectedBalance" />
 
             </PopTray>
 
@@ -220,8 +223,8 @@ else
 
         <!-- Savings Goals-->
         <MonthlyGoalTracking ActualAmount=@ActualCost
-        ActualIncomeAmount=@ActualIncome
-        EnvelopeAmount=@EnvelopeExpenses />
+                             ActualIncomeAmount=@ActualIncome
+                             EnvelopeAmount=@EnvelopeExpenses />
 
         <br style="clear:both" />
         <br style="clear:both" />
@@ -245,7 +248,7 @@ else
 
         <br style="clear:both" />
         <br />
-    }    
+    }
     @if (StashCashBool)
     {
         <StashCash OnClose="@CloseModal">
@@ -687,7 +690,7 @@ else
 
     public void Dispose()
     {
-        if(goals)
+        if (goals)
             GlobalBT.SetGoals(false);
         Constants.TransactionsChanged -= TransactionsUpdated;
         Constants.EnvelopesChanged -= EnvelopesUpdated;
