@@ -5,7 +5,7 @@
 @if (Mobile)
 {
     <br style="clear:both" />
-    <div class="flex-c-start" style="width:90vw;height:fit-content;align-items:center;">
+    <div class="flex-c-start" style="width:100%;height:fit-content;align-items:center;">
         <EditableBalanceSlot @ref=NewBalance @bind-TheBalance=TheBalance />
         @if (!string.IsNullOrEmpty(ErrorMsg))
         {
