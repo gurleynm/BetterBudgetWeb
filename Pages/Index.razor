@@ -687,6 +687,8 @@ else
 
     public void Dispose()
     {
+        if(goals)
+            GlobalBT.SetGoals(false);
         Constants.TransactionsChanged -= TransactionsUpdated;
         Constants.EnvelopesChanged -= EnvelopesUpdated;
     }

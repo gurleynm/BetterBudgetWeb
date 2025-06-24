@@ -9,29 +9,32 @@
 
 <style>
     .transactions-table {
-    font-family: 'CBB Default';
+        font-family: 'CBB Default';
     }
 
     .filter-table tr td {
-    padding: 1em;
+        padding: 1em;
     }
 
-    .filter-table tr td:nth-child(2n+1) {
-    text-align: right;
-    }
+        .filter-table tr td:nth-child(2n+1) {
+            text-align: right;
+        }
 
-    .filter-table tr td:nth-child(2n) {
-    text-align: left;
-    }
+        .filter-table tr td:nth-child(2n) {
+            text-align: left;
+        }
 
 </style>
 <div class="flex-c-start" style="justify-content:space-between">
-    <h2 style="font-family:'CBB Default'">Last 90 Days</h2>
-    <div class="flex-r" style="justify-content:start">
-        <h2 style="font-family:'CBB Default'">Total Net:&nbsp;</h2>
-        <h2 style="font-family:'CBB Default';color:@(NetTotal < 0 ? "red" : Constants.ColorScheme["IncomeGood"])">@Pretty(NetTotal)</h2>
-    </div>
-    <div class="flex-r-100" style="justify-content:space-around;flex-wrap:wrap">
+    <PopTray Id="add" @bind-ShowWorth=AddTransaction
+             ShowTxt="Add Transaction"
+             HideTxt="Nevermind"
+             TopButton=true
+             Margin="0 1em 0 0"
+             BottomButton=false>
+        <BetterBudgetWeb.Shared.InputActions.InputTransaction ParentId="add" />
+    </PopTray>
+    @* <div class="flex-r-100" style="justify-content:space-around;flex-wrap:wrap">
         <table style="table-layout:fixed">
             @for (int index = 0; index < UniqueBalances.Count; index += 2)
             {
@@ -54,25 +57,24 @@
                 </tr>
             }
         </table>
-    </div>
+    </div> *@
 </div>
 @if (FilteredTransactions != null)
 {
     string PrevMonth = DateTime.Now.AddMonths(1).ToString("dd MMM");
-    <PopTray Id="add" @bind-ShowWorth=AddTransaction
-    ShowTxt="Add Transaction"
-    HideTxt="Nevermind"
-    TopButton=true
-    BottomButton=false>
-        <BetterBudgetWeb.Shared.InputActions.InputTransaction ParentId="add" />
-    </PopTray>
+    string Plural = FilteredTransactions.Count == 1 ? "" : "s";
+
     <div class="flex-r-100" style="justify-content:space-between;align-items:center">
         <div class="flex-c-start" style="margin-right:1em">
-            <h3 style="font-family:'CBB Default';text-align:left">Total Transactions: @FilteredTransactions.Count</h3>
-            <h4 style="font-family:'CBB Default'">@($"Transactions recorded from: {StartShow} - Present")</h4>
+            <h2 style="margin-bottom:0;font-family:'CBB Default'">Last 90 Days</h2>
+            <div class="flex-r" style="justify-content:start;align-items:center">
+                <h2 style="margin-top:0;font-family:'CBB Default'">Net:&nbsp;</h2>
+                <h2 style="margin-top:0;font-family:'CBB Default';color:@(NetTotal < 0 ? "red" : Constants.ColorScheme["IncomeGood"])">@Pretty(NetTotal)</h2>
+            </div>
+            <h4 style="margin-top:0;font-family:'CBB Default'">@($"{FilteredTransactions.Count} Transaction{Plural} recorded from: {StartShow} - Present")</h4>
         </div>
-        <div>
-            <button class="btn-grad" @onclick=OpenFilters><img src="https://static-00.iconduck.com/assets.00/slider-horizontal-3-icon-256x216-nmsauigo.png" style="height:1.5em" /> Filters</button>
+        <div class="flex-c" style="justify-content:end">
+            <button class="btn-grad" @onclick=OpenFilters><img src="/images/filter.png" style="height:1.5em" /> Filters</button>
         </div>
     </div>
     <div class="flex-c-start">
@@ -170,10 +172,10 @@
 @if (ShowFilters)
 {
     <Confirmation OnClose="Close" RightBtnClick="@(() => SaveFilters(TempFilters))" LeftBtnTxt="Cancel"
-    RightBtnTxt="Save"
-    Title="Set Filters"
-    LeftBtnColor="btn-secondary"
-    RightBtnColor="btn-success">
+                  RightBtnTxt="Save"
+                  Title="Set Filters"
+                  LeftBtnColor="btn-secondary"
+                  RightBtnColor="btn-success">
         <div class="flex-c-start" style="color:white">
             <h3>Filters:</h3>
             <div class="flex-r-100" style="flex-wrap:wrap">
@@ -207,7 +209,7 @@
                             <select @bind=BalanceFilter>
                                 <option disabled value="">(Select Account)</option>
                                 @foreach (Balance balance in UniqueBalances.Where(b =>
-                            !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
+                                                            !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
                                 {
                                     <option>@balance.Name</option>
                                 }
@@ -236,7 +238,7 @@
                             <select @bind=ExpenseTypeFilter>
                                 <option disabled value="">(Select Expense)</option>
                                 @foreach (string et in UniqueExpenseTypes.Where(e =>
-                            !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
+                                                            !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
                                 {
                                     <option>@et</option>
                                 }
@@ -254,7 +256,7 @@
                                     <option>&le;</option>
                                     <option>&ge;</option>
                                 </select>
-                                <input type="number" style="width:5em" placeholder="$" @oninput="@(async (ui) => { TotalAmountNumFilter = (string) ui.Value;})" @onkeydown="@Enter" />
+                                <input type="number" style="width:5em" placeholder="$" @oninput="@(async (ui) => { TotalAmountNumFilter = (string)ui.Value; })" @onkeydown="@Enter" />
                             </div>
                         </td>
                     </tr>
@@ -392,14 +394,14 @@
             if (Constants.Balances.FirstOrDefault(b => b.Name == tb) is Balance balance)
             {
                 UniqueBalances.Add(new Balance
-                    {
-                        Name = tb,
-                        Value = TotalForBalance(tb),
-                        BalanceType = balance.BalanceType,
-                        Person = balance.Person,
-                        HexColor = balance.HexColor,
-                        TextColor = balance.TextColor
-                    });
+                {
+                    Name = tb,
+                    Value = TotalForBalance(tb),
+                    BalanceType = balance.BalanceType,
+                    Person = balance.Person,
+                    HexColor = balance.HexColor,
+                    TextColor = balance.TextColor
+                });
             }
         }
 
