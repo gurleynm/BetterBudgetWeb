@@ -9,9 +9,12 @@
         <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Home" ? "cyan" : "white")" @onclick=@(async () => await ButtonClicked("home"))>
             <BottomButton ClassName="oi-home" Title="Home" @bind-Loading=@DictionaryLoading["home"] />
         </div>
-        <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Transactions" ? "cyan" : "white")" @onclick=@(async () => await ButtonClicked("transactions"))>
-            <BottomButton ClassName="oi-credit-card" Title="Transactions" @bind-Loading=@DictionaryLoading["transactions"] />
-        </div>
+        @if (ShowTransactions)
+        {
+            <div class="flex-c" style="align-items:center;color:@(Constants.CurPage == "Transactions" ? "cyan" : "white")" @onclick=@(async () => await ButtonClicked("transactions"))>
+                <BottomButton ClassName="oi-credit-card" Title="Transactions" @bind-Loading=@DictionaryLoading["transactions"] />
+            </div>
+        }
         @if (ShowPortfolio)
         {
             @* <AdvancedWrapper > *@
@@ -43,11 +46,12 @@
     private string ThePageTitle => ToTitleCase(NavMan.Uri.Replace(NavMan.BaseUri, ""));
     private string ThePageTitle2 => NavMan.Uri;
 
-    private bool ShowPortfolio => Constants.Balances != null && Constants.TIER_LEVEL > Tier.BASIC_TIER;
+    private bool ShowTransactions => Constants.Balances != null && Constants.Balances.Count > 0;
+    private bool ShowPortfolio => Constants.Balances != null && Constants.Balances.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER;
     private bool ShowChart => Constants.Transactions != null && Constants.Transactions.Count > 0;
     private bool ShowForecast => Constants.Monthlies != null && Constants.Monthlies.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER;
 
-    private Dictionary<string,bool> DictionaryLoading = new()
+    private Dictionary<string, bool> DictionaryLoading = new()
     {
         {"home", false }
         ,{"transactions", false }
@@ -76,7 +80,7 @@
     {
         DictionaryLoading[url] = true;
         await Task.Delay(10);
-        NavMan.NavigateTo("/"+url);
+        NavMan.NavigateTo("/" + url);
         DictionaryLoading[url] = false;
         await Task.Delay(10);
     }

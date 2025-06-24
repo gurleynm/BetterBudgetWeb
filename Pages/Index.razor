@@ -10,6 +10,7 @@
 @using BetterBudgetWeb.Shared.Tutorial
 @using System.Collections.Specialized
 @using static BetterBudgetWeb.MainMenuItems.AddExpense
+@inject NavigationManager NavMan
 @inject IJSRuntime JSRuntime
 @implements IDisposable
 
@@ -22,244 +23,260 @@
 }
 else
 {
-    @if (!Constants.Mobile)
+    @if (Constants.Balances == null || Constants.Balances.Count == 0)
     {
-        @if (DataPoints != null && DataPoints.Count > 0)
-        {
-            <PopTray Id="spend" @bind-ShowWorth=ShowChart
-                     ShowTxt="Show Spending"
-                     HideTxt="Hide Spending"
-                     TopButton=true
-                     BottomButton=false>
-                <Chart DPs=DataPoints />
-            </PopTray>
-        }
-        <br />
-
-        <div class="flex-r" style="flex-wrap:nowrap;justify-content:space-between">
-            <div class="flex-r" style="justify-content:start;">
-                <div style="width:100%;float:left; margin-right:1vw; margin-bottom:2vh;display:inline-block;">
-                    <MyLineChart Plots="Plots" />
-                    <div class="flex-r" style="margin-bottom:2vh;">
-                        <div>
-                            <!-- Savings Goals-->
-                            <MonthlyGoalTracking ActualAmount=@ActualCost
-                                                 ActualIncomeAmount=@ActualIncome
-                                                 EnvelopeAmount=@EnvelopeExpenses />
-                        </div>
-                        <br />
-
-                        <div class="flex-c-start" style="margin-left:1vw">
-                            <PopTray Id="char" ShowWorth=ShowChart ShowButton=false>
-                                <div style="margin-bottom:2em">
-                                    <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                                                     TheBalance="@SelectedBalance" />
-                                </div>
-                            </PopTray>
-
-                            <!-- Dynamic Costs -->
-                            <ChartHorizontal DPs=@CostItems />
-                        </div>
-                    </div>
-                </div>
-
-                <br />
-                <div style="display:inline-block;width:50%;">
-                    <div class="flex-r" style="padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
-                        <div style="width:100%">
-                            <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
-                                <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
-                                <br style="clear:both" />
-                                <br style="clear:both" />
-                                <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
-                                <br />
-                                <br />
-
-                                <div class="flex-c">
-                                    <div style="font-size:1.5vw;text-align:center">
-                                        Total Goals:
-                                        <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
-                                    </div>
-                                    <div style="text-align:center;font-size:1.5vw;">
-                                        Total Saved:
-                                        <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
-                                    </div>
-                                    <hr />
-                                    <div class="flex-r" style="font-size:1.25vw;justify-content:space-evenly">
-                                        <div class="flex-c" style="font-size:1.25vw;justify-content:space-between">
-                                            <div style="text-align:center;">@Constants.Person1 Saved:</div>
-                                            <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
-                                        </div>
-                                        <div class="flex-c" style="font-size:1.25vw;justify-content:space-between">
-                                            <div style="text-align:center;">@Constants.Person2 Saved:</div>
-                                            <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <br />
-
-                                <div class="flex-r" style="font-size:3vw;flex-wrap:wrap;padding-bottom:2em;align-content:center;align-items:center">
-                                    @foreach (var env in Envelopes)
-                                    {
-                                        <Envelope Name="@env.Name" Scale=11 Font_Size=1.375
-                                                  Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)
-                                                  Saved=@env.TotalAmount FlipClick="true"
-                                                  Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
-                                                  Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
-                                                  Person1Amount="@env.Person1Amount"
-                                                  Person2Amount="@env.Person2Amount" />
-                                    }
-                                </div>
-                            </PopTray>
-                            <AddExpense OnAddConfirm="Add" Added="Added" @bind-Disabled=AddDisabled />
-                            <br style="clear:both;" />
-                            <!-- Ideal Emergency Fund-->
-                            <IdealEmergencyFund />
-                        </div>
-                    </div>
-                    <br />
-                    @if (Transactions.Count > 0)
-                    {
-                        <div class="flex-r-100" style="height:fit-content">
-                            <div>
-                                <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
-                                    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                                    <option value="All">All</option>
-                                    @foreach (var dt in FoundMonths)
-                                    {
-                                        <option value="@dt">@dt</option>
-                                    }
-                                </select>
-                                <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
-                                    <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
-                                    <option value="All">All</option>
-                                    @foreach (var dt in FoundYears)
-                                    {
-                                        <option value="@dt">@dt</option>
-                                    }
-                                </select>
-                                @if (ValidChoice)
-                                {
-                                    <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
-                                }
-                                else
-                                {
-                                    <label style="color:red">No values for this combination.</label>
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
-
+        <div class="flex-c-start" style="width:100%">
+            <div class="flex-r-100">
+                <h2 style="font-family:'CBB Default'">Let's get started by adding one of your accounts</h2>
+            </div>
+            <div class="flex-r-100">
+                <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)" @onclick=@(() => NavMan.NavigateTo("input"))>
+                    Add Account
+                </button>
             </div>
         </div>
     }
     else
     {
-        <BalanceTray @ref=@GlobalBT />
-
-        <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
-            <div style="display:inline-block;width:100%">
-                <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
-                <br style="clear:both" />
-                <br style="clear:both" />
-                <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
-                <br />
-                <br />
-                <div class="flex-c">
-                    <div style="font-size:5vw;text-align:center">
-                        Total Goals:
-                        <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
-                    </div>
-                    <div style="text-align:center;font-size:5vw;">
-                        Total Saved:
-                        <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
-                    </div>
-                    <hr />
-                    <div class="flex-r" style="font-size:4vw;justify-content:space-evenly">
-                        <div class="flex-c" style="font-size:4vw;justify-content:space-between">
-                            <div style="text-align:center;">@Constants.Person1 Saved:</div>
-                            <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
-                        </div>
-                        <div class="flex-c" style="font-size:4vw;justify-content:space-between">
-                            <div style="text-align:center;">@Constants.Person2 Saved:</div>
-                            <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
-                        </div>
-                    </div>
-                </div>
-                <br />
-                <div class="flex-r" style="flex-wrap:wrap;align-items:center;align-content:center">
-                    @foreach (var env in Envelopes)
-                    {
-                        <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@Math.Max(env.Goal, env.Person1Amount + env.Person2Amount)
-                                  Saved=@env.TotalAmount FlipClick="true"
-                                  Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
-                                  Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
-                                  Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
-                    }
-                </div>
-                <br style="clear:both" />
-                <br style="clear:both" />
-            </div>
-        </PopTray>
-
-        <AddExpense OnAddConfirm="Add" Added="Added" @bind-Disabled=AddDisabled />
-
-        @if (DataPoints != null && DataPoints.Count > 0)
+        @if (!Constants.Mobile)
         {
-            <PopTray Id="mobile-spend" ShowWorth=ShowChart ShowTxt="Show Spending" HideTxt="Hide Spending" TopButton=true BottomButton=false>
+            @if (DataPoints != null && DataPoints.Count > 0)
+            {
+                <PopTray Id="spend" @bind-ShowWorth=ShowChart
+                         ShowTxt="Show Spending"
+                         HideTxt="Hide Spending"
+                         TopButton=true
+                         BottomButton=false>
+                    <Chart DPs=DataPoints />
+                </PopTray>
+            }
+            <br />
 
-                <Chart DPs=DataPoints />
-                <br />
-                <br />
-                <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
-                                 TheBalance="@SelectedBalance" />
+            <div class="flex-r" style="flex-wrap:nowrap;justify-content:space-between">
+                <div class="flex-r" style="justify-content:start;">
+                    <div style="width:100%;float:left; margin-right:1vw; margin-bottom:2vh;display:inline-block;">
+                        <MyLineChart Plots="Plots" />
+                        <div class="flex-r" style="margin-bottom:2vh;">
+                            <div>
+                                <!-- Savings Goals-->
+                                <MonthlyGoalTracking ActualAmount=@ActualCost
+                                                     ActualIncomeAmount=@ActualIncome
+                                                     EnvelopeAmount=@EnvelopeExpenses />
+                            </div>
+                            <br />
 
+                            <div class="flex-c-start" style="margin-left:1vw">
+                                <PopTray Id="char" ShowWorth=ShowChart ShowButton=false>
+                                    <div style="margin-bottom:2em">
+                                        <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
+                                                         TheBalance="@SelectedBalance" />
+                                    </div>
+                                </PopTray>
+
+                                <!-- Dynamic Costs -->
+                                <ChartHorizontal DPs=@CostItems />
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div style="display:inline-block;width:50%;">
+                        <div class="flex-r" style="padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
+                            <div style="width:100%">
+                                <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
+                                    <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
+                                    <br style="clear:both" />
+                                    <br style="clear:both" />
+                                    <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
+                                    <br />
+                                    <br />
+
+                                    <div class="flex-c">
+                                        <div style="font-size:1.5vw;text-align:center">
+                                            Total Goals:
+                                            <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
+                                        </div>
+                                        <div style="text-align:center;font-size:1.5vw;">
+                                            Total Saved:
+                                            <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
+                                        </div>
+                                        <hr />
+                                        <div class="flex-r" style="font-size:1.25vw;justify-content:space-evenly">
+                                            <div class="flex-c" style="font-size:1.25vw;justify-content:space-between">
+                                                <div style="text-align:center;">@Constants.Person1 Saved:</div>
+                                                <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
+                                            </div>
+                                            <div class="flex-c" style="font-size:1.25vw;justify-content:space-between">
+                                                <div style="text-align:center;">@Constants.Person2 Saved:</div>
+                                                <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+
+                                    <div class="flex-r" style="font-size:3vw;flex-wrap:wrap;padding-bottom:2em;align-content:center;align-items:center">
+                                        @foreach (var env in Envelopes)
+                                        {
+                                            <Envelope Name="@env.Name" Scale=11 Font_Size=1.375
+                                                      Goal=@Math.Max(env.Goal,env.Person1Amount + env.Person2Amount)
+                                                      Saved=@env.TotalAmount FlipClick="true"
+                                                      Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
+                                                      Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
+                                                      Person1Amount="@env.Person1Amount"
+                                                      Person2Amount="@env.Person2Amount" />
+                                        }
+                                    </div>
+                                </PopTray>
+                                <AddExpense OnAddConfirm="Add" Added="Added" @bind-Disabled=AddDisabled />
+                                <br style="clear:both;" />
+                                <!-- Ideal Emergency Fund-->
+                                <IdealEmergencyFund />
+                            </div>
+                        </div>
+                        <br />
+                        @if (Transactions.Count > 0)
+                        {
+                            <div class="flex-r-100" style="height:fit-content">
+                                <div>
+                                    <select class="custom-select" @bind="SelectedMonth" title="Pick a Download Timeframe " style="width:8vw">
+                                        <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                                        <option value="All">All</option>
+                                        @foreach (var dt in FoundMonths)
+                                        {
+                                            <option value="@dt">@dt</option>
+                                        }
+                                    </select>
+                                    <select class="custom-select" @bind="SelectedYear" title="Pick a Download Timeframe " style="width:5vw">
+                                        <option value="@string.Empty" selected disabled="disabled">(Choose a download)</option>
+                                        <option value="All">All</option>
+                                        @foreach (var dt in FoundYears)
+                                        {
+                                            <option value="@dt">@dt</option>
+                                        }
+                                    </select>
+                                    @if (ValidChoice)
+                                    {
+                                        <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>
+                                    }
+                                    else
+                                    {
+                                        <label style="color:red">No values for this combination.</label>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+        else
+        {
+            <BalanceTray @ref=@GlobalBT />
+
+            <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
+                <div style="display:inline-block;width:100%">
+                    <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
+                    <br style="clear:both" />
+                    <br style="clear:both" />
+                    <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
+                    <br />
+                    <br />
+                    <div class="flex-c">
+                        <div style="font-size:5vw;text-align:center">
+                            Total Goals:
+                            <span> @Constants.Pretty(Envelopes.Sum(e => e.Goal))</span>
+                        </div>
+                        <div style="text-align:center;font-size:5vw;">
+                            Total Saved:
+                            <span> @Constants.Pretty(Envelopes.Sum(e => e.TotalAmount))</span>
+                        </div>
+                        <hr />
+                        <div class="flex-r" style="font-size:4vw;justify-content:space-evenly">
+                            <div class="flex-c" style="font-size:4vw;justify-content:space-between">
+                                <div style="text-align:center;">@Constants.Person1 Saved:</div>
+                                <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person1Amount))</div>
+                            </div>
+                            <div class="flex-c" style="font-size:4vw;justify-content:space-between">
+                                <div style="text-align:center;">@Constants.Person2 Saved:</div>
+                                <div style="text-align:center;"> @Constants.Pretty(Envelopes.Sum(e => e.Person2Amount))</div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="flex-r" style="flex-wrap:wrap;align-items:center;align-content:center">
+                        @foreach (var env in Envelopes)
+                        {
+                            <Envelope Name="@env.Name" Scale=40 Font_Size=5 Goal=@Math.Max(env.Goal, env.Person1Amount + env.Person2Amount)
+                                      Saved=@env.TotalAmount FlipClick="true"
+                                      Person1Account="@(BalanceRepo.GetName(env.Person1Account))"
+                                      Person2Account="@(BalanceRepo.GetName(env.Person2Account))"
+                                      Person1Amount="@env.Person1Amount" Person2Amount="@env.Person2Amount" />
+                        }
+                    </div>
+                    <br style="clear:both" />
+                    <br style="clear:both" />
+                </div>
             </PopTray>
 
+            <AddExpense OnAddConfirm="Add" Added="Added" @bind-Disabled=AddDisabled />
+
+            @if (DataPoints != null && DataPoints.Count > 0)
+            {
+                <PopTray Id="mobile-spend" ShowWorth=ShowChart ShowTxt="Show Spending" HideTxt="Hide Spending" TopButton=true BottomButton=false>
+
+                    <Chart DPs=DataPoints />
+                    <br />
+                    <br />
+                    <MonthlySpending Title="@(Constants.TheMonthsFromInt[DateTime.Now.Month] + " Transactions")"
+                                     TheBalance="@SelectedBalance" />
+
+                </PopTray>
+
+            }
+
+            <br />
+
+            <!-- Savings Goals-->
+            <MonthlyGoalTracking ActualAmount=@ActualCost
+                                 ActualIncomeAmount=@ActualIncome
+                                 EnvelopeAmount=@EnvelopeExpenses />
+
+            <br style="clear:both" />
+            <br style="clear:both" />
+
+            <!-- Dynamic Costs -->
+            <div style="margin-left:1vw">
+                <table>
+                    <tr>
+                        <td colspan="4">
+                            <ChartHorizontal DPs=@CostItems />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <br style="clear:both" />
+            <br />
+
+            <!-- Ideal Emergency Fund-->
+            <IdealEmergencyFund Mobile=true />
+
+            <br style="clear:both" />
+            <br />
         }
+        @if (StashCashBool)
+        {
+            <StashCash OnClose="@CloseModal">
 
-        <br />
+            </StashCash>
+        }
+        @if (CashOutBool)
+        {
+            <CashOut OnClose="@CloseModal">
 
-        <!-- Savings Goals-->
-        <MonthlyGoalTracking ActualAmount=@ActualCost
-                             ActualIncomeAmount=@ActualIncome
-                             EnvelopeAmount=@EnvelopeExpenses />
-
-        <br style="clear:both" />
-        <br style="clear:both" />
-
-        <!-- Dynamic Costs -->
-        <div style="margin-left:1vw">
-            <table>
-                <tr>
-                    <td colspan="4">
-                        <ChartHorizontal DPs=@CostItems />
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <br style="clear:both" />
-        <br />
-
-        <!-- Ideal Emergency Fund-->
-        <IdealEmergencyFund Mobile=true />
-
-        <br style="clear:both" />
-        <br />
-    }
-    @if (StashCashBool)
-    {
-        <StashCash OnClose="@CloseModal">
-
-        </StashCash>
-    }
-    @if (CashOutBool)
-    {
-        <CashOut OnClose="@CloseModal">
-
-        </CashOut>
+            </CashOut>
+        }
     }
 }
 
