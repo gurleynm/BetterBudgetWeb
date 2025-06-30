@@ -149,6 +149,7 @@
         <a href="" class="dismiss">🗙</a>
     </div>
     <script src="js/custom.js"></script>
+    <script src="_content/GoogleCaptchaComponent/Scripts/ScriptLoader.js"></script>
     <script>
         let IsMobile;
         window.onload = function () {
@@ -201,13 +202,13 @@
             //    window.location.reload();
         }
         function ScrollTo(id) {
-            var elm = document.getElementById(id,behave = 'smooth');
+            var elm = document.getElementById(id, behave = 'smooth');
             if (elm) {
                 elm.scrollIntoView({ behavior: behave });
             }
         }
         function ScrollToTop() {
-            ScrollTo('top-piece','instant');
+            ScrollTo('top-piece', 'instant');
         }
         function toggleExpand(id) {
             var element = document.getElementById(id);

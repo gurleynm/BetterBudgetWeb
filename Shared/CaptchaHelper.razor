@@ -1,0 +1,51 @@
+﻿@using System.Text.Json.Serialization
+
+<GoogleRecaptcha SuccessCallBack = "SuccessCallBack"
+                 TimeOutCallBack="TimeOutCallBack"
+                 ServerValidationErrorCallBack="ServerSideValidationError"
+                 ServerSideValidationHandler="ServerSideValidationHandler"
+                 Version="CaptchaConfiguration.Version.V2"
+                 Theme="CaptchaConfiguration.Theme.Dark"
+                 Language="CaptchaLanguages.English">
+</GoogleRecaptcha>
+@code {
+    private bool Disabled { get; set; }
+    string captchaResponse;
+    string errorMessage;
+    void SuccessCallBack(CaptchaSuccessEventArgs e)
+    {
+        Disabled = false; //Disable attribute of button becomes false for example
+        captchaResponse = e.CaptchaResponse; //result recieved from reCaptcha
+        base.StateHasChanged();
+    }
+    void TimeOutCallBack(CaptchaTimeOutEventArgs e)
+    {
+        Disabled = true; //Button becomes disable again
+        Console.WriteLine($"Captcha Time Out with message {e.ErrorMessage}");
+        errorMessage = $"Captcha Timeout: {e.ErrorMessage}";
+    }
+    private void ServerSideValidationError(CaptchaServerSideValidationErrorEventArgs e)
+    {
+        errorMessage = $"Captcha server side validation error: {e.ErrorMessage}";
+    }
+    /// <summary>
+    /// Captcha Verification Should be done by an internal api which holds the secret key
+    /// </summary>
+    /// <returns></returns>
+    private async Task<ServerSideCaptchaValidationResultModel> ServerSideValidationHandler(ServerSideCaptchaValidationRequestModel requestModel)
+    {
+        using var httpClient = new HttpClient();
+        string Url = $"{Constants.BaseUri}VerifyCaptcha?token={requestModel.CaptchaResponse}";
+        var apiResult = await httpClient.GetFromJsonAsync<GoogleCaptchaCheckResponseResult>(Url);
+        return new ServerSideCaptchaValidationResultModel(apiResult.Success, string.Join("\n", apiResult.ErrorCodes ?? new List<string>() { "No Error" }));
+    }
+
+    public class GoogleCaptchaCheckResponseResult
+    {
+        [JsonPropertyName("success")]
+        public bool Success { get; set; }
+
+        [JsonPropertyName("error-codes")]
+        public List<string> ErrorCodes { get; set; }
+    }
+}
