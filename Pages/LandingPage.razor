@@ -2,6 +2,7 @@
 @using BetterBudgetWeb.Runner
 @using BetterBudgetWeb.Shared.General
 @using BetterBudgetWeb.Pages.PricingStuff
+@using BetterBudgetWeb.Shared.General.Footer
 @inject NavigationManager NavMan
 @inject IJSRuntime jsRuntime
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
@@ -72,6 +73,7 @@
         <CookieBanner />
     </div>
 </div>
+<Footer />
 
 @code {
     [Parameter]

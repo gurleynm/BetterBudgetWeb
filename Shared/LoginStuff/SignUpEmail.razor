@@ -23,7 +23,7 @@
         {
             <LoadingDots />
         }
-        else
+        else if (EmailErrorMsg2 != "Email sent. Check inboxes for account creation links")
         {
             <button class="btn btn-primary" disabled=@(string.IsNullOrEmpty(Email1) && string.IsNullOrEmpty(Email2)) @onclick=@(async () => await SendEmail())>Submit</button>
         }
