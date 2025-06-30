@@ -10,7 +10,7 @@
         {
             <br style="clear:both" />
             <AdvancedWrapper Bottom="false" Top="true">
-                <div style="width:100%;height:fit-content;border:@Constants.Options(Constants.TryingItOut,"","solid silver 1px");">
+                <div style="width:100%;height:fit-content;border:@Constants.Options(Constants.TryingItOut, "", "solid silver 1px");">
                     <h1 style="text-align:center">Presets:</h1>
                     <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
                         @foreach (var et in ExpenseTypesForPresets)
@@ -49,7 +49,7 @@
                     {
                         <label>Transaction:</label>
                         <br />
-                        <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
+                        <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string)ui.Value; })" />
                     }
                 </div>
                 <br />
@@ -135,7 +135,7 @@
                     <div>
                         <label>@($"{Constants.Person1} Amount:")</label>
                         <br />
-                        <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+                        <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
                     </div>
                     <br />
                     <br />
@@ -186,7 +186,7 @@
                     <div>
                         <label>@($"{Constants.Person2} Amount:")</label>
                         <br />
-                        <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+                        <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
                     </div>
                 }
                 else
@@ -227,7 +227,7 @@
                         <div>
                             <label>@($"{Constants.Person1} Amount:")</label>
                             <br />
-                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
                         </div>
                         <br />
                         <br />
@@ -264,7 +264,7 @@
                         <div>
                             <label>@($"{Constants.Person2} Amount:")</label>
                             <br />
-                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
                         </div>
                     }
                     else
@@ -310,7 +310,7 @@
                         <div>
                             <label>@($"{Constants.Person1} Amount:")</label>
                             <br />
-                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
                         </div>
                         <br />
                         <div>
@@ -353,7 +353,7 @@
                         <div>
                             <label>@($"{Constants.Person2} Amount:")</label>
                             <br />
-                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
                         </div>
                     }
                 }
@@ -411,7 +411,7 @@ else
                             @if (ExpenseType != "Transfer")
                             {
                                 <label style="margin-right:1em">Transaction Name:</label>
-                                <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string) ui.Value;})" />
+                                <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string)ui.Value; })" />
                             }
                         </div>
                         <div class="flex-c" style="margin:0 1em">
@@ -679,11 +679,11 @@ else
                     <div class="flex-r" style="width:100%;justify-content:start;margin-top:1em;flex-wrap:wrap">
                         <div class="flex-c" style="margin:0 1em">
                             <label>@($"{Constants.Person1} Amount:")</label>
-                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string) ui.Value;})" />
+                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
                         </div>
                         <div class="flex-c" style="margin:0 1em">
                             <label>@($"{Constants.Person2} Amount:")</label>
-                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string) ui.Value;})" />
+                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
                         </div>
                     </div>
                     @if (ShowAddPreset)
@@ -839,7 +839,8 @@ else
         List<string> others = new List<string>();
 
         foreach (var dci in Constants.DynamicCostItems)
-            dcis.Add(dci.Name);
+            if (!dci.Name.Contains("(EXAMPLE DATA)"))
+                dcis.Add(dci.Name);
 
         others.Add("1-Time Charge");
         others.Add("Income");
@@ -854,19 +855,21 @@ else
         others.Add("Other");
         string DynaText = "-- Dynamic Costs --";
 
-        int longestDCI = dcis.OrderByDescending(s => s.Length).FirstOrDefault().Length;
+        int longestDCI = dcis.Count == 0 ? 0 : dcis.OrderByDescending(s => s.Length).FirstOrDefault().Length;
         int longestOther = others.OrderByDescending(s => s.Length).FirstOrDefault().Length;
         int longestOfEach = Math.Max(longestDCI, longestOther);
 
-        if (longestOfEach > DynaText.Length)
-            ExpenseTypes.Add(Constants.CENTER(DynaText, longestOfEach, '-'));
-        else if (longestOfEach > 0)
-            ExpenseTypes.Add(DynaText);
+        if (dcis.Count > 0)
+        {
+            if (longestOfEach > DynaText.Length)
+                ExpenseTypes.Add(Constants.CENTER(DynaText, longestOfEach, '-'));
+            else if (longestOfEach > 0)
+                ExpenseTypes.Add(DynaText);
 
-        foreach (var str in dcis)
-            ExpenseTypes.Add(str);
+            foreach (var str in dcis)
+                ExpenseTypes.Add(str);
+        }
 
-        ExpenseTypes.Add(Constants.CENTER(" Envelopes ", longestOfEach, '-'));
 
         // Add Envelopes
         var Person1Envelopes = Constants.Envelopes.Where(e => e.Person1Amount > 0).ToList();
@@ -882,10 +885,17 @@ else
 
         TempEnv.Sort();
 
-        foreach (var d in TempEnv)
-            ExpenseTypes.Add(d);
+        if (TempEnv.Count > 0)
+        {
+            ExpenseTypes.Add(Constants.CENTER(" Envelopes ", longestOfEach, '-'));
+            foreach (var d in TempEnv)
+                ExpenseTypes.Add(d);
+        }
 
-        ExpenseTypes.Add(Constants.CENTER(" Others ", DynaText.Length, '-'));
+        if (ExpenseTypes.Count > 0)
+        {
+            ExpenseTypes.Add(Constants.CENTER(" Others ", DynaText.Length, '-'));
+        }
 
         foreach (var str in others)
             ExpenseTypes.Add(str);

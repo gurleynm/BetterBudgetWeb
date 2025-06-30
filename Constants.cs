@@ -315,23 +315,18 @@ namespace BetterBudgetWeb
         {
             if (DynamicCostItems.Count == 0)
             {
-                DynamicCostItems.Add(new Monthly("Food\n(EXAMPLE DATA)", 600, 200, "DYNAMIC"));
-                DynamicCostItems.Add(new Monthly("Fun\n(EXAMPLE DATA)", 300, 300, "DYNAMIC"));
-                DynamicCostItems.Add(new Monthly("Gas\n(EXAMPLE DATA)", 80, 180, "DYNAMIC"));
+                DynamicCostItems.Add(new Monthly("Food\n(EXAMPLE DATA)", 250, 250, "DYNAMIC"));
             }
 
             if (SavingsGoals.Count == 0)
             {
-                SavingsGoals.Add(new SavingsGoal(Person1 + "\n(EXAMPLE DATA)", 2000, "All", "1"));
-                SavingsGoals.Add(new SavingsGoal(Person2 + "\n(EXAMPLE DATA)", 1715, "All", "1"));
+                SavingsGoals.Add(new SavingsGoal(Person1 + "\n(EXAMPLE DATA)", 1000, "All", "1"));
+                SavingsGoals.Add(new SavingsGoal(Person2 + "\n(EXAMPLE DATA)", 1000, "All", "1"));
             }
 
             if (StaticMonthlyCosts.Count == 0)
             {
-                StaticMonthlyCosts.Add(new Monthly("Rent\n(EXAMPLE DATA)", 820, 800, "STATIC"));
-                StaticMonthlyCosts.Add(new Monthly("Car\n(EXAMPLE DATA)", 399.03, 0, "STATIC"));
-                StaticMonthlyCosts.Add(new Monthly("Internet\n(EXAMPLE DATA)", 70, 0,"STATIC"));
-                StaticMonthlyCosts.Add(new Monthly("Subs \n(EXAMPLE DATA)", 78, 0,"STATIC"));
+                StaticMonthlyCosts.Add(new Monthly("Rent\n(EXAMPLE DATA)", 600, 600, "STATIC"));
             }
         }
         public static List<Monthly> GetMonthlies() { return Monthlies; }

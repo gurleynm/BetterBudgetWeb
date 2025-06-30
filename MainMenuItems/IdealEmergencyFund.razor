@@ -1,70 +1,73 @@
 ﻿@using MonthView
 
-@if (Mobile)
+@if (ThreeMonthsPerson1 + ThreeMonthsPerson2 + SixMonthsPerson1 + SixMonthsPerson2 > 0)
 {
-    <div style="width:100%; margin-right:2vw;">
-        <table class="toggle-table">
-            <tr>
-                <th colspan="3" style="background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
-            </tr>
-            <tr>
-                <th></th>
-                <th>3-months of Expenses</th>
-                <th>6-months of Expenses</th>
-            </tr>
-            <tr>
-                <td style="padding:.5vw;">@Constants.Person1</td>
-                <td>@Constants.Pretty(ThreeMonthsPerson1)</td>
-                <td>@Constants.Pretty(SixMonthsPerson1)</td>
-            </tr>
-            <tr>
-                <td style="padding:.5vw;">@Constants.Person2</td>
-                <td>@Constants.Pretty(ThreeMonthsPerson2)</td>
-                <td>@Constants.Pretty(SixMonthsPerson2)</td>
-            </tr>
-            <tr>
-                <td colspan="3">=</td>
-            </tr>
-            <tr>
-                <td><strong>Total</strong></td>
-                <td>@Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2)</td>
-                <td>@Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2)</td>
-            </tr>
-        </table>
-    </div>
-}
-else
-{
-    <div style="width:100%;">
-        <table class="toggle-table">
-            <tr>
-                <th colspan="3" style="background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
-            </tr>
-            <tr>
-                <th></th>
-                <th>3-months of Expenses</th>
-                <th>6-months of Expenses</th>
-            </tr>
-            <tr>
-                <td style="padding:.5vw;">@Constants.Person1</td>
-                <td>@Constants.Pretty(ThreeMonthsPerson1)</td>
-                <td>@Constants.Pretty(SixMonthsPerson1)</td>
-            </tr>
-            <tr>
-                <td style="padding:.5vw;">@Constants.Person2</td>
-                <td>@Constants.Pretty(ThreeMonthsPerson2)</td>
-                <td>@Constants.Pretty(SixMonthsPerson2)</td>
-            </tr>
-            <tr>
-                <td colspan="3">=</td>
-            </tr>
-            <tr>
-                <td><strong>Total</strong></td>
-                <td>@Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2)</td>
-                <td>@Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2)</td>
-            </tr>
-        </table>
-    </div>
+    @if (Mobile)
+    {
+        <div style="width:100%; margin-right:2vw;">
+            <table class="toggle-table">
+                <tr>
+                    <th colspan="3" style="background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>3-months of Expenses</th>
+                    <th>6-months of Expenses</th>
+                </tr>
+                <tr>
+                    <td style="padding:.5vw;">@Constants.Person1</td>
+                    <td>@Constants.Pretty(ThreeMonthsPerson1)</td>
+                    <td>@Constants.Pretty(SixMonthsPerson1)</td>
+                </tr>
+                <tr>
+                    <td style="padding:.5vw;">@Constants.Person2</td>
+                    <td>@Constants.Pretty(ThreeMonthsPerson2)</td>
+                    <td>@Constants.Pretty(SixMonthsPerson2)</td>
+                </tr>
+                <tr>
+                    <td colspan="3">=</td>
+                </tr>
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td>@Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2)</td>
+                    <td>@Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2)</td>
+                </tr>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div style="width:100%;">
+            <table class="toggle-table">
+                <tr>
+                    <th colspan="3" style="background-color:orange;color:white"><i>Ideal Emergency Fund</i></th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>3-months of Expenses</th>
+                    <th>6-months of Expenses</th>
+                </tr>
+                <tr>
+                    <td style="padding:.5vw;">@Constants.Person1</td>
+                    <td>@Constants.Pretty(ThreeMonthsPerson1)</td>
+                    <td>@Constants.Pretty(SixMonthsPerson1)</td>
+                </tr>
+                <tr>
+                    <td style="padding:.5vw;">@Constants.Person2</td>
+                    <td>@Constants.Pretty(ThreeMonthsPerson2)</td>
+                    <td>@Constants.Pretty(SixMonthsPerson2)</td>
+                </tr>
+                <tr>
+                    <td colspan="3">=</td>
+                </tr>
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td>@Constants.Pretty(ThreeMonthsPerson1 + ThreeMonthsPerson2)</td>
+                    <td>@Constants.Pretty(SixMonthsPerson1 + SixMonthsPerson2)</td>
+                </tr>
+            </table>
+        </div>
+    }
 }
 
 @code {

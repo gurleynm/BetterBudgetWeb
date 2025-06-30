@@ -15,7 +15,7 @@ else
             @foreach (var et in ExpenseTypes)
             {
                 @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
-               || et.Contains("-- Others --"))
+                    || et.Contains("-- Others --"))
                 {
                     <option value="et" disabled>@et</option>
                 }
@@ -33,7 +33,7 @@ else
             @foreach (var et in ExpenseTypes)
             {
                 @if (et.Contains("- Envelopes -") || et.Contains("-- Dynamic Costs --")
-               || et.Contains("-- Others --"))
+                    || et.Contains("-- Others --"))
                 {
                     <option disabled value="@et">@et</option>
                 }
@@ -108,17 +108,31 @@ else
 
         TempEnv.Sort();
 
-        ExpenseTypes.Add("-- Dynamic Costs --");
+        List<string> DCINames = new();
 
         foreach (var d in TempDCI)
-            if(!d.Contains("(EXAMPLE DATA)"))
+            if (!d.Contains("(EXAMPLE DATA)"))
+                DCINames.Add(d);
+
+        if (DCINames.Count > 0)
+        {
+            ExpenseTypes.Add("-- Dynamic Costs --");
+            foreach (var d in DCINames)
                 ExpenseTypes.Add(d);
+        }
 
-        ExpenseTypes.Add("-- Envelopes --");
-        foreach (var d in TempEnv)
-            ExpenseTypes.Add(d);
+        if (TempEnv.Count > 0)
+        {
+            ExpenseTypes.Add("-- Envelopes --");
+            foreach (var d in TempEnv)
+                ExpenseTypes.Add(d);
+        }
 
-        ExpenseTypes.Add("-- Others --");
+        if (ExpenseTypes.Count > 0)
+        {
+            ExpenseTypes.Add("-- Others --");
+        }
+
         foreach (var o in TempOth)
             ExpenseTypes.Add(o);
 
