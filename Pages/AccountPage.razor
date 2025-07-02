@@ -21,8 +21,8 @@
     </div>
     @if (Constants.TIER_LEVEL != Tier.DEMO)
     {
-        <div class="flex-r" style="@Constants.TestMobile("justify-content:space-between;width:100%;margin-bottom:1em","")">
-            <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em" @onclick=@(() => {ShowUpdatePassword = true; ErrorMsgPass = "";})>Update Password</button>
+        <div class="flex-r" style="@Constants.TestMobile("justify-content:space-between;width:100%;margin-bottom:1em", "")">
+            <button class="btn btn-primary" style="background-color:indigo;color:white;margin-right:1em" @onclick=@(() => { ShowUpdatePassword = true; ErrorMsgPass = ""; })>Update Password</button>
             <button class="btn btn-primary" style="background-color:cyan;color:black" @onclick=LogOff>Sign Out</button>
         </div>
     }
@@ -39,22 +39,41 @@
     {
         <div class="flex-r"
              style="margin:auto 0;
-                width:100%;
-                padding: 1vw;
-                height:100%;
-                outline:solid dodgerblue 1px;
-                border-radius:5px;
-                color:white;
-                text-align:center;
-                pointer-events:none;
-                z-index:10;">
+                        width:100%;
+                        padding: 1vw;
+                        height:100%;
+                        outline:solid dodgerblue 1px;
+                        border-radius:5px;
+                        color:white;
+                        text-align:center;
+                        pointer-events:none;
+                        z-index:10;">
             Update successful!
         </div>
     }
     <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="width:100%;justify-content:space-between">
-        <h4>Your name is: <input type="text" @bind-value=@NewUsername @oninput="@(async (ui) => { NewUsername = (string) ui.Value;})" /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
-        <h4>Your email is: <input type="email" @bind-value=@NewEmail @oninput="@(async (ui) => { NewEmail = (string) ui.Value;})" style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
-        <h4>The second user's name is: <span>@OtherUser</span></h4>
+        <h4>Your name is: <input type="text" @bind-value=@NewUsername @oninput="@(async (ui) => { NewUsername = (string)ui.Value; })" /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
+        <h4>Your email is: <input type="email" @bind-value=@NewEmail @oninput="@(async (ui) => { NewEmail = (string)ui.Value; })" style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
+        @if (OtherUser.Contains("Partner's creation email sent on"))
+        {
+            <h4>@OtherUser</h4>
+
+        }
+        else if (OtherUser == "Your Partner")
+        {
+            @if (ResendDisabled)
+            {
+                <LoadingDots />
+            }
+            else
+            {
+                <button class="btn btn-primary" style="background-color:cyan;color:black;margin-bottom:1em" @onclick=@(async () => await Resend())>Resend Partner's Creation Email</button>
+            }
+        }
+        else
+        {
+            <h4>The second user's name is: <span>@OtherUser</span></h4>
+        }
     </div>
     @if (Constants.Mobile)
     {
@@ -149,7 +168,7 @@ else
 
     private bool ShowChangedDisabled => NewUsername == OG_Username && NewEmail == OG_Email;
 
-    private string OtherUser => Constants.CUR_USER_NAME == Constants.Person1 ? Constants.Person2 : Constants.Person1;
+    private string OtherUser = "";
 
     private bool UpdateDisabled;
     private bool ShowUpdatePassword;
@@ -178,9 +197,11 @@ else
     private string ErrorMsgEmail = "";
 
     private bool ShowPricingTable;
+    private bool ResendDisabled;
 
     protected override async Task OnInitializedAsync()
     {
+        OtherUser = Constants.CUR_USER_NAME == Constants.Person1 ? Constants.Person2 : Constants.Person1;
         Constants.CurPage = "Account";
         OG_Username = Constants.CUR_USER_NAME;
         OG_Email = Constants.CUR_USER_EMAIL;
@@ -267,6 +288,18 @@ else
             ShowUpdatePassword = false;
 
         UpdateDisabled = false;
+        StateHasChanged();
+    }
+
+    private async Task Resend()
+    {
+        ResendDisabled = true;
+        StateHasChanged();
+
+        await UserRepo.ResendEmail();
+        OtherUser = Constants.Person2;
+
+        ResendDisabled = false;
         StateHasChanged();
     }
 

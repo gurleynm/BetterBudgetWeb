@@ -98,6 +98,19 @@ namespace BetterBudgetWeb.Repo
             Constants.TokenInvalidated = false;
             return true;
         }
+        public static async Task<bool> ResendEmail()
+        {
+            if (Constants.Token == "DEMO")
+                return true;
+
+            string content = await CallAPI("POST", baseURI + $"/Resend?uid={Constants.catchAll.Token.Id}");
+
+            if (string.IsNullOrEmpty(content))
+                return false;
+
+            Constants.Person2 = "Partner's creation email sent on " + DateTime.Now.ToString("MMMM dd, yyyy");
+            return true;
+        }
         public static async Task<bool> AddUser(User user)
         {
             if (Constants.Token == "DEMO")
