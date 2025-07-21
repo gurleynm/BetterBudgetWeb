@@ -11,7 +11,7 @@
 @inject NavigationManager NavMan
 @inject IJSRuntime jsRuntime
 
-<div class="flex-r-100" style="height:@Constants.TestMobile("fit-content", "100%");">
+<div class="flex-r-100" style="height:@Constants.TestMobile("fit-content", "100%");background: linear-gradient(135deg, #4c1d95, #1e293b);">
     @if (!Constants.Mobile)
     {
         <div class="slide-right flex-c" style="height:100%">
@@ -31,9 +31,26 @@
         <div class="flex-c-start" style="align-items:center">
             <span style="font-family:'CBB Default';font-size:xx-large;text-align:center">Start your commitment-free trial today</span>
             <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">@Constants.SignUpText</button>
+            <div class="flex-r-100">
+                <a target="_blank" href="https://play.google.com/store/apps/details?id=com.gurleytechsolutions.cbb" style="margin:1em">
+                    <img src="images/GetItOnGooglePlay_Badge_Web_color_English.png" style="height:3em" />
+                </a>
+
+                <a target="_blank" href="https://apps.apple.com/us/app/couples-better-budget/id6739722601" style="margin:1em">
+                    <img src="images/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" style="height:3em" />
+                </a>
+            </div>
         </div>
     </div>
 </div>
+<h1 style="font-family:'CBB Default';width:75%;text-align:center">What is Couple's Better Budget?</h1>
+<h4 style="font-family:'CBB Default';width:75%;text-align:center">Couple’s Better Budget (CBB) is the all-in-one budgeting app designed specifically for couples.
+    Whether you're dating, engaged, or married, CBB makes it easy to track shared expenses, manage savings goals, and monitor your net worth-together. With a clean,
+    intuitive design and powerful financial tools built for two, it helps partners stay organized, reduce money stress, and build a stronger financial future as a team.</h4>
+<video style="width:75%;border-radius:3%" autoplay muted loop>
+    <source src="/videos/Cropped_CBB_Demo.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
 <StubChart />
 <StubKISS />
 <StubEnvelopes />

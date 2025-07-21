@@ -1,6 +1,6 @@
 ﻿@if (Invert && !Constants.Mobile)
 {
-    <div class="preview-goodie">
+    <div class="preview-goodie prev-invert">
         <div class="flex-c" style="height:fit-content;padding:1em">
             <h2 style="font-family:'CBB Default';text-align:@Constants.TestMobile("center",ShiftDirection)">
                 @Title
@@ -16,7 +16,7 @@
 }
 else
 {
-    <div class="preview-goodie">
+    <div class="preview-goodie @(!Invert ? "prev-invert" : "")">
         <div>
             @ChildContent
         </div>
