@@ -11,7 +11,14 @@
             <span><strong>WARNING: All of your data will be deleted. This action cannot be reversed!</strong></span>
             <br />
             <br />
-            <span>To delete your account, please enter in your name, the other user's name, and your passwords below:</span>
+            @if (NoSecond)
+            {
+                <span>To delete your account, please enter in your name and your password below:</span>
+            }
+            else
+            {
+                <span>To delete your account, please enter in your name, the other user's name, and your passwords below:</span>
+            }
             <br />
             <br />
             <div class="flex-r">
@@ -22,24 +29,30 @@
                             <input id="delUser1" type="text" @bind-value=User1 placeholder=@Constants.CUR_USER_NAME />
                         </td>
                     </tr>
-                    <tr>
-                        <td>Their name:</td>
-                        <td class="flex-r" style="justify-content:start">
-                            <input id="delUser2" type="text" @bind-value=User2 placeholder=@OtherUser />
-                        </td>
-                    </tr>
+                    @if (!NoSecond)
+                    {
+                        <tr>
+                            <td>Their name:</td>
+                            <td class="flex-r" style="justify-content:start">
+                                <input id="delUser2" type="text" @bind-value=User2 placeholder=@OtherUser />
+                            </td>
+                        </tr>
+                    }
                     <tr>
                         <td>Password:</td>
                         <td>
                             <PasswordInput @bind-Password=@Password ShowEye="true" />
                         </td>
                     </tr>
-                    <tr>
-                        <td>Their Password:</td>
-                        <td>
-                            <PasswordInput @bind-Password=@Password2 ShowEye="true" />
-                        </td>
-                    </tr>
+                    @if (!NoSecond)
+                    {
+                        <tr>
+                            <td>Their Password:</td>
+                            <td>
+                                <PasswordInput @bind-Password=@Password2 ShowEye="true" />
+                            </td>
+                        </tr>
+                    }
                 </table>
             </div>
             <br />
@@ -87,6 +100,8 @@
         }
     }
 
+    private bool NoSecond => Constants.Person2 == "Your Partner" || Constants.Person2.Contains("Partner's creation email sent on");
+
     private bool showDelete;
     private bool deleteDisabled;
 
@@ -109,11 +124,11 @@
 
             if (User1 != Constants.CUR_USER_NAME)
                 ErrorMsgPass = "Name is incorrect.";
-            else if (User2 != OtherUser)
+            else if (!NoSecond && User2 != OtherUser)
                 ErrorMsgPass = "Second name is incorrect.";
             else if (string.IsNullOrEmpty(Password))
                 ErrorMsgPass = "Password must be entered";
-            else if (string.IsNullOrEmpty(Password2))
+            else if (!NoSecond && string.IsNullOrEmpty(Password2))
                 ErrorMsgPass = "Their password must be entered";
 
             if (!string.IsNullOrEmpty(ErrorMsgPass))
@@ -122,11 +137,14 @@
                 return;
             }
 
-            bool DelUser = await UserRepo.DeleteUser(User1, User2, Password, Password2);
+            bool DelUser = await UserRepo.DeleteUser(User1, NoSecond ? Constants.Person2 : User2, Password, NoSecond ? "NONE" : Password2);
             await Task.Delay(2000);
             if (!DelUser)
             {
-                ErrorMsgPass = "Password(s) are incorrect.";
+                if (NoSecond)
+                    ErrorMsgPass = "Password is incorrect.";
+                else
+                    ErrorMsgPass = "Password(s) are incorrect.";
             }
             else
             {
