@@ -11,26 +11,16 @@
 @inject NavigationManager NavMan
 @inject IJSRuntime jsRuntime
 
-<div class="flex-r-100" style="height:@Constants.TestMobile("fit-content", "100%");background: linear-gradient(135deg, #4c1d95, #1e293b);">
-    @if (!Constants.Mobile)
-    {
-        <div class="slide-right flex-c" style="height:100%">
-            <h1 style="font-size:8em;font-family:'CBB Default';">Helping you reach your goals together</h1>
-        </div>
-    }
+<div class="flex-r-100 jumbotron" style="height:@Constants.TestMobile("fit-content", "100%");">
     <div class="flex-c-start slide-up" style="padding:1em;margin-bottom:0;width:@(Constants.Mobile ? "100%" : "50%")">
-        @if (Constants.Mobile)
-        {
-            <div class="flex-c" style="text-align:center">
-                <h1 style="font-size:3em;font-family:'CBB Default';">Helping you reach your goals together</h1>
-            </div>
-        }
-        <div class="flex-r">
-            <img fetchpriority="high" src="/images/RoundLogo.webp" alt="Logo image" style="width:50%;" />
+        <div class="flex-c" style="text-align:center">
+            <h1 style="font-size:3em;font-family:'CBB Default';">Build Wealth Together — Track, Plan, and Grow as One</h1>
         </div>
+
         <div class="flex-c-start" style="align-items:center">
-            <span style="font-family:'CBB Default';font-size:xx-large;text-align:center">Start your commitment-free trial today</span>
+            <p class="fancy-text" style="width:90%;font-size:large;text-align:center;color:white;">Couple's Better Budget helps partners budget, save, and invest with total transparency.</p>
             <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="width:90%;font-size:large;font-family:'CBB Default';color:black;background-color:cyan">@Constants.SignUpText</button>
+
             <div class="flex-r-100">
                 <a target="_blank" href="https://play.google.com/store/apps/details?id=com.gurleytechsolutions.cbb" style="margin:1em">
                     <img src="images/GetItOnGooglePlay_Badge_Web_color_English.png" style="height:3em" />
@@ -44,17 +34,89 @@
     </div>
 </div>
 <h1 style="font-family:'CBB Default';width:75%;text-align:center">What is Couple's Better Budget?</h1>
-<h4 style="font-family:'CBB Default';width:75%;text-align:center">Couple’s Better Budget (CBB) is the all-in-one budgeting app designed specifically for couples.
+<h4 style="font-family:'CBB Default';width:75%;text-align:center">
+    Couple’s Better Budget (CBB) is the all-in-one budgeting app designed specifically for couples.
     Whether you're dating, engaged, or married, CBB makes it easy to track shared expenses, manage savings goals, and monitor your net worth-together. With a clean,
-    intuitive design and powerful financial tools built for two, it helps partners stay organized, reduce money stress, and build a stronger financial future as a team.</h4>
-<video style="width:75%;border-radius:3%" autoplay muted loop>
+    intuitive design and powerful financial tools built for two, it helps partners stay organized, reduce money stress, and build a stronger financial future as a team.
+</h4>
+<video style="width:65%;border-radius:2em" autoplay muted loop>
     <source src="/videos/Cropped_Full_CBB_Demo.mp4" type="video/mp4">
     Your browser does not support the video tag.
 </video>
+
+<div class="main-page-section" style="width:100%;margin-left:1em">
+    <h2 class="fancy-text">How it Works</h2>
+    <div class="flex-c" style="margin:1em">
+        <h3 class="fancy-text">1.  Add Your Partner</h3>
+        <h4 class="fancy-text">Connect and sync your partner to build your shared financial plan together.</h4>
+    </div>
+
+    <div class="flex-c" style="margin:1em">
+        <h3 class="fancy-text">2. Track Expenses</h3>
+        <h4 class="fancy-text">Log your spending and see monthly breakdowns in real time.</h4>
+    </div>
+
+    <div class="flex-c" style="margin:1em">
+        <h3 class="fancy-text">3. Grow Net Worth</h3>
+        <h4 class="fancy-text">Track assets, goals, and investments — together and individually.</h4>
+    </div>
+</div>
+
+<div class="flex-c-start" style="width:100%;margin-left:1em">
+    <h2 class="fancy-text">Features for Real Couples</h2>
+    <div class="main-page-section">
+        <h3 class="fancy-text">Shared Budgeting</h3>
+        <h4 class="fancy-text">Create envelopes, split transactions, and set savings goals as a team.</h4>
+    </div>
+
+    <div class="main-page-section">
+        <h3 class="fancy-text">Combined Net Worth</h3>
+        <h4 class="fancy-text">Track each partner's contributions and see the full picture over time.</h4>
+    </div>
+
+    <div class="main-page-section">
+        <h3 class="fancy-text">Stock Portfolio Tracking</h3>
+        <h4 class="fancy-text">Monitor real-time value of shared investments with no brokerage logins required.</h4>
+    </div>
+</div>
+
+<div class="main-page-section" style="width:100%;margin-left:1em">
+    <h2 class="fancy-text">Inside the App</h2>
+
 <StubChart />
 <StubKISS />
 <StubEnvelopes />
 <StubSpending />
+</div>
+
+<div class="flex-c-start" style="width:90%;align-items:center">
+    <h1 class="fancy-text" style="text-align:center">Simple, Honest Pricing</h1>
+    <h3 class="fancy-text" style="text-align:center">All plans under $50.00/year</h3>
+    <h3 class="fancy-text" style="text-align:center">45-day free trial - No ads - Cancel anytime</h3>
+    <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">@Constants.SignUpText</button>
+</div>
+
+<div class="flex-c-start" style="width:100%;margin-left:1em">
+    <h2 class="fancy-text">What Couples are Saying</h2>
+    <div class="main-page-section">
+        <div class="stars">★★★★★</div>
+        <h4 class="fancy-text">“We finally feel like we are on the same page with our finances."</h4>
+        <h4 class="fancy-text"><i>~ Nathan & Lindsey</i></h4>
+    </div>
+    
+    <div class="main-page-section">
+        <div class="stars">★★★★★</div>
+        <h4 class="fancy-text">“We have saved THOUSANDS already just by being able to see where everything we spent was going!"</h4>
+        <h4 class="fancy-text"><i>~ David & Katie</i></h4>
+    </div>
+    
+    <div class="main-page-section">
+        <div class="stars">★★★★★</div>
+        <h4 class="fancy-text">“The savings envelopes make it so much easier to work together towards our goals."</h4>
+        <h4 class="fancy-text"><i>~ Liam & Sarah</i></h4>
+    </div>
+</div>
+
 <div class="flex-c-start" style="align-items:center;flex-wrap:wrap">
     <div class="flex-r-100">
         <h4 style="font-family:'CBB Default';margin:1em;text-align:center">
@@ -77,6 +139,8 @@
 @code {
 
     private bool LoadingDemo { get; set; }
+    private double EnvelopeSize = 35;
+    private double EnvelopeFontSize = 4.5;
 
     protected override async Task OnInitializedAsync()
     {

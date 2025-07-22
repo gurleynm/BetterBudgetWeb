@@ -533,3 +533,29 @@ label {
 {
     padding: 1em 0;
 }
+
+.jumbotron {
+    background: linear-gradient(135deg, #1a1a40, #2c2c6c);
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.fancy-text {
+    font-family: 'CBB Default';
+}
+
+.main-page-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    background-color: #1E293B7F;
+    border-radius: 2em;
+    padding: 1em;
+    margin:1em;
+}
+
+.stars {
+    color: #facc15;
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+}
