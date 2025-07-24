@@ -3,7 +3,7 @@
 {
     <div class="flex-c" style="margin:@Margin">
         <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)"
-                @onclick=@(() => ToggleShowWorthBtn())>
+                @onclick=@(async () => await ToggleShowWorthBtn())>
             @WorthTxt
         </button>
     </div>
@@ -15,7 +15,7 @@
 {
     <div class="flex-c" style="margin:@Margin">
         <button class="btn btn-primary" style="background-image:linear-gradient(to right, cyan,indigo,cyan)"
-                @onclick=@(() => ToggleShowWorthBtn())>
+                @onclick=@(async () => await ToggleShowWorthBtn())>
             @WorthTxt
         </button>
     </div>
@@ -37,10 +37,6 @@
         {
             if (showWorth == value)
                 return;
-
-            showWorth = value;
-            ToggleShowWorth(false);
-            ShowWorthChanged.InvokeAsync(value);
         }
     }
     [Parameter]
@@ -96,11 +92,12 @@
         }
     }
 
-    private void ToggleShowWorthBtn()
+    private async Task ToggleShowWorthBtn()
     {
         ShowWorth = !ShowWorth;
+        await ToggleShowWorth(false);
     }
-    private async void ToggleShowWorth(bool invert = true)
+    private async Task ToggleShowWorth(bool invert = true)
     {
         await JSRuntime.InvokeAsync<object>("toggleExpand", Id);
     }
