@@ -8,7 +8,7 @@
         </button>
     </div>
 }
-<div id="@Id" class="pop-up" >
+<div id="@Id" class="pop-up">
     @ChildContent
 </div>
 @if (BottomButton && ShowButton)
@@ -41,11 +41,14 @@
             showWorth = value;
 
             if (!HitHere)
+            {
                 ToggleShowWorth(false);
+            }
         }
     }
+
     [Parameter]
-    public EventCallback<bool> ShowWorthChanged { get; set; }
+    public Action ShowWorthToggled { get; set; }
 
     private bool setFit { get; set; } = true;
     [Parameter]
@@ -105,6 +108,8 @@
         ShowWorth = !ShowWorth;
         await ToggleShowWorth(false);
         HitHere = false;
+        if (ShowWorthToggled != null)
+            ShowWorthToggled.Invoke();
     }
     private async Task ToggleShowWorth(bool invert = true)
     {

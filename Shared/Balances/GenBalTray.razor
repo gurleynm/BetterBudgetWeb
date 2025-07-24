@@ -19,7 +19,7 @@
 
     <h5 style="align-self:end;color:@Constants.GoodOrBad(BalanceTotal)">@Constants.Pretty(BalanceTotal)</h5>
 </div>
-<PopTray Id="@Id" @bind-ShowWorth=OpenTray ShowButton=false
+<PopTray Id="@Id" ShowWorth=OpenTray ShowButton=false
          StartOpen=!Constants.Mobile>
     <div style="padding-bottom:1em">
         @foreach (var bal in Balances)

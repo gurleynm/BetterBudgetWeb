@@ -42,7 +42,7 @@ else
         {
             @if (DataPoints != null && DataPoints.Count > 0)
             {
-                <PopTray Id="spend" @bind-ShowWorth=ShowChart
+                <PopTray Id="spend" ShowWorth=ShowChart
                          ShowTxt="Show Spending"
                          HideTxt="Hide Spending"
                          TopButton=true
@@ -85,7 +85,7 @@ else
                             <div style="width:100%">
                                 @if (Envelopes.Count > 0)
                                 {
-                                    <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
+                                    <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" ShowWorthToggled=@(() => Goals = !Goals) TopButton=true BottomButton=false>
                                         <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                                         <br style="clear:both" />
                                         <br style="clear:both" />
@@ -179,7 +179,7 @@ else
 
             @if (Envelopes.Count > 0)
             {
-                <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" @bind-ShowWorth=Goals TopButton=true BottomButton=false>
+                <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" ShowWorthToggled=@(() => Goals = !Goals) TopButton=true BottomButton=false>
                     <div style="display:inline-block;width:100%">
                         <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                         <br style="clear:both" />
