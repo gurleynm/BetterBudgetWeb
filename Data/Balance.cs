@@ -98,6 +98,14 @@
                 amount -= ChangeAmount * BalanceTypeModifier;
             }
 
+
+            // Code below does ignores a Loan account type being used
+            if (BalanceType != "Loan" && amount > Value)
+            {
+                double difference = amount - Value;
+                amount = Value - difference;
+            }
+
             amount = Math.Round(amount, 2);
             return amount;
         }
