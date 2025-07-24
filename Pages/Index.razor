@@ -175,7 +175,7 @@ else
         }
         else
         {
-            <BalanceTray @ref=@GlobalBT />
+            <BalanceTray @ref=MGlobalBT />
 
             @if (Envelopes.Count > 0)
             {
@@ -292,6 +292,8 @@ else
     [CascadingParameter]
     public MainLayout MainLayout { get; set; }
 
+    public BalanceTray MGlobalBT { get; set; }
+
     private bool Added { get; set; }
     private bool AddDisabled { get; set; }
 
@@ -346,7 +348,21 @@ else
     private List<DataPoint> DataPoints = new List<DataPoint>();
 
     private bool goals;
-    private bool Goals { get { return goals; } set { goals = value; GlobalBT.SetGoals(goals); } }
+    private bool Goals
+    {
+        get
+        {
+            return goals;
+        }
+        set
+        {
+            goals = value;
+            if (!Constants.Mobile)
+                GlobalBT.SetGoals(goals);
+            else
+                MGlobalBT.SetGoals(goals);
+        }
+    }
 
     private bool filtered;
 
@@ -712,8 +728,14 @@ else
 
     public void Dispose()
     {
-        if (goals && GlobalBT !=  null)
-            GlobalBT.SetGoals(false);
+        if (goals)
+        {
+            if (GlobalBT != null)
+                GlobalBT.SetGoals(false);
+
+            if (MGlobalBT != null)
+                MGlobalBT.SetGoals(false);
+        }
         Constants.TransactionsChanged -= TransactionsUpdated;
         Constants.EnvelopesChanged -= EnvelopesUpdated;
     }
