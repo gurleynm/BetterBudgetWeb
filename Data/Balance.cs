@@ -90,14 +90,14 @@
 
             for (int counter = 0; counter < 2; counter++)
             {
-                double ChangeAmount = Constants.Envelopes
-                                            .Where(en => counter == 0 ? en.Person1Account == Id :
-                                                                        en.Person2Account == Id)
-                                            .Sum(en => counter == 0 ? en.Person1Amount :
-                                                                        en.Person2Amount);
-                amount -= ChangeAmount * BalanceTypeModifier;
-            }
+                envs = Constants.Envelopes.Where(en => counter == 0 ? en.Person1Account == Id :
+                                                                        en.Person2Account == Id).ToList();
 
+                foreach (var en in envs)
+                {
+                    amount -= (counter == 0 ? en.Person1Amount : en.Person2Amount) * BalanceTypeModifier;
+                }
+            }
             amount = Math.Round(amount, 2);
             return amount;
         }
