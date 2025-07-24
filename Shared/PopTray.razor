@@ -37,6 +37,9 @@
         {
             if (showWorth == value)
                 return;
+
+            if (!HitHere)
+                ToggleShowWorth(false);
         }
     }
     [Parameter]
@@ -84,6 +87,8 @@
     private string WorthTxt => !showWorth ? ShowTxt : HideTxt;
     private string FitHeight => SetFit ? "height:fit-content" : "";
 
+    public bool HitHere { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && StartOpen)
@@ -94,8 +99,10 @@
 
     private async Task ToggleShowWorthBtn()
     {
+        HitHere = true;
         ShowWorth = !ShowWorth;
         await ToggleShowWorth(false);
+        HitHere = false;
     }
     private async Task ToggleShowWorth(bool invert = true)
     {
