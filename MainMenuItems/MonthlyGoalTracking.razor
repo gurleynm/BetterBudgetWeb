@@ -150,7 +150,8 @@
         if (e != null && e.Count > 0)
         {
             Refresh();
-            await Donut?.Redrive(Expenses);
+            if (Donut != null)
+             await Donut.Redrive(Expenses);
             StateHasChanged();
         }
     }
