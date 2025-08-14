@@ -24,7 +24,7 @@
     <div style="padding-bottom:1em">
         @foreach (var bal in Balances)
         {
-            <BalanceSlot TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals
+            <BalanceSlot @key=bal.Id TheBalance="bal" SetClass="selected-account" IncludeGoals=Goals
                          ShowPersonInMonthly=Constants.Mobile ParentId=@Id @bind-ParentOpen=OpenTray/>
         }
     </div>
