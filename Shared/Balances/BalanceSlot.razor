@@ -147,6 +147,10 @@
         if (!string.IsNullOrEmpty(ParentId))
             await JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
     }
+    private async Task ResizeMe()
+    {
+        await JSRuntime.InvokeAsync<object>("resizeTray", Id);
+    }
     private bool ThisBalance(Transaction t)
     {
         return t.PaidWithPerson1 == TheBalance.Name ||
@@ -213,8 +217,10 @@
     {
         ShowPerson = false;
     }
-    private void BalancesUpdated(object sender, List<Balance> e)
+    private async void BalancesUpdated(object sender, List<Balance> e)
     {
+        if (Show)
+            await ResizeMe();
         StateHasChanged();
     }
     public void Dispose()
