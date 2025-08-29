@@ -256,7 +256,8 @@
                                     <option>&le;</option>
                                     <option>&ge;</option>
                                 </select>
-                                <input type="number" style="width:5em" placeholder="$" @oninput="@(async (ui) => { TotalAmountNumFilter = (string)ui.Value; })" @onkeydown="@Enter" />
+                                <input type="number" style="width:5em" placeholder="$" @oninput="@(async (ui) => { TotalAmountNumFilter = (string)ui.Value; })" />
+                                <button class="btn btn-primary" @onclick=FilterAmount>Filter Amount</button>
                             </div>
                         </td>
                     </tr>
@@ -410,15 +411,12 @@
         UniqueExpenseTypes = FilteredTransactions.Select(ft => ft.ExpenseType).Distinct().ToList();
         UniqueExpenseTypes.Sort();
     }
-    private async void Enter(KeyboardEventArgs e)
+    private void FilterAmount()
     {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        if (!string.IsNullOrEmpty(TotalAmountFilter) && !string.IsNullOrEmpty(TotalAmountNumFilter))
         {
-            if (!string.IsNullOrEmpty(TotalAmountFilter) && !string.IsNullOrEmpty(TotalAmountNumFilter))
-            {
-                AddFilter(new FilterHelper("Total Amount", TotalAmountFilter + TotalAmountNumFilter));
-                TotalAmountNumFilter = "";
-            }
+            AddFilter(new FilterHelper("Total Amount", TotalAmountFilter + TotalAmountNumFilter));
+            TotalAmountNumFilter = "";
         }
     }
     private string TranColor(string et, double amount)
