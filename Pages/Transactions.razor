@@ -257,6 +257,8 @@
                                     <option>&ge;</option>
                                 </select>
                                 <input type="number" style="width:5em" placeholder="$" @oninput="@(async (ui) => { TotalAmountNumFilter = (string)ui.Value; })" />
+                            </div>
+                            <div class="flex-r-100" style="margin:1em">
                                 <button class="btn btn-primary" @onclick=FilterAmount>Filter Amount</button>
                             </div>
                         </td>
