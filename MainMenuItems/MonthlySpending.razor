@@ -44,7 +44,7 @@
                 @if (TransEdits[transaction.Id])
                 {
                     <td>
-                        <div class="flex-r">
+                        <div class="flex-r" style="justify-content:end">
                             @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                             {
                                 <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => SplitModal(transaction))"><span class="oi oi-pie-chart"></span></button>
