@@ -129,6 +129,7 @@
                                     <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
+                            <option value="NONE">Did not pay off</option>
                         </select>
                     </div>
                     <br />
@@ -180,6 +181,7 @@
                                     <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                 }
                             }
+                            <option value="NONE">Did not pay off</option>
                         </select>
                     </div>
                     <br />
@@ -206,6 +208,7 @@
                                         <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
                                 }
+                                <option value="NONE">Did not transfer</option>
                             </select>
                         </div>
                         <br />
@@ -221,6 +224,7 @@
                                         <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
                                 }
+                                <option value="NONE">Did not transfer</option>
                             </select>
                         </div>
                         <br />
@@ -243,6 +247,7 @@
                                         <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
                                 }
+                                <option value="NONE">Did not transfer</option>
                             </select>
                         </div>
                         <br />
@@ -258,6 +263,7 @@
                                         <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
                                 }
+                                <option value="NONE">Did not transfer</option>
                             </select>
                         </div>
                         <br />
@@ -278,7 +284,6 @@
                             else
                             {
                                 <label>@($"{Constants.Person1} Paid With:")</label>
-
                             }
                             <br />
                             <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
@@ -628,6 +633,7 @@ else
                                             <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                         }
                                     }
+                                    <option value="NONE">Did not pay off</option>
                                 </select>
                             </div>
                             <div class="flex-c" style="margin:0 1em">
@@ -641,6 +647,7 @@ else
                                             <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                         }
                                     }
+                                    <option value="NONE">Did not pay off</option>
                                 </select>
                             </div>
                         }
@@ -657,6 +664,7 @@ else
                                             <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                         }
                                     }
+                                    <option value="NONE">Did not transfer</option>
                                 </select>
                             </div>
                             <div class="flex-c" style="margin:0 1em">
@@ -670,6 +678,7 @@ else
                                             <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                         }
                                     }
+                                    <option value="NONE">Did not transfer</option>
                                 </select>
                             </div>
                             <br style="clear:both;" />
@@ -782,7 +791,16 @@ else
     }
 
     public DateTime TransactionDate { get; set; } = DateTime.Now;
-    public string ExpenseType { get; set; } = "";
+    public string expenseType { get; set; } = "";
+    public string ExpenseType
+    {
+        get { return expenseType; }
+        set
+        {
+            expenseType = value;
+            JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
+        }
+    }
     public string PaidOffPerson1 { get; set; } = "";
     public string PaidOffPerson2 { get; set; } = "";
     public string PaidWithPerson1 { get; set; } = "";
