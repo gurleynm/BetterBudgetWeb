@@ -204,6 +204,12 @@
                 elm.scrollIntoView({ behavior: behave });
             }
         }
+        function ScrollToEnd(id) {
+            var elm = document.getElementById(id,behave = 'smooth');
+            if (elm) {
+                elm.scrollIntoView({ behavior: behave, block: "end" });
+            }
+        }
         function ScrollToTop() {
             ScrollTo('top-piece','instant');
         }

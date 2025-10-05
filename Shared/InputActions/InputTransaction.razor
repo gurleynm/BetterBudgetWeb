@@ -397,7 +397,7 @@
         </div>
         @if (!string.IsNullOrEmpty(ErrorMsg))
         {
-            <p style="color:@ErrorColor">@ErrorMsg</p>
+            <p id="errormsg" style="color:@ErrorColor">@ErrorMsg</p>
         }
     </div>
 }
@@ -759,7 +759,7 @@ else
             <br />
             @if (!string.IsNullOrEmpty(ErrorMsg))
             {
-                <p style="color:@ErrorColor">@ErrorMsg</p>
+                <p id="errormsg" style="color:@ErrorColor">@ErrorMsg</p>
             }
         </div>
     </div>
@@ -1010,6 +1010,7 @@ else
 
         Disabled = false;
         await JSRuntime.InvokeAsync<object>("resizeTray", ParentId);
+        await JSRuntime.InvokeAsync<string>("ScrollToEnd", "errormsg");
         StateHasChanged();
     }
     public async void AddPreset()
@@ -1052,6 +1053,7 @@ else
             PaidWithPerson1 = string.Empty;
         }
 
+        await JSRuntime.InvokeAsync<string>("ScrollToEnd", "errormsg");
         Disabled = false;
         StateHasChanged();
     }

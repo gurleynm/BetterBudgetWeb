@@ -209,7 +209,7 @@
                             <select @bind=BalanceFilter>
                                 <option disabled value="">(Select Account)</option>
                                 @foreach (Balance balance in UniqueBalances.Where(b =>
-                                                            !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)))
+                                                            !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)).OrderBy(b => b.Name))
                                 {
                                     <option>@balance.Name</option>
                                 }
