@@ -38,7 +38,7 @@
                         <td>
                             @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith) && !string.IsNullOrEmpty(NewTrans.TopWhoPaid))
                             {
-                                <div style="color:white">@(NewTrans.TopWhoPaid + " Paid")</div>
+                                <div style="color:white">@("➡️ " + NewTrans.TopWhoPaid)</div>
                             }
                         </td>
                     </tr>
@@ -46,11 +46,11 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="@NewTrans.TopWhoPaid">
+                                <FancySelect @bind-Value="NewTrans.TopWhoPaid" Style="width:8vw;margin:1vh 0 1vh 0;color:white">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
-                                    <option>@Constants.Person2</option>
-                                </select>
+                                    <option>@Constants.Person2</option>                                    
+                                </FancySelect>
                             </td>
                         </tr>
                     }
@@ -68,7 +68,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith) && !string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
                                 {
-                                    <div style="color:white">@(NewTrans.BottomWhoPaid + " Paid")</div>
+                                    <div style="color:white">@("➡️ " + NewTrans.BottomWhoPaid)</div>
                                 }
                             </td>
                         </tr>
@@ -77,11 +77,11 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;color:white" @bind="@NewTrans.BottomWhoPaid">
+                                <FancySelect @bind-Value="NewTrans.BottomWhoPaid" Style="width:8vw;margin:1vh 0 1vh 0;color:white">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
-                                </select>
+                                </FancySelect>
                             </td>
                         </tr>
                     }
@@ -138,7 +138,7 @@
 
                             @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith) && !string.IsNullOrEmpty(NewTrans.TopWhoPaid))
                             {
-                                <div style="color:white">@(NewTrans.TopWhoPaid + " Paid")</div>
+                                <div style="color:white">@("➡️ " + NewTrans.TopWhoPaid)</div>
                             }
                         </td>
                     </tr>
@@ -146,11 +146,11 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <select class="custom-select" style="color:white" @bind="@NewTrans.TopWhoPaid">
+                                <FancySelect @bind-Value="NewTrans.TopWhoPaid" Style="color:white">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
-                                </select>
+                                </FancySelect>
                             </td>
                         </tr>
                     }
@@ -167,7 +167,7 @@
 
                                 @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith) && !string.IsNullOrEmpty(NewTrans.BottomWhoPaid))
                                 {
-                                    <div style="color:white">@(NewTrans.BottomWhoPaid + " Paid")</div>
+                                    <div style="color:white">@("➡️ " + NewTrans.BottomWhoPaid)</div>
                                 }
                             </td>
                         </tr>
@@ -176,11 +176,11 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <select class="custom-select" style="color:white" @bind="@NewTrans.BottomWhoPaid">
+                                <FancySelect @bind-Value="NewTrans.BottomWhoPaid" Style="color:white">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
-                                </select>
+                                </FancySelect>
                             </td>
                         </tr>
                     }

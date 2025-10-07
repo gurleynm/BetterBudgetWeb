@@ -5,7 +5,7 @@
 @inject NavigationManager NavManager
 @inject IJSRuntime JSRuntime
 
-<div style="margin:1em 0;@Constants.TestMobile("width:100%;","width:50%;")">
+<div style="margin:1em 0;@Constants.TestMobile("width:100%;", "width:50%;")">
     <div class="flex-r" style="flex-wrap:wrap;justify-content:space-between;
                                 padding:0; margin: 0;cursor:auto;
                                 width:100%;border: 1px gray solid;
@@ -23,17 +23,17 @@
                         <label style="font-size:smaller;margin:0;color:@TheBalance.TextColor">
                             <i>
                                 @(
-                                    "Tradeable Cash: " + Constants.Pretty(Amount)
-                                    )
-                            </i>
-                        </label>
-                    }
+                                                        "Tradeable Cash: " + Constants.Pretty(Amount)
+                                                        )
+                        </i>
+                    </label>
+                                }
                 }
-                <select class="custom-select" @bind="TheBalance.Person" title="Person's Account" style="color:@TheBalance.TextColor">
+                <FancySelect @bind-Value="TheBalance.Person" Style="@("color:" + TheBalance.TextColor)">
                     <option value="@Constants.Person1" selected>@Constants.Person1</option>
                     <option value="@Constants.Person2">@Constants.Person2</option>
                     <option value="Joint">Joint</option>
-                </select>
+                </FancySelect>
             </div>
         </div>
         <div class="slot-background" style="align-self:flex-end;padding:0; margin: 0;width:35%">
@@ -41,19 +41,19 @@
                 <input class=@ClassColor type="number" @bind-value=@Amount />
                 <br />
                 <div class="flex-c" style="padding:0">
-                    <select class="custom-select" @bind="TheBalance.BalanceType" title="Type of Account is required " style="color:white">
+                    <FancySelect @bind-Value="TheBalance.BalanceType" Style="color:white">
                         <option value="" disabled>(Choose Account Type)</option>
                         <option value="Equity">Equity</option>
                         <option value="Loan">Credit Card/Loan</option>
                         <option value="Income">Savings/Checkings/Income</option>
                         <option value="Stocks">Stocks/Options/Securities</option>
-                    </select>
+                    </FancySelect>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div style="@Constants.TestMobile("width:100%","width:50%")">
+<div style="@Constants.TestMobile("width:100%", "width:50%")">
     <div class="flex-r-100" style="justify-content:space-around;align-items:center;flex-wrap:wrap">
         <div class="flex-r" style="justify-content:flex-start;padding:1em;align-self:start">
             <label style="margin-right:1em">Color:</label>
@@ -61,16 +61,16 @@
         </div>
         <div class="flex-r" style="justify-content:flex-start;padding:1em">
             <label style="margin-right:1em">Text Color:</label>
-            <select class="custom-select" @bind=TheBalance.TextColor title="Type of Account is required ">
+            <FancySelect @bind-Value="TheBalance.TextColor">
                 <option value="white" selected>White</option>
                 <option value="black">Black</option>
-            </select>
+            </FancySelect>
         </div>
         @if (TheBalance.BalanceType != "Stocks")
         {
             <div class="flex-r" style="align-items:center">
                 <label style="margin-right:1em">APR:</label>
-                <input type="number" placeholder="APR (optional)" @oninput="@(async (ui) => { APR = (string)ui.Value;})" />
+                <input type="number" placeholder="APR (optional)" @oninput="@(async (ui) => { APR = (string)ui.Value; })" />
             </div>
         }
         else
@@ -109,8 +109,9 @@
 
     private bool ShowTradable => TheBalance.BalanceType == "Stocks";
     private double amount { get; set; } = 0.00;
-    private double Amount {
-        get{ return amount; }
+    private double Amount
+    {
+        get { return amount; }
         set
         {
             amount = value;

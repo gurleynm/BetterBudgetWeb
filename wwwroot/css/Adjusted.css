@@ -1,8 +1,8 @@
 ﻿@font-face {
-    font-display:swap;
+    font-display: swap;
     font-family: 'CBB Default';
     src: url('../fonts/IMPRISHA.TTF') format('truetype'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}  
+}
 
 .desktop-view {
     background-position: center center;
@@ -20,6 +20,74 @@
     height: 100vh;
     overflow-x: hidden;
     background-repeat: no-repeat;
+}
+
+.custom-select-wrapper {
+    position: relative; /* Essential for positioning the arrow */
+    display: inline-block; /* Or block, depending on your layout */
+}
+
+    .custom-select-wrapper::after {
+        content: '\25BC'; /* Downward-pointing triangle symbol */
+        position: absolute;
+        top: 50%;
+        right: 10px; /* Adjust as needed */
+        transform: translateY(-50%); /* Vertically center the arrow */
+        pointer-events: none; /* Prevents the arrow from interfering with select clicks */
+        color: white; /* Customize arrow color */
+    }
+
+/* Add focus style for accessibility */
+.custom-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    border-color: #007bff;
+}
+
+.custom-select {
+    /* Remove browser default styling */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: none;
+    /* Custom styling for the select box */
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: cyan;
+    background-color: #121727;
+    padding: 10px 40px 10px 15px; /* Add padding for the custom arrow */
+    border: 1px solid #152030;
+    border-radius: 1em;
+    cursor: pointer;
+    width: 200px;
+}
+
+.custom-select option {
+    color:white;
+}
+
+.transaction-container-desktop {
+    justify-content: space-between;
+    align-items: start;
+    flex-wrap: wrap;
+    width: 75%;
+    padding-right: 5%
+}
+
+.transaction-container-mobile {
+    justify-content: center;
+    align-items: start;
+    flex-wrap: wrap;
+    width: 100%;
+    padding-right: 5%
+}
+
+.input-transaction-block {
+    align-items: center;
+    background-color: #152030;
+    border-radius: 1em;
+    padding: 1em;
+    margin: 1em 0;
 }
 
 .add_expense {
@@ -216,29 +284,29 @@ td {
     text-align: center;
 }
 
-td a, td input, td img {
-    vertical-align: middle;
-    display: inline-block;
-}
+    td a, td input, td img {
+        vertical-align: middle;
+        display: inline-block;
+    }
 
 .borderless-table {
     border-radius: 0;
 }
 
-.borderless-table tr td {
-    border: none;
-    text-align: center;
-    vertical-align: middle;
-    font-size: large;
-    padding: .5em;
-    margin: 0;
-}
+    .borderless-table tr td {
+        border: none;
+        text-align: center;
+        vertical-align: middle;
+        font-size: large;
+        padding: .5em;
+        margin: 0;
+    }
 
 .flex-r-100 {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    width:100%;
+    width: 100%;
 }
 
 .flex-r {
@@ -295,7 +363,7 @@ td a, td input, td img {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index:1;
+    z-index: 1;
 }
 
 .top-centered {
@@ -338,11 +406,11 @@ td a, td input, td img {
     height: fit-content;
 }
 
-.btn-grad:hover {
-    background-position: right center; /* change the direction of the change here */
-    color: #fff;
-    text-decoration: none;
-}
+    .btn-grad:hover {
+        background-position: right center; /* change the direction of the change here */
+        color: #fff;
+        text-decoration: none;
+    }
 
 .slide-right {
     width: 50%;
@@ -350,10 +418,10 @@ td a, td input, td img {
     margin-left: 10em;
 }
 
-.slide-right * {
-    animation: slide-hor 2s forwards;
-    transform: translateX(-100%);
-}
+    .slide-right * {
+        animation: slide-hor 2s forwards;
+        transform: translateX(-100%);
+    }
 
 .slide-left {
     width: 50%;
@@ -361,10 +429,10 @@ td a, td input, td img {
     margin-right: 10em;
 }
 
-.slide-left * {
-    animation: slide-hor 2s forwards;
-    transform: translateX(100%);
-}
+    .slide-left * {
+        animation: slide-hor 2s forwards;
+        transform: translateX(100%);
+    }
 
 .slide-up {
     width: 50%;
@@ -372,10 +440,10 @@ td a, td input, td img {
     margin-bottom: 10em;
 }
 
-.slide-up * {
-    animation: slide-vert 2s forwards;
-    transform: translateY(100%);
-}
+    .slide-up * {
+        animation: slide-vert 2s forwards;
+        transform: translateY(100%);
+    }
 
 .slide-down {
     width: 50%;
@@ -383,10 +451,10 @@ td a, td input, td img {
     margin-top: 10em;
 }
 
-.slide-down * {
-    animation: slide-vert 2s forwards;
-    transform: translateY(-100%);
-}
+    .slide-down * {
+        animation: slide-vert 2s forwards;
+        transform: translateY(-100%);
+    }
 
 @keyframes slide-hor {
     to {
@@ -401,7 +469,7 @@ td a, td input, td img {
 }
 
 .footer {
-    margin-top:auto;
+    margin-top: auto;
 }
 
 .componentWrapper {
@@ -452,7 +520,7 @@ td a, td input, td img {
     border-radius: 5px;
     background-color: white;
     color: black;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .unsel-span {
@@ -461,6 +529,7 @@ td a, td input, td img {
     color: white;
     cursor: pointer;
 }
+
 .chart {
     padding: 1rem;
     border-radius: 12px;
@@ -481,6 +550,7 @@ td a, td input, td img {
     display: inline-block;
     height: 23rem;
 }
+
 .chart-bar {
     height: 100%;
     display: flex;
@@ -489,6 +559,7 @@ td a, td input, td img {
     cursor: pointer;
     margin: 0 5px;
 }
+
 .chart-bar__inner {
     height: 100%;
     width: 100%;
@@ -500,37 +571,42 @@ td a, td input, td img {
     flex-direction: column;
     justify-content: flex-end;
 }
+
 .chart-bar__fill-bad {
     background-color: red;
     width: 100%;
     transition: all 0.3s ease-out;
 }
+
 .chart-bar__label {
     font-weight: bold;
     font-size: 1rem;
     text-align: center;
     color: black;
 }
+
 .chart-bar__fill {
     background-color: forestgreen;
     width: 100%;
     transition: all 0.3s ease-out;
 }
+
 label {
     font-family: 'CBB Default';
-    font-size:large;
+    font-size: large;
 }
+
 .plain-announce {
     font-family: 'CBB Default';
     text-align: center;
 }
-.spaced-table tr
-{
+
+.spaced-table tr {
     border-top: .5px solid silver;
     border-bottom: .5px solid silver;
 }
-.spaced-table td
-{
+
+.spaced-table td {
     padding: 1em 0;
 }
 
@@ -551,7 +627,7 @@ label {
     background-color: #1E293B7F;
     border-radius: 2em;
     padding: 1em;
-    margin:1em;
+    margin: 1em;
 }
 
 .stars {

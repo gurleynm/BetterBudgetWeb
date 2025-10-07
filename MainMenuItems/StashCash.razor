@@ -18,13 +18,13 @@
                     <div class="flex-c" style="justify-content:space-between">
                         @if (Envelopes != null && Envelopes.Count > 0)
                         {
-                            <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
+                            <FancySelect @bind-Value=@SelectedEnvID>
                                 <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
                                 @foreach (var env in Envelopes)
                                 {
                                     <option value=@env.Id>@env.Name</option>
                                 }
-                            </select>
+                            </FancySelect>
                             @if (SelectedEnv != null)
                             {
                                 <br />
@@ -91,13 +91,13 @@ else
                     <div class="flex-c" style="justify-content:space-between">
                         @if (Envelopes != null && Envelopes.Count > 0)
                         {
-                            <select class="custom-select" @bind="SelectedEnvID" title="Paid For is required ">
+                            <FancySelect @bind-Value=@SelectedEnvID>
                                 <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
                                 @foreach (var env in Envelopes)
                                 {
                                     <option value=@env.Id>@env.Name</option>
                                 }
-                            </select>
+                            </FancySelect>
                             @if (SelectedEnv != null)
                             {
                                 <br />

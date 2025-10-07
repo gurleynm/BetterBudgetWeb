@@ -1,0 +1,41 @@
+﻿<div class="custom-select-wrapper">
+    <select class="custom-select" @bind="CurrentValue" style="@Style">
+        @ChildContent
+    </select>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Style { get; set; } = "margin:1em 0";
+
+    public string valueLittle { get; set; }
+    [Parameter]
+    public string Value
+    {
+        get { return valueLittle; }
+        set
+        {
+            CurrentValue = value;
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    private string CurrentValue
+    {
+        get => Value;
+        set
+        {
+            if (Value == value)
+                return;
+
+            valueLittle = value;
+            ValueChanged.InvokeAsync(value);
+            StateHasChanged();
+        }
+    }
+}

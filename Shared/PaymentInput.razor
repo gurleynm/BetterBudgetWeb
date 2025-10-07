@@ -2,31 +2,31 @@
 
 @if (!Mobile)
 {
-    <select class="custom-select" style="width:8vw;margin:1vh 0 1vh 0;border:none;color:white" @bind="PaidWith" title="Pick a payment type ">
-        @if (Balances != null)
-        {
+    @if (Balances != null)
+    {
+        <FancySelect @bind-Value="PaidWith" Style="width:8vw;margin:1vh 0 1vh 0;border:none;color:white">
             <option selected value="@string.Empty" disabled>@Balance1Header</option>
             @foreach (var pay in Balances)
             {
                 <option style="background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
             }
             <option value="NONE">Did not pay</option>
-        }
-    </select>
+        </FancySelect>
+    }
 }
 else
 {
-    <select class="custom-select" style="margin:1vh 0 1vh 0;border:none;color:white" @bind="PaidWith" title="Pick a payment type ">
-        @if (Balances != null)
-        {
+    @if (Balances != null)
+    {
+        <FancySelect @bind-Value="PaidWith" Style="margin:1vh 0 1vh 0;border:none;color:white">
             <option selected value="@string.Empty" disabled>@Balance1Header</option>
             @foreach (var pay in Balances)
             {
-                <option>@pay.Name</option>
+                <option style="background-color:@pay.HexColor;color:@pay.TextColor">@pay.Name</option>
             }
             <option value="NONE">Did not pay</option>
-        }
-    </select>
+        </FancySelect>
+    }
 }
 
 @code {
