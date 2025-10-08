@@ -6,7 +6,7 @@
     {
         <div class="floaty-rev" style="position:absolute;height:100%;width:100%;background-color:green;border-radius:@BorderRadius;"></div>
         <div class="floaty-rev flex-c" style="position:absolute;height:100%;width:100%;border-radius:@BorderRadius;
-                                                align-items:center;">
+                                                                                align-items:center;">
             <span class="oi oi-circle-check" style="font-size:x-large"></span>
         </div>
     }
@@ -28,9 +28,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <span style="border:solid white 1px;padding-left:1em">
-                                $<input type="number" style="width:5em;border:none;color:@TextColor" @bind=@NewTrans.TopAmount>
-                            </span>
+                            <input class="custom-input" type="number" @bind-value="@NewTrans.TopAmount" @oninput="@(async (ui) => { NewTrans.TopAmount = double.TryParse((string)ui.Value, out double toss) ? toss : 0; })" />
                         </td>
                         <td>
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
@@ -46,10 +44,10 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <FancySelect @bind-Value="NewTrans.TopWhoPaid" Style="width:8vw;margin:1vh 0 1vh 0;color:white">
+                                <FancySelect @bind-Value="NewTrans.TopWhoPaid" Style="margin:1vh 0 1vh 0;color:white">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
-                                    <option>@Constants.Person2</option>                                    
+                                    <option>@Constants.Person2</option>
                                 </FancySelect>
                             </td>
                         </tr>
@@ -58,9 +56,7 @@
                     {
                         <tr>
                             <td>
-                                <span style="border:solid white 1px;padding-left:1em">
-                                    $<input type="number" style="width:5em;border:none;color:@TextColor" @bind=@NewTrans.BottomAmount>
-                                </span>
+                                <input type="number" class="custom-input" @bind-value="@NewTrans.BottomAmount" @oninput="@(async (ui) => { NewTrans.BottomAmount = (double)ui.Value; })" />
                             </td>
                             <td>
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
@@ -77,7 +73,7 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <FancySelect @bind-Value="NewTrans.BottomWhoPaid" Style="width:8vw;margin:1vh 0 1vh 0;color:white">
+                                <FancySelect @bind-Value="NewTrans.BottomWhoPaid" Style="margin:1vh 0 1vh 0;color:white">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
@@ -113,7 +109,9 @@
                             }
                             else
                             {
-                                <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => Add())">Add</button>
+                                <div class="flex-r-100">
+                                    <button class="btn btn-grad" disabled=@Disabled @onclick="@(() => Add())">Add</button>
+                                </div>
                             }
                         </td>
                     </tr>
@@ -129,10 +127,7 @@
                     </tr>
                     <tr>
                         <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                            <span>
-                                $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
-                                    border:none;border-bottom:solid white 1px;text-align:center;" @bind=@NewTrans.TopAmount>
-                            </span>
+                            <input type="number" class="custom-input" @bind-value="@NewTrans.TopAmount" @oninput="@(async (ui) => { NewTrans.TopAmount = double.TryParse((string)ui.Value, out double toss) ? toss : 0; })" />
 
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
 
@@ -158,10 +153,7 @@
                     {
                         <tr>
                             <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                                <span>
-                                    $<input type="number" style="width:6vw;width:5em;padding:0;margin:0;margin-bottom:1vh;background-color:transparent;color:white;
-                                    border:none;border-bottom:solid white 1px;text-align:center;" @bind=@NewTrans.BottomAmount>
-                                </span>
+                                <input type="number" class="custom-input" @bind-value="@NewTrans.BottomAmount" @oninput="@(async (ui) => { NewTrans.BottomAmount = (double)ui.Value; })" />
 
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
 
@@ -205,14 +197,16 @@
                         <td colspan="3" style="color:white;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
                     </tr>
                     <tr>
-                        <td colspan="3">
+                        <td colspan="3" class="flex-r-100">
                             @if (Disabled)
                             {
                                 <LoadingDots />
                             }
                             else
                             {
-                                <button class="btn btn-primary" disabled=@Disabled @onclick="@(() => Add())">Add</button>
+                                <div class="flex-r-100">
+                                    <button class="btn btn-grad" disabled=@Disabled @onclick="@(() => Add())">Add</button>
+                                </div>
                             }
                         </td>
                     </tr>

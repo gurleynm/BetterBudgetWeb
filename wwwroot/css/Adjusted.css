@@ -40,6 +40,7 @@
     position: relative; /* Essential for positioning the arrow */
     display: inline-block; /* Or block, depending on your layout */
     max-width:100%;
+    width: fit-content;
 }
 
     .custom-select-wrapper::after {
@@ -80,6 +81,29 @@
 .custom-select option {
     color:white;
 }
+
+.custom-input {
+    width: 80%;
+    background: #0a0e1a;
+    color: #f2f2f2;
+    border: 1px solid #1e2538;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+    .custom-input::placeholder {
+        color: #7a8399;
+        opacity: 0.8;
+    }
+
+    .custom-input:focus {
+        outline: none;
+        border-color: #5b7aff;
+        box-shadow: 0 0 8px rgba(91, 122, 255, 0.5);
+        background: #11172a;
+        transform: scale(1.01);
+    }
 
 .transaction-container {
     justify-content: center;
