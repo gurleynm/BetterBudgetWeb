@@ -34,7 +34,7 @@
                                 <h2>@Constants.Pretty(double.TryParse(Person1Amount, out double p1a) && double.TryParse(Person2Amount, out double p2a) ? p1a + p2a : 0)</h2>
 
                                 <PopTray Id="trans-name" ShowWorth=@(TabDictionary["Expense"] || TabDictionary["Income"] || ExpenseType == "Debt") ShowButton=false StartOpen=true>
-                                    <input type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" />
+                                    <input class="custom-input" type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" />
                                 </PopTray>
 
                                 <PopTray Id="exp-drop" ShowWorth=@TabDictionary["Expense"] StartOpen=true ShowButton=false>
@@ -60,7 +60,7 @@
                                         <option value="Debt">Paying off Debt</option>
                                     </FancySelect>
                                 </PopTray>
-                                <input type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
+                                <input class="custom-input" type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
                             </div>
                         </div>
                     }
@@ -90,7 +90,7 @@
                                 </PopTray>
                             }
                             <div class="flex-r-100" style="margin:1em 0">
-                                <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
+                                <input class="custom-input" type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
                             </div>
                         </div>
                         <div class="flex-c-start input-transaction-block">
@@ -122,7 +122,7 @@
                                 </PopTray>
                             }
                             <div class="flex-r-100" style="margin:1em 0">
-                                <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
+                                <input class="custom-input" type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
                                 <h2>@Constants.Pretty(double.TryParse(Person1Amount, out double p1a) && double.TryParse(Person2Amount, out double p2a) ? p1a + p2a : 0)</h2>
 
                                 <PopTray Id="trans-name" ShowWorth=@(TabDictionary["Expense"] || TabDictionary["Income"] || ExpenseType == "Debt") ShowButton=false StartOpen=true>
-                                    <input type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string)ui.Value; })" />
+                                    <input class="custom-input" type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string)ui.Value; })" />
                                 </PopTray>
 
                                 <PopTray Id="exp-drop" ShowWorth=@TabDictionary["Expense"] StartOpen=true ShowButton=false>
@@ -159,7 +159,7 @@
                                         <option value="Debt">Paying off Debt</option>
                                     </FancySelect>
                                 </PopTray>
-                                <input type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
+                                <input class="custom-input" type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
                             </div>
                             <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
                             @if (!string.IsNullOrEmpty(TransactionName))

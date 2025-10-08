@@ -13,8 +13,8 @@
                                 color:@TheBalance.TextColor">
         <div style="align-self:flex-start">
             <div class="flex-c" style="justify-content:space-between;padding:0; margin:0">
-                <input class="better" type="text" placeholder="Account Name"
-                       style="padding-left:2px;margin-bottom:1em;font-size:medium;align-self:flex-start;text-align:start;color:@TheBalance.TextColor" @bind-value=@TheBalance.Name />
+                <input class="custom-input" type="text" placeholder="Account Name"
+                       style="padding-left:1em;margin-bottom:1em;font-size:medium;align-self:flex-start;text-align:start;color:@TheBalance.TextColor" @bind-value=@TheBalance.Name />
 
                 @if (ShowTradable)
                 {
@@ -36,7 +36,7 @@
         </div>
         <div class="slot-background" style="align-self:flex-end;padding:0; margin: 0;width:35%">
             <div class="flex-c" style="justify-content:space-between;padding:0; margin: 0">
-                <input class=@ClassColor type="number" @bind-value=@Amount />
+                <input class="@ClassColor" type="number" @bind-value=@Amount />
                 <br />
                 <div class="flex-c" style="padding:0">
                     <FancySelect @bind-Value="TheBalance.BalanceType" Style="color:white">
@@ -68,7 +68,7 @@
         {
             <div class="flex-r" style="align-items:center">
                 <label style="margin-right:1em">APR:</label>
-                <input type="number" placeholder="APR (optional)" @oninput="@(async (ui) => { APR = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="APR (optional)" @oninput="@(async (ui) => { APR = (string)ui.Value; })" />
             </div>
         }
         else

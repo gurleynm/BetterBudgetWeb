@@ -18,14 +18,14 @@
         <div style="float:left; margin-right:10vw;">
             <label>Envelope Name:</label>
             <br />
-            <input type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string)ui.Value; })" />
+            <input class="custom-input" type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string)ui.Value; })" />
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
         <div style="float:left; margin-right:10vw;">
             <label>Goal Amount:</label>
             <br />
-            <input type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
+            <input class="custom-input" type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
@@ -67,7 +67,7 @@
         <div style="float:left; margin-right:10vw;">
             <label>Update this with Charges:</label>
             <br />
-            <input @bind="UpdateCheck" type="checkbox" />
+            <input class="custom-input" @bind="UpdateCheck" type="checkbox" />
         </div>
         <br style="clear:both" />
         <br />
@@ -91,12 +91,12 @@ else
                     <div>
                         <label>Envelope Saving Goal:</label>
                         <br />
-                        <input type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string)ui.Value; })" />
+                        <input class="custom-input" type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string)ui.Value; })" />
                     </div>
                     <div>
                         <label>Goal Amount:</label>
                         <br />
-                        <input type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
+                        <input class="custom-input" type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
                     </div>
                     <div class="flex-r" style="align-items:baseline">
                         <label style="margin-right:2px">Update this with Charges:</label>
