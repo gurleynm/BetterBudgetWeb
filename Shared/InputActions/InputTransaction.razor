@@ -27,6 +27,43 @@
                 }
 
                 <div class="flex-r-100" style="flex-wrap:wrap">
+                    @if (Constants.Mobile)
+                    {
+                        <div class="flex-c-start">
+                            <div class="flex-c-start input-transaction-block">
+                                <h2>@Constants.Pretty(double.TryParse(Person1Amount, out double p1a) && double.TryParse(Person2Amount, out double p2a) ? p1a + p2a : 0)</h2>
+
+                                <PopTray Id="trans-name" ShowWorth=@(TabDictionary["Expense"] || TabDictionary["Income"] || ExpenseType == "Debt") ShowButton=false StartOpen=true>
+                                    <input type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" />
+                                </PopTray>
+
+                                <PopTray Id="exp-drop" ShowWorth=@TabDictionary["Expense"] StartOpen=true ShowButton=false>
+                                    <FancySelect @bind-Value="ExpenseType">
+                                        <option value="@string.Empty" selected disabled="disabled">(Select Expense)</option>
+                                        @foreach (var et in ExpenseTypes)
+                                        {
+                                            @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --") || et.Contains("-- Envelopes --"))
+                                            {
+                                                <option value="et" disabled>@et</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@et">@et</option>
+                                            }
+                                        }
+                                    </FancySelect>
+                                </PopTray>
+
+                                <PopTray Id="exp-drop-transfer" ShowWorth=@(TabDictionary["Transfer"]) ShowButton=false>
+                                    <FancySelect @bind-Value="ExpenseType">
+                                        <option>Transfer</option>
+                                        <option value="Debt">Paying off Debt</option>
+                                    </FancySelect>
+                                </PopTray>
+                                <input type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
+                            </div>
+                        </div>
+                    }
                     <div class="flex-c-start">
                         <div class="flex-c-start input-transaction-block">
                             <h2 style="margin:0;align-self:start">@Constants.Person1</h2>
@@ -89,64 +126,78 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex-c-start">
-                        <div class="flex-c-start input-transaction-block">
-                            <h2>@Constants.Pretty(double.TryParse(Person1Amount, out double p1a) && double.TryParse(Person2Amount, out double p2a) ? p1a + p2a : 0)</h2>
+                    @if (!Constants.Mobile)
+                    {
+                        <div class="flex-c-start">
+                            <div class="flex-c-start input-transaction-block">
+                                <h2>@Constants.Pretty(double.TryParse(Person1Amount, out double p1a) && double.TryParse(Person2Amount, out double p2a) ? p1a + p2a : 0)</h2>
 
-                            <PopTray Id="trans-name" ShowWorth=@(TabDictionary["Expense"] || TabDictionary["Income"] || ExpenseType == "Debt") ShowButton=false StartOpen=true>
-                                <input type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" />
-                            </PopTray>
+                                <PopTray Id="trans-name" ShowWorth=@(TabDictionary["Expense"] || TabDictionary["Income"] || ExpenseType == "Debt") ShowButton=false StartOpen=true>
+                                    <input type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string)ui.Value; })" />
+                                </PopTray>
 
-                            <PopTray Id="exp-drop" ShowWorth=@TabDictionary["Expense"] StartOpen=true ShowButton=false>
-                                <FancySelect @bind-Value="ExpenseType">
-                                    <option value="@string.Empty" selected disabled="disabled">(Select Expense)</option>
-                                    @foreach (var et in ExpenseTypes)
-                                    {
-                                        @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --") || et.Contains("-- Envelopes --"))
+                                <PopTray Id="exp-drop" ShowWorth=@TabDictionary["Expense"] StartOpen=true ShowButton=false>
+                                    <FancySelect @bind-Value="ExpenseType">
+                                        <option value="@string.Empty" selected disabled="disabled">(Select Expense)</option>
+                                        @foreach (var et in ExpenseTypes)
                                         {
-                                            <option value="et" disabled>@et</option>
+                                            @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --") || et.Contains("-- Envelopes --"))
+                                            {
+                                                <option value="et" disabled>@et</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@et">@et</option>
+                                            }
                                         }
-                                        else
-                                        {
-                                            <option value="@et">@et</option>
-                                        }
-                                    }
-                                </FancySelect>
-                            </PopTray>
+                                    </FancySelect>
+                                </PopTray>
 
-                            <PopTray Id="exp-drop-transfer" ShowWorth=@(TabDictionary["Transfer"]) ShowButton=false>
-                                <FancySelect @bind-Value="ExpenseType">
-                                    <option>Transfer</option>
-                                    <option value="Debt">Paying off Debt</option>
-                                </FancySelect>
-                            </PopTray>
-                            <input type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
-                        </div>
-                        <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
-                    </div>
-                    <PopTray Id="add-preset" ShowWorth=ShowAddPreset ShowButton=false >
-                        <div class="flex-c-start input-transaction-block">
-                            <h4 style="margin:0;align-self:start">Add Preset (optional)</h4>
-
-                            <div class="flex-r" style="justify-content:start;align-items:center">
-                                <label style="margin-right:1vw">Text Color:</label>
-                                <FancySelect @bind-Value="TextColor">
-                                    <option value="#FFFFFF">White</option>
-                                    <option value="#000000">Black</option>
-                                </FancySelect>
+                                <PopTray Id="exp-drop-transfer" ShowWorth=@(TabDictionary["Transfer"]) ShowButton=false>
+                                    <FancySelect @bind-Value="ExpenseType">
+                                        <option>Transfer</option>
+                                        <option value="Debt">Paying off Debt</option>
+                                    </FancySelect>
+                                </PopTray>
+                                <input type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
                             </div>
-                            <br />
-                            <div class="flex-r-100" style="justify-content:space-between">
-                                <label style="margin-right:1vw">Color:</label>
-                                <input @bind=Hex type="color" />
+                            <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
+                            @if (!string.IsNullOrEmpty(TransactionName))
+                            {
+                                <div class="flex-r-100" style="justify-content:space-between;align-items:center">
+                                    <FancySelect @bind-Value="TextColor" Style="width:fit-content">
+                                        <option value="#FFFFFF">White</option>
+                                        <option value="#000000">Black</option>
+                                    </FancySelect>
+                                    <input @bind=Hex type="color" />
+                                </div>
                                 <button class="btn btn-primary" style="background-color:@Hex;" @onclick="AddPreset">
                                     <span style="color:@TextColor;">Add Preset For:</span>
                                     <br />
                                     <span style="color:@TextColor;">@TransactionName</span>
                                 </button>
-                            </div>
+                            }
                         </div>
-                    </PopTray>
+                    }
+                    else
+                    {
+                        <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
+                        @if (!string.IsNullOrEmpty(TransactionName))
+                        {
+                            <div class="flex-r-100" style="justify-content:space-between;align-items:center">
+                                <FancySelect @bind-Value="TextColor" Style="width:fit-content">
+                                    <option value="#FFFFFF">White</option>
+                                    <option value="#000000">Black</option>
+                                </FancySelect>
+                                <input @bind=Hex type="color" />
+                            </div>
+                            <button class="btn btn-primary" style="background-color:@Hex;" @onclick="AddPreset">
+                                <span style="color:@TextColor;">Add Preset For:</span>
+                                <br />
+                                <span style="color:@TextColor;">@TransactionName</span>
+                            </button>
+                        }
+                    }
                 </div>
             </div>
         </div>

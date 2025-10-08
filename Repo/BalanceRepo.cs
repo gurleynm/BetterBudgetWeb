@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Xml.Linq;
 
 namespace BetterBudgetWeb.Repo
 {
@@ -99,6 +100,14 @@ namespace BetterBudgetWeb.Repo
                 name = name.ToUpper();
 
             return Constants.Balances?.FirstOrDefault(b => (IgnoreCase && b.Name.ToUpper() == name) || b.Name == name);
+        }
+        public static string GetNameFromId(string id)
+        {
+            Balance chose = Constants.Balances?.FirstOrDefault(b => b.Id == id);
+            if (chose == null)
+                return "";
+
+            return chose.Name;
         }
     }
 }

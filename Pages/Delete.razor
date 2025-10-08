@@ -11,41 +11,58 @@
     <h1 style="font-family:'CBB Default'">Delete</h1>
 }
 <div class="tab flex-r" style="width:100%;flex-wrap:wrap">
-    <button class="tablinks tab-btn @BalanceClass" @onclick="@ShowBalanceGoal">Account</button>
-    @if(Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "DYNAMIC") != null)
+    <button class="tablinks tab-btn @(ShowBools["Balance"] ? "active" : "")" @onclick="@(() => ShowIndex("Balance"))">Account</button>
+    @if (Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "DYNAMIC") != null)
     {
-        <button class="tablinks tab-btn @DynamicClass" @onclick="@ShowDynamicGoal">Budget Category</button>
+        <button class="tablinks tab-btn @(ShowBools["Dynamic"] ? "active" : "")" @onclick="@(() => ShowIndex("Dynamic"))">Budget Category</button>
     }
     @if (Constants.Monthlies.FirstOrDefault(m => m.Dynamic == "STATIC") != null)
     {
-        <button class="tablinks tab-btn @StaticClass" @onclick="@ShowStaticGoal">1-time Monthly Charge</button>
+        <button class="tablinks tab-btn @(ShowBools["Static"] ? "active" : "")" @onclick="@(() => ShowIndex("Static"))">1-time Monthly Charge</button>
     }
-    @if(Constants.Envelopes.Count > 0)
+    @if (Constants.Envelopes.Count > 0)
     {
-        <button class="tablinks tab-btn @EnvelopesClass" @onclick="@ShowEnvelopes">Goal Envelopes</button>
+        <button class="tablinks tab-btn @(ShowBools["Envelope"] ? "active" : "")" @onclick="@(() => ShowIndex("Envelope"))">Goal Envelopes</button>
+    }
+    @if (Constants.Presets.Count > 0)
+    {
+        <button class="tablinks tab-btn @(ShowBools["Preset"] ? "active" : "")" @onclick="@(() => ShowIndex("Preset"))">Presets</button>
     }
     @*<button class="tablinks @SavingsClass" @onclick="@ShowSavingsGoal">Savings Monthly</button>*@
 </div>
 
-@if (ShowBalance)
+@if (ShowBools["Balance"])
 {
     <DeleteBalance />
 }
-@if (ShowDynamic)
+@if (ShowBools["Dynamic"])
 {
     <DeleteDynamic />
 }
-else if (ShowStatic)
+else if (ShowBools["Static"])
 {
-    <DeleteStatic  />
+    <DeleteStatic />
 }
-else if (ShowEnvelope)
+else if (ShowBools["Envelope"])
 {
     <DeleteEnvelope />
+}
+else if (ShowBools["Preset"])
+{
+    <DeletePreset />
 }
 
 
 @code {
+    Dictionary<string, bool> ShowBools = new()
+    {
+        {"Balance",true}
+        ,{"Dynamic",false}
+        ,{"Static",false}
+        ,{"Envelope",false}
+        ,{"Preset",false}
+    };
+
     private string TransactionName;
     private string ExpenseType;
     private string PaidOffPerson1;
@@ -77,16 +94,6 @@ else if (ShowEnvelope)
         }
     }
 
-    private bool ShowBalance { get; set; } = true;
-    private bool ShowDynamic { get; set; }
-    private bool ShowStatic { get; set; }
-    private bool ShowEnvelope { get; set; }
-
-    private string BalanceClass => ShowBalance ? "active" : "";
-    private string DynamicClass => ShowDynamic ? "active" : "";
-    private string StaticClass => ShowStatic ? "active" : "";
-    private string EnvelopesClass => ShowEnvelope ? "active" : "";
-
     private bool NoBalances { get; set; } = Constants.Balances == null || Constants.Balances.Count == 0;
 
     protected override Task OnInitializedAsync()
@@ -95,33 +102,10 @@ else if (ShowEnvelope)
         return base.OnInitializedAsync();
     }
 
-    private void ShowBalanceGoal()
+    private void ShowIndex(string index)
     {
-        ShowBalance = !ShowBalance;
-        ShowDynamic = false;
-        ShowStatic = false;
-        ShowEnvelope = false;
-    }
-    private void ShowDynamicGoal()
-    {
-        ShowDynamic = !ShowDynamic;
-        ShowBalance = false;
-        ShowStatic = false;
-        ShowEnvelope = false;
-    }
-    private void ShowStaticGoal()
-    {
-        ShowStatic = !ShowStatic;
-        ShowBalance = false;
-        ShowDynamic = false;
-        ShowEnvelope = false;
-    }
-    private void ShowEnvelopes()
-    {
-        ShowEnvelope = !ShowEnvelope;
-        ShowBalance = false;
-        ShowDynamic = false;
-        ShowStatic = false;
+        foreach (string key in ShowBools.Keys)
+            ShowBools[key] = key == index;
     }
 
     private void Refresh(bool accepted)

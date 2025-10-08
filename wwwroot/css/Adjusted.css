@@ -27,6 +27,14 @@
     opacity: 1;
 }
 
+.mini-table {
+    width:fit-content;
+}
+
+.mini-table tr td {
+    padding:1em;
+    margin-top:1em;
+}
 
 .custom-select-wrapper {
     position: relative; /* Essential for positioning the arrow */
