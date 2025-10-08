@@ -18,22 +18,23 @@
         <div style="float:left; margin-right:10vw;">
             <label>Envelope Name:</label>
             <br />
-            <input type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string) ui.Value;})" />
+            <input type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string)ui.Value; })" />
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
         <div style="float:left; margin-right:10vw;">
             <label>Goal Amount:</label>
             <br />
-            <input type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
+            <input type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
         <div style="float:left; margin-right:9vw;">
             <label>@($"{Constants.Person1} Will Pay With:")</label>
             <br />
-            <select class="custom-select" @bind="WillPayPerson1" title="Paid For is required ">
-                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Will Pay)")</option>
+            <FancySelect @bind-Value="WillPayPerson1">
+                <option value="Debt">Paying off Debt</option>
+                <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person1} Will Pay)")</option>
                 @if (Balances != null)
                 {
                     @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
@@ -42,15 +43,15 @@
                     }
                 }
                 <option value="NONE">Will Not Contribute</option>
-            </select>
+            </FancySelect>
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
         <div style="float:left; margin-right:9vw;">
             <label>@($"{Constants.Person2} Will Pay With:")</label>
             <br />
-            <select class="custom-select" @bind="WillPayPerson2" title="Paid For is required ">
-                <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Will Pay)")</option>
+            <FancySelect @bind-Value="WillPayPerson2">
+                <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person2} Will Pay)")</option>
                 @if (Balances != null)
                 {
                     @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
@@ -59,7 +60,7 @@
                     }
                 }
                 <option value="NONE">Will Not Contribute</option>
-            </select>
+            </FancySelect>
         </div>
         <br style="clear:both" />
         <br />
@@ -90,12 +91,12 @@ else
                     <div>
                         <label>Envelope Saving Goal:</label>
                         <br />
-                        <input type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string) ui.Value;})" />
+                        <input type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string)ui.Value; })" />
                     </div>
                     <div>
                         <label>Goal Amount:</label>
                         <br />
-                        <input type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string) ui.Value;})" />
+                        <input type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
                     </div>
                     <div class="flex-r" style="align-items:baseline">
                         <label style="margin-right:2px">Update this with Charges:</label>
@@ -106,8 +107,8 @@ else
                     <div>
                         <label>@($"{Constants.Person1} Will Pay With:")</label>
                         <br />
-                        <select class="custom-select" @bind="WillPayPerson1" title="Paid For is required ">
-                            <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person1} Will Pay)")</option>
+                        <FancySelect @bind-Value="WillPayPerson1">
+                            <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person1} Will Pay)")</option>
                             @if (Balances != null)
                             {
                                 @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
@@ -116,13 +117,13 @@ else
                                 }
                             }
                             <option value="NONE">Will Not Contribute</option>
-                        </select>
+                        </FancySelect>
                     </div>
                     <div>
                         <label>@($"{Constants.Person2} Will Pay With:")</label>
                         <br />
-                        <select class="custom-select" @bind="WillPayPerson2" title="Paid For is required ">
-                            <option value="@string.Empty" selected disabled="disabled">@($"(Choose How {Constants.Person2} Will Pay)")</option>
+                        <FancySelect @bind-Value="WillPayPerson2">
+                            <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person2} Will Pay)")</option>
                             @if (Balances != null)
                             {
                                 @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
@@ -131,7 +132,7 @@ else
                                 }
                             }
                             <option value="NONE">Will Not Contribute</option>
-                        </select>
+                        </FancySelect>
                     </div>
                 </div>
             </div>
@@ -203,15 +204,15 @@ else
         if (string.IsNullOrEmpty(ErrorMsg))
         {
             Envelopes = await EnvelopeRepo.AddOrUpdateAsync(new Data.Envelope
-                {
-                    Name = EnvName,
-                    Goal = am,
-                    Person1Account = WillPayPerson1,
-                    Person2Account = WillPayPerson2,
-                    Person1Amount = 0,
-                    Person2Amount = 0,
-                    UpdateGoal = UpdateCheck ? 1 : 0
-                });
+            {
+                Name = EnvName,
+                Goal = am,
+                Person1Account = WillPayPerson1,
+                Person2Account = WillPayPerson2,
+                Person1Amount = 0,
+                Person2Amount = 0,
+                UpdateGoal = UpdateCheck ? 1 : 0
+            });
 
             Constants.Envelopes = new List<Data.Envelope>(Envelopes);
 

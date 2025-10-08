@@ -6,7 +6,7 @@
         <label>Account Name:</label>
             <br />
             <select @bind="Name">
-            <option value="@string.Empty" selected disabled="disabled">(Choose Account)</option>
+            <option value="@string.Empty" selected disabled="disabled">(Select Account)</option>
                 @foreach (var bal in Balances.OrderBy(b => b.Name))
                 {
                     <option value="@bal.Name">@bal.Name</option>

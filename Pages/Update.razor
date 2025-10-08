@@ -33,7 +33,7 @@
         <label>Select an account:</label>
         <br />
         <select @bind=SelectedBalance title="Select Balance ">
-            <option value="" selected>(Choose an Account)</option>
+            <option value="" selected>(Select an Account)</option>
             @foreach (var bal in Balances.OrderBy(b => b.Name))
             {
                 <option value=@bal.Id>@bal.Name</option>
@@ -51,11 +51,11 @@ else if (ShowEnv)
     <div class="tabcontent">
         <label>Select an envelope:</label>
         <br />
-        <select @bind=SelectedEnv title="Selectn Envelope ">
-            <option value="" selected>(Choose an Envelope)</option>
+        <select @bind=SelectedEnv title="Select an Envelope ">
+            <option value="" selected>(Select an Envelope)</option>
             @foreach (var envs in Envelopes.OrderBy(e => e.Name))
             {
-                <option value=@envs.Id>@envs.Name</option>
+                <option value=@(envs.Id)>@(envs.Name)</option>
             }
         </select>
     </div>
@@ -77,7 +77,7 @@ else if (ShowMon)
         <label>Select a recurring transaction:</label>
         <br />
         <select @bind=SelectedMonthly title="Select Recurring Transaction">
-            <option value="" selected>(Choose a recurring transaction)</option>
+            <option value="" selected>(Select a recurring transaction)</option>
             @foreach (var mon in Monthlies)
             {
                 <option>@mon</option>
@@ -222,7 +222,6 @@ else if (ShowMon)
 
     private void EnvelopesUpdated(object sender, List<Data.Envelope> e)
     {
-        SelectedEnv = Envelopes.Count > 0 ? Envelopes[0].Name : "";
         StateHasChanged();
     }
 

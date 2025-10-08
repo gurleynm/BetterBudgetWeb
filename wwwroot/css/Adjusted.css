@@ -22,9 +22,16 @@
     background-repeat: no-repeat;
 }
 
+.fade-in {
+    animation: fade-in 1s 1 linear;
+    opacity: 1;
+}
+
+
 .custom-select-wrapper {
     position: relative; /* Essential for positioning the arrow */
     display: inline-block; /* Or block, depending on your layout */
+    max-width:100%;
 }
 
     .custom-select-wrapper::after {
@@ -66,20 +73,11 @@
     color:white;
 }
 
-.transaction-container-desktop {
-    justify-content: space-between;
-    align-items: start;
-    flex-wrap: wrap;
-    width: 75%;
-    padding-right: 5%
-}
-
-.transaction-container-mobile {
+.transaction-container {
     justify-content: center;
     align-items: start;
     flex-wrap: wrap;
     width: 100%;
-    padding-right: 5%
 }
 
 .input-transaction-block {
@@ -87,7 +85,9 @@
     background-color: #152030;
     border-radius: 1em;
     padding: 1em;
-    margin: 1em 0;
+    margin: 1em .5em;
+    height:fit-content;
+    transition: height 0.3s ease;
 }
 
 .add_expense {

@@ -8,33 +8,33 @@
         <div class="flex-c-start" style="padding:1em">
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Security Name:</label>
-                <input type="text" placeholder="Security Name" style="text-transform:uppercase" @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
+                <input type="text" placeholder="Security Name" style="text-transform:uppercase" @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper(); })" />
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Security Type:</label>
-                <select class="custom-select" @bind="SecType" title="Type of Balance is required ">
+                <FancySelect @bind-Value="SecType">
                     <option value="Stock" selected>Stock</option>
                     <option value="ETF">ETF</option>
                     @*<option value="Call">Call Option</option>
                       <option value="Put">Put Option</option>
                     <option value="Crypto">Crypto</option>*@
-                </select>
+                </FancySelect>
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Number of Shares:</label>
-                <input type="number" style="width:20vw" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+                <input type="number" style="width:20vw" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string)ui.Value; })" />
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Share Price at Sale:</label>
-                <input type="number" style="width:23vw" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
+                <input type="number" style="width:23vw" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string)ui.Value; })" />
             </div>
             <div class="flex-r-100">
                 <button class="btn btn-secondary" style="margin:auto 0" disabled=@Disabled @onclick=Submit>
                     @("Buy in " + ChosenBalance.Name
-                        )
-                </button>
-            </div>
+                                )
+            </button>
         </div>
+    </div>
     }
     <br style="clear:both" />
     <br />
@@ -51,24 +51,24 @@ else
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Security Name:</label>
                 <input type="text" placeholder="Name" style="text-transform:uppercase;width:6vw"
-                       @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper();})" />
+                       @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper(); })" />
             </div>
             <div class="flex-c-start" style="margin:0 1vw;">
                 <label>Security Type:</label>
-                <select class="custom-select" @bind="SecType" title="Type of Balance is required ">
+                <FancySelect @bind-Value="SecType">
                     <option value="Stock" selected>Stock</option>
                     <option value="ETF">ETF</option>
                     @*<option value="Call">Call Option</option>
             <option value="Put">Put Option</option>
                     <option value="Crypto">Crypto</option>*@
-                </select>
+                </FancySelect>
             </div>
             @if (@SecType == "Call" || @SecType == "Put")
             {
                 <div class="flex-c-start" style="margin: 0 1vw;">
                     <label>Strike Price:</label>
                     <br />
-                    <input type="number" style="width:7vw" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string) ui.Value;})" />
+                    <input type="number" style="width:7vw" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string)ui.Value; })" />
                 </div>
                 <div>
                     <label>Expiration Date:</label>
@@ -79,30 +79,30 @@ else
             }
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label># of Shares:</label>
-                <input type="number" style="width:7vw" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string) ui.Value;})" />
+                <input type="number" style="width:7vw" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string)ui.Value; })" />
             </div>
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Cost Per Share:</label>
-                <input type="number" style="width:8vw" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string) ui.Value;})" />
+                <input type="number" style="width:8vw" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string)ui.Value; })" />
             </div>
             @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
             {
                 <div class="flex-c-start" style="margin: 0 1vw;">
                     <label>Person:</label>
                     <br />
-                    <select class="custom-select" @bind="Person" title="Person's Balance ">
+                    <FancySelect @bind-Value="Person">
                         <option value="@Constants.Person1" selected>@Constants.Person1</option>
                         <option value="@Constants.Person2">@Constants.Person2</option>
-                    </select>
+                    </FancySelect>
                 </div>
             }
-            <div class="flex-c">
-                <button class="btn btn-secondary" style="margin: 0 1vw;width:fit-content;height:fit-content" disabled=@Disabled @onclick=Submit>
-                    @("Buy in " + ChosenBalance.Name
-                        )
-                </button>
-            </div>
+        <div class="flex-c">
+            <button class="btn btn-secondary" style="margin: 0 1vw;width:fit-content;height:fit-content" disabled=@Disabled @onclick=Submit>
+                @("Buy in " + ChosenBalance.Name
+                            )
+            </button>
         </div>
+    </div>
     }
     @if (!string.IsNullOrEmpty(ErrorMsg))
     {
@@ -199,16 +199,16 @@ else
         if (string.IsNullOrEmpty(ErrorMsg))
         {
             await SecurityRepo.AddOrUpdateAsync(new Data.Security
-                {
-                    Name = Name,
-                    Person = Person,
-                    NumShares = double.TryParse(NumShares, out double toss) ? toss : 0,
-                    AvgCost = double.TryParse(AvgCost, out double toss2) ? toss2 : 0,
-                    SecType = SecType,
-                    StrikePrice = double.TryParse(StrikePrice, out double toss1) ? toss1 : 0,
-                    DateOfSecurity = ExpirationDate,
-                    BalanceFrom = BalanceSelected
-                });
+            {
+                Name = Name,
+                Person = Person,
+                NumShares = double.TryParse(NumShares, out double toss) ? toss : 0,
+                AvgCost = double.TryParse(AvgCost, out double toss2) ? toss2 : 0,
+                SecType = SecType,
+                StrikePrice = double.TryParse(StrikePrice, out double toss1) ? toss1 : 0,
+                DateOfSecurity = ExpirationDate,
+                BalanceFrom = BalanceSelected
+            });
 
             ErrorColor = "green";
             ErrorMsg = Name + " was added!";

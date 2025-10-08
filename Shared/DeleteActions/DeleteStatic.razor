@@ -6,7 +6,7 @@
         <label>One-time Monthly Charge:</label>
         <br />
         <select @bind="Name">
-            <option value="@string.Empty" selected disabled="disabled">(Choose Type)</option>
+            <option value="@string.Empty" selected disabled="disabled">(Select Type)</option>
             @foreach (var mon in MonthliesNames)
             {
                 <option value="@mon">@mon</option>
@@ -19,7 +19,7 @@
             <label>When (Month Year):</label>
             <br />
             <select @bind="SelectMonth">
-                <option value="@string.Empty" disabled="disabled">(Choose Month)</option>
+                <option value="@string.Empty" disabled="disabled">(Select Month)</option>
                 @foreach (var item in MonthsToShow)
                 {
                     <option value="@item">@item</option>
@@ -28,7 +28,7 @@
             @if (!string.IsNullOrEmpty(SelectMonth))
             {
                 <select @bind="SelectYear">
-                    <option value="@string.Empty" disabled="disabled">(Choose Year)</option>
+                    <option value="@string.Empty" disabled="disabled">(Select Year)</option>
                     @foreach (var item in YearsToShow)
                     {
                         <option value="@item">@item</option>

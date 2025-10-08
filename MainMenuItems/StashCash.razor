@@ -6,7 +6,7 @@
     <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
         <div class="modal-dialog" role="document">
             <div class="modal-content" style="width:50vw;position: absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"];">
+                                transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"];">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
                         Stash Cash
@@ -18,13 +18,15 @@
                     <div class="flex-c" style="justify-content:space-between">
                         @if (Envelopes != null && Envelopes.Count > 0)
                         {
-                            <FancySelect @bind-Value=@SelectedEnvID>
-                                <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
-                                @foreach (var env in Envelopes)
-                                {
-                                    <option value=@env.Id>@env.Name</option>
-                                }
-                            </FancySelect>
+                            <div>
+                                <FancySelect @bind-Value=@SelectedEnvID>
+                                    <option selected disabled="disabled">@($"(Select Goal Envelope)")</option>
+                                    @foreach (var env in Envelopes)
+                                    {
+                                        <option value=@env.Id>@env.Name</option>
+                                    }
+                                </FancySelect>
+                            </div>
                             @if (SelectedEnv != null)
                             {
                                 <br />
@@ -91,13 +93,15 @@ else
                     <div class="flex-c" style="justify-content:space-between">
                         @if (Envelopes != null && Envelopes.Count > 0)
                         {
-                            <FancySelect @bind-Value=@SelectedEnvID>
-                                <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
-                                @foreach (var env in Envelopes)
-                                {
-                                    <option value=@env.Id>@env.Name</option>
-                                }
-                            </FancySelect>
+                            <div>
+                                <FancySelect @bind-Value=@SelectedEnvID>
+                                    <option selected disabled="disabled">@($"(Select Goal Envelope)")</option>
+                                    @foreach (var env in Envelopes)
+                                    {
+                                        <option value=@env.Id>@env.Name</option>
+                                    }
+                                </FancySelect>
+                            </div>
                             @if (SelectedEnv != null)
                             {
                                 <br />

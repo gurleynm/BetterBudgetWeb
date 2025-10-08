@@ -17,6 +17,7 @@
 <GoogleAnalytic />
 
 <PageTitle>Index</PageTitle>
+
 @if (Transactions == null)
 {
     <div>Login successful. Pulling data...</div>
@@ -139,7 +140,7 @@ else
                         <br />
                         @if (Transactions.Count > 0)
                         {
-                            <div class="flex-r-100" style="height:fit-content">
+                            <div class="flex-r-100" style="height:fit-content;flex-wrap:wrap">
                                 <div>
                                     <FancySelect @bind-Value="SelectedMonth">
                                         @foreach (var dt in FoundMonths)
@@ -148,7 +149,6 @@ else
                                         }
                                         <option value="All">All</option>
                                     </FancySelect>
-
                                     <FancySelect @bind-Value="SelectedYear">
                                         @foreach (var dt in FoundYears)
                                         {
@@ -156,6 +156,8 @@ else
                                         }
                                         <option value="All">All</option>
                                     </FancySelect>
+                                </div>
+                                <div>
                                     @if (ValidChoice)
                                     {
                                         <button class="btn btn-secondary" style="margin:1vw" @onclick="DownloadCSV"><span class="oi oi-data-transfer-download"></span> CSV</button>

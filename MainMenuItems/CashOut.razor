@@ -6,7 +6,7 @@
     <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
         <div class="modal-dialog" role="document">
             <div class="modal-content" style="width:50vw;position: absolute;left: 50%; top: 50%;
-                        transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"]">
+                            transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"]">
                 <div class="modal-header">
                     <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
                         Cash Out
@@ -18,20 +18,22 @@
                     <div class="flex-c" style="justify-content:space-between">
                         @if (Envelopes != null && Envelopes.Count > 0)
                         {
-                            <FancySelect @bind-Value=@SelectedEnvID>
-                                <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
-                                @foreach (var env in Envelopes)
-                                {
-                                    <option value=@env.Id>@env.Name</option>
-                                }
-                            </FancySelect>
+                            <div>
+                                <FancySelect @bind-Value=@SelectedEnvID>
+                                    <option selected disabled="disabled">@($"(Select Goal Envelope)")</option>
+                                    @foreach (var env in Envelopes)
+                                    {
+                                        <option value=@env.Id>@env.Name</option>
+                                    }
+                                </FancySelect>
+                            </div>
                             @if (SelectedEnv != null)
                             {
                                 <br />
                                 <div class="flex-r" style="justify-content:space-between;width:100%;">
                                     <div style="align-content:flex-start">
                                         <Stashvelope Name=@SelectedEnv.Name Scale=20 Font_Size=2 Adding=false
-                                      Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                                                     Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
                                     <div class="flex-c">
                                         <img alt="Cash Arrow" src="/images/CashArrow.webp" style="height:3vw;cursor:pointer" @onclick=@(() => HandleCash()) />
@@ -92,13 +94,15 @@ else
                     <div class="flex-c" style="justify-content:space-between">
                         @if (Envelopes != null && Envelopes.Count > 0)
                         {
-                            <FancySelect @bind-Value=@SelectedEnvID>
-                                <option selected disabled="disabled">@($"(Choose Goal Envelope)")</option>
-                                @foreach (var env in Envelopes)
-                                {
-                                    <option value=@env.Id>@env.Name</option>
-                                }
-                            </FancySelect>
+                            <div>
+                                <FancySelect @bind-Value=@SelectedEnvID>
+                                    <option selected disabled="disabled">@($"(Select Goal Envelope)")</option>
+                                    @foreach (var env in Envelopes)
+                                    {
+                                        <option value=@env.Id>@env.Name</option>
+                                    }
+                                </FancySelect>
+                            </div>
                             @if (SelectedEnv != null)
                             {
                                 <br />
@@ -140,7 +144,7 @@ else
                                     </div>
                                     <div style="align-content:flex-end">
                                         <Stashvelope Name=@SelectedEnv.Name Scale=80 Font_Size=8 Adding=false
-                                      Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
+                                                     Cashing=Cashing Goal=@SelectedEnv.Goal Saved=@SelectedEnv.TotalAmount />
                                     </div>
                                 </div>
                             }
@@ -216,9 +220,9 @@ else
                 ErrorMsg += $"{Constants.Person2} must contribute. ";
         }
 
-        if (Math.Round(SelectedEnv.Person1Amount,2) - Person1Amount < 0)
+        if (Math.Round(SelectedEnv.Person1Amount, 2) - Person1Amount < 0)
             ErrorMsg += $"Envelope value for {Constants.Person1} cannot be less than zero. {Constants.Person1} has {Constants.Pretty(SelectedEnv.Person1Amount)} saved. ";
-        if (Math.Round(SelectedEnv.Person2Amount - Person2Amount,2) < 0)
+        if (Math.Round(SelectedEnv.Person2Amount - Person2Amount, 2) < 0)
             ErrorMsg += $"Envelope value for {Constants.Person2} cannot be less than zero. {Constants.Person2} has {Constants.Pretty(SelectedEnv.Person2Amount)} saved. ";
 
 
@@ -234,9 +238,9 @@ else
             StateHasChanged();
             Task runner = EnvelopeRepo.AddOrUpdateAsync(UpdateEnv);
             await Task.Delay(2000);
-            
+
             await runner;
-            
+
             StateHasChanged();
             Cashing = false;
         }

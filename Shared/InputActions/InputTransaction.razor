@@ -3,571 +3,160 @@
 @using BetterBudgetWeb.Shared.PresetSections
 @inject IJSRuntime JSRuntime
 
-@if (false)
-{
-    <div style="width:fit-content;">
-        @if (Presets != null && Presets.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER)
-        {
-            <br style="clear:both" />
-            <AdvancedWrapper Bottom="false" Top="true">
-                <div style="width:100%;height:fit-content;border:@Constants.Options(Constants.TryingItOut, "", "solid silver 1px");">
-                    <h1 style="text-align:center">Presets:</h1>
-                    <div style="display:table;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap">
-                        @foreach (var et in ExpenseTypesForPresets[SelectedTab])
-                        {
-                            <PresetBlock ExpenseType=@et Preset=Preset />
-                        }
-                    </div>
-                    @if (PresetsForDel != null && PresetsForDel.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER)
-                    {
-                        <div class="flex-r" style="width:100%;justify-content:space-evenly;align-items:center;padding:1em;border:solid red 1px;">
-                            <div><span>Delete Preset:</span></div>
-                            <div>
-                                <select @bind="@SelectedPreset">
-                                    <option selected disabled value='@("NONE")'>(Select Preset)</option>
-                                    @foreach (var pre in PresetsForDel)
-                                    {
-                                        <option value="@pre.Id">@pre.Name</option>
-                                    }
-                                </select>
-                            </div>
-                            <div><button class="btn btn-danger" @onclick="DeletePreset">Delete</button></div>
-                        </div>
-                    }
+<div class="tabcontent" style="border-color:cyan">
+    <div class="flex-c">
+        <div class="flex-r" style="justify-content:space-between;align-items:start;width:100%">
+            <div class="flex-c-start transaction-container" style="width:100%">
+                <div class="tab flex-r" style="width:100%;flex-wrap:wrap">
+                    <button class="tablinks tab-btn @ExpenseTabClass" @onclick=@(() => TabToggle("Expense"))>Expense</button>
+                    <button class="tablinks tab-btn @IncomeTabClass" @onclick=@(() => TabToggle("Income"))>Income</button>
+                    <button class="tablinks tab-btn @TransferTabClass" @onclick=@(() => TabToggle("Transfer"))>Transfer/Pay Debt</button>
                 </div>
-            </AdvancedWrapper>
-        }
-        <br />
-        <br />
-        <div id="tran-name" class="flex-r" style="justify-content:start;flex-wrap:wrap">
-            <div style="width:100%;">
-                <label>Date:</label>
-                <input type="date" placeholder="Date" @bind-value="@TransactionDate" />
-                <br />
-                <div>
-                    @if (ExpenseType != "Transfer")
-                    {
-                        <label>Transaction:</label>
-                        <br />
-                        <input type="text" placeholder="Name" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string)ui.Value; })" />
-                    }
-                </div>
-                <br />
-                <div>
-                    <label>Expense Type:</label>
-                    <br />
-                    <select class="custom-select" style="margin:1vh 0 1vh 0;width:fit-content" @bind="ExpenseType" title="Pick an Expense Type ">
-                        <option value="@string.Empty" selected disabled="disabled">Expense</option>
-                        @foreach (var et in ExpenseTypes)
-                        {
-                            @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --") || et.Contains("-- Envelopes --"))
-                            {
-                                <option value="et" disabled>@et</option>
-                            }
-                            else
-                            {
-                                @if (et == "Paying Off Debt")
-                                {
-                                    <option value="Debt">@et</option>
-                                }
-                                else
-                                {
-                                    @if (et == "Transfer Between Accounts")
-                                    {
-                                        <option value="Transfer">@et</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@et">@et</option>
-                                    }
-                                }
-                            }
-                        }
-                    </select>
-                </div>
-                @if (ExpenseType == "Debt")
+                @if (Presets != null && Presets.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER)
                 {
-                    <br />
-                    <div>
-                        <label>@($"{Constants.Person1} Paying With:")</label>
-                        <br />
-                        <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
-                            <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person1}'s Account)")</option>
-                            @if (ExpenseType == "Equity")
+                    <AdvancedWrapper Left="true" Top="true">
+                        <div class="flex-r-100" style="flex-wrap:wrap;margin-top:1em">
+                            @foreach (var pre in LocalET.OrderBy(p => p.Name))
                             {
-                                @if (Person1BalancesEquities != null)
-                                {
-                                    @foreach (var pay in Person1BalancesEquities)
-                                    {
-                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                    }
-                                }
+                                <div>
+                                    <button class="btn btn-primary" style="margin-left:1vw;margin-bottom:1vh;background-color:@pre.HexColor;color:@pre.TextColor;" @onclick="@(() => Preset(@pre))">@pre.Name</button>
+                                </div>
                             }
-                            else
+                        </div>
+                    </AdvancedWrapper>
+                }
+
+                <div class="flex-r-100" style="flex-wrap:wrap">
+                    <div class="flex-c-start">
+                        <div class="flex-c-start input-transaction-block">
+                            <h2 style="margin:0;align-self:start">@Constants.Person1</h2>
+                            @if (Person1Balances != null)
                             {
-                                @if (Person1Balances != null)
-                                {
+                                <FancySelect @bind-Value="PaidWithPerson1">
+                                    <option value="">@(TabDictionary["Expense"] ? "(Select Payment Method)" : "(Select Account)")</option>
                                     @foreach (var pay in Person1Balances)
                                     {
                                         <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
-                                }
-                            }
-                            <option value="NONE">Did not pay</option>
-                        </select>
-                    </div>
-                    <br />
-                    <div>
-                        <label>@($"{Constants.Person1} Paying Off:")</label>
-                        <br />
-                        <select class="custom-select" @bind="PaidOffPerson1" title="Paid Off is required ">
-                            <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                            @if (Person1BalancesLoans != null)
-                            {
-                                @foreach (var pay in Person1BalancesLoans)
-                                {
-                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                }
-                            }
-                            <option value="NONE">Did not pay off</option>
-                        </select>
-                    </div>
-                    <br />
-                    <div>
-                        <label>@($"{Constants.Person1} Amount:")</label>
-                        <br />
-                        <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
-                    </div>
-                    <br />
-                    <br />
-                    <div>
-                        <label>@($"{Constants.Person2} Paying With:")</label>
-                        <br />
-                        <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
-                            <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person2}'s Account)")</option>
-                            @if (ExpenseType == "Equity")
-                            {
-                                @if (Person2BalancesEquities != null)
-                                {
-                                    @foreach (var pay in Person2BalancesEquities)
-                                    {
-                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                @if (Person2Balances != null)
-                                {
-                                    @foreach (var pay in Person2Balances)
-                                    {
-                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                    }
-                                }
-                            }
-                            <option value="NONE">Did not pay</option>
-                        </select>
-                    </div>
-                    <br />
-                    <div>
-                        <label><strong>@($"{Constants.Person2} Paying Off:")</strong></label>
-                        <br />
-                        <select class="custom-select" @bind="PaidOffPerson2" title="Paid Off is required ">
-                            <option value="@string.Empty" selected disabled="disabled">(Choose What You Paid Off)</option>
-                            @if (Person2BalancesLoans != null)
-                            {
-                                @foreach (var pay in Person2BalancesLoans)
-                                {
-                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                }
-                            }
-                            <option value="NONE">Did not pay off</option>
-                        </select>
-                    </div>
-                    <br />
-                    <div>
-                        <label>@($"{Constants.Person2} Amount:")</label>
-                        <br />
-                        <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
-                    </div>
-                }
-                else
-                {
-                    @if (ExpenseType == "Transfer")
-                    {
-                        <br />
-                        <div>
-                            <label>@($"{Constants.Person1} Transferring From:")</label>
-                            <br />
-                            <select class="custom-select" @bind="PaidWithPerson1" title="Transfer account is required ">
-                                <option value="@string.Empty" selected disabled="disabled">(Choose What You Are Transferring From)</option>
-                                @if (Person1BalancesNotLoans != null)
-                                {
-                                    @foreach (var pay in Person1BalancesNotLoans)
-                                    {
-                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                    }
-                                }
-                                <option value="NONE">Did not transfer</option>
-                            </select>
-                        </div>
-                        <br />
-                        <div>
-                            <label>@($"{Constants.Person1} Transferring To:")</label>
-                            <br />
-                            <select class="custom-select" @bind="PaidOffPerson1" title="Transfer account is required ">
-                                <option value="@string.Empty" selected disabled="disabled">(Choose What You Are Transferring To)</option>
-                                @if (Person1BalancesNotLoans != null)
-                                {
-                                    @foreach (var pay in Person1BalancesNotLoans)
-                                    {
-                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                    }
-                                }
-                                <option value="NONE">Did not transfer</option>
-                            </select>
-                        </div>
-                        <br />
-                        <div>
-                            <label>@($"{Constants.Person1} Amount:")</label>
-                            <br />
-                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
-                        </div>
-                        <br />
-                        <br />
-                        <div>
-                            <label>@($"{Constants.Person2} Transferring From:")</label>
-                            <br />
-                            <select class="custom-select" @bind="PaidWithPerson2" title="Transfer account required ">
-                                <option value="@string.Empty" selected disabled="disabled">(Choose What You Are Transferring From)</option>
-                                @if (Person2BalancesNotLoans != null)
-                                {
-                                    @foreach (var pay in Person2BalancesNotLoans)
-                                    {
-                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                    }
-                                }
-                                <option value="NONE">Did not transfer</option>
-                            </select>
-                        </div>
-                        <br />
-                        <div>
-                            <label>@($"{Constants.Person2} Transferring To:")</label>
-                            <br />
-                            <select class="custom-select" @bind="PaidOffPerson2" title="Transfer account required ">
-                                <option value="@string.Empty" selected disabled="disabled">(Choose What You Are Transferring To)</option>
-                                @if (Person2BalancesNotLoans != null)
-                                {
-                                    @foreach (var pay in Person2BalancesNotLoans)
-                                    {
-                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                    }
-                                }
-                                <option value="NONE">Did not transfer</option>
-                            </select>
-                        </div>
-                        <br />
-                        <div>
-                            <label>@($"{Constants.Person2} Amount:")</label>
-                            <br />
-                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
-                        </div>
-                    }
-                    else
-                    {
-                        <br />
-                        <div>
-                            @if (ExpenseType == "Income" || ExpenseType == "Equity")
-                            {
-                                <label>@($"{Constants.Person1} was Paid Into:")</label>
-                            }
-                            else
-                            {
-                                <label>@($"{Constants.Person1} Paid With:")</label>
-                            }
-                            <br />
-                            <select class="custom-select" @bind="PaidWithPerson1" title="Paid For is required ">
-                                <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person1}'s Account)")</option>
-                                @if (ExpenseType == "Equity")
-                                {
-                                    @if (Person1BalancesEquities != null)
-                                    {
-                                        @foreach (var pay in Person1BalancesEquities)
-                                        {
-                                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    @if (Person1Balances != null)
-                                    {
+                                    <option value="NONE">Did not pay</option>
+                                </FancySelect>
+                                <PopTray Id="transfer-p1" ShowWorth=@TabDictionary["Transfer"] ShowButton=false>
+                                    <h4 style="margin:0">@(ExpenseType == "Transfer" ? "Transferring to..." : "Paying off...")</h4>
+                                    <FancySelect @bind-Value="PaidOffPerson1">
+                                        <option value="">(Select Account)</option>
                                         @foreach (var pay in Person1Balances)
                                         {
                                             <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                         }
-                                    }
-                                }
-                                <option value="NONE">Did not pay</option>
-                            </select>
-                        </div>
-                        <br />
-                        <div>
-                            <label>@($"{Constants.Person1} Amount:")</label>
-                            <br />
-                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
-                        </div>
-                        <br />
-                        <div>
-                            @if (ExpenseType == "Income" || ExpenseType == "Equity")
-                            {
-                                <label>@($"{Constants.Person2} was Paid Into:")</label>
+                                        <option value="NONE">Did not pay</option>
+                                    </FancySelect>
+                                </PopTray>
                             }
-                            else
+                            <div class="flex-r-100" style="margin:1em 0">
+                                <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
+                            </div>
+                        </div>
+                        <div class="flex-c-start input-transaction-block">
+                            <h2 style="margin:0;align-self:start">@Constants.Person2</h2>
+                            @if (Person2Balances != null)
                             {
-                                <label>@($"{Constants.Person2} Paid With:")</label>
-
-                            }
-                            <br />
-                            <select class="custom-select" @bind="PaidWithPerson2" title="Paid For is required ">
-                                <option value="@string.Empty" selected disabled="disabled">@($"(Choose {Constants.Person2}'s Account)")</option>
-                                @if (ExpenseType == "Equity")
-                                {
-                                    @if (Person2BalancesEquities != null)
-                                    {
-                                        @foreach (var pay in Person2BalancesEquities)
-                                        {
-                                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    @if (Person2Balances != null)
-                                    {
-                                        @foreach (var pay in Person2Balances)
-                                        {
-                                            <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                        }
-                                    }
-                                }
-                                <option value="NONE">Did not pay</option>
-                            </select>
-                        </div>
-                        <br />
-                        <div>
-                            <label>@($"{Constants.Person2} Amount:")</label>
-                            <br />
-                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
-                        </div>
-                    }
-                }
-            </div>
-            @if (ShowAddPreset)
-            {
-                <div class="flex-r-100" style="margin-top:1em;padding:1em">
-                    <div class="flex-r-100" style="align-items:center;justify-content:space-between;height:fit-content">
-                        <div class="flex-c" style="justify-content:start;width:fit-content">
-                            <label style="float:left;margin-right:1vw">Text Color:</label>
-                            <select class="custom-select" @bind=TextColor title="Balance color is required ">
-                                <option value="#FFFFFF">White</option>
-                                <option value="#000000">Black</option>
-                            </select>
-                        </div>
-                        <br />
-                        <div class="flex-c" style="justify-content:start;width:fit-content">
-                            <label style="float:left;margin-right:1vw">Color:</label>
-                            <input @bind=Hex type="color" />
-                        </div>
-                        <br />
-                        <div class="flex-c">
-                            <button class="btn btn-primary" style="float:right;background-color:@Hex;" @onclick="AddPreset">
-                                <span style="color:@TextColor;">Add Preset For:</span>
-                                <br />
-                                <span style="color:@TextColor;">@TransactionName</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            }
-            <div style="margin:2vh 0;">
-                <button class="btn btn-secondary" style="float:left" disabled=@Disabled @onclick="Submit">Submit</button>
-            </div>
-            <br />
-        </div>
-        @if (!string.IsNullOrEmpty(ErrorMsg))
-        {
-            <p id="errormsg" style="color:@ErrorColor">@ErrorMsg</p>
-        }
-    </div>
-}
-else
-{
-    <div class="tabcontent">
-        <div class="flex-c">
-            <div class="flex-r" style="justify-content:space-between;align-items:start;width:100%">
-                <div class="flex-r @Constants.TestMobile("transaction-container-mobile","transaction-container-desktop")">
-                    <div class="tab flex-r" style="width:100%;flex-wrap:wrap">
-                        <button class="tablinks tab-btn @ExpenseTabClass" @onclick=@(() => TabToggle("Expense"))>Expense</button>
-                        <button class="tablinks tab-btn @IncomeTabClass" @onclick=@(() => TabToggle("Income"))>Income</button>
-                        <button class="tablinks tab-btn @TransferTabClass" @onclick=@(() => TabToggle("Transfer"))>Transfer/Pay Debt</button>
-                    </div>
-                    <div class="flex-c-start input-transaction-block">
-                        <h2>@Constants.Pretty(double.TryParse(Person1Amount, out double p1a) && double.TryParse(Person2Amount, out double p2a) ? p1a + p2a : 0)</h2>
-                        @if (!(TabDictionary["Transfer"] && ExpenseType == "Transfer"))
-                        {
-                            <input type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" />
-                        }
-                        @if (TabDictionary["Expense"])
-                        {
-                            <FancySelect @bind-Value="ExpenseType">
-                                <option value="@string.Empty" selected disabled="disabled">(Select Expense)</option>
-                                @foreach (var et in ExpenseTypes)
-                                {
-                                    @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --") || et.Contains("-- Envelopes --"))
-                                    {
-                                        <option value="et" disabled>@et</option>
-                                    }
-                                    else
-                                    {
-                                        <option value="@et">@et</option>
-                                    }
-                                }
-                            </FancySelect>
-                        }
-                        else if (TabDictionary["Transfer"])
-                        {
-                            <FancySelect @bind-Value="ExpenseType">
-                                <option>Transfer</option>
-                                <option value="Debt">Paying off Debt</option>
-                            </FancySelect>
-                        }
-                        <input type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
-                    </div>
-                    <div class="flex-c-start input-transaction-block">
-                        <h2 style="margin:0">@Constants.Person1</h2>
-                        @if (Person1Balances != null)
-                        {
-                            <FancySelect @bind-Value="PaidWithPerson1">
-                                <option value="">Did not pay</option>
-                                @foreach (var pay in Person1Balances)
-                                {
-                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                }
-                            </FancySelect>
-                            @if (TabDictionary["Transfer"])
-                            {
-                                <h4 style="margin:0">Transferring to...</h4>
-                                <FancySelect @bind-Value="PaidOffPerson1">
-                                    <option value="">Did not pay</option>
-                                    @foreach (var pay in Person1Balances)
-                                    {
-                                        <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                    }
-                                </FancySelect>
-                            }
-                        }
-                        <div class="flex-r-100" style="margin:1em 0">
-                            <input type="number" placeholder="Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
-                        </div>
-                    </div>
-                    <div class="flex-c-start input-transaction-block">
-                        <h2 style="margin:0">@Constants.Person2</h2>
-                        @if (Person2Balances != null)
-                        {
-                            <FancySelect @bind-Value="PaidWithPerson2">
-                                <option value="">Did not pay</option>
-                                @foreach (var pay in Person2Balances)
-                                {
-                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                }
-                            </FancySelect>
-
-                            @if (TabDictionary["Transfer"])
-                            {
-                                <h4 style="margin:0">Transferring to...</h4>
-                                <FancySelect @bind-Value="PaidOffPerson2">
-                                    <option value="">Did not pay</option>
+                                <FancySelect @bind-Value="PaidWithPerson2">
+                                    <option value="">@(TabDictionary["Expense"] ? "(Select Payment Method)" : "(Select Account)")</option>
                                     @foreach (var pay in Person2Balances)
                                     {
                                         <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
                                     }
+                                    <option value="NONE">Did not pay</option>
                                 </FancySelect>
+
+
+                                <PopTray Id="transfer-p2" ShowWorth=@TabDictionary["Transfer"] ShowButton=false>
+                                    <div class="fade-in flex-c-start">
+                                        <h4 style="margin:0">@(ExpenseType == "Transfer" ? "Transferring to..." : "Paying off...")</h4>
+                                        <FancySelect @bind-Value="PaidOffPerson2">
+                                            <option value="">(Select Account)</option>
+                                            @foreach (var pay in Person2Balances)
+                                            {
+                                                <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
+                                            }
+                                            <option value="NONE">Did not pay</option>
+                                        </FancySelect>
+                                    </div>
+                                </PopTray>
                             }
-                        }
-                        <div class="flex-r-100" style="margin:1em 0">
-                            <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
+                            <div class="flex-r-100" style="margin:1em 0">
+                                <input type="number" placeholder="Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
+                            </div>
                         </div>
                     </div>
-                    @if (ShowAddPreset)
-                    {
-                        <div class="flex-r-100" style="justify-content:space-evenly;align-items:center;margin-top:1em">
-                            <div class="flex-r" style="justify-content:end">
-                                <label style="float:left;margin-right:1vw">Text Color:</label>
+                    <div class="flex-c-start">
+                        <div class="flex-c-start input-transaction-block">
+                            <h2>@Constants.Pretty(double.TryParse(Person1Amount, out double p1a) && double.TryParse(Person2Amount, out double p2a) ? p1a + p2a : 0)</h2>
+
+                            <PopTray Id="trans-name" ShowWorth=@(TabDictionary["Expense"] || TabDictionary["Income"] || ExpenseType == "Debt") ShowButton=false StartOpen=true>
+                                <input type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" />
+                            </PopTray>
+
+                            <PopTray Id="exp-drop" ShowWorth=@TabDictionary["Expense"] StartOpen=true ShowButton=false>
+                                <FancySelect @bind-Value="ExpenseType">
+                                    <option value="@string.Empty" selected disabled="disabled">(Select Expense)</option>
+                                    @foreach (var et in ExpenseTypes)
+                                    {
+                                        @if (et.Contains("- Others -") || et.Contains("-- Dynamic Costs --") || et.Contains("-- Envelopes --"))
+                                        {
+                                            <option value="et" disabled>@et</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@et">@et</option>
+                                        }
+                                    }
+                                </FancySelect>
+                            </PopTray>
+
+                            <PopTray Id="exp-drop-transfer" ShowWorth=@(TabDictionary["Transfer"]) ShowButton=false>
+                                <FancySelect @bind-Value="ExpenseType">
+                                    <option>Transfer</option>
+                                    <option value="Debt">Paying off Debt</option>
+                                </FancySelect>
+                            </PopTray>
+                            <input type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
+                        </div>
+                        <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
+                    </div>
+                    <PopTray Id="add-preset" ShowWorth=ShowAddPreset ShowButton=false >
+                        <div class="flex-c-start input-transaction-block">
+                            <h4 style="margin:0;align-self:start">Add Preset (optional)</h4>
+
+                            <div class="flex-r" style="justify-content:start;align-items:center">
+                                <label style="margin-right:1vw">Text Color:</label>
                                 <FancySelect @bind-Value="TextColor">
                                     <option value="#FFFFFF">White</option>
                                     <option value="#000000">Black</option>
                                 </FancySelect>
                             </div>
                             <br />
-                            <div class="flex-r" style="justify-content:end">
-                                <label style="float:left;margin-right:1vw">Color:</label>
+                            <div class="flex-r-100" style="justify-content:space-between">
+                                <label style="margin-right:1vw">Color:</label>
                                 <input @bind=Hex type="color" />
+                                <button class="btn btn-primary" style="background-color:@Hex;" @onclick="AddPreset">
+                                    <span style="color:@TextColor;">Add Preset For:</span>
+                                    <br />
+                                    <span style="color:@TextColor;">@TransactionName</span>
+                                </button>
                             </div>
-                            <button class="btn btn-primary" style="background-color:@Hex;" @onclick="AddPreset">
-                                <span style="color:@TextColor;">Add Preset For:</span>
-                                <br />
-                                <span style="color:@TextColor;">@TransactionName</span>
-                            </button>
                         </div>
-                    }
-                </div>
-                <div class="flex-r" style="width:25%;height:auto">
-                    @if (Presets != null && Presets.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER)
-                    {
-                        <AdvancedWrapper Bottom="false" Top="true" Left="true" Class="componentWrapper">
-                            <div class="flex-c-start" style="height: 70vh;">
-                                <h1 style="text-align:center;height:10%;">Presets:</h1>
-                                <div class="flex-r" style="flex: 1;justify-content:flex-start;align-content:flex-start;flex-wrap:wrap;overflow-y:auto;">
-                                    @foreach (var et in ExpenseTypesForPresets[SelectedTab])
-                                    {
-                                        <PresetBlock ExpenseType=@et Preset=Preset />
-                                    }
-                                </div>
-                                <div class="flex-r" style="flex: 0 0 auto;">
-                                    @if (PresetsForDel != null && PresetsForDel.Count > 0 && Constants.TIER_LEVEL > Tier.BASIC_TIER)
-                                    {
-                                        <div class="flex-r" style="width:100%;justify-content:space-evenly;border:solid red 1px;padding:1em;align-items:center">
-                                            <div>
-                                                <select @bind="@SelectedPreset">
-                                                    <option selected disabled value='@("NONE")'>(Select Preset)</option>
-                                                    @foreach (var pre in PresetsForDel)
-                                                    {
-                                                        <option value="@pre.Id">@pre.Name</option>
-                                                    }
-                                                </select>
-                                            </div>
-                                            <div><button class="btn btn-danger" @onclick="DeletePreset">Delete</button></div>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </AdvancedWrapper>
-                    }
+                    </PopTray>
                 </div>
             </div>
-
-            <div style="margin:2vh 0;">
-                <button class="btn btn-secondary" style="float:left;" disabled=@Disabled @onclick="Submit">Submit</button>
-            </div>
-            <br />
-            @if (!string.IsNullOrEmpty(ErrorMsg))
-            {
-                <p id="errormsg" style="color:@ErrorColor">@ErrorMsg</p>
-            }
         </div>
+        <br />
+        @if (!string.IsNullOrEmpty(ErrorMsg))
+        {
+            <p id="errormsg" style="color:@ErrorColor">@ErrorMsg</p>
+        }
     </div>
-}
+</div>
 <br />
 <br />
 
@@ -619,6 +208,8 @@ else
     string ExpenseTabClass = "active";
     string IncomeTabClass = "";
     string TransferTabClass = "";
+
+    private List<Preset> LocalET => Constants.Presets.Where(p => ExpenseTypesForPresets[SelectedTab].Contains(p.ExpenseType))?.ToList();
 
     private List<Preset> Presets => Constants.Presets;
     public List<Preset> PresetsForDel { get; set; }
@@ -732,20 +323,6 @@ else
         ExpenseTypesForPresets["Transfer"] = new List<string>() { "Debt" };
 
         return base.OnInitializedAsync();
-    }
-
-    public async void DeletePreset()
-    {
-        Preset exists = Presets.FirstOrDefault(p => p.Id == SelectedPreset);
-
-        if (exists != null)
-        {
-            await PresetRepo.RemoveAsync(exists);
-            PresetsForDel = new List<Preset>(Presets);
-        }
-
-        SelectedPreset = "NONE";
-        StateHasChanged();
     }
 
     void TabToggle(string index)

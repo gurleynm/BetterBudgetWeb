@@ -5,7 +5,7 @@
         <label>Envelope Name:</label>
         <br />
         <select @bind="Name">
-            <option value="@string.Empty" selected disabled="disabled">(Choose Goal)</option>
+            <option value="@string.Empty" selected disabled="disabled">(Select Goal)</option>
             @foreach (var env in Envelopes.OrderBy(e => e.Name))
             {
                 <option value="@env.Name">@env.Name</option>

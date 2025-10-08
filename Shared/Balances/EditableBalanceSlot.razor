@@ -22,12 +22,10 @@
                     {
                         <label style="font-size:smaller;margin:0;color:@TheBalance.TextColor">
                             <i>
-                                @(
-                                                        "Tradeable Cash: " + Constants.Pretty(Amount)
-                                                        )
-                        </i>
-                    </label>
-                                }
+                                @("Tradeable Cash: " + Constants.Pretty(Amount))
+                            </i>
+                        </label>
+                    }
                 }
                 <FancySelect @bind-Value="TheBalance.Person" Style="@("color:" + TheBalance.TextColor)">
                     <option value="@Constants.Person1" selected>@Constants.Person1</option>
@@ -42,7 +40,7 @@
                 <br />
                 <div class="flex-c" style="padding:0">
                     <FancySelect @bind-Value="TheBalance.BalanceType" Style="color:white">
-                        <option value="" disabled>(Choose Account Type)</option>
+                        <option value="" disabled>(Select Account Type)</option>
                         <option value="Equity">Equity</option>
                         <option value="Loan">Credit Card/Loan</option>
                         <option value="Income">Savings/Checkings/Income</option>
@@ -55,11 +53,11 @@
 </div>
 <div style="@Constants.TestMobile("width:100%", "width:50%")">
     <div class="flex-r-100" style="justify-content:space-around;align-items:center;flex-wrap:wrap">
-        <div class="flex-r" style="justify-content:flex-start;padding:1em;align-self:start">
+        <div class="flex-r" style="justify-content:flex-start;padding:1em;align-self:center">
             <label style="margin-right:1em">Color:</label>
             <input type="color" @bind=TheBalance.HexColor />
         </div>
-        <div class="flex-r" style="justify-content:flex-start;padding:1em">
+        <div class="flex-r" style="justify-content:flex-start;padding:1em;align-items:center">
             <label style="margin-right:1em">Text Color:</label>
             <FancySelect @bind-Value="TheBalance.TextColor">
                 <option value="white" selected>White</option>

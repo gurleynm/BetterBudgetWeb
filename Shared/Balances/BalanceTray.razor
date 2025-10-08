@@ -97,7 +97,11 @@
     public void SetGoals(bool goal)
     {
         Goals = goal;
-        StateHasChanged();
+        try
+        {
+            StateHasChanged();
+        }
+        catch(Exception e) { }
     }
 
     public void RefreshBalances()
