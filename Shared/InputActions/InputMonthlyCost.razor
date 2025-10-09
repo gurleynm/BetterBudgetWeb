@@ -13,27 +13,27 @@
     <div>
         <label>Type of Recurring Charge:</label>
         <br />
-        <select @bind="Dyna">
+        <FancySelect @bind-Value="Dyna" Style="">
             <option value="@string.Empty" selected disabled="disabled">(Select Type)</option>
             <option value="DYNAMIC">Budget Category</option>
             <option value="STATIC">One-time Monthly Charge</option>
-        </select>
+        </FancySelect>
     </div>
     <br />
     <div>
         <label>When (Month Year):</label>
         <br />
-        <select @bind="SelectMonth">
+        <FancySelect @bind-Value="SelectMonth" Style="">
             @foreach (var item in Months)
             {
                 <option value="@item">@item</option>
-            }
-        </select>
-        <select @bind="SelectYear">
+            }            
+        </FancySelect>
+        <FancySelect @bind-Value="SelectYear" Style="">
             <option value="1">All</option>
             <option value="@DateTime.Now.Year.ToString()">@DateTime.Now.Year</option>
             <option value="@DateTime.Now.AddYears(1).Year.ToString()">@DateTime.Now.AddYears(1).Year</option>
-        </select>
+        </FancySelect>
     </div>
     <br />
     @if (Dyna == "DYNAMIC")
@@ -81,27 +81,26 @@ else
         <div style="float:left;margin-right:10vw;">
             <label>Type of Recurring Charge:</label>
             <br />
-            <select @bind="Dyna">
+            <FancySelect @bind-Value="Dyna" Style="">
                 <option value="@string.Empty" selected disabled="disabled">(Select Type)</option>
                 <option value="DYNAMIC">Budget Category</option>
                 <option value="STATIC">One-time Monthly Charge</option>
-            </select>
+            </FancySelect>
         </div>
         <div style="float:left;margin-right:10vw;">
             <label>When (Month Year):</label>
             <br />
-            <select @bind="SelectMonth">
+            <FancySelect @bind-Value="SelectMonth" Style="">
                 @foreach (var item in Months)
                 {
                     <option value="@item">@item</option>
-                }
-            </select>
-
-            <select @bind="SelectYear">
+                }                
+            </FancySelect>
+            <FancySelect @bind-Value="SelectYear" Style="">
                 <option value="1">All</option>
                 <option value="@DateTime.Now.Year.ToString()">@DateTime.Now.Year</option>
                 <option value="@DateTime.Now.AddYears(1).Year.ToString()">@DateTime.Now.AddYears(1).Year</option>
-            </select>
+            </FancySelect>
         </div>
         <br style="clear:both;" />
         <br />
@@ -193,7 +192,7 @@ else
         bool tpLAmount = double.TryParse(Person2Amount, out double lam);
         bool tpTAmount = double.TryParse(TotalAmount, out double tam);
 
-        if(Dyna == "DYNAMIC")
+        if (Dyna == "DYNAMIC")
         {
             tpNAmount = tpTAmount;
             tpLAmount = tpTAmount;

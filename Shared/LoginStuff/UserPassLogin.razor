@@ -21,7 +21,7 @@
                 <div class="flex-c">
                     <label style="color:white">Enter email associated with your account</label>
                     <div class="flex-r">
-                        <input class="better" id="user" placeholder="Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email = (string) ui.Value;})" />
+                        <input class="custom-input" id="user" placeholder="Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email = (string)ui.Value; })" />
                     </div>
                     <div class="flex-r">
                         <span style="color:@errLocalColor">@errorMsgLocal</span>
@@ -43,7 +43,7 @@
                 <div class="flex-c">
                     <label style="color:white">Username</label>
                     <div class="flex-r" style="justify-content:start">
-                        <input class="better" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string) ui.Value;})" />
+                        <input class="custom-input" id="user" placeholder="Username" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Username = (string)ui.Value; })" />
                     </div>
                     <br />
                     <label style="color:white">Password</label>

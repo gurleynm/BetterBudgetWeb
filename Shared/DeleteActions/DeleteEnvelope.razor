@@ -4,18 +4,18 @@
     <div style="float:left;margin-right:10vw;">
         <label>Envelope Name:</label>
         <br />
-        <select @bind="Name">
+        <FancySelect @bind-Value="Name">
             <option value="@string.Empty" selected disabled="disabled">(Select Goal)</option>
             @foreach (var env in Envelopes.OrderBy(e => e.Name))
             {
                 <option value="@env.Name">@env.Name</option>
             }
-        </select>
+        </FancySelect>
     </div>
 
     <br style="clear:both" />
     <br style="clear:both" />
-    <button class="btn btn-secondary" disabled=@Disabled @onclick ="Submit">Submit</button>
+    <button class="btn btn-secondary" disabled=@Disabled @onclick="Submit">Submit</button>
     <br />
 
     @if (!string.IsNullOrEmpty(ErrorMsg))
@@ -38,7 +38,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        
+
     }
 
     public async Task Submit()

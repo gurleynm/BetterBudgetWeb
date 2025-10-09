@@ -4,17 +4,17 @@
     <div>
         <label>Preset Name:</label>
         <br />
-        <select @bind="Id">
+        <FancySelect @bind-Value="Id">
             <option value="@string.Empty" selected disabled="disabled">(Select Preset)</option>
             @foreach (var pres in Presets.OrderBy(e => e.Name))
             {
                 <option value="@pres.Id">@pres.Name</option>
             }
-        </select>
+        </FancySelect>
     </div>
     @if (ChosenOne != null)
     {
-        <div >
+        <div>
             <table class="toggle-table mini-table ">
                 <tr>
                     <th>Name</th>

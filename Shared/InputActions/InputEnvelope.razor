@@ -29,10 +29,10 @@
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
-        <div style="float:left; margin-right:9vw;">
+        <div>
             <label>@($"{Constants.Person1} Will Pay With:")</label>
             <br />
-            <FancySelect @bind-Value="WillPayPerson1">
+            <FancySelect @bind-Value="WillPayPerson1" Style="">
                 <option value="Debt">Paying off Debt</option>
                 <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person1} Will Pay)")</option>
                 @if (Balances != null)
@@ -47,10 +47,10 @@
         </div>
         <br style="clear:both" />
         <br style="clear:both" />
-        <div style="float:left; margin-right:9vw;">
+        <div>
             <label>@($"{Constants.Person2} Will Pay With:")</label>
             <br />
-            <FancySelect @bind-Value="WillPayPerson2">
+            <FancySelect @bind-Value="WillPayPerson2" Style="">
                 <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person2} Will Pay)")</option>
                 @if (Balances != null)
                 {
@@ -107,7 +107,7 @@ else
                     <div>
                         <label>@($"{Constants.Person1} Will Pay With:")</label>
                         <br />
-                        <FancySelect @bind-Value="WillPayPerson1">
+                        <FancySelect @bind-Value="WillPayPerson1" Style="">
                             <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person1} Will Pay)")</option>
                             @if (Balances != null)
                             {
@@ -122,7 +122,7 @@ else
                     <div>
                         <label>@($"{Constants.Person2} Will Pay With:")</label>
                         <br />
-                        <FancySelect @bind-Value="WillPayPerson2">
+                        <FancySelect @bind-Value="WillPayPerson2" Style="">
                             <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person2} Will Pay)")</option>
                             @if (Balances != null)
                             {

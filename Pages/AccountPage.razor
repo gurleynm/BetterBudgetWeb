@@ -42,21 +42,25 @@
     {
         <div class="flex-r"
              style="margin:auto 0;
-                    width:100%;
-                    padding: 1vw;
-                    height:100%;
-                    outline:solid dodgerblue 1px;
-                    border-radius:5px;
-                    color:white;
-                    text-align:center;
-                    pointer-events:none;
-                    z-index:10;">
+                            width:100%;
+                            padding: 1vw;
+                            height:100%;
+                            outline:solid dodgerblue 1px;
+                            border-radius:5px;
+                            color:white;
+                            text-align:center;
+                            pointer-events:none;
+                            z-index:10;">
             Update successful!
         </div>
     }
     <div class="@(Constants.Mobile ? "flex-c" : "flex-r")" style="width:100%;justify-content:space-between">
-        <h4>Username: <input type="text" @bind-value=@NewUsername @oninput="@(async (ui) => { NewUsername = (string)ui.Value; })" /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span></h4>
-        <h4>Email: <input type="email" @bind-value=@NewEmail @oninput="@(async (ui) => { NewEmail = (string)ui.Value; })" style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span></h4>
+        <div class="flex-c-start">
+            <h4>Username:</h4> <input class="custom-input" type="text" @bind-value=@NewUsername @oninput="@(async (ui) => { NewUsername = (string)ui.Value; })" /><span style="color:red;padding-left:1em">@ErrorMsgUsername</span>
+        </div>
+        <div class="flex-c-start">
+            <h4>Email:</h4> <input class="custom-input" type="email" @bind-value=@NewEmail @oninput="@(async (ui) => { NewEmail = (string)ui.Value; })" style="width:fit-content;padding:0 1em" /><span style="color:red;padding-left:1em">@ErrorMsgEmail</span>
+        </div>
         @if (OtherUser.Contains("Partner's creation email sent on"))
         {
             <h4>@OtherUser</h4>

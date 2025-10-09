@@ -30,24 +30,20 @@
                 </tr>
                 <tr>
                     <td style="padding:1vw">
-                        <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
+                        <input class="custom-input" type="date" @bind-value="Transact.DateOfTransaction" style="color-scheme:dark" />
                     </td>
                     <td style="padding:1vw">
                         <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
                     </td>
                     <td style="padding:1vw">
-                        <InputText @bind-Value="Transact.Name" style="color:white" />
+                        <input class="custom-input" type="text" @bind-value="Transact.Name" style="width:fit-content" />
                     </td>
                     <td style="padding:1vw">
-                        <span style="border:solid white 1px;padding-left:1em">
-                            $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
-                        </span>
+                        <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
                         <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
                     </td>
                     <td style="padding:1vw">
-                        <span style="border:solid white 1px;padding-left:1em">
-                            $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
-                        </span>
+                        <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
                         <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
                     </td>
                     <td style="padding:1vw">
@@ -71,7 +67,7 @@ else
                         <label>Name</label>
                     </td>
                     <td>
-                        <InputText @bind-Value="Transact.Name" style="color:white" />
+                        <input class="custom-input" type="text" @bind-value="Transact.Name" />
                     </td>
                 </tr>
                 <tr>
@@ -79,7 +75,7 @@ else
                         <label>Date</label>
                     </td>
                     <td>
-                        <InputDate @bind-Value="Transact.DateOfTransaction" style="color:silver" />
+                        <input class="custom-input" type="date" @bind-value="Transact.DateOfTransaction" style="color-scheme:dark" />
                     </td>
                 </tr>
                 <tr>
@@ -95,9 +91,7 @@ else
                         <label>@(Person1 + " Values")</label>
                     </td>
                     <td>
-                        <span style="border:solid white 1px;padding-left:1em">
-                            $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person1Amount>
-                        </span>
+                        <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
                         <br />
                         <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
                     </td>
@@ -107,9 +101,7 @@ else
                         <label>@(Person2 + " Values")</label>
                     </td>
                     <td>
-                        <span style="border:solid white 1px;padding-left:1em">
-                            $<input type="number" style="width:5em;border:none;color:white" @bind=@Transact.Person2Amount>
-                        </span>
+                        <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
                         <br />
                         <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
                     </td>

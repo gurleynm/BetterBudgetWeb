@@ -60,7 +60,7 @@
                                         <option value="Debt">Paying off Debt</option>
                                     </FancySelect>
                                 </PopTray>
-                                <input class="custom-input" type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
+                                <input class="custom-input" type="date" @bind-value="@TransactionDate" style="margin:1em 0;color-scheme:dark;" />
                             </div>
                         </div>
                     }
@@ -159,7 +159,7 @@
                                         <option value="Debt">Paying off Debt</option>
                                     </FancySelect>
                                 </PopTray>
-                                <input class="custom-input" type="date" placeholder="Date" @bind-value="@TransactionDate" style="margin:1em 0" />
+                                <input class="custom-input" type="date" @bind-value="@TransactionDate" style="margin:1em 0;color-scheme:dark;" />
                             </div>
                             <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
                             @if (!string.IsNullOrEmpty(TransactionName))

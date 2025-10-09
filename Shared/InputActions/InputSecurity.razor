@@ -8,11 +8,11 @@
         <div class="flex-c-start" style="padding:1em">
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Security Name:</label>
-                <input type="text" placeholder="Security Name" style="text-transform:uppercase" @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper(); })" />
+                <input class="custom-input" type="text" placeholder="Security Name" style="text-transform:uppercase" @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper(); })" />
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Security Type:</label>
-                <FancySelect @bind-Value="SecType">
+                <FancySelect @bind-Value="SecType" Style="">
                     <option value="Stock" selected>Stock</option>
                     <option value="ETF">ETF</option>
                     @*<option value="Call">Call Option</option>
@@ -22,11 +22,11 @@
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Number of Shares:</label>
-                <input type="number" style="width:20vw" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string)ui.Value; })" />
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Share Price at Sale:</label>
-                <input type="number" style="width:23vw" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="Cost" @bind-value ="@AvgCost" @oninput ="@(async (ui) => { AvgCost = (string)ui.Value; })" />
             </div>
             <div class="flex-r-100">
                 <button class="btn btn-secondary" style="margin:auto 0" disabled=@Disabled @onclick=Submit>
@@ -50,12 +50,12 @@ else
         <div class="flex-r" style="padding-top:1em">
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Security Name:</label>
-                <input type="text" placeholder="Name" style="text-transform:uppercase;width:6vw"
+                <input class="custom-input" type="text" placeholder="Name" style="text-transform:uppercase;"
                        @bind-value="@Name" @oninput="@(async (ui) => { Name = ((string)ui.Value).ToUpper(); })" />
             </div>
             <div class="flex-c-start" style="margin:0 1vw;">
                 <label>Security Type:</label>
-                <FancySelect @bind-Value="SecType">
+                <FancySelect @bind-Value="SecType" Style="">
                     <option value="Stock" selected>Stock</option>
                     <option value="ETF">ETF</option>
                     @*<option value="Call">Call Option</option>
@@ -68,29 +68,29 @@ else
                 <div class="flex-c-start" style="margin: 0 1vw;">
                     <label>Strike Price:</label>
                     <br />
-                    <input type="number" style="width:7vw" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string)ui.Value; })" />
+                    <input class="custom-input" type="number" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string)ui.Value; })" />
                 </div>
                 <div>
                     <label>Expiration Date:</label>
                     <br />
-                    <input type="date" @bind="@ExpirationDate" />
+                    <input class="custom-input" type="date" style="color-scheme:dark;" @bind="@ExpirationDate" />
                 </div>
                 <br style="clear:both" />
             }
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label># of Shares:</label>
-                <input type="number" style="width:7vw" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string)ui.Value; })" />
             </div>
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Cost Per Share:</label>
-                <input type="number" style="width:8vw" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string)ui.Value; })" />
             </div>
             @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
             {
                 <div class="flex-c-start" style="margin: 0 1vw;">
                     <label>Person:</label>
                     <br />
-                    <FancySelect @bind-Value="Person">
+                    <FancySelect @bind-Value="Person" Style="">
                         <option value="@Constants.Person1" selected>@Constants.Person1</option>
                         <option value="@Constants.Person2">@Constants.Person2</option>
                     </FancySelect>

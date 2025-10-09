@@ -75,7 +75,7 @@
     border: 1px solid #152030;
     border-radius: 1em;
     cursor: pointer;
-    width: 200px;
+    width: 100%;
 }
 
 .custom-select option {
@@ -444,6 +444,27 @@ td {
     border-radius: 10px;
     display: block;
     height: fit-content;
+    /*animation: shimmer-cycle 5s linear infinite;*/
+}
+@keyframes shimmer-cycle {
+    0% {
+       
+    }
+
+    20% {
+    }
+
+    21% {
+        background-position: right center; /* change the direction of the change here */
+        color: #fff;
+        text-decoration: none;
+    }
+
+    100% {
+        background-position: right center; /* change the direction of the change here */
+        color: #fff;
+        text-decoration: none;
+    }
 }
 
     .btn-grad:hover {
