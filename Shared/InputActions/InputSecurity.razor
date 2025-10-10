@@ -29,7 +29,7 @@
                 <input class="custom-input" type="number" placeholder="Cost" @bind-value ="@AvgCost" @oninput ="@(async (ui) => { AvgCost = (string)ui.Value; })" />
             </div>
             <div class="flex-r-100">
-                <button class="btn btn-secondary" style="margin:auto 0" disabled=@Disabled @onclick=Submit>
+                <button class="btn btn-primary" style="margin:auto 0" disabled=@Disabled @onclick=Submit>
                     @("Buy in " + ChosenBalance.Name
                                 )
             </button>
@@ -97,7 +97,7 @@ else
                 </div>
             }
         <div class="flex-c">
-            <button class="btn btn-secondary" style="margin: 0 1vw;width:fit-content;height:fit-content" disabled=@Disabled @onclick=Submit>
+            <button class="btn btn-primary" style="margin: 0 1vw;width:fit-content;height:fit-content" disabled=@Disabled @onclick=Submit>
                 @("Buy in " + ChosenBalance.Name
                             )
             </button>

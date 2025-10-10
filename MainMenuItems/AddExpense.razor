@@ -19,7 +19,7 @@
                 {
                     <tr>
                         <td colspan="1">
-                            <input type="date" class="custom-input" style="color-scheme: dark;" @bind-value="@NewTrans.DateOfTransaction" @oninput="@(async (ui) => { NewTrans.DateOfTransaction = DateTime.TryParse((string)ui.Value, out DateTime toss) ? toss : DateTime.Now; })" />
+                            <input type="date" class="custom-input" style="width:80%;color-scheme: dark;" @bind-value="@NewTrans.DateOfTransaction" @oninput="@(async (ui) => { NewTrans.DateOfTransaction = DateTime.TryParse((string)ui.Value, out DateTime toss) ? toss : DateTime.Now; })" />
                         </td>
                         <td colspan="2">
                             <input type="text" class="custom-input" placeholder="Enter Name" @bind-value="@NewTrans.Name" @oninput="@(async (ui) => { NewTrans.Name = (string)ui.Value; })" />
@@ -27,7 +27,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input class="custom-input" type="number" @bind-value="@NewTrans.TopAmount" @oninput="@(async (ui) => { NewTrans.TopAmount = double.TryParse((string)ui.Value, out double toss) ? toss : 0; })" />
+                            <input class="custom-input" type="number" style="width:80%;" @bind-value="@NewTrans.TopAmount" @oninput="@(async (ui) => { NewTrans.TopAmount = double.TryParse((string)ui.Value, out double toss) ? toss : 0; })" />
                         </td>
                         <td>
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
@@ -93,7 +93,7 @@
                             }
                             else
                             {
-                                <button class="btn btn-secondary" @onclick=@(() => ShowSecond = !ShowSecond)>Show Second Person</button>
+                                <button class="btn btn-primary" @onclick=@(() => ShowSecond = !ShowSecond)>Show Second Person</button>
                             }
                         </td>
                     </tr>
@@ -109,7 +109,9 @@
                             else
                             {
                                 <div class="flex-r-100">
-                                    <button class="btn btn-grad" disabled=@Disabled @onclick="@(() => Add())">Add</button>
+                                    <button class="btn btn-grad" disabled=@Disabled @onclick="@(() => Add())" style="box-shadow: none;">
+                                        Add
+                                    </button>
                                 </div>
                             }
                         </td>
@@ -188,7 +190,7 @@
                             }
                             else
                             {
-                                <button class="btn btn-secondary" @onclick=@(() => ShowSecond = !ShowSecond)>Show Second Person</button>
+                                <button class="btn btn-primary" @onclick=@(() => ShowSecond = !ShowSecond)>Show Second Person</button>
                             }
                         </td>
                     </tr>
@@ -204,7 +206,7 @@
                             else
                             {
                                 <div class="flex-r-100">
-                                    <button class="btn btn-grad" disabled=@Disabled @onclick="@(() => Add())">Add</button>
+                                    <button class="btn btn-grad" disabled=@Disabled @onclick="@(() => Add())" style="box-shadow: none;">Add</button>
                                 </div>
                             }
                         </td>

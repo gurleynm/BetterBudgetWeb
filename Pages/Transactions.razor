@@ -142,8 +142,8 @@
                         <div class="flex-r" style="justify-content:end">
                             @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                             {
-                                <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => SplitModal(transaction))"><span class="oi oi-pie-chart"></span></button>
-                                <button class="btn btn-secondary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
+                                <button class="btn btn-primary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => SplitModal(transaction))"><span class="oi oi-pie-chart"></span></button>
+                                <button class="btn btn-primary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
                             }
                             <button class="btn" disabled=@Disabled style="background-color:transparent;color:red;border:none;margin:.5vh;height:5vh;" @onclick="(() => DelBtn(transaction))"><span class="bi bi-trash" style="color:red"></span></button>
                         </div>
@@ -174,7 +174,7 @@
     <Confirmation OnClose="Close" RightBtnClick="@(() => SaveFilters(TempFilters))" LeftBtnTxt="Cancel"
                   RightBtnTxt="Save"
                   Title="Set Filters"
-                  LeftBtnColor="btn-secondary"
+                  LeftBtnColor="btn-primary"
                   RightBtnColor="btn-success">
         <div class="flex-c-start" style="color:white">
             <h3>Filters:</h3>

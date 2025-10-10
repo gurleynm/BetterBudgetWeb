@@ -440,30 +440,26 @@ td {
     transition: 0.5s;
     background-size: 200% auto;
     color: white;
-    box-shadow: 0 0 10px #eee;
+    /*box-shadow: 0 0 10px #eee;*/
     border-radius: 10px;
     display: block;
     height: fit-content;
-    /*animation: shimmer-cycle 5s linear infinite;*/
+    background-position: left center; /* change the direction of the change here */
+    --shadow-color: hsl(180deg 100% 50%);
+    filter: drop-shadow( 1px 2px 8px var(--shadow-color) );
 }
-@keyframes shimmer-cycle {
+
+@keyframes shimmer {
     0% {
-       
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     }
 
-    20% {
-    }
-
-    21% {
-        background-position: right center; /* change the direction of the change here */
-        color: #fff;
-        text-decoration: none;
+    50% {
+        box-shadow: 0 0 20px rgba(0, 123, 255, 0.8), 0 0 40px rgba(0, 123, 255, 0.4);
     }
 
     100% {
-        background-position: right center; /* change the direction of the change here */
-        color: #fff;
-        text-decoration: none;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
     }
 }
 
