@@ -161,6 +161,39 @@
                                 </PopTray>
                                 <input class="custom-input" type="date" @bind-value="@TransactionDate" style="margin:1em 0;color-scheme:dark;" />
                             </div>
+                            @if (Disabled)
+                            {
+                                <LoadingDots />
+                            }
+                            else
+                            {
+                                <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
+                                @if (!string.IsNullOrEmpty(TransactionName))
+                                {
+                                    <div class="flex-r-100" style="justify-content:space-between;align-items:center">
+                                        <FancySelect @bind-Value="TextColor" Style="width:fit-content">
+                                            <option value="#FFFFFF">White</option>
+                                            <option value="#000000">Black</option>
+                                        </FancySelect>
+                                        <input @bind=Hex type="color" />
+                                    </div>
+                                    <button class="btn btn-primary" style="background-color:@Hex;" @onclick="AddPreset">
+                                        <span style="color:@TextColor;">Add Preset For:</span>
+                                        <br />
+                                        <span style="color:@TextColor;">@TransactionName</span>
+                                    </button>
+                                }
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        @if (Disabled)
+                        {
+                            <LoadingDots />
+                        }
+                        else
+                        {
                             <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
                             @if (!string.IsNullOrEmpty(TransactionName))
                             {
@@ -177,25 +210,6 @@
                                     <span style="color:@TextColor;">@TransactionName</span>
                                 </button>
                             }
-                        </div>
-                    }
-                    else
-                    {
-                        <button class="btn btn-grad" disabled=@Disabled @onclick="Submit">Record</button>
-                        @if (!string.IsNullOrEmpty(TransactionName))
-                        {
-                            <div class="flex-r-100" style="justify-content:space-between;align-items:center">
-                                <FancySelect @bind-Value="TextColor" Style="width:fit-content">
-                                    <option value="#FFFFFF">White</option>
-                                    <option value="#000000">Black</option>
-                                </FancySelect>
-                                <input @bind=Hex type="color" />
-                            </div>
-                            <button class="btn btn-primary" style="background-color:@Hex;" @onclick="AddPreset">
-                                <span style="color:@TextColor;">Add Preset For:</span>
-                                <br />
-                                <span style="color:@TextColor;">@TransactionName</span>
-                            </button>
                         }
                     }
                 </div>
@@ -398,6 +412,9 @@
     public async void Submit()
     {
         Disabled = true;
+        await Task.Delay(100);
+        StateHasChanged();
+
         ErrorMsg = string.Empty;
         ErrorColor = "red";
         bool tp1Amount = double.TryParse(Person1Amount, out double nam);
@@ -509,7 +526,7 @@
             TransactionName = string.Empty;
             Person1Amount = string.Empty;
             Person2Amount = string.Empty;
-            ExpenseType = string.Empty;
+            ExpenseType = "Transfer Debt".Contains(ExpenseType) ? "Transfer" : string.Empty;
             PaidOffPerson2 = string.Empty;
             PaidOffPerson1 = string.Empty;
             PaidWithPerson2 = string.Empty;

@@ -2,6 +2,7 @@
 {
     public class SplitTrans
     {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         private double person1Amout { get; set; }
         private double person2Amout { get; set; }
         public string ExpenseType { get; set; }

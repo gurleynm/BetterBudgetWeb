@@ -52,7 +52,8 @@
         </tr>
         @foreach (var split in Splits)
         {
-            <tr>
+            var local = split;
+            <tr @key=local.Id>
                 <td>
                     <div class="flex-r-100" style="justify-content:space-between;align-items:center;padding:1em">
                         <div style="color:white;text-align:start">
@@ -61,17 +62,13 @@
                         @if (Transact.Person1Amount > 0)
                         {
                             <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
-                                <span style="border:solid white 1px;">
-                                    <input type="number" min="0" style="width:5em;border:none;color:white" @bind=@split.Person1Amout>
-                                </span>
+                                <input class="custom-input" type="number" min="0" @bind=@split.Person1Amout>
                             </div>
                         }
                         @if (Transact.Person2Amount > 0)
                         {
                             <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
-                                <span style="border:solid white 1px;">
-                                    <input type="number" min="0" style="width:5em;border:none;color:white" @bind=@split.Person2Amout>
-                                </span>
+                                <input class="custom-input" type="number" min="0" @bind=@split.Person2Amout>
                             </div>
                         }
                         @if (ThisTransactionTotal != ThisTransactionPerson1 && ThisTransactionTotal != ThisTransactionPerson2)
@@ -81,10 +78,11 @@
                             </div>
                         }
                     </div>
+                    <button class="btn btn-danger" style="width:98%" @onclick=@(() => RemoveSplit(local.Id))><span class="oi oi-minus" /> Remove Split</button>
                 </td>
             </tr>
         }
-        <tr>
+        <tr style="border-bottom:none">
             <td>
                 <button class="btn-grad" style="width:98%" @onclick=AddSplit><span class="oi oi-plus" /> Add Split</button>
             </td>
@@ -119,6 +117,13 @@
         Splits.Add(new SplitTrans(Transact.ExpenseType));
     }
 
+    private void RemoveSplit(string id)
+    {
+        var split = Splits.FirstOrDefault(s => s.Id == id);
+        if (split != null)
+            Splits.Remove(split);
+    }
+
     private Task ModalCancel()
     {
         return OnClose.InvokeAsync(false);
@@ -136,17 +141,24 @@
 
         List<Transaction> AllTrans = new();
 
-        foreach (var split in Splits)
+        for (int index = Splits.Count - 1; index >= 0; index--)
         {
-            if (split.TotalAmount <= 0)
+            if (Splits[index].TotalAmount < 0)
             {
-                split.Person1Amout = 0;
-                split.Person2Amout = 0;
+                Splits[index].Person1Amout = 0;
+                Splits[index].Person2Amout = 0;
+                continue;
+            }
+            else if (Splits[index].TotalAmount == 0)
+            {
+                Splits.RemoveAt(index);
                 continue;
             }
 
-            AllTrans.Add(new Transaction(split, Transact));
+            AllTrans.Add(new Transaction(Splits[index], Transact));
         }
+        await Task.Delay(100);
+        StateHasChanged();
 
         if (Transact.Person1Amount != ThisTransactionPerson1 || Transact.Person2Amount != ThisTransactionPerson2)
         {
