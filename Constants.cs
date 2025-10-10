@@ -504,7 +504,7 @@ namespace BetterBudgetWeb
 
         public static void SetColorScheme()
         {
-            ColorScheme["Background"] = "#111827";
+            ColorScheme["Background"] = "#0C1119";
             ColorScheme["ComponentBackground"] = "#152030";
             ColorScheme["Text"] = "silver";
             ColorScheme["TextOnSilver"] = "white";

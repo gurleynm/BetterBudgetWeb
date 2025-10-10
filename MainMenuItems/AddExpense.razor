@@ -27,7 +27,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input class="custom-input" type="number" style="width:80%;" @bind-value="@NewTrans.TopAmount" @oninput="@(async (ui) => { NewTrans.TopAmount = double.TryParse((string)ui.Value, out double toss) ? toss : 0; })" />
+                            <input class="custom-input" type="number" style="width:80%;" placeholder="$ Amount" @bind-value="@TopAmount" @oninput="@(async (ui) => { TopAmount = (string)ui.Value; })" />
                         </td>
                         <td>
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
@@ -55,7 +55,7 @@
                     {
                         <tr>
                             <td>
-                                <input type="number" class="custom-input" @bind-value="@NewTrans.BottomAmount" @oninput="@(async (ui) => { NewTrans.BottomAmount = (double)ui.Value; })" />
+                                <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@BottomAmount" @oninput="@(async (ui) => { BottomAmount = (string)ui.Value; })" />
                             </td>
                             <td>
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
@@ -108,7 +108,7 @@
                             }
                             else
                             {
-                                <div class="flex-r-100">
+                                <div class="flex-r-100" style="margin-bottom:.75em">
                                     <button class="btn btn-grad" disabled=@Disabled @onclick="@(() => Add())" style="box-shadow: none;">
                                         Add
                                     </button>
@@ -128,7 +128,7 @@
                     </tr>
                     <tr>
                         <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                            <input type="number" class="custom-input" @bind-value="@NewTrans.TopAmount" @oninput="@(async (ui) => { NewTrans.TopAmount = double.TryParse((string)ui.Value, out double toss) ? toss : 0; })" />
+                            <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@TopAmount" @oninput="@(async (ui) => { TopAmount = (string)ui.Value; })" />
 
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
 
@@ -154,7 +154,7 @@
                     {
                         <tr>
                             <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                                <input type="number" class="custom-input" @bind-value="@NewTrans.BottomAmount" @oninput="@(async (ui) => { NewTrans.BottomAmount = (double)ui.Value; })" />
+                                <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@BottomAmount" @oninput="@(async (ui) => { BottomAmount = (string)ui.Value; })" />
 
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
 
@@ -205,7 +205,7 @@
                             }
                             else
                             {
-                                <div class="flex-r-100">
+                                <div class="flex-r-100" style="margin-bottom:.75em">
                                     <button class="btn btn-grad" disabled=@Disabled @onclick="@(() => Add())" style="box-shadow: none;">Add</button>
                                 </div>
                             }
@@ -220,6 +220,9 @@
 @code {
     private bool Mobile => Constants.Mobile;
     private string TextColor => @Constants.ColorScheme["Text"];
+
+    string TopAmount = "";
+    string BottomAmount = "";
 
     [Parameter]
     public bool Added { get; set; }
@@ -296,6 +299,9 @@
 
         ErrorMsg = "";
         ErrorMsgColor = "red";
+
+        NewTrans.TopAmount = double.TryParse(TopAmount, out double toss1) ? toss1 : 0;
+        NewTrans.BottomAmount = double.TryParse(BottomAmount, out double toss2) ? toss2 : 0;
 
         if (string.IsNullOrEmpty(NewTrans.Name)) ErrorMsg += "You must enter a Name. ";
         if (string.IsNullOrEmpty(NewTrans.ExpenseType)) ErrorMsg += "You must enter an Expense Type. ";
