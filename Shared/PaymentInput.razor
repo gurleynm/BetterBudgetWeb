@@ -4,7 +4,7 @@
 {
     @if (Balances != null)
     {
-        <FancySelect @bind-Value="PaidWith" Style="margin:1vh 0 1vh 0;border:none;color:white">
+        <FancySelect @bind-Value="PaidWith">
             <option selected value="@string.Empty" disabled>@Balance1Header</option>
             @foreach (var pay in Balances)
             {
@@ -18,7 +18,7 @@ else
 {
     @if (Balances != null)
     {
-        <FancySelect @bind-Value="PaidWith" Style="margin:1vh 0 1vh 0;border:none;color:white">
+        <FancySelect @bind-Value="PaidWith">
             <option selected value="@string.Empty" disabled>@Balance1Header</option>
             @foreach (var pay in Balances)
             {

@@ -43,7 +43,7 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <FancySelect @bind-Value="NewTrans.TopWhoPaid" Style="margin:1vh 0 1vh 0;color:white">
+                                <FancySelect @bind-Value="NewTrans.TopWhoPaid">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
@@ -72,7 +72,7 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <FancySelect @bind-Value="NewTrans.BottomWhoPaid" Style="margin:1vh 0 1vh 0;color:white">
+                                <FancySelect @bind-Value="NewTrans.BottomWhoPaid">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
@@ -98,7 +98,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="color:white;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
+                        <td colspan="3" style="color:cyan;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
                     </tr>
                     <tr>
                         <td colspan="3">
@@ -142,7 +142,7 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <FancySelect @bind-Value="NewTrans.TopWhoPaid" Style="color:white">
+                                <FancySelect @bind-Value="NewTrans.TopWhoPaid">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
@@ -169,7 +169,7 @@
                     {
                         <tr>
                             <td colspan="3">
-                                <FancySelect @bind-Value="NewTrans.BottomWhoPaid" Style="color:white">
+                                <FancySelect @bind-Value="NewTrans.BottomWhoPaid">
                                     <option value="@string.Empty" disabled selected>--Pick Person--</option>
                                     <option>@Constants.Person1</option>
                                     <option>@Constants.Person2</option>
@@ -195,7 +195,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="3" style="color:white;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
+                        <td colspan="3" style="color:cyan;padding:1vw">@("Total: " + Constants.Pretty(NewTrans.TotalAmount))</td>
                     </tr>
                     <tr>
                         <td colspan="3" class="flex-r-100">
@@ -221,8 +221,32 @@
     private bool Mobile => Constants.Mobile;
     private string TextColor => @Constants.ColorScheme["Text"];
 
-    string TopAmount = "";
-    string BottomAmount = "";
+    private string topAmount = "";
+    public string TopAmount
+    {
+        get { return topAmount; }
+        set
+        {
+            if (topAmount == value)
+                return;
+
+            topAmount = value;
+            NewTrans.TopAmount = double.TryParse(TopAmount, out double toss1) ? toss1 : 0;
+        }
+    }
+    private string bottomAmount = "";
+    public string BottomAmount
+    {
+        get { return bottomAmount; }
+        set
+        {
+            if (bottomAmount == value)
+                return;
+
+            bottomAmount = value;
+            NewTrans.BottomAmount = double.TryParse(BottomAmount, out double toss2) ? toss2 : 0;
+        }
+    }
 
     [Parameter]
     public bool Added { get; set; }
@@ -300,9 +324,6 @@
         ErrorMsg = "";
         ErrorMsgColor = "red";
 
-        NewTrans.TopAmount = double.TryParse(TopAmount, out double toss1) ? toss1 : 0;
-        NewTrans.BottomAmount = double.TryParse(BottomAmount, out double toss2) ? toss2 : 0;
-
         if (string.IsNullOrEmpty(NewTrans.Name)) ErrorMsg += "You must enter a Name. ";
         if (string.IsNullOrEmpty(NewTrans.ExpenseType)) ErrorMsg += "You must enter an Expense Type. ";
         if (NewTrans.TopAmount == 0) ErrorMsg += "You must enter an Amount. ";
@@ -344,7 +365,6 @@
 
                     NewTrans.TopWhoPaid = "";
                     NewTrans.TopPaidWith = "";
-                    NewTrans.TopAmount = 0;
                 }
             }
             else if (NewTrans.BottomPaidWith == Constants.Person1)
@@ -355,7 +375,6 @@
 
                 NewTrans.BottomPaidWith = "";
                 NewTrans.BottomWhoPaid = "";
-                NewTrans.BottomAmount = 0;
             }
 
             if (Math.Abs(DateTime.Now.Subtract(NewTrans.DateOfTransaction).TotalMinutes) < 3)
@@ -364,6 +383,8 @@
                 NewTrans.DateOfTransaction = NewTrans.DateOfTransaction.AddHours(hourOffset);
             }
 
+            TopAmount = "";
+            BottomAmount = "";
             await OnAddConfirm.InvokeAsync(NewTrans);
             ShowSecond = false;
         }

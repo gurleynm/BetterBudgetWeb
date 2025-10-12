@@ -10,7 +10,7 @@ else
 {
     @if (!Mobile)
     {
-        <FancySelect @bind-Value="NewExpense" Style="margin:1vh 0 1vh 0;color:white;border:none;">
+        <FancySelect @bind-Value="NewExpense">
             <option value="@string.Empty" selected disabled="disabled">Expense Type</option>
             @foreach (var et in ExpenseTypes)
             {
@@ -28,7 +28,7 @@ else
     }
     else
     {
-        <FancySelect @bind-Value="NewExpense" Style="margin:1vh 0 1vh 0;border:none;width:20vw;color:white">
+        <FancySelect @bind-Value="NewExpense">
             <option value="@string.Empty" selected disabled="disabled">Expense</option>
             @foreach (var et in ExpenseTypes)
             {
