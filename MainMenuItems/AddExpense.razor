@@ -383,9 +383,9 @@
                 NewTrans.DateOfTransaction = NewTrans.DateOfTransaction.AddHours(hourOffset);
             }
 
+            await OnAddConfirm.InvokeAsync(NewTrans);
             TopAmount = "";
             BottomAmount = "";
-            await OnAddConfirm.InvokeAsync(NewTrans);
             ShowSecond = false;
         }
         else
