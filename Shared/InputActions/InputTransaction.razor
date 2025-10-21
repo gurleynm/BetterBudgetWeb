@@ -433,7 +433,7 @@
 
         if (TabDictionary["Income"])
             ExpenseType = "Income";
-        else if (TabDictionary["Transfer"])
+        else if (TabDictionary["Transfer"] && ExpenseType != "Debt")
             ExpenseType = "Transfer";
 
         ErrorMsg += string.IsNullOrEmpty(TransactionName) && ExpenseType != "Transfer" ? "Transaction Name must be set. " : "";
