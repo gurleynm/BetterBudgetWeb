@@ -91,9 +91,9 @@ else
                         <label>@(Person1 + " Values")</label>
                     </td>
                     <td>
-                        <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
-                        <br />
                         <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
+                        <br />
+                        <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
                     </td>
                 </tr>
                 <tr>
@@ -101,9 +101,9 @@ else
                         <label>@(Person2 + " Values")</label>
                     </td>
                     <td>
-                        <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
-                        <br />
                         <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
+                        <br />
+                        <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
                     </td>
                 </tr>
                 <tr>

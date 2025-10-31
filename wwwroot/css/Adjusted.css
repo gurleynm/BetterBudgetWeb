@@ -75,7 +75,7 @@
     border: 1px solid rgba(91,122,255,0.4);
     border-radius: 1em;
     cursor: pointer;
-    width: 100%;
+    width: fit-content;
 }
 
 .custom-select option {

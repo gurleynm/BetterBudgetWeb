@@ -121,14 +121,14 @@
                 {
                     <tr>
                         <td class="flex-r" style="padding:1vw;justify-content:space-evenly">
-                            <input type="date" class="custom-input" style="color-scheme: dark;" @bind-value="@NewTrans.DateOfTransaction" @oninput="@(async (ui) => { NewTrans.DateOfTransaction = DateTime.TryParse((string)ui.Value, out DateTime toss) ? toss : DateTime.Now; })" />
+                            <input type="date" class="custom-input" style="color-scheme: dark;width:fit-content;padding 0 2px;" @bind-value="@NewTrans.DateOfTransaction" @oninput="@(async (ui) => { NewTrans.DateOfTransaction = DateTime.TryParse((string)ui.Value, out DateTime toss) ? toss : DateTime.Now; })" />
 
-                            <input type="text" class="custom-input" placeholder="Enter Name" @bind-value="@NewTrans.Name" @oninput="@(async (ui) => { NewTrans.Name = (string)ui.Value; })" />
+                            <input type="text" class="custom-input" style="width:40%" placeholder="Enter Name" @bind-value="@NewTrans.Name" @oninput="@(async (ui) => { NewTrans.Name = (string)ui.Value; })" />
                         </td>
                     </tr>
                     <tr>
                         <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                            <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@TopAmount" @oninput="@(async (ui) => { TopAmount = (string)ui.Value; })" />
+                            <input type="number" class="custom-input" style="width:45%;" placeholder="$ Amount" @bind-value="@TopAmount" @oninput="@(async (ui) => { TopAmount = (string)ui.Value; })" />
 
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
 
