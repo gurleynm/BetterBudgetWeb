@@ -70,6 +70,7 @@
             Disabled = true;
             await Task.Delay(100);
             StateHasChanged();
+            contactFormModel.Message += $"\nSender name: {contactFormModel.Name}";
             await EmailService.SendEmailAsync(contactFormModel.Email, contactFormModel.Subject, contactFormModel.Message);
             message = "Your message has been sent successfully.";
             Disabled = false;
