@@ -33,18 +33,55 @@
                         <input class="custom-input" type="date" @bind-value="Transact.DateOfTransaction" style="color-scheme:dark" />
                     </td>
                     <td style="padding:1vw">
-                        <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
+                        @if ("Debt Transfer".Contains(Transact.ExpenseType))
+                        {
+                            <div>@Transact.ExpenseType</div>
+                        }
+                        else
+                        {
+                            <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
+                        }
                     </td>
                     <td style="padding:1vw">
-                        <input class="custom-input" type="text" @bind-value="Transact.Name" style="width:fit-content" />
+                        @if (Transact.ExpenseType != "Transfer")
+                        {
+                            <input class="custom-input" type="text" @bind-value="Transact.Name" style="width:fit-content" />
+                        }
+                        @if ("Debt Transfer".Contains(Transact.ExpenseType))
+                        {
+                            string tOd = Transact.ExpenseType == "Transfer" ? "(Transferring into " : "(Paying Off ";
+
+                            @if (Transact.Person1Amount != 0)
+                            {
+                                <div>@(tOd + Transact.PaidOffPerson1 + ")")</div>
+                            }
+                            @if (Transact.Person2Amount != 0)
+                            {
+                                <div>@(tOd + Transact.PaidOffPerson2 + ")")</div>
+                            }
+                        }
                     </td>
                     <td style="padding:1vw">
-                        <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
-                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
+                        @if ("Debt Transfer".Contains(Transact.ExpenseType) && Transact.Person1Amount == 0)
+                        {
+                            <div>Cannot change</div>
+                        }
+                        else
+                        {
+                            <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
+                            <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
+                        }
                     </td>
                     <td style="padding:1vw">
-                        <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
-                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
+                        @if ("Debt Transfer".Contains(Transact.ExpenseType) && Transact.Person2Amount == 0)
+                        {
+                            <div>Cannot change</div>
+                        }
+                        else
+                        {
+                            <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
+                            <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
+                        }
                     </td>
                     <td style="padding:1vw">
                         <label>@Transact.TotalAmount</label>
@@ -67,7 +104,23 @@ else
                         <label>Name</label>
                     </td>
                     <td>
-                        <input class="custom-input" type="text" @bind-value="Transact.Name" />
+                        @if (Transact.ExpenseType != "Transfer")
+                        {
+                            <input class="custom-input" type="text" @bind-value="Transact.Name" />
+                        }
+                        @if ("Debt Transfer".Contains(Transact.ExpenseType))
+                        {
+                            string tOd = Transact.ExpenseType == "Transfer" ? "(Transferring into " : "(Paying Off ";
+
+                            @if (Transact.Person1Amount != 0)
+                            {
+                                <div>@(tOd + Transact.PaidOffPerson1 + ")")</div>
+                            }
+                            @if (Transact.Person2Amount != 0)
+                            {
+                                <div>@(tOd + Transact.PaidOffPerson2 + ")")</div>
+                            }
+                        }
                     </td>
                 </tr>
                 <tr>
@@ -83,29 +136,43 @@ else
                         <label>Expense Type</label>
                     </td>
                     <td>
-                        <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
+
+                        @if ("Debt Transfer".Contains(Transact.ExpenseType))
+                        {
+                            <div>@Transact.ExpenseType</div>
+                        }
+                        else
+                        {
+                            <ExpenseTypeInput @bind-NewExpense=@Transact.ExpenseType />
+                        }
                     </td>
                 </tr>
-                <tr>
-                    <td style="padding:1em 0">
-                        <label>@(Person1 + " Values")</label>
-                    </td>
-                    <td>
-                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
-                        <br />
-                        <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:1em 0">
-                        <label>@(Person2 + " Values")</label>
-                    </td>
-                    <td>
-                        <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
-                        <br />
-                        <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
-                    </td>
-                </tr>
+                @if (!"Debt Transfer".Contains(Transact.ExpenseType) || Transact.Person1Amount != 0)
+                {
+                    <tr>
+                        <td style="padding:1em 0">
+                            <label>@(Person1 + " Values")</label>
+                        </td>
+                        <td>
+                            <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
+                            <br />
+                            <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
+                        </td>
+                    </tr>
+                }
+                @if (!"Debt Transfer".Contains(Transact.ExpenseType) || Transact.Person2Amount != 0)
+                {
+                    <tr>
+                        <td style="padding:1em 0">
+                            <label>@(Person2 + " Values")</label>
+                        </td>
+                        <td>
+                            <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
+                            <br />
+                            <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
+                        </td>
+                    </tr>
+                }
                 <tr>
                     <td style="padding:1em 0">
                         <label>Total</label>

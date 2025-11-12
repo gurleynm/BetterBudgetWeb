@@ -668,17 +668,7 @@ else
     {
         var test = await JSRuntime.InvokeAsync<object>("WriteCookie", name, value, days);
     }
-    private void ToggleChartBtn()
-    {
-        if (!ShowChart)
-        {
-            FilteredTransactions = new List<Transaction>(Constants.catchAll.Transactions);
-            FilteredTransactions = FilteredTransactions.Where(t => t.MonthYear() == Constants.MonthYear()).OrderByDescending(t => t.DateOfTransaction).ToList();
-            SelectedBalance = "";
-        }
-        ShowChart = !ShowChart;
-        StateHasChanged();
-    }
+    
     private async void ToggleAddEnvelope()
     {
         AddEnv = !AddEnv;

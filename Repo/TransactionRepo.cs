@@ -8,7 +8,7 @@ namespace BetterBudgetWeb.Repo
     public class TransactionRepo
     {
         private static string baseURI => Constants.BaseUri + "Transaction";
-        public static List<Transaction> Transactions { get; set; } = new List<Transaction>(); 
+        public static List<Transaction> Transactions { get; set; } = new List<Transaction>();
         public static async Task<List<Transaction>> CallAPI(string method, string URI = "", object small = null)
         {
             if (string.IsNullOrEmpty(URI))
@@ -129,7 +129,7 @@ namespace BetterBudgetWeb.Repo
 
             return await CallAPI("POST", baseURI, trans);
         }
-        
+
         // THIS IS UNIQUE!!! IT RETURNS A CatchAll!
         public static async Task<List<Transaction>> AddOrUpdateBatchAsync(Transaction[] MultiTrans)
         {

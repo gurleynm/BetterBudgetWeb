@@ -48,8 +48,8 @@
                             @if (!(transaction.ExpenseType == "Debt" || transaction.ExpenseType == "Transfer"))
                             {
                                 <button class="btn btn-primary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => SplitModal(transaction))"><span class="oi oi-pie-chart"></span></button>
-                                <button class="btn btn-primary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
                             }
+                            <button class="btn btn-primary" disabled=@Disabled style="background-color:transparent;margin:.5vh;height:5vh;" @onclick="(() => OpenModal(transaction))"><span class="oi oi-pencil"></span></button>
                             <button class="btn" disabled=@Disabled style="background-color:transparent;color:red;border:none;margin:.5vh;height:5vh;" @onclick="(() => DelBtn(transaction))"><span class="bi bi-trash" style="color:red"></span></button>
                         </div>
                     </td>
