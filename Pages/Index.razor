@@ -84,16 +84,23 @@ else
                     <div style="display:inline-block;width:50%;">
                         <div class="flex-r" style="padding:0;width:100%;justify-content:space-around;align-items:center; margin-bottom:1vh">
                             <div style="width:100%">
-                                @if (Envelopes.Count > 0)
-                                {
-                                    <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" ShowWorthToggled=@(() => Goals = !Goals) TopButton=true BottomButton=false>
+                                <PopTray Id="goal-envs-index" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" ShowWorthToggled=@(() => Goals = !Goals) TopButton=true BottomButton=false>
+                                    @if (Envelopes.Count > 0)
+                                    {
                                         <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                                         <br style="clear:both" />
                                         <br style="clear:both" />
                                         <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
-                                        <br />
-                                        <br />
+                                        <br style="clear:both" />
+                                        <br style="clear:both" />
+                                    }
+                                    <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleAddEnvelope())>+ Envelope</button>
 
+                                    <br />
+                                    <br />
+
+                                    @if (Envelopes.Count > 0)
+                                    {
                                         <div class="flex-c">
                                             <div style="font-size:1.5vw;text-align:center">
                                                 Total Goals:
@@ -129,8 +136,8 @@ else
                                                           Person2Amount="@env.Person2Amount" />
                                             }
                                         </div>
-                                    </PopTray>
-                                }
+                                    }
+                                </PopTray>
                                 <AddExpense OnAddConfirm="Add" Added="Added" @bind-Disabled=AddDisabled />
                                 <br style="clear:both;" />
                                 <!-- Ideal Emergency Fund-->
@@ -178,14 +185,21 @@ else
         {
             <BalanceTray @ref=MGlobalBT />
 
-            @if (Envelopes.Count > 0)
-            {
-                <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" ShowWorthToggled=@(() => Goals = !Goals) TopButton=true BottomButton=false>
-                    <div style="display:inline-block;width:100%">
+            <PopTray Id="goal-envs-index-mobile" ShowTxt="Show Savings Envelopes" HideTxt="Hide Savings Envelopes" Margin="0 0 1em 0" ShowWorthToggled=@(() => Goals = !Goals) TopButton=true BottomButton=false>
+                <div style="display:inline-block;width:100%">
+                    @if (Envelopes.Count > 0)
+                    {
                         <button class="btn btn-success" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleStash())>Stash Cash</button>
                         <br style="clear:both" />
                         <br style="clear:both" />
                         <button class="btn btn-danger" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleCash())>Cash Out</button>
+                        <br style="clear:both" />
+                        <br style="clear:both" />
+                    }
+                    <button class="btn btn-info" style="width:100%;align-self:center;color:black" @onclick=@(() => ToggleAddEnvelope())>+ Envelope</button>
+
+                    @if (Envelopes.Count > 0)
+                    {
                         <br />
                         <br />
                         <div class="flex-c">
@@ -222,9 +236,9 @@ else
                         </div>
                         <br style="clear:both" />
                         <br style="clear:both" />
-                    </div>
-                </PopTray>
-            }
+                    }
+                </div>
+            </PopTray>
             <AddExpense OnAddConfirm="Add" Added="Added" @bind-Disabled=AddDisabled />
 
             @if (DataPoints != null && DataPoints.Count > 0)
@@ -273,15 +287,15 @@ else
         }
         @if (StashCashBool)
         {
-            <StashCash OnClose="@CloseModal">
-
-            </StashCash>
+            <StashCash OnClose="@CloseModal" />
         }
         @if (CashOutBool)
         {
-            <CashOut OnClose="@CloseModal">
-
-            </CashOut>
+            <CashOut OnClose="@CloseModal" />
+        }
+        @if (AddEnv)
+        {
+            <AddEnvelope OnClose="@CloseModal" />
         }
     }
 }
@@ -369,6 +383,7 @@ else
 
     private bool StashCashBool { get; set; }
     private bool CashOutBool { get; set; }
+    private bool AddEnv { get; set; }
 
     private bool hideEnvExp;
     private bool HideEnvExp
@@ -473,13 +488,13 @@ else
 
         /*
         * string TutorialSeen = await ReadCookies("TutorialSeen");
-       if (string.IsNullOrEmpty(TutorialSeen))
-           ShowTutorial = true;
-           else
-           ShowTutorial = false;
-            */
+        if (string.IsNullOrEmpty(TutorialSeen))
+            ShowTutorial = true;
+        else
+            ShowTutorial = false;
+        */
 
-        SetDataPoints();
+                SetDataPoints();
 
         Constants.TransactionsChanged += TransactionsUpdated;
         Constants.EnvelopesChanged += EnvelopesUpdated;
@@ -613,6 +628,11 @@ else
         StashCashBool = false;
         CashOutBool = false;
 
+        if (AddEnv && accepted)
+            await JSRuntime.InvokeAsync<object>("resizeTray", Constants.TestMobile("goal-envs-index-mobile","goal-envs-index"));
+
+        AddEnv = false;
+
         if (accepted)
         {
             Transactions = Constants.Transactions;
@@ -658,6 +678,10 @@ else
         }
         ShowChart = !ShowChart;
         StateHasChanged();
+    }
+    private async void ToggleAddEnvelope()
+    {
+        AddEnv = !AddEnv;
     }
     private async void ToggleStash()
     {

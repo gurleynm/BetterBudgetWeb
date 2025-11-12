@@ -43,79 +43,24 @@
                     </div>
                 }
                 <div class="tabcontent flex-r" style="justify-content:space-between;width:100%">
-                    <table class="toggle-table">
-                        <tr>
-                            <th colspan="4" style="background-color:darkblue;color:white;"><i>Summary</i></th>
-                        </tr>
-                        <tr>
-                            <th>
-                            </th>
-                            <th>
-                                @Constants.Person1
-                            </th>
-                            <th>
-                                @Constants.Person2
-                            </th>
-                            <th>
-                                Total
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>Transactions:</td>
-                            <td>@Person1TransCount</td>
-                            <td>@Person2TransCount</td>
-                            <td>
-                                @TotalTransCount
-                                @if (Person1TransCount + Person2TransCount > TotalTransCount)
-                                {
-                                    <br />
-                                    <span>@($"(Overlapped: {Person1TransCount + Person2TransCount - TotalTransCount})")</span>
-                                }
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Projected Expense Total:
-                            </td>
-                            <td>@Pretty(Person1Projected)</td>
-                            <td>@Pretty(Person2Projected)</td>
-                            <td>@Pretty(TotalProjected)</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Actual Expense Total:
-                            </td>
-                            <td class="income-bad">@Pretty(Person1Actual)</td>
-                            <td class="income-bad">@Pretty(Person2Actual)</td>
-                            <td class="income-bad">@Pretty(TotalActual)</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Income + Added Equity Total:
-                            </td>
-                            <td class="income-good">@Pretty(Person1Income)</td>
-                            <td class="income-good">@Pretty(Person2Income)</td>
-                            <td class="income-good">@Pretty(TotalIncome)</td>
-                        </tr>
-                        <tr>
-                            <td colspan="4">=</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Net for Month:
-                            </td>
-                            <td class="@TranColor(Person1Income - Person1Actual)">@Pretty(Person1Income - Person1Actual)</td>
-                            <td class="@TranColor(Person2Income - Person2Actual)">@Pretty(Person2Income - Person2Actual)</td>
-                            <td class="@TranColor(TotalIncome - TotalActual)">@Pretty(TotalIncome - TotalActual)</td>
-                        </tr>
-                    </table>
+                    <div class="flex-c-start" style="width:60%">
+                        <table style="background-color:transparent;border-radius:0;border:none;margin-bottom:1em">
+                            <ReportHelper Title="Transactions" Spot1="@Person1TransCount" Spot2="@Person2TransCount" Spot3="@TotalTransCount" SetColors=false Beautify=false />
+                            <ReportHelper Title="Projected Expenses" Spot1="@(-Person1Projected)" Spot2="@(-Person2Projected)" Spot3="@(-TotalProjected)" />
+                            <ReportHelper Title="Actual Expenses" Spot1="@(-Person1Actual)" Spot2="@(-Person2Actual)" Spot3="@(-TotalActual)" />
+                            <ReportHelper Title="Income & Equity" Spot1="@Person1Income" Spot2="@Person2Income" Spot3="@TotalIncome" />
+                            <ReportHelper Title="Net" Spot1="@(Person1Income - Person1Actual)" Spot2="@(Person2Income - Person2Actual)" Spot3="@(TotalIncome - TotalActual)" />
+                        </table>
+                        <ReportDynamic SFDs=@SFDs Rebalancing=@(Rebalancing && SelectedMonth == "All")
+                               NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye =>
+                                                              ye.MyClass == "active").MyYear).Count() - 1) />
+            </div>
+
                     <br style="clear:both;" />
-                    <div class="flex-c-start"  style="margin-left:1vw;">
-                    <ReportDynamic SFDs=@SFDs Rebalancing=@(Rebalancing &&
-                                                                         SelectedMonth == "All")
-                           NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye =>
-                                                      ye.MyClass == "active").MyYear).Count() - 1) />
-                        @if (OrderedEnvelopes.Count > 0)
+                    <div class="flex-c-start" style="width:40%;margin-left:1vw;">
+                        <Report1Time SFSs=@SFSs NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye =>
+                                                                     ye.MyClass == "active").MyYear).Count() - 1) />
+                @if (OrderedEnvelopes.Count > 0)
                         {
                             <br style="clear:both;" />
                             <table class="toggle-table">
@@ -136,7 +81,7 @@
                                         <td>@envelope.Name</td>
                                         <td>@Constants.Pretty(envelope.Goal)</td>
                                     </tr>
-                                }                                
+                                }
                                 <tr>
                                     <td colspan="2">=</td>
                                 </tr>
@@ -199,8 +144,12 @@ else
                         <ReportHelper Title="Income & Equity" Spot1="@Person1Income" Spot2="@Person2Income" Spot3="@TotalIncome" />
                         <ReportHelper Title="Net" Spot1="@(Person1Income - Person1Actual)" Spot2="@(Person2Income - Person2Actual)" Spot3="@(TotalIncome - TotalActual)" />
                     </table>
+
                     <div style="margin-bottom:2em">
                         <ReportDynamic SFDs=@SFDs />
+                        <br />
+                        <Report1Time SFSs=@SFSs NumOfMonths=@(MonthTabs.Where(m => m.MyYear == Years.FirstOrDefault(ye =>
+                                                                             ye.MyClass == "active").MyYear).Count() - 1) />
                         @if (OrderedEnvelopes.Count > 0)
                         {
                             <br style="clear:both;" />
@@ -222,7 +171,7 @@ else
                                         <td>@envelope.Name</td>
                                         <td>@Constants.Pretty(envelope.Goal)</td>
                                     </tr>
-                                }                                                             
+                                }
                                 <tr>
                                     <td colspan="2">=</td>
                                 </tr>
@@ -285,11 +234,12 @@ else
 
     private List<Transaction> Transactions = new List<Transaction>();
     private List<SnapForDynamic> SFDs = new List<SnapForDynamic>();
+    private List<SnapForDynamic> SFSs = new List<SnapForDynamic>();
 
     Dictionary<string, double> Envelopes = new();
     List<Envelope> OrderedEnvelopes = new();
+
     private List<Monthly> DCIs = new List<Monthly>();
-    private List<Monthly> SMCs = new List<Monthly>();
     private List<Snapshot> snaps = new List<Snapshot>();
 
     protected override async Task OnInitializedAsync()
@@ -343,22 +293,22 @@ else
             * Now: Always set Previous Month in case updates are made up to 1 month later
         */
 
-    if (Years.Count == 1 && Years[0].MyClass != "active")
-                Years[0].MyClass = "active";
-            snaps = await SnapshotRepo.GetSnapshotsAsync();
+        if (Years.Count == 1 && Years[0].MyClass != "active")
+            Years[0].MyClass = "active";
+        snaps = await SnapshotRepo.GetSnapshotsAsync();
 
-            await LoadTable();
-        }
+        await LoadTable();
+    }
 
     private async Task LoadTable()
     {
         Trans.Clear();
         DCIs.Clear();
-        SMCs.Clear();
         Rebalancing = false;
 
         Dynamo dyna;
         SFDs = new List<SnapForDynamic>();
+        SFSs = new List<SnapForDynamic>();
         SnapForDynamic sfd = new SnapForDynamic();
 
 
@@ -438,6 +388,28 @@ else
                     }
                 }
             }
+
+            foreach (Transaction transaction in Trans)
+            {
+                if (transaction.ExpenseType == "1-Time Charge")
+                {
+                    sfd = new SnapForDynamic
+                    {
+                        Name = transaction.Name,
+                        Actual = transaction.TotalAmount
+                    };
+
+                    exists = SFSs.FirstOrDefault(s => s.Name.Trim() == sfd.Name.Trim());
+
+                    if (exists == null)
+                        SFSs.Add(sfd);
+                    else
+                    {
+                        exists.Projected += sfd.Projected;
+                        exists.Actual += sfd.Actual;
+                    }
+                }
+            }
         }
         else
         {
@@ -470,6 +442,19 @@ else
                 };
 
                 SFDs.Add(sfd);
+            }
+
+            foreach (Transaction transaction in Trans)
+            {
+                if (transaction.ExpenseType == "1-Time Charge")
+                {
+                    sfd = new SnapForDynamic
+                    {
+                        Name = transaction.Name,
+                        Actual = transaction.TotalAmount
+                    };
+                    SFSs.Add(sfd);
+                }
             }
 
             monthInt = DateTime.ParseExact(SelectedMonth, "MMMM", CultureInfo.CurrentCulture).Month;
@@ -506,7 +491,7 @@ else
             }
         }
 
-        foreach(string key in Envelopes.Keys)
+        foreach (string key in Envelopes.Keys)
         {
             OrderedEnvelopes.Add(new Envelope { Name = key, Goal = Envelopes[key] });
         }

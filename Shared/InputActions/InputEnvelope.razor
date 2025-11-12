@@ -1,37 +1,29 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Repo
 
-@if (Mobile)
-{
-    <br style="clear:both" />
-    @if (!string.IsNullOrEmpty(EnvName) && !string.IsNullOrEmpty(Amount))
-    {
-        <div style="width:90vw;height:fit-content;">
-            <h1 style="text-align:center;">Envelope Preview:</h1>
-            <div class="flex-r">
-                <Envelope Name="@EnvName" Scale=80 Font_Size=9 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
-            </div>
-        </div>
-    }
-    <br />
-    <div style="position:relative;">
-        <div style="float:left; margin-right:10vw;">
+<br style="clear:both" />
+<div style="height:fit-content;">
+    <h1 style="text-align:center;">Envelope Preview:</h1>
+    <div class="flex-r">
+        <Envelope Name="@EnvName" Scale=@(Constants.TestMobile(80, 15)) Font_Size=@(Constants.TestMobile(9, 2)) Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
+    </div>
+</div>
+<br />
+<div class="flex-c-start" style="position:relative;">
+    <div class="@(Constants.TestMobile("flex-c-start", "flex-r-100"))">
+        <div class="flex-c-start" style="margin-bottom:2em;margin-right:2em;margin-bottom:2em">
             <label>Envelope Name:</label>
-            <br />
             <input class="custom-input" type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string)ui.Value; })" />
         </div>
-        <br style="clear:both" />
-        <br style="clear:both" />
-        <div style="float:left; margin-right:10vw;">
+
+        <div class="flex-c-start" style="margin-bottom:2em;">
             <label>Goal Amount:</label>
-            <br />
             <input class="custom-input" type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
         </div>
-        <br style="clear:both" />
-        <br style="clear:both" />
-        <div>
+    </div>
+    <div class="@(Constants.TestMobile("flex-c-start", "flex-r-100"))">
+        <div class="flex-c-start" style="margin-right:2em;">
             <label>@($"{Constants.Person1} Will Pay With:")</label>
-            <br />
             <FancySelect @bind-Value="WillPayPerson1" Style="">
                 <option value="Debt">Paying off Debt</option>
                 <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person1} Will Pay)")</option>
@@ -45,11 +37,8 @@
                 <option value="NONE">Will Not Contribute</option>
             </FancySelect>
         </div>
-        <br style="clear:both" />
-        <br style="clear:both" />
-        <div>
+        <div class="flex-c-start">
             <label>@($"{Constants.Person2} Will Pay With:")</label>
-            <br />
             <FancySelect @bind-Value="WillPayPerson2" Style="">
                 <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person2} Will Pay)")</option>
                 @if (Balances != null)
@@ -62,103 +51,30 @@
                 <option value="NONE">Will Not Contribute</option>
             </FancySelect>
         </div>
-        <br style="clear:both" />
-        <br />
-        <div style="float:left; margin-right:10vw;">
-            <label>Update this with Charges:</label>
-            <br />
+    </div>
+    <br />
+    <div class="flex-r" style="justify-content:@(Constants.TestMobile("start", "center"))">
+        <label style="margin-right:1em">Update this with Charges:</label>
+        <div class="flex-c" style="height:100%">
             <input class="custom-input" @bind="UpdateCheck" type="checkbox" />
         </div>
-        <br style="clear:both" />
-        <br />
-        @if (!string.IsNullOrEmpty(ErrorMsg))
-        {
-            <p style="color:@ErrorColor">@ErrorMsg</p>
-        }
-        <button class="btn btn-primary" disabled=@Disabled @onclick=Submit>Submit</button>
-        <br />
-        <br />
-        <br />
-        <br />
     </div>
-}
-else
-{
-    <div class="tabcontent">
-        <div class="flex-r-100">
-            <div class="flex-r" style="justify-content:space-between;align-items:start;flex-wrap:wrap;width:75%;padding-right:5%">
-                <div class="flex-r-100" style="justify-content:space-between;align-items:start;">
-                    <div>
-                        <label>Envelope Saving Goal:</label>
-                        <br />
-                        <input class="custom-input" type="text" placeholder="Envelope Name" @bind=EnvName @oninput="@(async (ui) => { EnvName = (string)ui.Value; })" />
-                    </div>
-                    <div>
-                        <label>Goal Amount:</label>
-                        <br />
-                        <input class="custom-input" type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
-                    </div>
-                    <div class="flex-r" style="align-items:baseline">
-                        <label style="margin-right:2px">Update this with Charges:</label>
-                        <input @bind="UpdateCheck" type="checkbox" />
-                    </div>
-                </div>
-                <div class="flex-r-100" style="justify-content:space-evenly;align-items:start;">
-                    <div>
-                        <label>@($"{Constants.Person1} Will Pay With:")</label>
-                        <br />
-                        <FancySelect @bind-Value="WillPayPerson1" Style="">
-                            <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person1} Will Pay)")</option>
-                            @if (Balances != null)
-                            {
-                                @foreach (var pay in Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT"))
-                                {
-                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                }
-                            }
-                            <option value="NONE">Will Not Contribute</option>
-                        </FancySelect>
-                    </div>
-                    <div>
-                        <label>@($"{Constants.Person2} Will Pay With:")</label>
-                        <br />
-                        <FancySelect @bind-Value="WillPayPerson2" Style="">
-                            <option value="@string.Empty" selected disabled="disabled">@($"(Select How {Constants.Person2} Will Pay)")</option>
-                            @if (Balances != null)
-                            {
-                                @foreach (var pay in Balances.Where(b => b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT"))
-                                {
-                                    <option style="background-color:@pay.HexColor;color:@pay.TextColor" value="@pay.Id">@pay.Name</option>
-                                }
-                            }
-                            <option value="NONE">Will Not Contribute</option>
-                        </FancySelect>
-                    </div>
-                </div>
-            </div>
-            @if (!string.IsNullOrEmpty(EnvName) && !string.IsNullOrEmpty(Amount))
-            {
-                <div class="flex-r" style="width:25%;flex-wrap:wrap">
-                    <h1 style="text-align:center;">Envelope Preview:</h1>
-                    <div>
-                        <Envelope Name="@EnvName" Scale=15 Font_Size=2 Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
-                    </div>
-                </div>
-            }
-        </div>
-        <br style="clear:both" />
-        <br />
-        @if (!string.IsNullOrEmpty(ErrorMsg))
-        {
-            <p style="color:@ErrorColor">@ErrorMsg</p>
-        }
+    <br style="clear:both" />
+    <br />
+    @if (!string.IsNullOrEmpty(ErrorMsg))
+    {
+        <p style="color:@ErrorColor">@ErrorMsg</p>
+    }
+    @if (Disabled)
+    {
+        <LoadingDots />
+    }
+    else
+    {
         <button class="btn btn-primary" disabled=@Disabled @onclick=Submit>Submit</button>
-    </div>
-    <br />
-    <br />
-    <br />
-    <br />
-}
+    }
+</div>
+
 
 @code {
     [Parameter]
@@ -171,6 +87,8 @@ else
     public string Amount { get; set; }
     [Parameter]
     public bool UpdateCheck { get; set; } = true;
+    [Parameter]
+    public Action OnSubmit { get; set; }
 
     public bool Mobile => Constants.Mobile;
 
@@ -188,9 +106,11 @@ else
         Envelopes = await EnvelopeRepo.GetEnvelopesAsync();
     }
 
-    public async void Submit()
+    public async Task Submit()
     {
         Disabled = true;
+        StateHasChanged();
+        await Task.Delay(100);
         ErrorMsg = string.Empty;
         ErrorColor = "red";
         bool tpAmount = double.TryParse(Amount, out double am);
@@ -223,6 +143,10 @@ else
             Amount = string.Empty;
             WillPayPerson1 = string.Empty;
             WillPayPerson2 = string.Empty;
+
+            if (OnSubmit != null)
+                OnSubmit.Invoke();
+
         }
 
         Disabled = false;

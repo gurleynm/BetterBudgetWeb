@@ -1,0 +1,146 @@
+﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
+
+@if (!Mobile)
+{
+    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:rgba(0,0,0,.8);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:50vw;position: absolute;left: 50%; top: 50%;
+                                    transform: translate(-50%, 0%);background-color:@Constants.ColorScheme["ComponentBackground"];">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
+                        Add Envelope
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    </button>
+                </div>
+                <div class="modal-body" style="width:100%;color:white;">
+                    <div class="flex-c" style="justify-content:space-between">
+                        <BetterBudgetWeb.Shared.InputActions.InputEnvelope OnSubmit="OnEnvSubmit" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="modal show" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="overflow:auto;background-color:rgba(0,0,0,.8);">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="width:fit-content;margin:0 auto;background-color:@Constants.ColorScheme["ComponentBackground"];">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:large;font-family:'CBB Default';color:white;">
+                        Add Envelope
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-dismiss="modal" aria-label="Close" @onclick="@ModalCancel">
+                    </button>
+                </div>
+                <div class="modal-body" style="width:100%;color:white;@(SelectedEnv != null ? "overflow-y:auto;height:90vh;" : "")">
+                    <div class="flex-c" style="justify-content:space-between">
+                        <BetterBudgetWeb.Shared.InputActions.InputEnvelope OnSubmit="OnEnvSubmit" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    public double Person1Amount { get; set; }
+    public double Person2Amount { get; set; }
+    public bool Stashing { get; set; }
+
+    public string ErrorMsg { get; set; }
+    public string ErrorColor { get; set; }
+
+    private List<Data.Envelope> Envelopes { get; set; }
+
+    private string selectedEnvID { get; set; }
+    private string SelectedEnvID
+    {
+        get { return selectedEnvID; }
+        set
+        {
+            SelectedEnv = Envelopes.FirstOrDefault(e => e.Id == value);
+            selectedEnvID = value;
+            StateHasChanged();
+        }
+    }
+    private Data.Envelope SelectedEnv { get; set; }
+    private Balance Person1Bal => Constants.Balances.FirstOrDefault(b => b.Id == SelectedEnv.Person1Account);
+    private Balance Person2Bal => Constants.Balances.FirstOrDefault(b => b.Id == SelectedEnv.Person2Account);
+
+    public bool Mobile => Constants.Mobile;
+
+
+    protected override Task OnInitializedAsync()
+    {
+        Envelopes = Constants.Envelopes.OrderBy(e => e.Name).ToList();
+        return base.OnInitializedAsync();
+    }
+
+    private async Task HandleStash()
+    {
+        ErrorMsg = string.Empty;
+        ErrorColor = "red";
+
+        if (SelectedEnv.Person1Account != "NONE" && SelectedEnv.Person2Account != "NONE")
+        {
+            if (Person1Amount <= 0 && Person2Amount <= 0)
+                ErrorMsg += "At least one person must contribute. ";
+        }
+        else if (SelectedEnv.Person1Account != "NONE")
+        {
+            if (Person1Amount <= 0)
+                ErrorMsg += $"{Constants.Person1} must contribute. ";
+        }
+        else if (SelectedEnv.Person2Account != "NONE")
+        {
+            if (Person2Amount <= 0)
+                ErrorMsg += $"{Constants.Person2} must contribute. ";
+        }
+
+        if (Person1Bal != null && Person1Bal.GetValueWithGoals() - Person1Amount < 0)
+            ErrorMsg += $"Stashed cash cannot exceed your balance, {Constants.Person1}. ";
+        if (Person2Bal != null && Person2Bal.GetValueWithGoals() - Person2Amount < 0)
+            ErrorMsg += $"Stashed cash cannot exceed your balance, {Constants.Person2}. ";
+
+
+        if (string.IsNullOrEmpty(ErrorMsg))
+        {
+            Data.Envelope UpdateEnv = new Data.Envelope(SelectedEnv);
+            UpdateEnv.Person1Amount += Person1Amount;
+            UpdateEnv.Person2Amount += Person2Amount;
+
+            Stashing = true;
+            StateHasChanged();
+            Task runner = EnvelopeRepo.AddOrUpdateAsync(UpdateEnv);
+            await Task.Delay(2000);
+            SelectedEnv.Person1Amount += Person1Amount;
+            SelectedEnv.Person2Amount += Person2Amount;
+            if (SelectedEnv.Goal < SelectedEnv.Person1Amount + SelectedEnv.Person2Amount)
+                SelectedEnv.Goal = SelectedEnv.Person1Amount + SelectedEnv.Person2Amount;
+
+            StateHasChanged();
+            Stashing = false;
+            await runner;
+        }
+    }
+
+    private void OnEnvSubmit()
+    {
+        OnClose.InvokeAsync(true);
+    }
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private async Task ModalDecline()
+    {
+        await OnClose.InvokeAsync(false);
+    }
+}

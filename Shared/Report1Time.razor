@@ -1,0 +1,85 @@
+﻿@using BetterBudgetWeb.Data;
+@using BetterBudgetWeb.Repo;
+
+<table class="toggle-table">
+    <tr>
+        <th colspan="4" style="background-color:forestgreen;color:white;"><i>1-Time Charges</i></th>
+    </tr>
+    <tr>
+        <th>Expense</th>
+        <th>Spent</th>
+    </tr>
+    @foreach (var sfd in SFSs.OrderByDescending(s => s.Actual))
+    {
+        @if (sfd.Name.Contains("EXAMPLE DATA"))
+        {
+            <tr>
+                <td style="padding:.5vw 1vw;cursor:pointer;"><i>@sfd.Name</i></td>
+                <td>@Pretty(sfd.Actual)</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td style="padding:.5vw 1vw;cursor:pointer;">@sfd.Name</td>
+                <td>@Pretty(sfd.Actual)</td>
+            </tr>
+        }
+
+    }
+    <tr>
+        <td colspan="4">=</td>
+    </tr>
+    <tr>
+        <td><strong>Total</strong></td>
+        <td>@Pretty(SFSs.Sum(d => d.Actual))</td>
+    </tr>
+</table>
+
+@code {
+    [Parameter]
+    public List<SnapForDynamic> SFSs { get; set; } = new List<SnapForDynamic>();
+
+    [Parameter]
+    public int NumOfMonths { get; set; }
+
+    private List<string> Months = new List<string>();
+    private string SelectMonth = "";
+    private string SelectYear = "";
+
+    protected override Task OnInitializedAsync()
+    {
+        int thisYear = DateTime.Now.Year;
+
+        List<string> theMons = new List<string>{"January", "February",
+    "March", "April", "May", "June", "July", "August", "September",
+    "October", "November", "December"};
+
+        Months.Add("All");
+        int startMonth = DateTime.Now.Month - 1;
+        for (int index = startMonth; index < startMonth + 12; index++)
+        {
+            if (theMons[index % 12] == "January" && DateTime.Now.Month != 1)
+                thisYear++;
+
+            Months.Add(theMons[index % 12]);
+        }
+
+        Months.Sort(Constants.SortMonths);
+
+
+        return base.OnInitializedAsync();
+    }
+
+    private string Pretty(double am)
+    {
+        return Constants.Pretty(am);
+    }
+    private string TranColor(double num)
+    {
+        if (num > 0)
+            return "income-good";
+        else
+            return "income-bad";
+    }
+}

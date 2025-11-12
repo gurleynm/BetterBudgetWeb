@@ -3,41 +3,44 @@
 @if (!ShowBack)
 {
     <div class="container-env flex-c" style="height:fit-content;width:@scale;background-image:url(images/Envelope.webp);margin:0;background-size:100% 100%;align-items:center;
-        cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
+                        cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
 
-        @if (Goal != 0)
-        {
-            <div class="flex-r-100" style="font-size:@(Font_Size/2)vw;margin:1em">
-                <div style="width:fit-content;background-color:white">
-                    <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
-                </div>
-            </div>
-        }
-        <div class="flex-r" style="font-size:@(Font_Size)vw;width:100%;white-space:normal;padding:0 10%">
-            <div style="background-color:white;white-space:normal">
-                @Name
+        <div class="flex-r-100" style="font-size:@(Font_Size / 2)vw;margin:1em">
+            <div style="width:fit-content;background-color:white">
+                <strong>Goal: <span style="color:limegreen;">@Constants.Pretty(Goal)</span></strong>
             </div>
         </div>
-        @if (Goal != 0)
-        {
-            <div class="flex-r-100" style="font-size:@(Font_Size/2)vw;white-space:nowrap;margin:1em;padding:0;">
-                <div style="width:fit-content;background-color:white">
-                    <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
-                </div>
+
+        <div class="flex-r" style="font-size:@(Font_Size)vw;width:100%;white-space:normal;padding:0 10%">
+            <div style="background-color:white;white-space:normal">
+                @if (string.IsNullOrEmpty(Name))
+                {
+                    @("(Enter Name)")
+                }
+                else
+                {
+                    @Name
+                }
             </div>
-        }
+        </div>
+
+        <div class="flex-r-100" style="font-size:@(Font_Size / 2)vw;white-space:nowrap;margin:1em;padding:0;">
+            <div style="width:fit-content;background-color:white">
+                <strong>Saved: <span style="color:@GoodOrBad()">@Constants.Pretty(Saved)</span></strong>
+            </div>
+        </div>
     </div>
 }
 else
 {
     <div class="container-env flex-c-start" style="height:fit-content;width:@scale;background-image:url(images/EnvelopeBack.webp);margin:0;padding:1px;background-size:100% 100%;align-items:center;
-        cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
+                        cursor: @(OnClick == null && !FlipClick ? "auto" : "pointer");" @onclick='@(() => OnClickHandle())'>
         <div class="flex-r-100" style="font-size:@(Font_Size)vw;">
             <div style="background-color:white;width:fit-content">
                 @Name
             </div>
         </div>
-        <div class="flex-c" style="background-color:transparent;font-size:@(Font_Size/2)vw;">
+        <div class="flex-c" style="background-color:transparent;font-size:@(Font_Size / 2)vw;">
             <div style="width:@SmallTxtScale">
                 <strong>
                     @(Constants.Person1 + ":")

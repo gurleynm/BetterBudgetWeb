@@ -23,7 +23,7 @@
                     <div class="flex-r">
                         <input class="custom-input" id="user" placeholder="Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email = (string)ui.Value; })" />
                     </div>
-                    <div class="flex-r">
+                    <div class="flex-r" style="margin:1em 0">
                         <span style="color:@errLocalColor">@errorMsgLocal</span>
                     </div>
                     <div class="flex-r">
@@ -31,7 +31,7 @@
                         {
                             <LoadingDots />
                         }
-                        else
+                        else if (errorMsgLocal != "Email sent.")
                         {
                             <button class="btn btn-primary" @onclick=@(async () => await SendEmail())>Submit</button>
                         }
@@ -284,7 +284,7 @@
             }
             StateHasChanged();
         }
-        SendEmailDisabled = true;
+        SendEmailDisabled = false;
         StateHasChanged();
     }
 }

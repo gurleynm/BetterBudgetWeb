@@ -14,7 +14,7 @@
         <div class="flex-r">
             <input class="better" id="user" placeholder="Partner's Email" type="text" @onkeydown="@Enter" @oninput="@(async (ui) => { Email2 = (string) ui.Value;})" />
         </div>
-        <div class="flex-r">
+        <div class="flex-r" style="margin:1em 0">
             <span style="text-align:center;color:@EmailErrorMsgColor2">@EmailErrorMsg2</span>
         </div>
     </div>
