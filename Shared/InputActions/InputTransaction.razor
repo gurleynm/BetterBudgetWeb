@@ -40,6 +40,10 @@
                                 <PopTray Id="trans-name" ShowWorth=@(TabDictionary["Expense"] || TabDictionary["Income"] || ExpenseType == "Debt") ShowButton=false StartOpen=true>
                                     <input class="custom-input" type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string)ui.Value; })" />
                                 </PopTray>
+                                @if (TransNameErr && !Disabled)
+                                {
+                                    <p id="errormsgtrans" style="color:red">Transaction name must be set</p>
+                                }
 
                                 <PopTray Id="exp-drop" ShowWorth=@TabDictionary["Expense"] StartOpen=true ShowButton=false>
                                     <FancySelect @bind-Value="ExpenseType">
@@ -64,6 +68,11 @@
                                         <option value="Debt">Paying off Debt</option>
                                     </FancySelect>
                                 </PopTray>
+
+                                @if (ExpenseTypeErr && !Disabled)
+                                {
+                                    <p id="errormsgextyp" style="color:red">Please select an expense type</p>
+                                }
                                 <input class="custom-input" type="date" @bind-value="@TransactionDate" style="margin:1em 0;color-scheme:dark;" />
                             </div>
                         </div>
@@ -81,6 +90,10 @@
                                     }
                                     <option value="NONE">Did not pay</option>
                                 </FancySelect>
+                                @if (PayMeth1Err && !Disabled)
+                                {
+                                    <p id="errormsgpaymeth1" style="color:red">@($"{Constants.Person1} payment method must be set")</p>
+                                }
                                 <PopTray Id="transfer-p1" ShowWorth=@TabDictionary["Transfer"] ShowButton=false>
                                     <h4 style="margin:0">@(ExpenseType == "Transfer" ? "Transferring to..." : "Paying off...")</h4>
                                     <FancySelect @bind-Value="PaidOffPerson1">
@@ -92,10 +105,25 @@
                                         <option value="NONE">Did not pay</option>
                                     </FancySelect>
                                 </PopTray>
+                                @if (PayOff1Err && !Disabled)
+                                {
+                                    <p id="errormsgpayoff1" style="color:red">@($"{Constants.Person1} second account must be set")</p>
+                                }
                             }
                             <div class="flex-r-100" style="margin:1em 0">
                                 <input class="custom-input" type="number" placeholder="$ Amount" @bind-value="@Person1Amount" @oninput="@(async (ui) => { Person1Amount = (string)ui.Value; })" />
                             </div>
+                            @if (PayAm1Err && !Disabled)
+                            {
+                                @if (PayAm2Err)
+                                {
+                                    <p id="errormsgpayam1" style="color:red">Someone must pay</p>
+                                }
+                                else
+                                {
+                                    <p id="errormsgpayam1" style="color:red">Amount must be non-zero</p>
+                                }
+                            }
                         </div>
                         <div class="flex-c-start input-transaction-block">
                             <h2 style="margin:0;align-self:start">@Constants.Person2</h2>
@@ -109,8 +137,10 @@
                                     }
                                     <option value="NONE">Did not pay</option>
                                 </FancySelect>
-
-
+                                @if (PayMeth2Err && !Disabled)
+                                {
+                                    <p id="errormsgpaymeth2" style="color:red">@($"{Constants.Person2} payment method must be set")</p>
+                                }
                                 <PopTray Id="transfer-p2" ShowWorth=@TabDictionary["Transfer"] ShowButton=false>
                                     <div class="fade-in flex-c-start">
                                         <h4 style="margin:0">@(ExpenseType == "Transfer" ? "Transferring to..." : "Paying off...")</h4>
@@ -124,10 +154,25 @@
                                         </FancySelect>
                                     </div>
                                 </PopTray>
+                                @if (PayOff2Err && !Disabled)
+                                {
+                                    <p id="errormsgpayoff2" style="color:red">@($"{Constants.Person2} second account must be set")</p>
+                                }
                             }
                             <div class="flex-r-100" style="margin:1em 0">
                                 <input class="custom-input" type="number" placeholder="$ Amount" @bind-value="@Person2Amount" @oninput="@(async (ui) => { Person2Amount = (string)ui.Value; })" />
                             </div>
+                            @if (PayAm2Err && !Disabled)
+                            {
+                                @if (PayAm1Err)
+                                {
+                                    <p id="errormsgpayam2" style="color:red">Someone must pay</p>
+                                }
+                                else
+                                {
+                                    <p id="errormsgpayam2" style="color:red">Amount must be non-zero</p>
+                                }
+                            }
                         </div>
                     </div>
                     @if (!Constants.Mobile)
@@ -143,6 +188,10 @@
                                 <PopTray Id="trans-name" ShowWorth=@(TabDictionary["Expense"] || TabDictionary["Income"] || ExpenseType == "Debt") ShowButton=false StartOpen=true>
                                     <input class="custom-input" type="text" placeholder="Name (e.g. Groceries)" @bind-value="@TransactionName" @oninput="@(async (ui) => { TransactionName = (string)ui.Value; })" />
                                 </PopTray>
+                                @if (TransNameErr && !Disabled)
+                                {
+                                    <p id="errormsgtrans" style="color:red">Transaction name must be set</p>
+                                }
 
                                 <PopTray Id="exp-drop" ShowWorth=@TabDictionary["Expense"] StartOpen=true ShowButton=false>
                                     <FancySelect @bind-Value="ExpenseType">
@@ -167,6 +216,10 @@
                                         <option value="Debt">Paying off Debt</option>
                                     </FancySelect>
                                 </PopTray>
+                                @if (ExpenseTypeErr && !Disabled)
+                                {
+                                    <p id="errormsgextyp" style="color:red">Please select an expense type</p>
+                                }
                                 <input class="custom-input" type="date" @bind-value="@TransactionDate" style="margin:1em 0;color-scheme:dark;" />
                             </div>
                             @if (Disabled)
@@ -224,9 +277,9 @@
             </div>
         </div>
         <br />
-        @if (!string.IsNullOrEmpty(ErrorMsg))
+        @if (!string.IsNullOrEmpty(SuccessMsg))
         {
-            <p id="errormsg" style="color:@ErrorColor">@ErrorMsg</p>
+            <p id="successmsg" style="color:green">@SuccessMsg</p>
         }
     </div>
 </div>
@@ -291,6 +344,8 @@
 
     public string SelectedPreset { get; set; }
 
+    public bool TransNameErr, ExpenseTypeErr, PayMeth1Err, PayMeth2Err, PayAm1Err, PayAm2Err, PayOff1Err, PayOff2Err = false;
+
     private List<Balance> Balances => Constants.Balances;
     private List<Balance> Person1Balances => Constants.Balances.Where(b => b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person1BalancesLoans => Constants.Balances.Where(b => (b.Person == Constants.Person1 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Loan").OrderBy(p1b => p1b.Name).ToList();
@@ -305,8 +360,7 @@
     private List<Balance> Person2BalancesSecurities => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Stocks").OrderBy(p1b => p1b.Name).ToList();
     private List<Balance> Person2BalancesEquities => Constants.Balances.Where(b => (b.Person == Constants.Person2 || b.Person.ToUpper() == "JOINT") && b.BalanceType == "Equity").OrderBy(p1b => p1b.Name).ToList();
 
-    private string ErrorMsg { get; set; } = string.Empty;
-    private string ErrorColor { get; set; } = "red";
+    private string SuccessMsg { get; set; } = string.Empty;
 
     private List<string> ExpenseTypes { get; set; } = new List<string>();
     private Dictionary<string, List<string>> ExpenseTypesForPresets { get; set; } = new Dictionary<string, List<string>>();
@@ -400,6 +454,8 @@
 
     void TabToggle(string index)
     {
+        TransNameErr = ExpenseTypeErr = PayAm1Err = PayAm2Err = PayMeth1Err = PayMeth2Err = PayOff1Err = PayOff2Err = false;
+
         foreach (string key in TabDictionary.Keys)
             TabDictionary[key] = index == key;
 
@@ -423,8 +479,8 @@
         await Task.Delay(100);
         StateHasChanged();
 
-        ErrorMsg = string.Empty;
-        ErrorColor = "red";
+        SuccessMsg = string.Empty;
+
         bool tp1Amount = double.TryParse(Person1Amount, out double nam);
         bool tp2Amount = double.TryParse(Person2Amount, out double lam);
 
@@ -436,27 +492,35 @@
         else if (TabDictionary["Transfer"] && ExpenseType != "Debt")
             ExpenseType = "Transfer";
 
-        ErrorMsg += string.IsNullOrEmpty(TransactionName) && ExpenseType != "Transfer" ? "Transaction Name must be set. " : "";
-        ErrorMsg += string.IsNullOrEmpty(ExpenseType) ? "Please select an expense type. " : "";
 
         bool Amount1NumChk = !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tp1Amount;
         bool Amount2NumChk = !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tp2Amount;
-        bool BothEmpty = string.IsNullOrEmpty(PaidWithPerson1) && string.IsNullOrEmpty(PaidWithPerson2);
+        bool BothEmpty = !tp1Amount && !tp2Amount;
 
-        bool AmountUnfillPaidWith1 = tp1Amount && string.IsNullOrEmpty(PaidWithPerson1);
-        bool AmountUnfillPaidWith2 = tp2Amount && string.IsNullOrEmpty(PaidWithPerson2);
+        bool AmountUnfillPaidWith1 = tp1Amount && (string.IsNullOrEmpty(PaidWithPerson1) || PaidWithPerson1 == "NONE");
+        bool AmountUnfillPaidWith2 = tp2Amount && (string.IsNullOrEmpty(PaidWithPerson2) || PaidWithPerson2 == "NONE");
 
-        ErrorMsg += Amount1NumChk ? $"{Constants.Person1} Amount must be a number. " : "";
-        ErrorMsg += Amount2NumChk ? $"{Constants.Person2} Amount must be a number. " : "";
-        ErrorMsg += BothEmpty ? $"At least one person must pay. " : "";
+        TransNameErr = string.IsNullOrEmpty(TransactionName) && ExpenseType != "Transfer";
+        ExpenseTypeErr = string.IsNullOrEmpty(ExpenseType);
+        PayMeth1Err = AmountUnfillPaidWith1;
+        PayMeth2Err = AmountUnfillPaidWith2;
+        PayAm1Err = Amount1NumChk;
+        PayAm2Err = Amount2NumChk;
 
-        ErrorMsg += AmountUnfillPaidWith1 ? $"{Constants.Person1} paid with value must be set if their amount is non-zero. " : "";
-        ErrorMsg += AmountUnfillPaidWith2 ? $"{Constants.Person2} paid with value must be set if their amount is non-zero. " : "";
+        if (BothEmpty)
+            PayAm1Err = PayAm2Err = true;
 
-        //ErrorMsg += !string.IsNullOrEmpty(ExpenseType) && ExpenseType == "Debt" ? "APR must be a number. " : "";
-        //ErrorMsg += string.IsNullOrEmpty(Color) ? "Color must be set." : "";
+        if (!string.IsNullOrEmpty(ExpenseType) && "Transfer Debt".Contains(ExpenseType))
+        {
+            PayOff1Err = tp1Amount && (string.IsNullOrEmpty(PaidOffPerson1) || PaidOffPerson1 == "NONE");
+            PayOff2Err = tp2Amount && (string.IsNullOrEmpty(PaidOffPerson2) || PaidOffPerson2 == "NONE");
+        }
+        else
+        {
+            PayOff1Err = PayOff2Err = false;
+        }
 
-        if (string.IsNullOrEmpty(ErrorMsg))
+        if (!TransNameErr && !ExpenseTypeErr && !PayMeth1Err && !PayMeth2Err && !PayAm1Err && !PayAm2Err && !PayOff1Err && !PayOff2Err)
         {
             string TransName;
 
@@ -483,8 +547,7 @@
             nt.DateOfTransaction = TransactionDate;
             var tr = await TransactionRepo.AddOrUpdateAsync(nt);
 
-            ErrorColor = "green";
-            ErrorMsg = TransName + " transaction was added!";
+            SuccessMsg = TransName + " transaction was added!";
 
             TransactionName = string.Empty;
             Person1Amount = string.Empty;
@@ -503,17 +566,39 @@
     }
     public async void AddPreset()
     {
-        ErrorMsg = string.Empty;
-        ErrorColor = "red";
-        bool tpNAmount = double.TryParse(Person1Amount, out double nam);
-        bool tpLAmount = double.TryParse(Person2Amount, out double lam);
+        SuccessMsg = string.Empty;
 
-        ErrorMsg += string.IsNullOrEmpty(TransactionName) ? "Transaction Name must be set. " : "";
-        ErrorMsg += string.IsNullOrEmpty(ExpenseType) ? "Please select an expense type. " : "";
-        ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tpNAmount ? $"{Constants.Person1} Amount must be a number. " : "";
-        ErrorMsg += !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tpLAmount ? $"{Constants.Person2} Amount must be a number. " : "";
+        bool tp1Amount = double.TryParse(Person1Amount, out double nam);
+        bool tp2Amount = double.TryParse(Person2Amount, out double lam);
+        tp1Amount = tp1Amount && nam != 0;
+        tp2Amount = tp2Amount && lam != 0;
 
-        if (string.IsNullOrEmpty(ErrorMsg))
+        bool AmountUnfillPaidWith1 = tp1Amount && (string.IsNullOrEmpty(PaidWithPerson1) || PaidWithPerson1 == "NONE");
+        bool AmountUnfillPaidWith2 = tp2Amount && (string.IsNullOrEmpty(PaidWithPerson2) || PaidWithPerson2 == "NONE");
+        bool BothEmpty = !tp1Amount && !tp2Amount;
+
+        TransNameErr = string.IsNullOrEmpty(TransactionName) && ExpenseType != "Transfer";
+        ExpenseTypeErr = string.IsNullOrEmpty(ExpenseType);
+        PayMeth1Err = AmountUnfillPaidWith1;
+        PayMeth2Err = AmountUnfillPaidWith2;
+
+        if (BothEmpty)
+            PayAm1Err = PayAm2Err = true;
+
+        PayAm1Err = !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tp1Amount;
+        PayAm2Err = !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tp2Amount;
+
+        if (!string.IsNullOrEmpty(ExpenseType) && "Transfer Debt".Contains(ExpenseType))
+        {
+            PayOff1Err = tp1Amount && (string.IsNullOrEmpty(PaidOffPerson1) || PaidOffPerson1 == "NONE");
+            PayOff2Err = tp2Amount && (string.IsNullOrEmpty(PaidOffPerson2) || PaidOffPerson2 == "NONE");
+        }
+        else
+        {
+            PayOff1Err = PayOff2Err = false;
+        }
+
+        if (!TransNameErr && !ExpenseTypeErr && !PayMeth1Err && !PayMeth2Err && !PayAm1Err && !PayAm2Err && !PayOff1Err && !PayOff2Err)
         {
             await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, PaidWithPerson1, PaidWithPerson2, PaidOffPerson1, PaidOffPerson2, Hex, TextColor));
             PresetsForDel = new List<Preset>(Presets);
@@ -528,8 +613,7 @@
                         Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
             }
 
-            ErrorColor = "green";
-            ErrorMsg = TransactionName + " preset was added!";
+            SuccessMsg = TransactionName + " preset was added!";
 
             TransactionName = string.Empty;
             Person1Amount = string.Empty;
@@ -545,6 +629,7 @@
         Disabled = false;
         StateHasChanged();
     }
+
     private async void Preset(Preset pre)
     {
         // 0 - Trans Name
