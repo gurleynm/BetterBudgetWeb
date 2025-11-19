@@ -209,7 +209,7 @@
                             <select @bind=BalanceFilter>
                                 <option disabled value="">(Select Account)</option>
                                 @foreach (Balance balance in UniqueBalances.Where(b =>
-                                                            !TempFilters.Any(t => t.Field == "Balance" && t.Value == b.Name)).OrderBy(b => b.Name))
+                                                            !TempFilters.Any(t => t.Field == "Account" && t.Value == b.Name)).OrderBy(b => b.Name))
                                 {
                                     <option>@balance.Name</option>
                                 }
@@ -282,7 +282,7 @@
             balanceFilter = value;
             if (!string.IsNullOrEmpty(balanceFilter))
             {
-                AddFilter(new FilterHelper("Balance", balanceFilter));
+                AddFilter(new FilterHelper("Account", balanceFilter));
             }
         }
     }
@@ -546,7 +546,7 @@
         FilteredTransactions = GetTransactions();
         if (Filters.Count > 0)
         {
-            var BalanceFilters = Filters.Where(filter => filter.Field == "Balance");
+            var BalanceFilters = Filters.Where(filter => filter.Field == "Account");
             var PersonFilters = Filters.Where(filter => filter.Field == "Person");
             var ExpenseTypeFilters = Filters.Where(filter => filter.Field == "Expense Type");
             var TotalAmountFilters = Filters.Where(filter => filter.Field == "Total Amount");
@@ -659,14 +659,14 @@
 
     private void BalanceClicked(Balance balance)
     {
-        var BalanceFilters = Filters.Where(filter => filter.Field == "Balance");
+        var BalanceFilters = Filters.Where(filter => filter.Field == "Account");
         if (BalanceFilters.FirstOrDefault(bf => bf.Value == balance.Name) is FilterHelper balF)
         {
             RemoveFilter(balF);
         }
         else
         {
-            Filters.Add(new FilterHelper("Balance", balance.Name));
+            Filters.Add(new FilterHelper("Account", balance.Name));
             SaveFilters();
         }
         StateHasChanged();

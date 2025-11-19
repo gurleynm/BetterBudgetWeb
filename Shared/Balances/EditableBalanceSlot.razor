@@ -14,7 +14,7 @@
         <div style="align-self:flex-start">
             <div class="flex-c" style="justify-content:space-between;padding:0; margin:0">
                 <input class="custom-input" type="text" placeholder="Account Name"
-                       style="padding-left:1em;margin-bottom:1em;font-size:medium;align-self:flex-start;text-align:start;border-radius:0;color:@TheBalance.TextColor" @bind-value=@TheBalance.Name />
+                       style="@(!string.IsNullOrEmpty(TheBalance.Name) ? "background-color:transparent;":"")padding-left:1em;margin-bottom:1em;font-size:medium;align-self:flex-start;text-align:start;border-radius:0;color:@TheBalance.TextColor" @bind-value=@TheBalance.Name />
 
                 @if (ShowTradable)
                 {
@@ -27,7 +27,7 @@
                         </label>
                     }
                 }
-                <FancySelect @bind-Value="TheBalance.Person" Style="@("color:" + TheBalance.TextColor)">
+                <FancySelect @bind-Value="TheBalance.Person" Style="color:white">
                     <option value="@Constants.Person1" selected>@Constants.Person1</option>
                     <option value="@Constants.Person2">@Constants.Person2</option>
                     <option value="Joint">Joint</option>
