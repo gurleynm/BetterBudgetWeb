@@ -293,7 +293,7 @@
                         <div class="flex-c-start">
                             @if (!Constants.MobileApp)
                             {
-                                <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-left:10px;padding-top:1em" /> Back to main page</a></div>
+                                <div><a href="" @onclick=@(() => NavMan.NavigateTo("", true)) style="color:white"><span class="oi oi-arrow-left" style="padding-left:10px;padding-top:1em" /> Back to main page</a></div>
                             }
                             <h2 style="font-family:'CBB Default';text-align:center">Like what you see? Consider subscribing!</h2>
                             <h3 style="font-family:'CBB Default';text-align:center">Your trial has ended, but we'll keep your budget for an additional 10 days while you decide.</h3>
@@ -313,7 +313,7 @@
                         <div class="flex-c-start" style="padding:1em">
                             @if (!NavMan.BaseUri.Contains("mobile."))
                             {
-                                <div><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-left:10px;padding-top:1em" /> Back to main page</a></div>
+                                <div><a href="" @onclick=@(() => NavMan.NavigateTo("", true)) style="color:white"><span class="oi oi-arrow-left" style="padding-left:10px;padding-top:1em" /> Back to main page</a></div>
                             }
                             <h2 style="text-align:center;font-family:'CBB Default'">
                                 This login appears to be associated with an account that's been canceled. This is your last chance to keep your current budget.
@@ -504,7 +504,7 @@
             {
                 @if (!NavMan.BaseUri.Contains("mobile."))
                 {
-                    <div style="position:absolute;top:1em;left:1em"><a href="" style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
+                    <div style="position:absolute;top:1em;left:1em"><a href="" @onclick=@(()=>NavMan.NavigateTo("",true)) style="color:white"><span class="oi oi-arrow-left" style="padding-right:10px" /> Back to main page</a></div>
                 }
                 <div class="flex-c-start" style="margin:1em;align-items:center">
                     <h2 style="font-family:'CBB Default'">Oops, something went wrong!</h2>
