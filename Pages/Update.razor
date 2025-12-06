@@ -16,15 +16,18 @@
 }
 
 <div class="tab flex-r" style="width:100%;flex-wrap:wrap">
-    <button class="tablinks tab-btn @BalClass" @onclick=@(() => ShowHideIndex(0))>Account</button>
+    <button class="tablinks tab-btn @(ShowBal ? "active" : "")" @onclick=@(() => ShowHideIndex(0))>Account</button>
     @if (Constants.Envelopes.Count > 0)
     {
-        <button class="tablinks tab-btn @EnvClass" @onclick=@(() => ShowHideIndex(1))>Goal Envelope</button>
+        <button class="tablinks tab-btn @(ShowEnv ? "active" :"")" @onclick=@(() => ShowHideIndex(1))>Goal Envelope</button>
     }
-    @* @if (Constants.RelevantMonthlies.Count > 0)
+    @if (Constants.RelevantMonthlies.Count > 0)
     {
-        <button class="tablinks @MonthlyClass" @onclick=@(() => ShowHideIndex(2))>Recurring Transactions</button>
-    } *@
+        <button class="tablinks tab-btn @(ShowMon ? "active" : "")" @onclick=@(() => ShowHideIndex(2))>Recurring Charge</button>
+    }
+    @if (Constants.Presets.Count > 0 && false) {
+        <button class="tablinks tab-btn @(ShowPre ? "active" : "")" @onclick=@(() => ShowHideIndex(3))>Preset</button>
+    }
 </div>
 
 @if (ShowBal)
@@ -37,13 +40,13 @@
             @foreach (var bal in Balances.OrderBy(b => b.Name))
             {
                 <option value=@bal.Id>@bal.Name</option>
-            }            
+            }
         </FancySelect>
     </div>
 
     @if (!string.IsNullOrEmpty(SelectedBalance))
     {
-        <InputBalance TheBalance=ThisBalance />
+        <InputBalance TheBalance=ThisBalance Updating=true />
     }
 }
 else if (ShowEnv)
@@ -51,7 +54,7 @@ else if (ShowEnv)
     <div class="tabcontent">
         <label>Select an envelope:</label>
         <br />
-        <FancySelect @bind-Value="SelectedEnv">            
+        <FancySelect @bind-Value="SelectedEnv">
             <option value="" selected>(Select an Envelope)</option>
             @foreach (var envs in Envelopes.OrderBy(e => e.Name))
             {
@@ -76,19 +79,37 @@ else if (ShowMon)
     <div class="tabcontent">
         <label>Select a recurring transaction:</label>
         <br />
-        <select @bind=SelectedMonthly title="Select Recurring Transaction">
-            <option value="" selected>(Select a recurring transaction)</option>
+        <FancySelect @bind-Value="SelectedMonthly">
+            <option value="">(Select a recurring transaction)</option>
             @foreach (var mon in Monthlies)
             {
-                <option>@mon</option>
+                <option value="@mon.Id">@BetterName(mon)</option>
             }
-        </select>
+        </FancySelect>
     </div>
 
     @if (!string.IsNullOrEmpty(SelectedMonthly))
     {
-        <div><i>Soon</i></div>
-        @* <InputBalance TheBalance=ThisMonthly /> *@
+        <InputMonthlyCost @bind-SelectedMonthly=ThisMonthly Updating=true />
+    }
+}
+else if (ShowPre)
+{
+    <div class="tabcontent">
+        <label>Select a preset:</label>
+        <br />
+        <FancySelect @bind-Value="SelectedPreset">
+            <option value="">(Select a preset)</option>
+            @foreach (var pre in Presets)
+            {
+                <option value="@pre.Id">@pre.Name</option>
+            }
+        </FancySelect>
+    </div>
+
+    @if (!string.IsNullOrEmpty(SelectedPreset))
+    {
+        
     }
 }
 
@@ -96,7 +117,7 @@ else if (ShowMon)
     // index0 => Balance
     // index1 => Envelope
     // index2 => Monthly
-    bool[] ShowHides = new bool[] { true, false, false };
+    bool[] ShowHides = new bool[] { true, false, false, false };
 
     /* Start BALANCE */
     private string NameBal;
@@ -109,7 +130,6 @@ else if (ShowMon)
 
     private List<Balance> Balances => Constants.Balances;
     private bool ShowBal => ShowHides[0];
-    private string BalClass => ShowBal ? "active" : "";
 
     private Balance ThisBalance;
     private string selectedBalance;
@@ -144,7 +164,6 @@ else if (ShowMon)
 
     private List<Data.Envelope> Envelopes => Constants.Envelopes;
     private bool ShowEnv => ShowHides[1];
-    private string EnvClass => ShowEnv ? "active" : "";
 
 
     private string selectedEnv;
@@ -180,9 +199,8 @@ else if (ShowMon)
     /* End ENVELOPE */
 
     /* Start Monthly */
-    private List<string> Monthlies => Constants.RelevantMonthlies.OrderBy(mo => mo.Name).Select(m => m.Name).Distinct().ToList();
+    private List<Monthly> Monthlies => Constants.RelevantMonthlies.OrderBy(mo => mo.Name).Distinct().ToList();
     private bool ShowMon => ShowHides[2];
-    private string MonthlyClass => ShowMon ? "active" : "";
 
     private Monthly ThisMonthly;
     private string selectedMonthly;
@@ -197,7 +215,26 @@ else if (ShowMon)
         }
     }
 
-    /* End BALANCE */
+    /* End MONTHLY */
+
+    /* Start Preset */
+    private List<Preset> Presets => Constants.Presets.OrderBy(pre => pre.Name).Distinct().ToList();
+    private bool ShowPre => ShowHides[3];
+
+    private Preset ThisPreset;
+    private string selectedPreset;
+    private string SelectedPreset
+    {
+        get { return selectedPreset; }
+        set
+        {
+            selectedPreset = value;
+            ThisPreset = Constants.Presets.FirstOrDefault(m => m.Id == selectedPreset);
+            StateHasChanged();
+        }
+    }
+
+    /* End PRESET */
 
     protected override async Task OnInitializedAsync()
     {
@@ -212,6 +249,20 @@ else if (ShowMon)
     {
         for (int index = 0; index < ShowHides.Length; index++)
             ShowHides[index] = index == ind;
+    }
+
+    private string BetterName(Monthly monthly)
+    {
+        string month = monthly.Month;
+        string year = monthly.Year;
+
+        if (month == "All")
+            month = "Every Month";
+
+        if (year == "1")
+            year = "Every Year";
+
+        return monthly.Name + $" - ({month}, {year})";
     }
 
     private void BalancesUpdated(object sender, List<Balance> e)

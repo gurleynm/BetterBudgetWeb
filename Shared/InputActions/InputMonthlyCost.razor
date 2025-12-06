@@ -27,7 +27,7 @@
             @foreach (var item in Months)
             {
                 <option value="@item">@item</option>
-            }            
+            }
         </FancySelect>
         <FancySelect @bind-Value="SelectYear" Style="">
             <option value="1">All</option>
@@ -94,7 +94,7 @@ else
                 @foreach (var item in Months)
                 {
                     <option value="@item">@item</option>
-                }                
+                }
             </FancySelect>
             <FancySelect @bind-Value="SelectYear" Style="">
                 <option value="1">All</option>
@@ -128,7 +128,7 @@ else
         <br style="clear:both;" />
 
         <br style="clear:both" />
-        <button class="btn btn-primary" disabled=@Disabled @onclick="Submit">Submit</button>
+        <button class="btn btn-primary" disabled=@Disabled @onclick="Submit">@(Updating ? "Update" : "Add")</button>
         <br />
         @if (!string.IsNullOrEmpty(ErrorMsg))
         {
@@ -140,6 +140,28 @@ else
 <br />
 
 @code {
+    private Monthly selectedMonthly { get; set; }
+    [Parameter]
+    public Monthly SelectedMonthly
+    {
+        get { return selectedMonthly; }
+        set
+        {
+            if (selectedMonthly == value)
+                return;
+
+            selectedMonthly = value;
+            SetMonthly();
+            SelectedMonthlyChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<Monthly> SelectedMonthlyChanged { get; set; }
+
+    [Parameter]
+    public bool Updating { get; set; }
+
     [Parameter]
     public string StaticName { get; set; }
     [Parameter]
@@ -179,8 +201,24 @@ else
         }
 
         Months.Sort(Constants.SortMonths);
-
         return base.OnInitializedAsync();
+    }
+
+    private void SetMonthly()
+    {
+        if (SelectedMonthly != null)
+        {
+            Dyna = SelectedMonthly.Dynamic;
+            Person1Amount = SelectedMonthly.Person1Amount.ToString();
+            Person2Amount = SelectedMonthly.Person2Amount.ToString();
+            StaticName = SelectedMonthly.Name;
+            SelectMonth = SelectedMonthly.Month;
+            SelectYear = SelectedMonthly.Year;
+            double.TryParse(Person1Amount, out double nam);
+            double.TryParse(Person2Amount, out double lam);
+            
+            TotalAmount = (nam + lam).ToString();
+        }
     }
 
     public async void Submit()
@@ -215,10 +253,11 @@ else
         {
             string mon;
             string year;
-            var mons = await MonthlyRepo.AddOrUpdateAsync(StaticName, nam, lam, Dyna, SelectMonth + " " + SelectYear);
+            string id = SelectedMonthly == null ? "" : SelectedMonthly.Id;
+            var mons = await MonthlyRepo.AddOrUpdateAsync(StaticName, nam, lam, Dyna, SelectMonth + " " + SelectYear, id);
 
             ErrorColor = "green";
-            ErrorMsg = StaticName + " Monthly was added!";
+            ErrorMsg = $"'{StaticName}' recurring transaction was {(Updating ? "updated" : "added")}!";
 
             StaticName = string.Empty;
             Person1Amount = string.Empty;

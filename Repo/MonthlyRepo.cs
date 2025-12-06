@@ -50,7 +50,7 @@ namespace BetterBudgetWeb.Repo
 
             return await CallAPI("DELETE",trans);
         }
-        public static async Task<List<Monthly>> AddOrUpdateAsync(string name, double person1Amount, double person2Amount, string dyna, string monYear)
+        public static async Task<List<Monthly>> AddOrUpdateAsync(string name, double person1Amount, double person2Amount, string dyna, string monYear, string Id = "")
         {
             if (Constants.Token == "DEMO")
             {
@@ -71,6 +71,9 @@ namespace BetterBudgetWeb.Repo
             }
 
             Monthly month = new Monthly(name, person1Amount, person2Amount, dyna, monYear);
+
+            if (!string.IsNullOrEmpty(Id))
+                month.Id = Id;
 
             return await CallAPI("POST",month);
         }
