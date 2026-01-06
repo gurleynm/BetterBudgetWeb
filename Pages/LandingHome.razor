@@ -39,13 +39,34 @@
 </h3>
 
 <div class="flex-r" style="margin-top:1em">
-    <img alt="website logo" src="images/CBB.png" style="width:80%"
+    <img alt="website logo" src="images/@(Constants.Mobile ? "CBB_Phone" : "CBB").png" style="width:80%"
          fetchpriority="high" class="main-img" />
 </div>
 <h4 style="font-family:'CBB Default';width:75%;text-align:center">
-    Whether you're dating, engaged, or married, CBB makes it easy to track shared expenses, manage savings goals, and monitor your net worth-together. With a clean,
-    intuitive design and powerful financial tools built for two, it helps partners stay organized, reduce money stress, and build a stronger financial future as a team.
+    Whether you're dating, engaged, or married, CBB makes it easy to track shared expenses, manage savings goals, and monitor your net worth-together. 
 </h4>
+
+<div class="flex-c-start" style="width:100%;margin-left:1em">
+    <h2 class="fancy-text">What Couples are Saying</h2>
+    <div class="main-page-section">
+        <div class="stars">★★★★★</div>
+        <h4 class="fancy-text">“We finally feel like we are on the same page with our finances."</h4>
+        <h4 class="fancy-text"><i>~ Nathan & Lindsey</i></h4>
+    </div>
+
+    <div class="main-page-section">
+        <div class="stars">★★★★★</div>
+        <h4 class="fancy-text">“We have saved THOUSANDS already just by being able to see where everything we spent was going!"</h4>
+        <h4 class="fancy-text"><i>~ David & Katie</i></h4>
+    </div>
+
+    <div class="main-page-section">
+        <div class="stars">★★★★★</div>
+        <h4 class="fancy-text">“The savings envelopes make it so much easier to work together towards our goals."</h4>
+        <h4 class="fancy-text"><i>~ Liam & Sarah</i></h4>
+    </div>
+</div>
+
 
 <div class="main-page-section" style="width:100%;margin-left:1em">
     <h2 class="fancy-text">How it Works</h2>
@@ -97,27 +118,6 @@
     <h3 class="fancy-text" style="text-align:center">All plans under $50.00/year</h3>
     <h3 class="fancy-text" style="text-align:center">45-day free trial - No ads - Cancel anytime</h3>
     <button class="btn btn-primary" @onclick=@(() => NavMan.NavigateTo("sign/up")) style="font-size:large;font-family:'CBB Default';color:black;background-color:cyan">@Constants.SignUpText</button>
-</div>
-
-<div class="flex-c-start" style="width:100%;margin-left:1em">
-    <h2 class="fancy-text">What Couples are Saying</h2>
-    <div class="main-page-section">
-        <div class="stars">★★★★★</div>
-        <h4 class="fancy-text">“We finally feel like we are on the same page with our finances."</h4>
-        <h4 class="fancy-text"><i>~ Nathan & Lindsey</i></h4>
-    </div>
-
-    <div class="main-page-section">
-        <div class="stars">★★★★★</div>
-        <h4 class="fancy-text">“We have saved THOUSANDS already just by being able to see where everything we spent was going!"</h4>
-        <h4 class="fancy-text"><i>~ David & Katie</i></h4>
-    </div>
-
-    <div class="main-page-section">
-        <div class="stars">★★★★★</div>
-        <h4 class="fancy-text">“The savings envelopes make it so much easier to work together towards our goals."</h4>
-        <h4 class="fancy-text"><i>~ Liam & Sarah</i></h4>
-    </div>
 </div>
 
 <div class="flex-c-start" style="align-items:center;flex-wrap:wrap">
