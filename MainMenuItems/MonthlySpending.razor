@@ -56,13 +56,13 @@
                 }
                 else
                 {
-                    @if (transaction.Person1Amount == transaction.TotalAmount)
+                    @if (transaction.Person1Amount == transaction.TotalAmount || (transaction.Person1Amount != 0 && TheBalance != null && transaction.PaidWithPerson1 == TheBalance))
                     {
                         <td style="height:100%;border:none">
                             <div class="@(TranColor(transaction.ExpenseType, transaction.Person1Amount))" style="text-align:end;padding-right:.5em;">@Pretty(transaction.Person1Amount)</div>
                         </td>
                     }
-                    else if (transaction.Person2Amount == transaction.TotalAmount)
+                    else if (transaction.Person2Amount == transaction.TotalAmount || (transaction.Person2Amount != 0 && TheBalance != null && transaction.PaidWithPerson2 == TheBalance))
                     {
                         <td style="height:100%;border:none">
                             <div class="@(TranColor(transaction.ExpenseType, transaction.Person2Amount))" style="text-align:end;padding-right:.5em;">@Pretty(transaction.Person2Amount)</div>
