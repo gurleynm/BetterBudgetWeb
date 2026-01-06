@@ -700,3 +700,25 @@ label {
     font-size: 2.25rem;
     margin-bottom: 0.5rem;
 }
+
+.main-img {
+    width: fit-content;
+}
+
+.floating {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
