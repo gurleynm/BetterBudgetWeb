@@ -134,6 +134,9 @@
                         <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
                             @transaction.ExpenseType
                         </div>
+                        <div class="flex-c-start" style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                            <BalanceFromTo TheTransaction=transaction />
+                        </div>
                     </div>
                 </td>
                 @if (TransEdits[transaction.Id])

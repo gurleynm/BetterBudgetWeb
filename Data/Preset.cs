@@ -114,7 +114,7 @@ namespace BetterBudgetWeb.Data
             string pon = (string.IsNullOrEmpty(PaidOffPerson1) || PaidOffPerson1 == "none") ? "----------------" : PaidOffPerson1;
             string pol = string.IsNullOrEmpty(PaidOffPerson2) || PaidOffPerson2 == "none" ? "----------------" : PaidOffPerson2;
 
-            int IncomeMultiplier = ExpenseType == "Income" || ExpenseType == "Debt" ? 1 : -1;
+            int IncomeMultiplier = Constants.IncomeMultiplier(ExpenseType);
 
             string na = Pretty(IncomeMultiplier * Person1Amount).Replace(",", ""); ;
             string la = Pretty(IncomeMultiplier * Person2Amount).Replace(",", ""); ;

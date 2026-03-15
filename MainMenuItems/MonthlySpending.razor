@@ -39,6 +39,9 @@
                         <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
                             @transaction.ExpenseType
                         </div>
+                        <div class="flex-c-start" style="text-align:start;color:@Constants.ColorScheme["Text"]">
+                            <BalanceFromTo TheTransaction=transaction />
+                        </div>
                     </div>
                 </td>
                 @if (TransEdits[transaction.Id])
@@ -101,6 +104,8 @@
     public EventCallback RefreshParent { get; set; }
 
     public List<Transaction> FilteredTransactions { get; set; }
+
+    Dictionary<string, double> BalancesAt = new();
 
     [Parameter]
     public string TheBalance

@@ -36,6 +36,9 @@ namespace BetterBudgetWeb.Runner
         public static async Task<CatchAll> GrabDemo()
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "DEMO");
+            
+            // Uncomment below to test user token
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "a77d36b1-7d3b-439c-b2d2-f698b92cbe4f");
 
             JsonSerializerOptions _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var response = await client.GetAsync(baseURI);

@@ -432,6 +432,11 @@ namespace BetterBudgetWeb
         }
         public static string Pretty(double num)
         {
+            string retStr = num.ToString("C", CultureInfo.CurrentCulture);
+
+            if (Math.Round(num, 2) == 0)
+                num = 0;
+
             return num.ToString("C", CultureInfo.CurrentCulture);
         }
         public static string Pretty(double? num)
@@ -730,6 +735,12 @@ namespace BetterBudgetWeb
         public static double TestMobile(double MobileOption, double DesktopOption)
         {
             return Mobile ? MobileOption : DesktopOption;
+        }
+
+        public static int IncomeMultiplier(string et)
+        {
+            string IncomePlausible = "Income Equity Transfer Debt";
+            return IncomePlausible.Contains(et) ? 1 : -1;
         }
     }
 }

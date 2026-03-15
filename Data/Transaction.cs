@@ -138,9 +138,7 @@
             string pon = (string.IsNullOrEmpty(PaidOffPerson1) || PaidOffPerson1 == "none") ? "----------------" : PaidOffPerson1;
             string pol = string.IsNullOrEmpty(PaidOffPerson2) || PaidOffPerson2 == "none" ? "----------------" : PaidOffPerson2;
 
-            string[] Goods = new string[] { "Income", "Debt", "Transfer", "Equity" };
-
-            int IncomeMultiplier = Goods.Contains(ExpenseType) ? 1 : -1;
+            int IncomeMultiplier = Constants.IncomeMultiplier(ExpenseType);
 
             string na = Constants.Pretty(IncomeMultiplier * Person1Amount).Replace(",", ""); ;
             string la = Constants.Pretty(IncomeMultiplier * Person2Amount).Replace(",", ""); ;
@@ -155,6 +153,14 @@
                    pon + "," +
                    pol + "," +
                    DateOfTransaction.Date.ToShortDateString() + "\n";
+        }
+
+        public bool OneOfTheBalances(string BalName)
+        {
+            return PaidWithPerson1 == BalName ||
+                    PaidWithPerson2 == BalName ||
+                    PaidOffPerson1 == BalName ||
+                    PaidOffPerson2 == BalName;
         }
         public string ToString(string version, string general = "")
         {

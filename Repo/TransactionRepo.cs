@@ -54,9 +54,7 @@ namespace BetterBudgetWeb.Repo
                     Balance Person1POBalance = BalanceRepo.GetBalanceFromName(trans.PaidOffPerson1);
                     Balance Person2POBalance = BalanceRepo.GetBalanceFromName(trans.PaidOffPerson2);
 
-
-                    string IncomePlausible = "Income Equity";
-                    int IncomeMultiplier = IncomePlausible.Contains(trans.ExpenseType) ? 1 : -1;
+                    int IncomeMultiplier = Constants.IncomeMultiplier(trans.ExpenseType);
 
                     if (Constants.Envelopes.Select(e => e.Name).Contains(trans.ExpenseType))
                     {
@@ -168,8 +166,6 @@ namespace BetterBudgetWeb.Repo
         // NEEDED FOR DEMO
         private static async Task DemoAccountForRemove(Transaction trans)
         {
-            string IncomePlausible = "Income Equity";
-
             Balance Person1PWBalance = BalanceRepo.GetBalanceFromName(trans.PaidWithPerson1);
             Balance Person2PWBalance = BalanceRepo.GetBalanceFromName(trans.PaidWithPerson2);
 
@@ -213,7 +209,7 @@ namespace BetterBudgetWeb.Repo
                 }
             }
 
-            int IncomeMultiplier = IncomePlausible.Contains(trans.ExpenseType) ? -1 : 1;
+            int IncomeMultiplier = Constants.IncomeMultiplier(trans.ExpenseType);
 
             if (Person1PWBalance != null)
             {
