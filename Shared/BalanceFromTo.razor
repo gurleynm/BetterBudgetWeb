@@ -37,14 +37,14 @@
     [Parameter]
     public Transaction TheTransaction { get; set; }
 
-    int IncomeMultiplier => Constants.IncomeMultiplier(TheTransaction.ExpenseType);
-
     private (double, double) GetFromTo(string balName, bool Person1 = true)
     {
+        int IncomeMultiplier = Constants.IncomeMultiplier(TheTransaction.ExpenseType);
         var trans = new List<Transaction>(Constants.Transactions.Where(t => t.DateOfTransaction.CompareTo(TheTransaction.DateOfTransaction) >= 0
                                                                         && t.OneOfTheBalances(balName)).OrderByDescending(t => t.DateOfTransaction));
         if (Constants.Balances.FirstOrDefault(b => b.Name == balName) is Balance foundBal)
         {
+            IncomeMultiplier *= foundBal.BalanceType == "Loan" ? 1 : -1;
             double CurrentVal = foundBal.Value;
 
             for (int index = 0; index < trans.Count; index++)
