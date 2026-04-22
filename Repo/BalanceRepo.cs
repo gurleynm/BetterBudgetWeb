@@ -109,5 +109,93 @@ namespace BetterBudgetWeb.Repo
 
             return chose.Name;
         }
+        public static (double, double) GetFromTo(Transaction TheTransaction, string balName)
+        {
+            var trans = new List<Transaction>(Constants.Transactions.Where(t => t.DateOfTransaction.CompareTo(TheTransaction.DateOfTransaction) >= 0
+                                                                            && t.OneOfTheBalances(balName)).OrderByDescending(t => t.DateOfTransaction));
+            if (Constants.Balances.FirstOrDefault(b => b.Name == balName) is Balance foundBal)
+            {
+                int IncomeMultiplier = foundBal.BalanceType == "Loan" ? -1 : 1;
+                double CurrentVal = foundBal.Value;
+                double PrevVal = CurrentVal;
+
+                for (int index = 0; index < trans.Count; index++)
+                {
+                    PrevVal = CurrentVal;
+                    SetChangedAmount(foundBal, trans[index], ref CurrentVal);
+
+                    if (trans[index].Id == TheTransaction.Id)
+                    {
+                        return (CurrentVal, PrevVal);
+
+                    }
+                }
+            }
+
+            return (0, 0);
+        }
+
+        private static void SetChangedAmount(Balance b, Transaction t, ref double curVal)
+        {
+            string balName = b.Name;
+            int IncomeMultiplier = 0;
+            if (b.BalanceType == "Loan")
+            {
+                IncomeMultiplier = -Constants.IncomeMultiplier(t.ExpenseType, false);
+                // Credit Cards, Loans, etc.
+                if (t.PaidWithPerson1 == balName)
+                {
+                    // Person 1 paid with balance
+                    curVal -= t.Person1Amount * IncomeMultiplier;
+                }
+
+                if (t.PaidWithPerson2 == balName)
+                {
+                    // Person 2 paid with balance
+                    curVal -= t.Person2Amount * IncomeMultiplier;
+                }
+
+                if (t.PaidOffPerson1 == balName)
+                {
+                    // Person 1 paid off balance
+                    curVal += t.Person1Amount * IncomeMultiplier;
+                }
+
+                if (t.PaidOffPerson2 == balName)
+                {
+                    // Person 2 paid off balance                
+                    curVal += t.Person2Amount * IncomeMultiplier;
+                }
+            }
+            else
+            {
+                IncomeMultiplier = -Constants.IncomeMultiplier(t.ExpenseType, false);
+
+                // Equity, Savings
+                if (t.PaidWithPerson1 == balName)
+                {
+                    // Person 1 paid with balance
+                    curVal += t.Person1Amount * IncomeMultiplier;
+                }
+
+                if (t.PaidWithPerson2 == balName)
+                {
+                    // Person 2 paid with balance
+                    curVal += t.Person2Amount * IncomeMultiplier;
+                }
+
+                if (t.PaidOffPerson1 == balName)
+                {
+                    // Person 1 paid off balance
+                    curVal -= t.Person1Amount * IncomeMultiplier;
+                }
+
+                if (t.PaidOffPerson2 == balName)
+                {
+                    // Person 2 paid off balance
+                    curVal -= t.Person2Amount * IncomeMultiplier;
+                }
+            }
+        }
     }
 }

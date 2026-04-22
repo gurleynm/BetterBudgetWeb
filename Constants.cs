@@ -737,9 +737,11 @@ namespace BetterBudgetWeb
             return Mobile ? MobileOption : DesktopOption;
         }
 
-        public static int IncomeMultiplier(string et)
+        public static int IncomeMultiplier(string et, bool IncludeTransfer = true)
         {
-            string IncomePlausible = "Income Equity Transfer Debt";
+            string IncomePlausible = "Income Equity";
+            if (IncludeTransfer)
+                IncomePlausible += " Transfer Debt";
             return IncomePlausible.Contains(et) ? 1 : -1;
         }
     }

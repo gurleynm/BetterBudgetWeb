@@ -1,34 +1,33 @@
 ﻿@using BetterBudgetWeb.Data
+@using BetterBudgetWeb.Repo
 @if (!string.IsNullOrEmpty(TheTransaction.PaidWithPerson1))
 {
-    int IncomeMultiplier = Constants.IncomeMultiplier(TheTransaction.ExpenseType);
     @if (!string.IsNullOrEmpty(TheTransaction.PaidOffPerson1) && TheTransaction.PaidOffPerson1.ToUpper() != "NONE")
     {
-        var FromToPW = GetFromTo(TheTransaction.PaidWithPerson1);
-        var FromToPO = GetFromTo(TheTransaction.PaidOffPerson1);
+        var FromToPW = BalanceRepo.GetFromTo(TheTransaction, TheTransaction.PaidWithPerson1);
+        var FromToPO = BalanceRepo.GetFromTo(TheTransaction,TheTransaction.PaidOffPerson1);
         <h5><i>@($"{TheTransaction.PaidWithPerson1} went from {Constants.Pretty(FromToPW.Item1)} to {Constants.Pretty(FromToPW.Item2)}")</i></h5>
-        <h5><i>@($"{TheTransaction.PaidOffPerson1} went from {Constants.Pretty(FromToPO.Item2 + (FromToPW.Item2 - FromToPW.Item1))} to {Constants.Pretty(FromToPO.Item2)}")</i></h5>
+        <h5><i>@($"{TheTransaction.PaidOffPerson1} went from {Constants.Pretty(FromToPO.Item1)} to {Constants.Pretty(FromToPO.Item2)}")</i></h5>
     }
     else
     {
-        var FromTo = GetFromTo(TheTransaction.PaidWithPerson1);
+        var FromTo = BalanceRepo.GetFromTo(TheTransaction,TheTransaction.PaidWithPerson1);
         <h5><i>@($"{TheTransaction.PaidWithPerson1} went from {Constants.Pretty(FromTo.Item1)} to {Constants.Pretty(FromTo.Item2)}")</i></h5>
     }
 }
 
 @if (!string.IsNullOrEmpty(TheTransaction.PaidWithPerson2))
 {
-    int IncomeMultiplier = Constants.IncomeMultiplier(TheTransaction.ExpenseType);
-    @if (!string.IsNullOrEmpty(TheTransaction.PaidOffPerson2) && TheTransaction.PaidOffPerson2.ToUpper() != "NONE")
+    @if (!string.IsNullOrEmpty(TheTransaction.PaidOffPerson2) && TheTransaction.PaidOffPerson1.ToUpper() != "NONE")
     {
-        var FromToPW = GetFromTo(TheTransaction.PaidWithPerson2,false);
-        var FromToPO = GetFromTo(TheTransaction.PaidOffPerson2,false);
+        var FromToPW = BalanceRepo.GetFromTo(TheTransaction, TheTransaction.PaidWithPerson2);
+        var FromToPO = BalanceRepo.GetFromTo(TheTransaction, TheTransaction.PaidOffPerson2);
         <h5><i>@($"{TheTransaction.PaidWithPerson2} went from {Constants.Pretty(FromToPW.Item1)} to {Constants.Pretty(FromToPW.Item2)}")</i></h5>
-        <h5><i>@($"{TheTransaction.PaidOffPerson2} went from {Constants.Pretty(FromToPO.Item2 + (FromToPW.Item2 - FromToPW.Item1))} to {Constants.Pretty(FromToPO.Item2)}")</i></h5>
+        <h5><i>@($"{TheTransaction.PaidOffPerson2} went from {Constants.Pretty(FromToPO.Item1)} to {Constants.Pretty(FromToPO.Item2)}")</i></h5>
     }
     else
     {
-        var FromTo = GetFromTo(TheTransaction.PaidWithPerson2, false);
+        var FromTo = BalanceRepo.GetFromTo(TheTransaction, TheTransaction.PaidWithPerson2);
         <h5><i>@($"{TheTransaction.PaidWithPerson2} went from {Constants.Pretty(FromTo.Item1)} to {Constants.Pretty(FromTo.Item2)}")</i></h5>
     }
 }
@@ -37,39 +36,5 @@
     [Parameter]
     public Transaction TheTransaction { get; set; }
 
-    private (double, double) GetFromTo(string balName, bool Person1 = true)
-    {
-        int IncomeMultiplier = Constants.IncomeMultiplier(TheTransaction.ExpenseType);
-        var trans = new List<Transaction>(Constants.Transactions.Where(t => t.DateOfTransaction.CompareTo(TheTransaction.DateOfTransaction) >= 0
-                                                                        && t.OneOfTheBalances(balName)).OrderByDescending(t => t.DateOfTransaction));
-        if (Constants.Balances.FirstOrDefault(b => b.Name == balName) is Balance foundBal)
-        {
-            IncomeMultiplier *= foundBal.BalanceType == "Loan" ? 1 : -1;
-            double CurrentVal = foundBal.Value;
-
-            for (int index = 0; index < trans.Count; index++)
-            {
-                double AmountWeCareAbout = Person1 ? trans[index].Person1Amount : trans[index].Person2Amount;
-                if (Person1)
-                {
-                    if (trans[index].PaidOffPerson1 == balName)
-                        AmountWeCareAbout *= IncomeMultiplier;
-                }
-                else
-                {
-                    if (trans[index].PaidOffPerson2 == balName)
-                        AmountWeCareAbout *= IncomeMultiplier;
-                }
-
-                if (trans[index].Id == TheTransaction.Id)
-                {
-                    return (CurrentVal - AmountWeCareAbout, CurrentVal);
-                }
-
-                CurrentVal -= AmountWeCareAbout;
-            }
-        }
-
-        return (0, 0);
-    }
+    int IncomeMultiplier => TheTransaction != null ? Constants.IncomeMultiplier(TheTransaction.ExpenseType) : 1;
 }
