@@ -292,10 +292,10 @@
             else if (0 < transact.TotalAmount && transact.TotalAmount < threshold)
             {
                 Transaction newT = new(transact);
-                if (!ThresholdAmounts.ContainsKey(transact.Name))
-                    ThresholdAmounts[transact.Name] = new();
+                if (!ThresholdAmounts.ContainsKey(transact.ExpenseType))
+                    ThresholdAmounts[transact.ExpenseType] = new();
 
-                ThresholdAmounts[transact.Name].Add(newT);
+                ThresholdAmounts[transact.ExpenseType].Add(newT);
             }
             else if (DesiredTransactionsDict.ContainsKey(TKey))
             {
@@ -312,9 +312,9 @@
         {
             Transaction transaction = new(ThresholdAmounts[key][0]);
             string plural = ThresholdAmounts[key].Count > 1 ? "s" : "";
-            transaction.Name = $"{ThresholdAmounts[key].Count} '{transaction.ExpenseType}' Item{plural} < {Constants.Pretty(threshold)}";
-            transaction.Person1Amount = ThresholdAmounts[key].Sum(t => t.Person1Amount);
-            transaction.Person2Amount = ThresholdAmounts[key].Sum(t => t.Person2Amount);
+            transaction.Name = $"{ThresholdAmounts[key].Count} '{key}' Item{plural} < {Constants.Pretty(threshold)}";
+            transaction.Person1Amount = ThresholdAmounts[key].Where(t => t.ExpenseType == transaction.ExpenseType).Sum(t => t.Person1Amount);
+            transaction.Person2Amount = ThresholdAmounts[key].Where(t => t.ExpenseType == transaction.ExpenseType).Sum(t => t.Person2Amount);
             DesiredTransactionsDict[transaction.Name] = transaction;
         }
 
