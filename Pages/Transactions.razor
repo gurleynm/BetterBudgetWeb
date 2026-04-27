@@ -209,20 +209,20 @@
                     <tr>
                         <td>Account</td>
                         <td>
-                            <select @bind=BalanceFilter>
+                            <FancySelect @bind-Value="BalanceFilter">
                                 <option disabled value="">(Select Account)</option>
                                 @foreach (Balance balance in UniqueBalances.Where(b =>
                                                             !TempFilters.Any(t => t.Field == "Account" && t.Value == b.Name)).OrderBy(b => b.Name))
                                 {
                                     <option>@balance.Name</option>
                                 }
-                            </select>
+                            </FancySelect>
                         </td>
                     </tr>
                     <tr>
                         <td>Person</td>
                         <td>
-                            <select @bind=PersonFilter>
+                            <FancySelect @bind-Value="PersonFilter">
                                 <option disabled value="">(Select Person)</option>
                                 @if (!TempFilters.Any(t => t.Field == "Person" && t.Value == Constants.Person1))
                                 {
@@ -232,34 +232,34 @@
                                 {
                                     <option>@Constants.Person2</option>
                                 }
-                            </select>
+                            </FancySelect>
                         </td>
                     </tr>
                     <tr>
                         <td>Expense Type</td>
                         <td>
-                            <select @bind=ExpenseTypeFilter>
+                            <FancySelect @bind-Value="ExpenseTypeFilter">
                                 <option disabled value="">(Select Expense)</option>
                                 @foreach (string et in UniqueExpenseTypes.Where(e =>
                                                             !TempFilters.Any(t => t.Field == "Expense Type" && t.Value == e)))
                                 {
                                     <option>@et</option>
                                 }
-                            </select>
+                            </FancySelect>
                         </td>
                     </tr>
                     <tr>
                         <td style="vertical-align:top">Total Amount</td>
                         <td>
                             <div class="flex-r-100">
-                                <select @bind=TotalAmountFilter style="width:fit-content">
+                                <FancySelect @bind-Value="TotalAmountFilter" Style="width:fit-content;;border-top-right-radius:0;border-bottom-right-radius:0">
                                     <option>&lt;</option>
                                     <option>&gt;</option>
                                     <option>=</option>
                                     <option>&le;</option>
                                     <option>&ge;</option>
-                                </select>
-                                <input type="number" style="width:5em" placeholder="$" @oninput="@(async (ui) => { TotalAmountNumFilter = (string)ui.Value; })" />
+                                </FancySelect>
+                                <input type="number" class="custom-input" style="width:5em;color-scheme: dark;;border-top-left-radius:0;border-bottom-left-radius:0" placeholder="0.00" @oninput="@(async (ui) => { TotalAmountNumFilter = (string)ui.Value; })" />
                             </div>
                             <div class="flex-r-100" style="margin-top:1em">
                                 <button class="btn btn-primary" @onclick=FilterAmount>Filter Amount</button>
