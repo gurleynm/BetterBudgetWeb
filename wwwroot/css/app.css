@@ -181,3 +181,43 @@ g.node text {
 g.link {
     opacity: 1;
 }
+
+/* Container and base lines */
+.hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.line {
+    height: 4px;
+    width: 100%;
+    background: white;
+    transition: all 0.3s ease; /* Smooth morphing */
+    transform-origin: center;
+}
+
+/* Morphing state when checkbox is checked */
+input.toggler:checked ~ .line:nth-child(2) {
+    transform: translateY(10px) rotate(45deg);
+}
+
+input.toggler:checked ~ .line:nth-child(3) {
+    opacity: 0; /* Hides middle bar */
+}
+
+input.toggler:checked ~ .line:nth-child(4) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Hide the actual checkbox */
+input.toggler {
+    display: none;
+}
+
+.border-while-open {
+    border-bottom-left-radius: 1em;
+    border-bottom-right-radius: 1em;
+}

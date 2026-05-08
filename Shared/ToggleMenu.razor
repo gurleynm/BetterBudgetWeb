@@ -1,0 +1,38 @@
+﻿@implements IDisposable
+
+<label class="hamburger-menu">
+    <input class="toggler" type="checkbox" @bind=ShowToggler @onclick="Clicked">
+    <div class="line" />
+    <div class="line" />
+    <div class="line" />
+</label>
+
+@code {
+    [Parameter]
+    public EventCallback OnToggle { get; set; }
+
+    private bool ShowToggler;
+
+    override protected void OnInitialized()
+    {
+        Constants.CurPageChanged += CurPageUpdated;
+    }
+
+    private void Clicked()
+    {
+        ShowToggler = !ShowToggler;
+        StateHasChanged();
+        OnToggle.InvokeAsync(null);
+    }
+
+    private void CurPageUpdated(object sender, string cp)
+    {
+        ShowToggler = false;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Constants.CurPageChanged -= CurPageUpdated;
+    }
+}
