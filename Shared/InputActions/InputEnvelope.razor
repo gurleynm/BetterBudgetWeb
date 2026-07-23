@@ -18,7 +18,7 @@
 
         <div class="flex-c-start" style="margin-bottom:2em;">
             <label>Goal Amount:</label>
-            <input class="custom-input" type="number" placeholder="Goal Amount" @bind=Amount @oninput="@(async (ui) => { Amount = (string)ui.Value; })" />
+            <input class="custom-input" type="number" placeholder="Goal Amount" @bind=Amount />
         </div>
     </div>
     <div class="@(Constants.TestMobile("flex-c-start", "flex-r-100"))">

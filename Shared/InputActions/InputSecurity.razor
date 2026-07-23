@@ -22,11 +22,11 @@
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Number of Shares:</label>
-                <input class="custom-input" type="number" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="#" @bind-value="@NumShares" />
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Share Price at Sale:</label>
-                <input class="custom-input" type="number" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="Cost" @bind-value="@AvgCost" />
             </div>
             <div class="flex-r-100">
                 @if (Disabled)
@@ -75,7 +75,7 @@ else
                 <div class="flex-c-start" style="margin: 0 1vw;">
                     <label>Strike Price:</label>
                     <br />
-                    <input class="custom-input" type="number" placeholder="Strike Price" @bind-value="@StrikePrice" @oninput="@(async (ui) => { StrikePrice = (string)ui.Value; })" />
+                    <input class="custom-input" type="number" placeholder="Strike Price" @bind-value="@StrikePrice" />
                 </div>
                 <div>
                     <label>Expiration Date:</label>
@@ -86,11 +86,11 @@ else
             }
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label># of Shares:</label>
-                <input class="custom-input" type="number" placeholder="#" @bind-value="@NumShares" @oninput="@(async (ui) => { NumShares = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="#" @bind-value="@NumShares" />
             </div>
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Cost Per Share:</label>
-                <input class="custom-input" type="number" placeholder="Cost" @bind-value="@AvgCost" @oninput="@(async (ui) => { AvgCost = (string)ui.Value; })" />
+                <input class="custom-input" type="number" placeholder="Cost" @bind-value="@AvgCost" />
             </div>
             @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
             {

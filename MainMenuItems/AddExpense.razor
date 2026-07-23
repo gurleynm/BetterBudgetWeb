@@ -27,7 +27,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input class="custom-input" type="number" style="width:80%;" placeholder="$ Amount" @bind-value="@TopAmount" @oninput="@(async (ui) => { TopAmount = (string)ui.Value; })" />
+                            <input class="custom-input" type="number" style="width:80%;" placeholder="$ Amount" @bind-value="@NewTrans.TopAmount"" />
                         </td>
                         <td>
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
@@ -55,7 +55,7 @@
                     {
                         <tr>
                             <td>
-                                <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@BottomAmount" @oninput="@(async (ui) => { BottomAmount = (string)ui.Value; })" />
+                                <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@NewTrans.BottomAmount" />
                             </td>
                             <td>
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
@@ -128,7 +128,7 @@
                     </tr>
                     <tr>
                         <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                            <input type="number" class="custom-input" style="width:45%;" placeholder="$ Amount" @bind-value="@TopAmount" @oninput="@(async (ui) => { TopAmount = (string)ui.Value; })" />
+                            <input type="number" class="custom-input" style="width:45%;" placeholder="$ Amount" @bind-value="@NewTrans.TopAmount"/>
 
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
 
@@ -154,7 +154,7 @@
                     {
                         <tr>
                             <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                                <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@BottomAmount" @oninput="@(async (ui) => { BottomAmount = (string)ui.Value; })" />
+                                <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@NewTrans.BottomAmount" />
 
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
 
@@ -220,33 +220,6 @@
 @code {
     private bool Mobile => Constants.Mobile;
     private string TextColor => @Constants.ColorScheme["Text"];
-
-    private string topAmount = "";
-    public string TopAmount
-    {
-        get { return topAmount; }
-        set
-        {
-            if (topAmount == value)
-                return;
-
-            topAmount = value;
-            NewTrans.TopAmount = double.TryParse(TopAmount, out double toss1) ? toss1 : 0;
-        }
-    }
-    private string bottomAmount = "";
-    public string BottomAmount
-    {
-        get { return bottomAmount; }
-        set
-        {
-            if (bottomAmount == value)
-                return;
-
-            bottomAmount = value;
-            NewTrans.BottomAmount = double.TryParse(BottomAmount, out double toss2) ? toss2 : 0;
-        }
-    }
 
     [Parameter]
     public bool Added { get; set; }
@@ -363,7 +336,7 @@
                     NewTrans.BottomPaidWith = NewTrans.TopPaidWith;
                     NewTrans.BottomAmount = NewTrans.TopAmount;
 
-                    TopAmount = "";
+                    NewTrans.TopAmount = 0;
                     NewTrans.TopWhoPaid = "";
                     NewTrans.TopPaidWith = "";
                 }
@@ -374,7 +347,7 @@
                 NewTrans.TopPaidWith = NewTrans.BottomPaidWith;
                 NewTrans.TopAmount = NewTrans.BottomAmount;
 
-                BottomAmount = "";
+                NewTrans.BottomAmount = 0;
                 NewTrans.BottomPaidWith = "";
                 NewTrans.BottomWhoPaid = "";
             }
@@ -386,8 +359,8 @@
             }
 
             await OnAddConfirm.InvokeAsync(NewTrans);
-            TopAmount = "";
-            BottomAmount = "";
+            NewTrans.TopAmount = 0;
+            NewTrans.BottomAmount = 0;
             ShowSecond = false;
         }
         else
