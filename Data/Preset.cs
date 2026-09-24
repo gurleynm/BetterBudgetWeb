@@ -7,14 +7,14 @@ namespace BetterBudgetWeb.Data
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; }
         public string ExpenseType { get; set; }
-        public string PaidWithPerson1 { get; set; }
-        public string PaidWithPerson2 { get; set; }
+        public string PaidWithPerson1 { get; set; } = "";
+        public string PaidWithPerson2 { get; set; } = "";
         public double Person1Amount { get; set; }
         public double Person2Amount { get; set; }
-        public string PaidOffPerson1 { get; set; }
-        public string PaidOffPerson2 { get; set; }
-        public string HexColor { get; set; }
-        public string TextColor { get; set; }
+        public string PaidOffPerson1 { get; set; } = "";
+        public string PaidOffPerson2 { get; set; } = "";
+        public string HexColor { get; set; } = "";
+        public string TextColor { get; set; } = "";
         public double TotalAmount => Person1Amount + Person2Amount;
 
         private void SetSMC(Monthly smc)
@@ -57,12 +57,12 @@ namespace BetterBudgetWeb.Data
             ExpenseType = expenseType;
             Person1Amount = person1;
             Person2Amount = person2;
-            PaidWithPerson1 = person1PaidWith;
-            PaidWithPerson2 = person2PaidWith;
-            PaidOffPerson1 = person1PaidOff;
-            PaidOffPerson2 = person2PaidOff;
-            HexColor = hex;
-            TextColor = text;
+            PaidWithPerson1 = person1PaidWith == null ? "" : person1PaidWith;
+            PaidWithPerson2 = person2PaidWith == null ? "" : person2PaidWith;
+            PaidOffPerson1 = person1PaidOff == null ? "" : person1PaidOff;
+            PaidOffPerson2 = person2PaidOff == null ? "" : person2PaidOff;
+            HexColor = hex == null ? "" : hex;
+            TextColor = text == null ? "" : text;
         }
         public Preset(Preset other)
         {

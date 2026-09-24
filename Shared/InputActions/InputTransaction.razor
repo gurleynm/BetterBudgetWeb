@@ -231,7 +231,7 @@
                                 <button class="btn btn-grad" disabled=@Disabled @onclick="Submit" style="box-shadow: none;">
                                     Add
                                 </button>
-                                
+
                                 @if (!string.IsNullOrEmpty(TransactionName))
                                 {
                                     <div class="flex-r-100" style="justify-content:space-between;align-items:center;margin:1em 0">
@@ -343,7 +343,6 @@
     private List<Preset> LocalET => Constants.Presets.Where(p => ExpenseTypesForPresets[SelectedTab].Contains(p.ExpenseType))?.ToList();
 
     private List<Preset> Presets => Constants.Presets;
-    public List<Preset> PresetsForDel { get; set; }
 
     public bool Mobile => Constants.Mobile;
 
@@ -372,21 +371,21 @@
 
     private bool Disabled;
     Dictionary<string, bool> TabDictionary = new();
+    List<Monthly> SMC_LOCAL = new List<Monthly>();
 
     protected override Task OnInitializedAsync()
     {
         TabDictionary = new() { { "Expense", true }, { "Income", false }, { "Transfer", false } };
-        PresetsForDel = new List<Preset>(Presets);
+        SMC_LOCAL = new List<Monthly>(Constants.StaticMonthlyCosts);
+        SMC_LOCAL.RemoveAll(m => m.Name.Contains("(EXAMPLE DATA)"));
 
-        foreach (var smc in Constants.StaticMonthlyCosts)
+        foreach (var smc in SMC_LOCAL)
         {
             if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "1-Time Charge") == 0)
-                if (!smc.Name.Contains("(EXAMPLE DATA)"))
-                    Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
+                Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
         }
 
         Presets.Sort();
-        PresetsForDel.Sort();
 
         List<string> dcis = new List<string>();
         List<string> others = new List<string>();
@@ -552,6 +551,13 @@
             nt.DateOfTransaction = TransactionDate;
             var tr = await TransactionRepo.AddOrUpdateAsync(nt);
 
+            foreach (var smc in SMC_LOCAL)
+            {
+                if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "1-Time Charge") == 0)
+                    Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
+            }
+            Presets.Sort();
+
             SuccessMsg = TransName + " transaction was added!";
 
             TransactionName = string.Empty;
@@ -606,17 +612,13 @@
         if (!TransNameErr && !ExpenseTypeErr && !PayMeth1Err && !PayMeth2Err && !PayAm1Err && !PayAm2Err && !PayOff1Err && !PayOff2Err)
         {
             await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, PaidWithPerson1, PaidWithPerson2, PaidOffPerson1, PaidOffPerson2, Hex, TextColor));
-            PresetsForDel = new List<Preset>(Presets);
-
-            Presets.Sort();
-            PresetsForDel.Sort();
-
-            foreach (var smc in Constants.StaticMonthlyCosts)
+            
+            foreach (var smc in SMC_LOCAL)
             {
                 if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "1-Time Charge") == 0)
-                    if (!smc.Name.Contains("(EXAMPLE DATA)"))
-                        Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
+                    Presets.Add(new Data.Preset(smc, "#058001", "#FFFFFF"));
             }
+            Presets.Sort();
 
             SuccessMsg = TransactionName + " preset was added!";
 
