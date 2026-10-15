@@ -1,7 +1,7 @@
 ﻿<div class="custom-select-wrapper">
-    <select class="custom-select" @bind="CurrentValue" style="@Style">
+    <InputSelect class="custom-select" @bind-Value=CurrentValue style="@Style">
         @ChildContent
-    </select>
+    </InputSelect>
 </div>
 
 @code {
