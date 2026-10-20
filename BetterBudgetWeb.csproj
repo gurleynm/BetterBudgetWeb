@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PublishIISAssets>true</PublishIISAssets>
 	<WasmEnableSIMD>false</WasmEnableSIMD>
+	<RunAOTCompilation>false</RunAOTCompilation>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Blazor.Bootstrap" Version="3.2.0" />
