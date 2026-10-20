@@ -6,4 +6,5 @@ chmod +x dotnet-install.sh
 
 ./dotnet-install.sh -c $DOTNET_VERSION -InstallDir ./dotnet
 ./dotnet/dotnet --version
+./dotnet/dotnet workload restore
 ./dotnet/dotnet publish -c Release -o publish
