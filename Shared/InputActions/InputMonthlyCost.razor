@@ -41,7 +41,7 @@
         <div>
             <label>@("Total Amount:")</label>
             <br />
-            <input class="custom-input" type="number" placeholder="Amount" @bind-value="@TotalAmount" />
+            <CustomCurrencyInput @bind-Value=TotalAmount />
         </div>
     }
     else
@@ -49,13 +49,13 @@
         <div>
             <label>@(Constants.Person1 + " Amount:")</label>
             <br />
-            <input class="custom-input" type="number" placeholder="Amount" @bind-value="@Person1Amount" />
+            <CustomCurrencyInput @bind-Value=Person1Amount />
         </div>
         <br />
         <div>
             <label>@(Constants.Person2 + " Amount:")</label>
             <br />
-            <input class="custom-input" type="number" placeholder="Amount" @bind-value="@Person2Amount" />
+            <CustomCurrencyInput @bind-Value=Person2Amount />
         </div>
     }
     <br style="clear:both;" />
@@ -109,7 +109,7 @@ else
             <div>
                 <label>@("Total Amount:")</label>
                 <br />
-                <input class="custom-input" type="number" placeholder="Amount" @bind-value="@TotalAmount" />
+                <CustomCurrencyInput @bind-Value=TotalAmount />
             </div>
         }
         else
@@ -117,12 +117,12 @@ else
             <div style="float:left;margin-right:10vw;">
                 <label>@(Constants.Person1 + " Amount:")</label>
                 <br />
-                <input class="custom-input" type="number" placeholder="Amount" @bind-value="@Person1Amount" />
+                <CustomCurrencyInput @bind-Value=Person1Amount />
             </div>
             <div style="float:left;margin-right:10vw;">
                 <label>@(Constants.Person2 + " Amount:")</label>
                 <br />
-                <input class="custom-input" type="number" placeholder="Amount" @bind-value="@Person2Amount" />
+                <CustomCurrencyInput @bind-Value=Person2Amount />
             </div>
         }
         <br style="clear:both;" />
@@ -164,12 +164,10 @@ else
 
     [Parameter]
     public string StaticName { get; set; }
-    [Parameter]
-    public string Person1Amount { get; set; }
-    [Parameter]
-    public string Person2Amount { get; set; }
-    [Parameter]
-    public string TotalAmount { get; set; }
+
+    public double Person1Amount { get; set; }
+    public double Person2Amount { get; set; }
+    public double TotalAmount { get; set; }
 
     public bool Mobile => Constants.Mobile;
 
@@ -209,15 +207,13 @@ else
         if (SelectedMonthly != null)
         {
             Dyna = SelectedMonthly.Dynamic;
-            Person1Amount = SelectedMonthly.Person1Amount.ToString();
-            Person2Amount = SelectedMonthly.Person2Amount.ToString();
+            Person1Amount = SelectedMonthly.Person1Amount;
+            Person2Amount = SelectedMonthly.Person2Amount;
             StaticName = SelectedMonthly.Name;
             SelectMonth = SelectedMonthly.Month;
             SelectYear = SelectedMonthly.Year;
-            double.TryParse(Person1Amount, out double nam);
-            double.TryParse(Person2Amount, out double lam);
-            
-            TotalAmount = (nam + lam).ToString();
+
+            TotalAmount = (Person1Amount + Person2Amount);
         }
     }
 
@@ -226,25 +222,19 @@ else
         Disabled = true;
         ErrorMsg = string.Empty;
         ErrorColor = "red";
-        bool tpNAmount = double.TryParse(Person1Amount, out double nam);
-        bool tpLAmount = double.TryParse(Person2Amount, out double lam);
-        bool tpTAmount = double.TryParse(TotalAmount, out double tam);
 
         if (Dyna == "DYNAMIC")
         {
-            tpNAmount = tpTAmount;
-            tpLAmount = tpTAmount;
-
-            if (tpTAmount)
-            {
-                nam = Math.Ceiling(tam / 2);
-                lam = Math.Floor(tam / 2);
-            }
+            Person1Amount = Math.Ceiling(TotalAmount / 2);
+            Person2Amount = Math.Floor(TotalAmount / 2);
+        }
+        else
+        {
+            TotalAmount = Person1Amount + Person2Amount;
         }
 
         ErrorMsg += Dyna != "SAVINGS" && string.IsNullOrEmpty(StaticName) ? "Static Name must be set. " : "";
-        ErrorMsg += !tpNAmount ? $"{Constants.Person1} Amount must be a number. " : "";
-        ErrorMsg += !tpLAmount ? $"{Constants.Person2} Amount must be a number. " : "";
+        ErrorMsg += TotalAmount <= 0 ? $"Total Amount must be > 0. " : "";
         ErrorMsg += string.IsNullOrEmpty(Dyna) ? "Cost Type must be specified. " : "";
         //ErrorMsg += !string.IsNullOrEmpty(ExpenseType) && ExpenseType == "Debt" ? "APR must be a number. " : "";
         //ErrorMsg += string.IsNullOrEmpty(Color) ? "Color must be set." : "";
@@ -254,14 +244,14 @@ else
             string mon;
             string year;
             string id = SelectedMonthly == null ? "" : SelectedMonthly.Id;
-            var mons = await MonthlyRepo.AddOrUpdateAsync(StaticName, nam, lam, Dyna, SelectMonth + " " + SelectYear, id);
+            var mons = await MonthlyRepo.AddOrUpdateAsync(StaticName, Person1Amount, Person2Amount, Dyna, SelectMonth + " " + SelectYear, id);
 
             ErrorColor = "green";
             ErrorMsg = $"'{StaticName}' recurring transaction was {(Updating ? "updated" : "added")}!";
 
             StaticName = string.Empty;
-            Person1Amount = string.Empty;
-            Person2Amount = string.Empty;
+            Person1Amount = 0;
+            Person2Amount = 0;
 
             Constants.SetMonthlies(mons);
         }

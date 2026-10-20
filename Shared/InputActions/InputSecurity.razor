@@ -26,7 +26,7 @@
             </div>
             <div class="flex-r-100" style="align-items:center;padding:1em">
                 <label style="padding-right:1em">Share Price at Sale:</label>
-                <input class="custom-input" type="number" placeholder="Cost" @bind-value="@AvgCost" />
+                <CustomCurrencyInput @bind-Value=AvgCost />
             </div>
             <div class="flex-r-100">
                 @if (Disabled)
@@ -75,7 +75,7 @@ else
                 <div class="flex-c-start" style="margin: 0 1vw;">
                     <label>Strike Price:</label>
                     <br />
-                    <input class="custom-input" type="number" placeholder="Strike Price" @bind-value="@StrikePrice" />
+                    <CustomCurrencyInput @bind-Value=StrikePrice />
                 </div>
                 <div>
                     <label>Expiration Date:</label>
@@ -90,7 +90,7 @@ else
             </div>
             <div class="flex-c-start" style="margin: 0 1vw;">
                 <label>Cost Per Share:</label>
-                <input class="custom-input" type="number" placeholder="Cost" @bind-value="@AvgCost" />
+                <CustomCurrencyInput @bind-Value=AvgCost />
             </div>
             @if (@ChosenBalance.Person?.ToUpper() == "JOINT")
             {
@@ -164,8 +164,8 @@ else
     private Balance ChosenBalance => Balances.FirstOrDefault(b => b.Id == BalanceSelected) ?? new Balance();
     public string Name { get; set; }
     public string NumShares { get; set; }
-    public string AvgCost { get; set; }
-    public string StrikePrice { get; set; }
+    public double AvgCost { get; set; }
+    public double StrikePrice { get; set; }
     public DateTime ExpirationDate { get; set; } = DateTime.Now;
     public string SecType { get; set; } = "Stock";
     public double NumericAmountToTrade = -1;
@@ -207,10 +207,10 @@ else
 
         ErrorMsg += string.IsNullOrEmpty(Name) ? "Security Name must be set. " : "";
         ErrorMsg += !double.TryParse(NumShares, out double tp) || tp < 0 ? "Enter a valid number of shares. " : "";
-        ErrorMsg += !double.TryParse(AvgCost, out double tp2) || tp2 < 0 ? "Enter a valid number for your cost per share. " : "";
-        ErrorMsg += (SecType == "Put" || SecType == "Call") && (!double.TryParse(StrikePrice, out double tp1) || tp1 < 0) ? "Enter a valid strike price. " : "";
+        ErrorMsg += AvgCost <= 0 ? "Enter a valid number for your cost per share. " : "";
+        ErrorMsg += (SecType == "Put" || SecType == "Call") && (StrikePrice < 0) ? "Enter a valid strike price. " : "";
         ErrorMsg += (SecType == "Put" || SecType == "Call") && DateTime.Now.CompareTo(ExpirationDate) > 0 ? "Pick a valid expiration date. " : "";
-        ErrorMsg += tp * tp2 > NumericAmountToTrade ? "Exceeds amount available to trade by " + Constants.Pretty(tp * tp2 - NumericAmountToTrade) + ". " : "";
+        ErrorMsg += tp * AvgCost > NumericAmountToTrade ? "Exceeds amount available to trade by " + Constants.Pretty(tp * AvgCost - NumericAmountToTrade) + ". " : "";
 
         if (string.IsNullOrEmpty(ErrorMsg))
         {
@@ -219,9 +219,9 @@ else
                 Name = Name,
                 Person = Person,
                 NumShares = double.TryParse(NumShares, out double toss) ? toss : 0,
-                AvgCost = double.TryParse(AvgCost, out double toss2) ? toss2 : 0,
+                AvgCost = AvgCost,
                 SecType = SecType,
-                StrikePrice = double.TryParse(StrikePrice, out double toss1) ? toss1 : 0,
+                StrikePrice = StrikePrice,
                 DateOfSecurity = ExpirationDate,
                 BalanceFrom = BalanceSelected
             });
@@ -233,8 +233,8 @@ else
 
             Name = string.Empty;
             NumShares = "";
-            AvgCost = "";
-            StrikePrice = "";
+            AvgCost = 0;
+            StrikePrice = 0;
             SecType = "Stock";
             Person = Constants.Person1;
         }

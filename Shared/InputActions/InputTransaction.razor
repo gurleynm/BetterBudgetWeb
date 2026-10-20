@@ -33,7 +33,7 @@
                             <div class="flex-c-start input-transaction-block input-transaction-summary">
                                 <h2 style="color:cyan">
                                     <strong>
-                                        @Constants.Pretty((double.TryParse(Person1Amount, out double p1a) ? p1a : 0) + (double.TryParse(Person2Amount, out double p2a) ? p2a : 0))
+                                        @Constants.Pretty(Person1Amount + Person2Amount)
                                     </strong>
                                 </h2>
 
@@ -111,7 +111,7 @@
                                 }
                             }
                             <div class="flex-r-100" style="margin:1em 0">
-                                <input class="custom-input" type="number" placeholder="$ Amount" @bind-value="@Person1Amount" />
+                                <CustomCurrencyInput @bind-Value=Person1Amount />
                             </div>
                             @if (PayAm1Err && !Disabled)
                             {
@@ -160,7 +160,7 @@
                                 }
                             }
                             <div class="flex-r-100" style="margin:1em 0">
-                                <input class="custom-input" type="number" placeholder="$ Amount" @bind-value="@Person2Amount" />
+                                <CustomCurrencyInput @bind-Value=Person2Amount />
                             </div>
                             @if (PayAm2Err && !Disabled)
                             {
@@ -181,7 +181,7 @@
                             <div class="flex-c-start input-transaction-block input-transaction-summary">
                                 <h2 style="color:cyan">
                                     <strong>
-                                        @Constants.Pretty((double.TryParse(Person1Amount, out double p1a) ? p1a : 0) + (double.TryParse(Person2Amount, out double p2a) ? p2a : 0))
+                                        @Constants.Pretty(Person1Amount + Person2Amount)
                                     </strong>
                                 </h2>
 
@@ -330,8 +330,8 @@
     public string PaidOffPerson2 { get; set; } = "";
     public string PaidWithPerson1 { get; set; } = "";
     public string PaidWithPerson2 { get; set; } = "";
-    public string Person1Amount { get; set; } = "";
-    public string Person2Amount { get; set; } = "";
+    public double Person1Amount { get; set; }
+    public double Person2Amount { get; set; }
     public string Hex { get; set; } = "#28A745";
     public string TextColor { get; set; } = "#FFFFFF";
 
@@ -485,25 +485,18 @@
 
         SuccessMsg = string.Empty;
 
-        bool tp1Amount = double.TryParse(Person1Amount, out double nam);
-        bool tp2Amount = double.TryParse(Person2Amount, out double lam);
-
-        tp1Amount = tp1Amount && nam != 0;
-        tp2Amount = tp2Amount && lam != 0;
-
         if (TabDictionary["Income"])
             ExpenseType = "Income";
         else if (TabDictionary["Transfer"] && ExpenseType != "Debt")
             ExpenseType = "Transfer";
 
 
-        bool Amount1NumChk = !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && !tp1Amount;
-        bool Amount2NumChk = !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && !tp2Amount;
-        bool BothEmpty = !tp1Amount && !tp2Amount;
+        bool Amount1NumChk = !string.IsNullOrEmpty(PaidWithPerson1) && PaidWithPerson1 != "NONE" && Person1Amount == 0;
+        bool Amount2NumChk = !string.IsNullOrEmpty(PaidWithPerson2) && PaidWithPerson2 != "NONE" && Person2Amount == 0;
+        bool BothEmpty = Person1Amount + Person2Amount == 0;
 
-        bool AmountUnfillPaidWith1 = tp1Amount && (string.IsNullOrEmpty(PaidWithPerson1) || PaidWithPerson1 == "NONE");
-        bool AmountUnfillPaidWith2 = tp2Amount && (string.IsNullOrEmpty(PaidWithPerson2) || PaidWithPerson2 == "NONE");
-
+        bool AmountUnfillPaidWith1 = Person1Amount != 0 && (string.IsNullOrEmpty(PaidWithPerson1) || PaidWithPerson1 == "NONE");
+        bool AmountUnfillPaidWith2 = Person2Amount != 0 && (string.IsNullOrEmpty(PaidWithPerson2) || PaidWithPerson2 == "NONE");
         TransNameErr = string.IsNullOrEmpty(TransactionName) && ExpenseType != "Transfer";
         ExpenseTypeErr = string.IsNullOrEmpty(ExpenseType);
         PayMeth1Err = AmountUnfillPaidWith1;
@@ -516,8 +509,8 @@
 
         if (!string.IsNullOrEmpty(ExpenseType) && "Transfer Debt".Contains(ExpenseType))
         {
-            PayOff1Err = tp1Amount && (string.IsNullOrEmpty(PaidOffPerson1) || PaidOffPerson1 == "NONE");
-            PayOff2Err = tp2Amount && (string.IsNullOrEmpty(PaidOffPerson2) || PaidOffPerson2 == "NONE");
+            PayOff1Err = Person1Amount != 0 && (string.IsNullOrEmpty(PaidOffPerson1) || PaidOffPerson1 == "NONE");
+            PayOff2Err = Person2Amount != 0 && (string.IsNullOrEmpty(PaidOffPerson2) || PaidOffPerson2 == "NONE");
         }
         else
         {
@@ -547,7 +540,7 @@
             else
                 TransName = TransactionName;
 
-            var nt = new Transaction(TransName, ExpenseType, nam, lam, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2));
+            var nt = new Transaction(TransName, ExpenseType, Person1Amount, Person2Amount, BalanceRepo.GetName(PaidWithPerson1), BalanceRepo.GetName(PaidWithPerson2), BalanceRepo.GetName(PaidOffPerson1), BalanceRepo.GetName(PaidOffPerson2));
             nt.DateOfTransaction = TransactionDate;
             var tr = await TransactionRepo.AddOrUpdateAsync(nt);
 
@@ -561,8 +554,8 @@
             SuccessMsg = TransName + " transaction was added!";
 
             TransactionName = string.Empty;
-            Person1Amount = string.Empty;
-            Person2Amount = string.Empty;
+            Person1Amount = 0;
+            Person2Amount = 0;
             ExpenseType = string.Empty;
             PaidOffPerson2 = string.Empty;
             PaidOffPerson1 = string.Empty;
@@ -579,10 +572,8 @@
     {
         SuccessMsg = string.Empty;
 
-        bool tp1Amount = double.TryParse(Person1Amount, out double nam);
-        bool tp2Amount = double.TryParse(Person2Amount, out double lam);
-        tp1Amount = tp1Amount && nam != 0;
-        tp2Amount = tp2Amount && lam != 0;
+        bool tp1Amount = Person1Amount != 0;
+        bool tp2Amount = Person2Amount != 0;
 
         bool AmountUnfillPaidWith1 = tp1Amount && (string.IsNullOrEmpty(PaidWithPerson1) || PaidWithPerson1 == "NONE");
         bool AmountUnfillPaidWith2 = tp2Amount && (string.IsNullOrEmpty(PaidWithPerson2) || PaidWithPerson2 == "NONE");
@@ -611,8 +602,8 @@
 
         if (!TransNameErr && !ExpenseTypeErr && !PayMeth1Err && !PayMeth2Err && !PayAm1Err && !PayAm2Err && !PayOff1Err && !PayOff2Err)
         {
-            await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, nam, lam, PaidWithPerson1, PaidWithPerson2, PaidOffPerson1, PaidOffPerson2, Hex, TextColor));
-            
+            await PresetRepo.AddOrUpdateAsync(new Preset(TransactionName, ExpenseType, Person1Amount, Person2Amount, PaidWithPerson1, PaidWithPerson2, PaidOffPerson1, PaidOffPerson2, Hex, TextColor));
+
             foreach (var smc in SMC_LOCAL)
             {
                 if (Presets.Count(p => p.Name == smc.Name && p.ExpenseType == "1-Time Charge") == 0)
@@ -623,8 +614,8 @@
             SuccessMsg = TransactionName + " preset was added!";
 
             TransactionName = string.Empty;
-            Person1Amount = string.Empty;
-            Person2Amount = string.Empty;
+            Person1Amount = 0;
+            Person2Amount = 0;
             ExpenseType = "Transfer Debt".Contains(ExpenseType) ? "Transfer" : string.Empty;
             PaidOffPerson2 = string.Empty;
             PaidOffPerson1 = string.Empty;
@@ -656,8 +647,8 @@
         {
             TransactionName = pre.Name;
             ExpenseType = "1-Time Charge";
-            Person1Amount = pre.Person1Amount.ToString();
-            Person2Amount = pre.Person2Amount.ToString();
+            Person1Amount = pre.Person1Amount;
+            Person2Amount = pre.Person2Amount;
         }
         else
         {
@@ -665,8 +656,8 @@
             ExpenseType = vals[1];
             PaidWithPerson1 = vals[2];
             PaidWithPerson2 = vals[3];
-            Person1Amount = vals[4];
-            Person2Amount = vals[5];
+            Person1Amount = double.TryParse(vals[4], out double val4) ? val4 : 0;
+            Person2Amount = double.TryParse(vals[5], out double val5) ? val5 : 0;
             PaidOffPerson1 = vals[6];
             PaidOffPerson2 = vals[7];
             TextColor = vals[8];

@@ -159,7 +159,7 @@ else if (ShowPre)
     private string WillPayPerson2Env;
     private double Person1AmountEnv;
     private double Person2AmountEnv;
-    private string GoalAmountEnv;
+    private double GoalAmountEnv;
     private bool UpdateCheckEnv;
 
     private List<Data.Envelope> Envelopes => Constants.Envelopes;
@@ -192,7 +192,7 @@ else if (ShowPre)
             WillPayPerson2Env = ThisEnv.Person2Account;
             Person1AmountEnv = Math.Round(ThisEnv.Person1Amount, 2);
             Person2AmountEnv = Math.Round(ThisEnv.Person2Amount, 2);
-            GoalAmountEnv = Math.Round(ThisEnv.Goal, 2).ToString();
+            GoalAmountEnv = Math.Round(ThisEnv.Goal, 2);
             UpdateCheckEnv = ThisEnv.UpdateGoal == 0 ? false : true;
         }
     }

@@ -5,7 +5,7 @@
 <div style="height:fit-content;">
     <h1 style="text-align:center;">Envelope Preview:</h1>
     <div class="flex-r">
-        <Envelope Name="@EnvName" Scale=@(Constants.TestMobile(80, 15)) Font_Size=@(Constants.TestMobile(9, 2)) Goal="@(double.TryParse(Amount, out double attempt0) ? attempt0 : 0)" />
+        <Envelope Name="@EnvName" Scale=@(Constants.TestMobile(80, 15)) Font_Size=@(Constants.TestMobile(9, 2)) Goal="@Amount" />
     </div>
 </div>
 <br />
@@ -18,7 +18,7 @@
 
         <div class="flex-c-start" style="margin-bottom:2em;">
             <label>Goal Amount:</label>
-            <input class="custom-input" type="number" placeholder="Goal Amount" @bind=Amount />
+            <CustomCurrencyInput @bind-Value=Amount />
         </div>
     </div>
     <div class="@(Constants.TestMobile("flex-c-start", "flex-r-100"))">
@@ -84,7 +84,7 @@
     [Parameter]
     public string WillPayPerson2 { get; set; }
     [Parameter]
-    public string Amount { get; set; }
+    public double Amount { get; set; }
     [Parameter]
     public bool UpdateCheck { get; set; } = true;
     [Parameter]
@@ -113,10 +113,8 @@
         await Task.Delay(100);
         ErrorMsg = string.Empty;
         ErrorColor = "red";
-        bool tpAmount = double.TryParse(Amount, out double am);
 
         ErrorMsg += string.IsNullOrEmpty(EnvName) ? "Envelope Name must be set. " : "";
-        ErrorMsg += !tpAmount ? "Amount must be a number. " : "";
         ErrorMsg += string.IsNullOrEmpty(WillPayPerson1) ? $"Must set {Constants.Person1} account to pay with. " : "";
         ErrorMsg += string.IsNullOrEmpty(WillPayPerson2) ? $"Must set {Constants.Person2} account to pay with. " : "";
         ErrorMsg += Envelopes.FirstOrDefault(e => e.Name == EnvName) != null ? "Already have a goal with this name. " : "";
@@ -126,7 +124,7 @@
             Envelopes = await EnvelopeRepo.AddOrUpdateAsync(new Data.Envelope
             {
                 Name = EnvName,
-                Goal = am,
+                Goal = Amount,
                 Person1Account = WillPayPerson1,
                 Person2Account = WillPayPerson2,
                 Person1Amount = 0,
@@ -140,7 +138,7 @@
             ErrorMsg = EnvName + " envelope was added!";
 
             EnvName = string.Empty;
-            Amount = string.Empty;
+            Amount = 0;
             WillPayPerson1 = string.Empty;
             WillPayPerson2 = string.Empty;
 

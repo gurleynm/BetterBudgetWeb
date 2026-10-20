@@ -1,5 +1,6 @@
 ﻿@using BetterBudgetWeb.Data
 @using BetterBudgetWeb.Runner;
+@using BlazorBootstrap
 
 <div style="position:relative">
     @if (Added)
@@ -27,7 +28,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input class="custom-input" type="number" style="width:80%;" placeholder="$ Amount" @bind-value="@NewTrans.TopAmount"" />
+                            <CustomCurrencyInput @bind-Value=NewTrans.TopAmount />
                         </td>
                         <td>
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
@@ -55,7 +56,7 @@
                     {
                         <tr>
                             <td>
-                                <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@NewTrans.BottomAmount" />
+                                <CustomCurrencyInput @bind-Value=NewTrans.BottomAmount />
                             </td>
                             <td>
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
@@ -128,8 +129,7 @@
                     </tr>
                     <tr>
                         <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                            <input type="number" class="custom-input" style="width:45%;" placeholder="$ Amount" @bind-value="@NewTrans.TopAmount"/>
-
+                            <CustomCurrencyInput @bind-Value=NewTrans.TopAmount />
                             <PaymentInput @bind-PaidWith="@NewTrans.TopPaidWith" />
 
                             @if (!string.IsNullOrEmpty(NewTrans.TopPaidWith) && !string.IsNullOrEmpty(NewTrans.TopWhoPaid))
@@ -154,8 +154,7 @@
                     {
                         <tr>
                             <td class="flex-r" style="padding:1vw;justify-content:space-around;align-items:center;">
-                                <input type="number" class="custom-input" placeholder="$ Amount" @bind-value="@NewTrans.BottomAmount" />
-
+                                <CustomCurrencyInput @bind-Value=NewTrans.BottomAmount />
                                 <PaymentInput @bind-PaidWith="@NewTrans.BottomPaidWith" />
 
                                 @if (!string.IsNullOrEmpty(NewTrans.BottomPaidWith) && !string.IsNullOrEmpty(NewTrans.BottomWhoPaid))

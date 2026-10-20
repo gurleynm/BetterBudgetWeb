@@ -36,7 +36,7 @@
         </div>
         <div class="slot-background" style="align-self:flex-end;padding:0; margin: 0;width:35%">
             <div class="flex-c" style="justify-content:space-between;padding:0; margin: 0">
-                <input class="custom-input @ClassColor" type="number" style="border-color:cyan" @bind-value=@Amount />
+                <CustomCurrencyInput Class="@ClassColor" @bind-Value=Amount />
                 <br />
                 <div class="flex-c" style="padding:0">
                     <FancySelect @bind-Value="TheBalance.BalanceType" Style="color:white">

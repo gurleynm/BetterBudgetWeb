@@ -259,7 +259,7 @@
                                     <option>&le;</option>
                                     <option>&ge;</option>
                                 </FancySelect>
-                                <input type="number" class="custom-input" style="width:5em;color-scheme: dark;;border-top-left-radius:0;border-bottom-left-radius:0" placeholder="0.00" @oninput="@(async (ui) => { TotalAmountNumFilter = (string)ui.Value; })" />
+                                <CustomCurrencyInput @bind-Value=TotalAmountNumFilter />
                             </div>
                             <div class="flex-r-100" style="margin-top:1em">
                                 <button class="btn btn-primary" @onclick=FilterAmount>Filter Amount</button>
@@ -324,7 +324,7 @@
         }
     }
     private string TotalAmountFilter = "<";
-    private string TotalAmountNumFilter = "";
+    private double TotalAmountNumFilter;
 
     private bool Added { get; set; }
     private bool AddDisabled { get; set; }
@@ -417,10 +417,10 @@
     }
     private void FilterAmount()
     {
-        if (!string.IsNullOrEmpty(TotalAmountFilter) && !string.IsNullOrEmpty(TotalAmountNumFilter))
+        if (!string.IsNullOrEmpty(TotalAmountFilter) && TotalAmountNumFilter != 0)
         {
             AddFilter(new FilterHelper("Total Amount", TotalAmountFilter + TotalAmountNumFilter));
-            TotalAmountNumFilter = "";
+            TotalAmountNumFilter = 0;
         }
     }
     private string TranColor(string et, double amount)
@@ -633,7 +633,7 @@
         BalanceFilter = "";
         ExpenseTypeFilter = "";
         TotalAmountFilter = "<";
-        TotalAmountNumFilter = "";
+        TotalAmountNumFilter = 0;
     }
 
     private double TotalForDay(string day)

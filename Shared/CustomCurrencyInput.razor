@@ -1,0 +1,124 @@
+﻿<input class="custom-input @Class" type="text"
+       style="@(ValidInput == false ? "border-color:red" : "");@Style"
+       value="@DisplayValue"
+       placeholder="$ Amount"
+       @onfocus="FormatFocus"
+       @oninput="OnInputChanged"
+       @onblur="FormatOnBlur" />
+
+@code {
+    [Parameter]
+    public string Class { get; set; }
+    [Parameter]
+    public string Style { get; set; }
+
+
+    bool? ValidInput;
+    private double val;
+    [Parameter]
+    public double Value
+    {
+        get { return val; }
+        set
+        {
+            if (value == val)
+                return;
+
+            val = value;
+            ValueChanged.InvokeAsync(value);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<double> ValueChanged { get; set; }
+
+    private string DisplayValue { get; set; } = "0.00";
+
+    protected override void OnInitialized()
+    {
+        DisplayValue = Value.ToString("F2");
+        base.OnInitialized();
+    }
+
+    // Handles live typing, allowing "-" to remain in the box
+    private void OnInputChanged(ChangeEventArgs e)
+    {
+        string rawInput = e.Value?.ToString() ?? "";
+
+        DisplayValue = RemoveLastIfDuplicate(rawInput, '-');
+        DisplayValue = RemoveLastIfDuplicate(DisplayValue, '.');
+
+        // Try to update the real value in the background if it's a valid decimal
+        if (double.TryParse(rawInput, out double parsedValue))
+        {
+            Value = parsedValue;
+        }
+    }
+
+    private void FormatFocus(FocusEventArgs focus)
+    {
+        // If the display value is "0.00", clear it for easier typing
+        if (DisplayValue == "0.00")
+        {
+            Value = 0;
+            DisplayValue = "";
+            return;
+        }
+
+        DisplayValue = DisplayValue.Replace("$", "");
+        if (double.TryParse(DisplayValue, out double parsedValue))
+        {
+            Value = parsedValue;
+            // Formats as standard number with 2 decimals (e.g., -123.45)
+            DisplayValue = Value.ToString("F2");
+        }
+    }
+
+    // Formats the text nicely when the user clicks away
+    private void FormatOnBlur()
+    {
+        DisplayValue = RemoveLastIfDuplicate(DisplayValue, '-');
+        DisplayValue = RemoveLastIfDuplicate(DisplayValue, '.');
+
+        // If empty or just a minus sign, fall back safely
+        if (string.IsNullOrWhiteSpace(DisplayValue) || DisplayValue == "-")
+        {
+            Value = 0;
+            DisplayValue = "0.00";
+            ValidInput = null;
+            return;
+        }
+
+        if (double.TryParse(DisplayValue, out double parsedValue))
+        {
+            Value = parsedValue;
+
+            string frontView = Value < 0 ? "-$" : "$";
+
+            // Formats as standard number with 2 decimals (e.g., -123.45)
+            DisplayValue = frontView + Math.Abs(Value).ToString("F2");
+            ValidInput = true;
+        }
+        else
+        {
+            Value = 0;
+            ValidInput = false;
+        }
+    }
+
+    private string RemoveLastIfDuplicate(string input, char target)
+    {
+        if (string.IsNullOrEmpty(input)) return input;
+
+        int firstIndex = input.IndexOf(target);
+        int lastIndex = input.LastIndexOf(target);
+
+        // If the first and last indices match, there is only 1 (or 0) of that character
+        if (firstIndex != -1 && firstIndex != lastIndex)
+        {
+            return input.Remove(lastIndex, 1);
+        }
+
+        return input;
+    }
+}

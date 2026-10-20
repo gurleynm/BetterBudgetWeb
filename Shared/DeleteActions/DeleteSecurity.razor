@@ -26,7 +26,8 @@
                 </div>
                 <div class="flex-r-100" style="align-items:center;padding:1em">
                     <label style="padding-right:1em">Share Price at Sale:</label>
-                    <input class="custom-input" type="number" style="min-width:23vw" placeholder="Price/Share" @bind-value="@SalePrice" @oninput="@(async (ui) => { SalePrice = (string)ui.Value; })" />
+
+                    <CustomCurrencyInput @bind-Value=SalePrice Style="min-width:23vw" />
                 </div>
                 @if (Disabled)
                 {
@@ -102,7 +103,7 @@ else
                 </div>
                 <div class="flex-c-start" style="margin:0 1vw;">
                     <label>Share Price at Sale:</label>
-                    <input class="custom-input" type="number" style="width:8vw" placeholder="Price/Share" @bind-value="@SalePrice" @oninput="@(async (ui) => { SalePrice = (string)ui.Value; })" />
+                    <CustomCurrencyInput Style="width:8vw" @bind-Value=SalePrice />
                 </div>
             }
 
@@ -164,7 +165,7 @@ else
     private string ErrorColor { get; set; } = "red";
 
     private string NumShares;
-    private string SalePrice;
+    private double SalePrice;
     private bool Disabled;
 
     protected override async Task OnInitializedAsync()
@@ -183,11 +184,10 @@ else
         ErrorColor = "red";
 
         bool NumSharesDouble = double.TryParse(NumShares, out double tp);
-        bool SoldPriceDouble = double.TryParse(SalePrice, out double tp1);
 
         ErrorMsg += string.IsNullOrEmpty(SecID) ? "Security name must be set. " : "";
         ErrorMsg += !NumSharesDouble || tp < 0 ? "Enter a valid number of shares. " : "";
-        ErrorMsg += !SoldPriceDouble || tp1 < 0 ? "Enter a valid sale price. " : "";
+        ErrorMsg += SalePrice <= 0 ? "Enter a valid sale price. " : "";
 
 
         if (string.IsNullOrEmpty(ErrorMsg))
@@ -202,7 +202,7 @@ else
             if (string.IsNullOrEmpty(ErrorMsg))
             {
                 chosenOne.NumShares = tp;
-                chosenOne.Value = tp1 * tp;
+                chosenOne.Value = SalePrice * tp;
 
                 Securities = await SecurityRepo.RemoveAsync(chosenOne);
 

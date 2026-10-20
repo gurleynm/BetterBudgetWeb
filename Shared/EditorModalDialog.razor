@@ -68,7 +68,7 @@
                         }
                         else
                         {
-                            <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
+                            <CustomCurrencyInput @bind-Value=Transact.Person1Amount />
                             <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
                         }
                     </td>
@@ -79,7 +79,7 @@
                         }
                         else
                         {
-                            <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
+                            <CustomCurrencyInput @bind-Value=Transact.Person2Amount />
                             <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
                         }
                     </td>
@@ -156,7 +156,7 @@ else
                         <td>
                             <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson1" Person="@Person1" />
                             <br />
-                            <input class="custom-input" type="number" @bind=@Transact.Person1Amount>
+                            <CustomCurrencyInput @bind-Value=Transact.Person1Amount />
                         </td>
                     </tr>
                 }
@@ -169,7 +169,7 @@ else
                         <td>
                             <PaymentInput @bind-PaidWith="@Transact.PaidWithPerson2" Person="@Person2" />
                             <br />
-                            <input class="custom-input" type="number" @bind=@Transact.Person2Amount>
+                            <CustomCurrencyInput @bind-Value=Transact.Person2Amount />
                         </td>
                     </tr>
                 }

@@ -62,13 +62,13 @@
                         @if (Transact.Person1Amount > 0)
                         {
                             <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
-                                <input class="custom-input" type="number" min="0" @bind=@split.Person1Amout>
+                                <CustomCurrencyInput @bind-Value=split.Person1Amout />
                             </div>
                         }
                         @if (Transact.Person2Amount > 0)
                         {
                             <div style="text-align:start;color:@Constants.ColorScheme["Text"]">
-                                <input class="custom-input" type="number" min="0" @bind=@split.Person2Amout>
+                                <CustomCurrencyInput @bind-Value=split.Person2Amout />
                             </div>
                         }
                         @if (ThisTransactionTotal != ThisTransactionPerson1 && ThisTransactionTotal != ThisTransactionPerson2)
