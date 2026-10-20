@@ -12,7 +12,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddBlazorBootstrap();
 
 builder.Services.AddBlazoredSessionStorage();
-StripeConfiguration.ApiKey = HiddenEnv.APIKey;
 
 Constants.SetColorScheme();
 

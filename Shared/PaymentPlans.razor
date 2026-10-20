@@ -3,8 +3,8 @@
 @if (Constants.Device == "WEB")
 {
     <script async src="https://js.stripe.com/v3/pricing-table.js"></script>
-    <stripe-pricing-table pricing-table-id="@HiddenEnv.TableId"
-                          publishable-key="@HiddenEnv.PubKey"
+    <stripe-pricing-table pricing-table-id="@StripeDataEnv.TableId"
+                          publishable-key="@StripeDataEnv.PubKey"
                           client-reference-id="@Constants.catchAll.Token.Id">
     </stripe-pricing-table>
 }

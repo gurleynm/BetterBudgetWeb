@@ -1,6 +1,4 @@
-﻿using Stripe.V2;
-
-namespace BetterBudgetWeb.Data
+﻿namespace BetterBudgetWeb.Data
 {
     public class Monthly
     {

@@ -65,7 +65,7 @@
     public bool HideSubscribe { get; set; }
 
     private bool ShowMonthly { get; set; } = true;
-    private List<MyProduct> MyProducts;
+    private List<MyProduct> MyProducts = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,17 +87,12 @@
             curPlan = curPlan.Replace("_year", "");
         }
 
-        IEnumerable<Product> Products = await StripeRepo.GetProducts();
-        List<Price> Prices = (await StripeRepo.GetPrices()).Where(pr => pr.Active).ToList();
+        var TempMyProducts = await StripeRepo.GetProducts();
 
-        Dictionary<string, List<double>> ProductPrices = new Dictionary<string, List<double>>();
-        MyProducts = new();
-
-        foreach (var prod in Products)
+        foreach (var prod in TempMyProducts)
         {
-            var ThesePrices = Prices.Where(p => p.ProductId == prod.Id);
-            double monthlyCost = ThesePrices.FirstOrDefault(p => p.Recurring.Interval == "month").UnitAmount.Value / 100.0;
-            double yearlyCost = ThesePrices.FirstOrDefault(p => p.Recurring.Interval != "month").UnitAmount.Value / 100.0;
+            double monthlyCost = prod.Costs["month"];
+            double yearlyCost = prod.Costs["year"];
 
             if (Constants.Device == "iOS")
             {

@@ -320,12 +320,12 @@ else
         if (Constants.TIER_LEVEL == Data.Tier.TRIAL || Constants.DeviceSubscribed != "WEB")
             ShowPricingTable = !ShowPricingTable;
         else
-            NavMan.NavigateTo(HiddenEnv.StripePortal);
+            NavMan.NavigateTo(StripeDataEnv.StripePortal);
     }
 
     private string GetRejectText()
     {
-        string retStr = "You subscrbied via ";
+        string retStr = "You subscribed via ";
         string HowToDoSo;
 
         if (Constants.DeviceSubscribed == "WEB")

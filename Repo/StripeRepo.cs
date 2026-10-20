@@ -1,26 +1,27 @@
-﻿using Stripe;
+﻿using BetterBudgetWeb.Data;
+using Stripe;
 using Stripe.Checkout;
 
 namespace BetterBudgetWeb.Repo
 {
     public class StripeRepo
     {
+        private static string baseURI => Constants.BaseUri + "Stripe";
         private static HttpClient client;
-        private static string baseURI => "https://api.stripe.com/v1/products";
-
-        public static async Task<StripeList<Product>> GetProducts()
+        public static async Task<List<MyProduct>> CallAPI(string method)
         {
-            var service = new ProductService();
-            StripeList<Product> products = await service.ListAsync();
+            string content = await APIHandler.PingAPI(baseURI, method);
 
-            return products;
+            if (content == null)
+                return new List<MyProduct>();
+
+            var catcher = System.Text.Json.JsonSerializer.Deserialize<List<MyProduct>>(content);
+
+            return catcher;
         }
-        public static async Task<StripeList<Price>> GetPrices()
+        public static async Task<List<MyProduct>> GetProducts()
         {
-            var service = new PriceService();
-            StripeList<Price> prices = await service.ListAsync();
-
-            return prices;
+            return await CallAPI("GET");
         }
 
         public static async Task<string> CheckoutUrl()
