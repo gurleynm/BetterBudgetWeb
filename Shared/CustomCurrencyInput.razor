@@ -26,6 +26,9 @@
 
             val = value;
             ValueChanged.InvokeAsync(value);
+
+            if (!SetInInput)
+                FormatDisplayValue();
         }
     }
 
@@ -33,6 +36,7 @@
     public EventCallback<double> ValueChanged { get; set; }
 
     private string DisplayValue { get; set; } = "0.00";
+    bool SetInInput;
 
     protected override void OnInitialized()
     {
@@ -51,7 +55,9 @@
         // Try to update the real value in the background if it's a valid decimal
         if (double.TryParse(rawInput, out double parsedValue))
         {
+            SetInInput = true;
             Value = parsedValue;
+            SetInInput = false;
         }
     }
 
@@ -68,7 +74,9 @@
         DisplayValue = DisplayValue.Replace("$", "");
         if (double.TryParse(DisplayValue, out double parsedValue))
         {
+            SetInInput = true;
             Value = parsedValue;
+            SetInInput = false;
             // Formats as standard number with 2 decimals (e.g., -123.45)
             DisplayValue = Value.ToString("F2");
         }
@@ -93,10 +101,7 @@
         {
             Value = parsedValue;
 
-            string frontView = Value < 0 ? "-$" : "$";
-
-            // Formats as standard number with 2 decimals (e.g., -123.45)
-            DisplayValue = frontView + Math.Abs(Value).ToString("F2");
+            FormatDisplayValue();
             ValidInput = true;
         }
         else
@@ -105,6 +110,14 @@
             ValidInput = false;
         }
     }
+
+    private void FormatDisplayValue()
+    {
+        string frontView = Value < 0 ? "-$" : "$";
+
+        // Formats as standard number with 2 decimals (e.g., -123.45)
+        DisplayValue = frontView + Math.Abs(Value).ToString("F2");
+    }       
 
     private string RemoveLastIfDuplicate(string input, char target)
     {
