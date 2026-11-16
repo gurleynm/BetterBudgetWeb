@@ -1,4 +1,4 @@
-﻿<input class="custom-input @Class" type="text" inputmode="numeric"
+﻿<input class="custom-input @Class" type="@InputType"
        style="@(ValidInput == false ? "border-color:red" : ValidInput == true ? "border-color: #26b050" : "");@Style"
        value="@DisplayValue"
        placeholder="$ Amount"
@@ -12,6 +12,7 @@
     [Parameter]
     public string Style { get; set; }
 
+    private string InputType { get; set; } = "text";
 
     bool? ValidInput;
     private double val;
@@ -49,8 +50,8 @@
     {
         string rawInput = e.Value?.ToString() ?? "";
 
-        DisplayValue = RemoveLastIfDuplicate(rawInput, '-');
-        DisplayValue = RemoveLastIfDuplicate(DisplayValue, '.');
+        DisplayValue = RemoveFirstIfDuplicate(rawInput, '-');
+        DisplayValue = RemoveFirstIfDuplicate(DisplayValue, '.');
 
         // Try to update the real value in the background if it's a valid decimal
         if (double.TryParse(rawInput, out double parsedValue))
@@ -63,6 +64,7 @@
 
     private void FormatFocus(FocusEventArgs focus)
     {
+        InputType = "number";
         // If the display value is "0.00", clear it for easier typing
         if (DisplayValue == "0.00")
         {
@@ -85,8 +87,9 @@
     // Formats the text nicely when the user clicks away
     private void FormatOnBlur()
     {
-        DisplayValue = RemoveLastIfDuplicate(DisplayValue, '-');
-        DisplayValue = RemoveLastIfDuplicate(DisplayValue, '.');
+        InputType = "text";
+        DisplayValue = RemoveFirstIfDuplicate(DisplayValue, '-');
+        DisplayValue = RemoveFirstIfDuplicate(DisplayValue, '.');
 
         // If empty or just a minus sign, fall back safely
         if (string.IsNullOrWhiteSpace(DisplayValue) || DisplayValue == "-")
@@ -119,7 +122,7 @@
         DisplayValue = frontView + Math.Abs(Value).ToString("F2");
     }       
 
-    private string RemoveLastIfDuplicate(string input, char target)
+    private string RemoveFirstIfDuplicate(string input, char target)
     {
         if (string.IsNullOrEmpty(input)) return input;
 
@@ -129,7 +132,7 @@
         // If the first and last indices match, there is only 1 (or 0) of that character
         if (firstIndex != -1 && firstIndex != lastIndex)
         {
-            return input.Remove(lastIndex, 1);
+            return input.Remove(firstIndex, 1);
         }
 
         return input;
